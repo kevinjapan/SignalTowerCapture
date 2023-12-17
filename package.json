@@ -1,0 +1,52 @@
+{
+  "name": "signal-capture",
+  "productName": "Signal Capture",
+  "version": "0.0.1",
+  "description": "Signal Capture",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron-forge start",
+    "package": "electron-forge package",
+    "make": "electron-forge make",
+    "start-forge": "electron-forge start"
+  },
+  "author": "Kev Hastie",
+  "license": "MIT",
+  "devDependencies": {
+    "@electron-forge/cli": "^7.2.0",
+    "@electron-forge/maker-deb": "^7.2.0",
+    "@electron-forge/maker-rpm": "^7.2.0",
+    "@electron-forge/maker-squirrel": "^7.2.0",
+    "@electron-forge/maker-zip": "^7.2.0",
+    "@electron-forge/plugin-auto-unpack-natives": "^7.2.0",
+    "electron": "^27.0.3"
+  },
+  "dependencies": {
+    "electron-squirrel-startup": "^1.0.0",
+    "electronmon": "^2.0.2",
+    "sqlite": "^5.1.1",
+    "sqlite3": "^5.1.6"
+  },
+  "electronmon": {
+    "comment": "ignore these folders in hot reload",
+    "patterns": [
+      "!database/**",
+      "!backups/**",
+      "!exports/**",
+      "!collection-dataset/**"
+    ]
+  },
+  "plugins": {
+   "entryPoints": [
+      {
+         "html": "./renderer/index.html",
+         "js": "./renderer/renderer.js",
+         "name": "index"
+      },
+      {
+         "html": "./renderer/about.html",
+         "name": "about"
+      }
+      ]
+}
+}

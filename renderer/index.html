@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'"/>
+   <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'"/>
+   
+   <title>Signal Capture</title>
+
+   <link rel="stylesheet" href="./css/index.css">
+
+</head>
+
+<body>
+
+   <nav id="nav" data-page="index"></nav>
+
+   <main class="flex flex_col min_h_full">
+
+
+      <div id="component_container" class="p_1">
+         <!-- our principal components are switched out in here -->
+      </div>
+
+
+   </main>
+
+</body>
+
+<script src="./renderer.js" type="module"></script>
+
+
+<script src="./renderer-dev.js" type="module">
+   // to do : dev only - remove renderer-dev.js script from production
+</script>
+</html>
