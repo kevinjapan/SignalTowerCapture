@@ -1,3 +1,4 @@
+import DevTools from '../DevTools/DevTools.js'
 import { create_section,create_heading,create_form } from '../../utilities/ui_elements.js'
 
 
@@ -20,8 +21,11 @@ class Home {
          ]
       })
 
+      let dev_tools = new DevTools()
+
+
       // assemble
-      home.append(home_heading,home_form)
+      home.append(home_heading,home_form,dev_tools.render())
       return home
    }
 

@@ -50,7 +50,7 @@ class TestRecord {
             field_values = no_id_list.map((field) => {
                switch(field.test.type) {
                   case 'date':
-                     return get_sqlready_datetime(Date())
+                     return field.key === 'deleted_at' ? null : get_sqlready_datetime(Date())
                   case 'string':
                      return get_random_string()
                   case 'int':

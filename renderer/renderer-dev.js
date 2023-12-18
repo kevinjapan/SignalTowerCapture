@@ -1,6 +1,7 @@
 //
 // We Inject dev tools (action buttons) into index.html via this script
 //
+
 let injects = document.getElementById('injects')
 
 if(injects) {
@@ -44,6 +45,7 @@ if(injects) {
       })
    }
 }
+
 
 function enable_add_records_btn() {   
    let add_records_btn = document.getElementById('add_records_btn')

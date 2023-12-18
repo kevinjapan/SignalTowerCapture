@@ -69,7 +69,7 @@ class CollectionItem {
 
             this.#database.serialize(() => {
                
-               sql = `SELECT COUNT(id) as count FROM collection_items`
+               sql = `SELECT COUNT(id) as count FROM collection_items WHERE collection_items.deleted_at IS NULL`
                this.#database.get(sql, (error, rows) => {
                   if(error) reject(error)
                   total_count = rows.count           
@@ -81,6 +81,7 @@ class CollectionItem {
 
                sql = `SELECT ${fields.toString()} 
                       FROM collection_items 
+                      WHERE collection_items.deleted_at IS NULL
                       LIMIT ${this.#items_per_page} 
                       OFFSET ${offset}`
                this.#database.all(sql, (error, rows) => {
@@ -392,8 +393,9 @@ class CollectionItem {
 
       if(!Number.isInteger(parseInt(id))) {
          return {
+            query:'delete_collection_item',
             outcome:'fail',
-            message:'There was an error attempting to permanently delete the record. '
+            message:'There was an error attempting to delete the record. The Record id was not matched.'
          } 
       }
 
@@ -430,6 +432,48 @@ class CollectionItem {
 
    }
 
+   //
+   // RESTORE (SOFT DELETED)
+   // 
+   async restore(id) {
+
+      if(!Number.isInteger(parseInt(id))) {
+         return {
+            query:'restore_collection_item',
+            outcome:'fail',
+            message:'There was an error attempting to permanently delete the record. The Record id was not matched.'
+         } 
+      }
+
+      const result = await new Promise((resolve,reject) => {
+         this.#database.run(
+            `UPDATE collection_items SET deleted_at = NULL WHERE id = ? `, [id], function(error) {
+               if(error) {
+                  reject(error)
+               }
+               resolve(true)
+            }
+         )
+      }).catch((error) => this.set_last_error(error))
+
+      if(result) {
+         return {
+            query:'restore_collection_item',
+            outcome:'success',
+            message: 'The record was successfully restored.'
+         }
+      }
+      else {
+         let fail_response = {
+            query:'restore_collection_item',
+            outcome:'fail',
+            message:'There was an error attempting to restore the record. [CollectionItem.restore]  ' + this.#last_error.message
+         }
+         this.clear_last_error()
+         return fail_response
+      }
+
+   }
    
 
    //
@@ -439,8 +483,9 @@ class CollectionItem {
       
       if(!Number.isInteger(parseInt(id))) {
          return {
+            query:'hard_delete_collection_item',
             outcome:'fail',
-            message:'There was an error attempting to permanently delete the record. '
+            message:'There was an error attempting to permanently delete the record. The Record id was not matched.'
          } 
       }
 
@@ -501,7 +546,8 @@ class CollectionItem {
 
             sql = `SELECT ${fields.toString()} 
                    FROM collection_items 
-                   WHERE title LIKE ?
+                   WHERE title LIKE ?                   
+                   AND collection_items.deleted_at IS NULL
                    LIMIT ${this.#items_per_page}
                    OFFSET ${offset}`
             this.#database.all(sql,`%${search_obj.search_term}%`, (error, rows) => {

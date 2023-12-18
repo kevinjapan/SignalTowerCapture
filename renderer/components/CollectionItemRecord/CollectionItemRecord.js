@@ -1,5 +1,6 @@
 import App from '../App/App.js'
 import RecordBtns from '../RecordBtns/RecordBtns.js'
+import RecordAdmin from '../RecordAdmin/RecordAdmin.js'
 import { ui_friendly_text } from '../../utilities/ui_strings.js'
 import { is_image_file, build_img_elem } from '../../utilities/ui_utilities.js'
 import { create_section,create_div,create_button } from '../../utilities/ui_elements.js'
@@ -53,8 +54,7 @@ class CollectionItemRecord {
       })
       text_col.append(form_layout)
 
-      let btn_group_1 = RecordBtns.render(this.#props.item)
-      form_layout.append(btn_group_1)
+      form_layout.append(RecordBtns.render(this.#props.item))
 
       let field_label
       let field_value
@@ -89,8 +89,13 @@ class CollectionItemRecord {
          }
       })
 
-      let btn_group_2 = RecordBtns.render(this.#props.item)
-      form_layout.append(btn_group_2)
+      form_layout.append(RecordBtns.render(this.#props.item))
+
+      const record_admin = new RecordAdmin(this.#props)
+      setTimeout(() => record_admin.activate(),300)
+
+      form_layout.append(record_admin.render())
+
 
       // assemble
       img_col.append(img_view)
@@ -153,6 +158,10 @@ class CollectionItemRecord {
             })
          })
       }
+
+
+
+
 
       // view larger image size
       let record_img = document.getElementById('record_img')

@@ -81,7 +81,7 @@ class App {
          }
 
          // short delay to allow rendering to complete
-         setTimeout(() => component.activate(),250)
+         setTimeout(() => component.activate(),300)
       }
    }
 }

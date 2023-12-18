@@ -38,6 +38,7 @@ contextBridge.exposeInMainWorld('collection_items_api', {
    addCollectionItem: (collection_item) => ipcRenderer.invoke('items:addCollectionItem',collection_item),   
    updateCollectionItem: (collection_item) => ipcRenderer.invoke('items:updateCollectionItem',collection_item),
    deleteCollectionItem: (id) => ipcRenderer.invoke('items:deleteCollectionItem',id),
+   restoreCollectionItem: (id) => ipcRenderer.invoke('items:restoreCollectionItem',id),
    searchCollectionItems: (search_term) => ipcRenderer.invoke('items:searchCollectionItems',search_term)
 })
 

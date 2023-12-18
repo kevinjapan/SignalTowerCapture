@@ -32,9 +32,9 @@ class PaginationNav {
    render = () => {
 
       // container
-      let nav = create_section({
+      let page_nav = create_section({
          attributes:[
-            {key:'id',value:'nav'}
+            {key:'id',value:'page_nav'}
          ],
          classlist:['page_nav','flex', 'space_between', 'gap_.5']
       })
@@ -63,8 +63,8 @@ class PaginationNav {
       })
 
       // assemble
-      nav.append(prev_link,now_link,next_link)
-      return nav
+      page_nav.append(prev_link,now_link,next_link)
+      return page_nav
    }
 
    activate = () => {

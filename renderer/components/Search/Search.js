@@ -97,12 +97,13 @@ class Search {
 
                   let page_count = Math.ceil(collection_items_obj.count / collection_items_obj.per_page)
 
-                  const top_pagination_nav = new PaginationNav('top',this.go_to_page,page_count,this.#search_context.page)  //this.go_to_page,page_count,this.#browse_context.page
-                  this.#browse_results_container.append(top_pagination_nav.render())
-                  top_pagination_nav.activate()
          
                   if(collection_items_obj.collection_items.length > 0) {
                      
+                     const top_pagination_nav = new PaginationNav('top',this.go_to_page,page_count,this.#search_context.page)  //this.go_to_page,page_count,this.#browse_context.page
+                     this.#browse_results_container.append(top_pagination_nav.render())
+                     top_pagination_nav.activate()
+
                      let number_records = document.getElementById('number_records')
                      if(number_records) {             
                         number_records.innerText = `There are ${ui_display_number_as_str(collection_items_obj.count)} records.`
@@ -121,14 +122,14 @@ class Search {
                      this.#browse_results_container.style.minHeight = '70vh' 
          
                      setTimeout(() => collection_item_card.activate(),200)
+
+                     const bottom_pagination_nav = new PaginationNav('bottom',this.go_to_page,page_count,this.#search_context.page)  //this.go_to_page,page_count,this.#browse_context.page
+                     this.#browse_results_container.append(bottom_pagination_nav.render())
+                     bottom_pagination_nav.activate()
                   }
                   else {
                      this.#browse_results_container.innerText = 'No records were found. '
                   }
-
-                  const bottom_pagination_nav = new PaginationNav('bottom',this.go_to_page,page_count,this.#search_context.page)  //this.go_to_page,page_count,this.#browse_context.page
-                  this.#browse_results_container.append(bottom_pagination_nav.render())
-                  bottom_pagination_nav.activate()
 
                   // re-instate scroll position if user had scrolled list before opening a record
                   window.scroll(0,this.#search_context.scroll_y)

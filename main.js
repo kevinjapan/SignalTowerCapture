@@ -101,6 +101,7 @@ app.whenReady().then(async() => {
    ipcMain.handle('items:addCollectionItem',add_collection_item)
    ipcMain.handle('items:updateCollectionItem',update_collection_item)
    ipcMain.handle('items:deleteCollectionItem',delete_collection_item)
+   ipcMain.handle('items:restoreCollectionItem',restore_collection_item)
    ipcMain.handle('items:searchCollectionItems',search_collection_items)
 
    // Config handlers
@@ -275,6 +276,23 @@ async function delete_collection_item (event,id,permanent = false) {
       return {
          outcome:'fail',
          message:'The id was invalid and no matching record could be found to delete.'
+      }       
+   }
+}
+
+async function restore_collection_item (event,id) {
+
+   if(!database) return NOTIFY.DATABASE_UNAVAILABLE
+
+   if(is_valid_int(id)) {
+      let collection_item = new CollectionItem(database)
+      const result = await collection_item.restore(id)
+      return result
+   }
+   else {
+      return {
+         outcome:'fail',
+         message:'The id was invalid and no matching record could be found to restore.'
       }       
    }
 }

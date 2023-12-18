@@ -38,6 +38,7 @@ nav {
    gap:.5rem;
 
    position:fixed;
+   z-index:9999;
    top:0;
    left:0;
    width:100%;
@@ -471,10 +472,7 @@ label/[value|input] layout for Record and Form views
 
 .page_nav {
    height:3rem;
-}
-
-.selected_page_btn {
-   background:yellow;
+   padding-top:1rem;
 }
 
 .CollectionItemCard {
