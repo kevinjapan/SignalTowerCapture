@@ -106,7 +106,7 @@ class Search {
 
                      let number_records = document.getElementById('number_records')
                      if(number_records) {             
-                        number_records.innerText = `There are ${ui_display_number_as_str(collection_items_obj.count)} records.`
+                        number_records.innerText = `${ui_display_number_as_str(collection_items_obj.count)} maching records were found.`
                      }
                      
                      let props = {
@@ -118,7 +118,7 @@ class Search {
                         this.#browse_results_container.appendChild(collection_item_card.render(collection_items_obj.collection_item_fields,item))
                      })
          
-                     // retain some spacing on short lists - do css file?
+                     // retain some spacing on short lists
                      this.#browse_results_container.style.minHeight = '70vh' 
          
                      setTimeout(() => collection_item_card.activate(),200)
@@ -128,7 +128,7 @@ class Search {
                      bottom_pagination_nav.activate()
                   }
                   else {
-                     this.#browse_results_container.innerText = 'No records were found. '
+                     this.#browse_results_container.innerText = 'No matching records were found. '
                   }
 
                   // re-instate scroll position if user had scrolled list before opening a record

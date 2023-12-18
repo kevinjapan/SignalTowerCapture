@@ -38,7 +38,7 @@ export const create_div = (props) => {
 export const create_img = (props) => {
    return create_element('img',props)
 }
-export const create_paragraph = (props) => {
+export const create_p = (props) => {
    return create_element('p',props)
 }
 export const create_ul = (props) => {
@@ -50,7 +50,7 @@ export const create_li = (props) => {
 
 // Heading
 // additional prop - level:'h1'
-export const create_heading = (props) => {
+export const create_h = (props) => {
    let valid_headings = ['h1','h2','h3','h4','h5','h6']   
    let heading_elem
    if(typeof props.level !== undefined) {

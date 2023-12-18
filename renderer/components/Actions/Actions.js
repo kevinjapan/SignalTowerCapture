@@ -1,6 +1,7 @@
 import BackupComponent from '../BackupComponent/BackupComponent.js'
 import ExportComponent from '../ExportComponent/ExportComponent.js'
-import { create_section,create_heading } from '../../utilities/ui_elements.js'
+import DeletedRecordsTeaser from '../DeletedRecordsTeaser/DeletedRecordsTeaser.js'
+import { create_section,create_h } from '../../utilities/ui_elements.js'
 
 
 
@@ -14,12 +15,14 @@ class Actions {
          ]
       })
 
-      const actions_heading = create_heading({
+      const actions_heading = create_h({
          level:'h1',
          text:'Actions'
       })
 
+
       // Backups
+
       let backup_section = create_section({
          attributes:[
             {key:'id',value:'backup_section'}
@@ -31,7 +34,9 @@ class Actions {
          setTimeout(() => backup_component.activate(),200)
       }
 
+
       // Exports
+
       let export_section = create_section({
          attributes:[
             {key:'id',value:'export_section'}
@@ -43,8 +48,23 @@ class Actions {
          export_component.activate()
       }
       
+
+      // Soft Deleted Files Admin
+
+      let deleted_files_section = create_section({
+         attributes:[
+            {key:'id',value:'deleted_files_section'}
+         ]
+      })
+      const managed_deleted_component = new DeletedRecordsTeaser()
+      if(deleted_files_section) {
+         deleted_files_section.append(managed_deleted_component.render())
+         setTimeout(() => managed_deleted_component.activate(),200)
+      }
+
+
       // assemble
-      actions_section.append(actions_heading,backup_section,export_section)
+      actions_section.append(actions_heading,backup_section,export_section,deleted_files_section)
       return actions_section
    }
 

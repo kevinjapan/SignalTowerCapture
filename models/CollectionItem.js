@@ -3,6 +3,7 @@ const { get_sqlready_datetime } = require('../app/utilities/datetime')
 
 
 
+
 class CollectionItem {
 
    #database
@@ -58,38 +59,47 @@ class CollectionItem {
    //
    // READ ALL : Paginated
    //
-   async read(page = 1) {
-     
-         let offset = (parseInt(page) - 1) * this.#items_per_page
-         let total_count = 0 //this.count().count   
-         let sql
+   async read(context) {
 
-         // wrap in a promise to await result
-         const result = await new Promise((resolve,reject) => {
+      const record_status = context.record_status ? context.record_status : ''
+      let offset = (parseInt(context.page) - 1) * this.#items_per_page
+      let total_count = 0  
+      let sql
 
-            this.#database.serialize(() => {
-               
-               sql = `SELECT COUNT(id) as count FROM collection_items WHERE collection_items.deleted_at IS NULL`
-               this.#database.get(sql, (error, rows) => {
-                  if(error) reject(error)
-                  total_count = rows.count           
-               })
+      let status = `collection_items.deleted_at IS NULL`
+      if(record_status === 'DELETED') {
+         status = `collection_items.deleted_at IS NOT NULL`
+      }
+      if(record_status === 'ALL') {
+         status = ``
+      }
 
-               const fields = CollectionItem.#full_fields_list.map((field) => {
-                  return field.key
-               })
+      // wrap in a promise to await result
+      const result = await new Promise((resolve,reject) => {
 
-               sql = `SELECT ${fields.toString()} 
-                      FROM collection_items 
-                      WHERE collection_items.deleted_at IS NULL
-                      LIMIT ${this.#items_per_page} 
-                      OFFSET ${offset}`
-               this.#database.all(sql, (error, rows) => {
-                  if(error) reject(error)
-                  resolve(rows)            
-               })
+         this.#database.serialize(() => {
+            
+            sql = `SELECT COUNT(id) as count FROM collection_items WHERE ${status}`
+            this.#database.get(sql, (error, rows) => {
+               if(error) reject(error)
+               total_count = rows.count           
             })
-         }).catch((error) => this.set_last_error(error))
+
+            const fields = CollectionItem.#full_fields_list.map((field) => {
+               return field.key
+            })
+
+            sql = `SELECT ${fields.toString()} 
+                     FROM collection_items 
+                     WHERE ${status}
+                     LIMIT ${this.#items_per_page} 
+                     OFFSET ${offset}`
+            this.#database.all(sql, (error, rows) => {
+               if(error) reject(error)
+               resolve(rows)            
+            })
+         })
+      }).catch((error) => this.set_last_error(error))
  
          
       const in_card_fields = CollectionItem.#full_fields_list.filter((field) => {
@@ -417,7 +427,7 @@ class CollectionItem {
          return {
             query:'delete_collection_item',
             outcome:'success',
-            message: 'The record was successfully deleted. This action is reversible.'
+            message: 'The record was successfully deleted.'
          }
       }
       else {
@@ -524,16 +534,25 @@ class CollectionItem {
    //
    async search(search_obj) {
 
+      const record_status = search_obj.record_status ? search_obj.record_status : ''
       let offset = (parseInt(search_obj.page) - 1) * this.#items_per_page
-      let total_count = 0 //this.count().count 
+      let total_count = 0
       let sql
+
+      let status = `collection_items.deleted_at IS NULL`
+      if(record_status === 'DELETED') {
+         status = `collection_items.deleted_at IS NOT NULL`
+      }
+      if(record_status === 'ALL') {
+         status = ``
+      }
 
       // wrap in a promise to await result
       const result = await new Promise((resolve,reject) => {
          
          this.#database.serialize(() => {
                
-            let stmt = this.#database.prepare("SELECT COUNT(id) as count FROM collection_items WHERE title LIKE ?");
+            let stmt = this.#database.prepare(`SELECT COUNT(id) as count FROM collection_items WHERE title LIKE ? AND ${status}`);
             stmt.each(`%${search_obj.search_term}%`, function(err, row) {
                 total_count=row.count
             }, function(err, count) {
@@ -547,7 +566,7 @@ class CollectionItem {
             sql = `SELECT ${fields.toString()} 
                    FROM collection_items 
                    WHERE title LIKE ?                   
-                   AND collection_items.deleted_at IS NULL
+                   AND ${status}
                    LIMIT ${this.#items_per_page}
                    OFFSET ${offset}`
             this.#database.all(sql,`%${search_obj.search_term}%`, (error, rows) => {

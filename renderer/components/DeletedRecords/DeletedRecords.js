@@ -2,21 +2,28 @@ import App from '../App/App.js'
 import CollectionItemCard from '../CollectionItemCard/CollectionItemCard.js'
 import PaginationNav from '../PaginationNav/PaginationNav.js'
 import { ui_display_number_as_str } from '../../utilities/ui_strings.js'
-import { create_section,create_div,create_h } from '../../utilities/ui_elements.js'
+import { 
+   create_section,
+   create_div,
+   create_h,
+   create_p
+} from '../../utilities/ui_elements.js'
 
 
 
-class Browse {
+
+class DeletedRecordsTeaser {
 
    #browse_results_container
 
    // we retain browse state (page,scroll_y,etc) by passing a 'context token'
    #browse_context = {
-      key:'Browse',
+      key:'DeletedRecords',
+      record_status:'DELETED',
       page:1,
       scroll_y:0
    }
-
+         
    // props 
    #props = null
 
@@ -28,49 +35,62 @@ class Browse {
       this.#props = props
    }
 
+   
+   render = () => {
 
-   render = async () => {
+
+      const deleted_Records_component = create_section({
+         attributes:[
+            {key:'id',value:'deleted_Records_component'}
+         ],
+         classlist:['ui_component']
+      })
+
+      const heading = create_h({
+         level:'h3',
+         text:'Deleted Records'
+      })
+
+      let desc_text =`
+      Deleted records are kept within the database to permit restoration and recovery,
+      although they are not included in the Browse or Search results lists.
+      You can recover a deleted record by searching through all the previously deleted records here.
+      You should ensure the number of deleted records never gets too large.`
+
+      const desc = create_p({
+         text:desc_text
+      })
+
       
-      let browse_section = create_section({
-         attributes:[
-            {key:'id',value:'browse_section'}
-         ]
-      })
-            
-      const browse_heading = create_h({
-         level:'h1',
-         text:'Browse All Records',
-         classlist:['m_0']
-      })
-
-      let app_status = create_section({
-         attributes:[
-            {key:'id',value:'app_status'}
-         ]
-      })
-
       let number_records = create_div({
          attributes:[
             {key:'id',value:'number_records'}
          ],
          classlist:['p_2']
       })
-      
+
       this.#browse_results_container = create_div({
          attributes:[
             {key:'id',value:'browse_results_container'}
-         ]
+         ],
+         classlist:['deleted_records']
       })
-      
+
       // required for re-instating search_context on 'back' to list actions
       if(this.#browse_context) {
          this.#browse_results_container.append(this.get_items())
       }
 
+
+      
       // assemble
-      browse_section.append(browse_heading,number_records,this.#browse_results_container)
-      return browse_section
+      deleted_Records_component.append(heading,desc,number_records,this.#browse_results_container)
+
+      return deleted_Records_component
+
    }
+
+
 
    //
    // retrieve the paginated items results 
@@ -99,7 +119,7 @@ class Browse {
                   
                      let number_records = document.getElementById('number_records')
                      if(number_records) {             
-                        number_records.innerText = `There are ${ui_display_number_as_str(collection_items_obj.count)} records.`
+                        number_records.innerText = `There are ${ui_display_number_as_str(collection_items_obj.count)} deleted records.`
                      }
             
                      let props = {context: this.#browse_context}
@@ -109,7 +129,7 @@ class Browse {
                      })
          
                      // retain some spacing on short lists
-                     this.#browse_results_container.style.minHeight = '70vh' 
+                     this.#browse_results_container.style.minHeight = '70vh'
          
                      setTimeout(() => collection_item_card.activate(),200)
                   }
@@ -148,16 +168,14 @@ class Browse {
       this.#browse_context.scroll_y = 0
       this.get_items()
    }
-
+   
    // enable buttons/links displayed in the render
    activate = () => {
 
    }
 
-
-
 }
 
 
 
-export default Browse
+export default DeletedRecordsTeaser

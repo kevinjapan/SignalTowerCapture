@@ -1,5 +1,5 @@
 import { get_ui_ready_date,get_ui_ready_time } from '../../utilities/ui_datetime.js'
-import { create_heading,create_paragraph,create_div,create_button } from '../../utilities/ui_elements.js'
+import { create_h,create_p,create_div,create_button } from '../../utilities/ui_elements.js'
 
 
 
@@ -12,11 +12,11 @@ class BackupComponent {
          classlist:['ui_component']
       })
 
-      const heading = create_heading({
+      const heading = create_h({
          level:'h3',
          text:'Backups'
       })
-      const paragraph = create_paragraph({
+      const paragraph = create_p({
          text:'Make a new timestamped folder containing a copy of the database.'
       })                
       let backup_btn = create_button({

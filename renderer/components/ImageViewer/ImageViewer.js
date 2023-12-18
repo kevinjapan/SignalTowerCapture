@@ -1,5 +1,5 @@
 import App from '../App/App.js'
-import { create_section,create_heading,create_button } from '../../utilities/ui_elements.js'
+import { create_section,create_h,create_button } from '../../utilities/ui_elements.js'
 import { is_image_file, build_img_elem } from '../../utilities/ui_utilities.js'
 
 
@@ -30,7 +30,7 @@ class ImageViewer {
          text:'X'
       })
       
-      const heading = create_heading({
+      const heading = create_h({
          level:'h1',
          text:'Image Viewer'
       })

@@ -3,7 +3,7 @@ import RecordBtns from '../RecordBtns/RecordBtns.js'
 import RecordAdmin from '../RecordAdmin/RecordAdmin.js'
 import { ui_friendly_text } from '../../utilities/ui_strings.js'
 import { is_image_file, build_img_elem } from '../../utilities/ui_utilities.js'
-import { create_section,create_div,create_button } from '../../utilities/ui_elements.js'
+import { create_section,create_div,create_p } from '../../utilities/ui_elements.js'
 
 
 
@@ -44,6 +44,15 @@ class CollectionItemRecord {
          classlist:['img_view']
       })
 
+      if(this.#props.item['deleted_at']) {
+         // to do : mark this as a deleted record / console.log(this.#props.item['deleted_at'])
+         // to do : enable only 'restore' button
+         const notify_deleted = create_p({
+            classlist:['bg_yellow_100','grid_span_2'],
+            text:'This record has previously been deleted and will soon be permanently auto-deleted from the system.'
+         })
+         this.#record.append(notify_deleted)
+      }
 
       // 'form' layout inside text_col
       let form_layout = create_div({
@@ -59,6 +68,7 @@ class CollectionItemRecord {
       let field_label
       let field_value
 
+      
       // append form element for each Record field
       this.#props.fields.forEach( async (field) => { 
 
@@ -94,13 +104,19 @@ class CollectionItemRecord {
       const record_admin = new RecordAdmin(this.#props)
       setTimeout(() => record_admin.activate(),300)
 
-      form_layout.append(record_admin.render())
-
-
       // assemble
       img_col.append(img_view)
-      this.#record.append(text_col,img_col,img_view)
+      this.#record.append(text_col,img_col,img_view,record_admin.render())
 
+      if(this.#props.item['deleted_at']) {
+         // to do : enable only 'restore' button
+         const notify_deleted = create_p({
+            classlist:['bg_yellow_100','grid_span_2'],
+            text:'This record has previously been deleted and will soon be permanently auto-deleted from the system.'
+         })
+         this.#record.append(notify_deleted)
+      }
+   
       window.scroll(0,0)
 
       return this.#record
@@ -178,7 +194,7 @@ class CollectionItemRecord {
          back_btns.forEach(back_btn => {
 
             back_btn.addEventListener('click',async(event) => {
-               // the context token identifies the current user context inc. component               
+               // the context token identifies the current user context inc. component      
                App.switch_to_component(this.#props.context.key,this.#props)             
             })
          })

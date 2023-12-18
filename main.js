@@ -177,12 +177,12 @@ function set_title (event, title) {
 // (COLLECTION) ITEMS API
 //
 
-async function get_collection_items (event,page) {
+async function get_collection_items (event,context) {
 
    if(!database) return NOTIFY.DATABASE_UNAVAILABLE
 
    let collection_item = new CollectionItem(database)
-   const results = await collection_item.read(page)
+   const results = await collection_item.read(context)
    return results
 }
 

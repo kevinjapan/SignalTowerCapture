@@ -1,5 +1,5 @@
 import AppConfigForm from '../AppConfigForm/AppConfigForm.js'
-import { create_section,create_heading,create_div } from '../../utilities/ui_elements.js'
+import { create_section,create_h,create_div } from '../../utilities/ui_elements.js'
 
 
 
@@ -12,7 +12,7 @@ class Config {
          classlist:['ui_component']
       })
       
-      const heading = create_heading({
+      const heading = create_h({
          level:'h3',
          text:'Config'
       })

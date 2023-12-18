@@ -1,6 +1,6 @@
 import App from '../App/App.js'
 import CollectionItemForm from '../CollectionItemForm/CollectionItemForm.js'
-import { create_section,create_heading,create_div } from '../../utilities/ui_elements.js'
+import { create_section,create_h,create_div } from '../../utilities/ui_elements.js'
 
 
 
@@ -16,7 +16,7 @@ class AddCollectionItem {
          ]
       })
 
-      const add_item_heading = create_heading({
+      const add_item_heading = create_h({
          level:'h1',
          text:'Add A Record'
       })

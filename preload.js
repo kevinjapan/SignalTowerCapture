@@ -32,7 +32,7 @@ contextBridge.exposeInMainWorld('app_api', {
 })
 
 contextBridge.exposeInMainWorld('collection_items_api', {
-   getItems: (page) => ipcRenderer.invoke('items:getItems',page),
+   getItems: (context) => ipcRenderer.invoke('items:getItems',context),
    getCollectionItemFields: () => ipcRenderer.invoke('items:getCollectionItemFields'),
    getCollectionItem: (id) => ipcRenderer.invoke('items:getCollectionItem',id),
    addCollectionItem: (collection_item) => ipcRenderer.invoke('items:addCollectionItem',collection_item),   

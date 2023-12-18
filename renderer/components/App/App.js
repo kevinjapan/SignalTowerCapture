@@ -6,6 +6,7 @@ import CollectionItemRecord from '../CollectionItemRecord/CollectionItemRecord.j
 import CollectionItemForm from '../CollectionItemForm/CollectionItemForm.js'
 import ImageViewer from '../ImageViewer/ImageViewer.js'
 import Actions from '../Actions/Actions.js'
+import DeletedRecords from '../DeletedRecords/DeletedRecords.js'
 import Config from '../Config/Config.js'
 import Files from '../Files/Files.js'
 import Error from '../Error/Error.js'
@@ -62,6 +63,10 @@ class App {
                component = new Actions()
                component_container.replaceChildren(component.render())
                break
+            case 'DeletedRecords':
+               component = new DeletedRecords(props)
+               component_container.replaceChildren(component.render())
+               break
             case 'Config':
                component = new Config()
                component_container.replaceChildren(component.render())
@@ -80,8 +85,8 @@ class App {
                break
          }
 
-         // short delay to allow rendering to complete
-         setTimeout(() => component.activate(),300)
+         // delay to allow rendering to complete
+         setTimeout(() => component.activate(),200)
       }
    }
 }

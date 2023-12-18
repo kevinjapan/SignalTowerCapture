@@ -1,6 +1,6 @@
 import App from '../App/App.js'
 import { get_ui_ready_date } from '../../utilities/ui_datetime.js'
-import { create_section,create_div,create_heading } from '../../utilities/ui_elements.js'
+import { create_section,create_div,create_h } from '../../utilities/ui_elements.js'
 
 
 
@@ -32,7 +32,7 @@ class CollectionItemCard {
 
             if(field_value === '') field_value = 'no title'
 
-            field_element = create_heading({
+            field_element = create_h({
                level:'h3',
                attributes: [
                   {key:'data-id',value:item.id}

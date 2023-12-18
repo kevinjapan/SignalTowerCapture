@@ -1,4 +1,4 @@
-import { create_heading,create_paragraph,create_div,create_button } from '../../utilities/ui_elements.js'
+import { create_h,create_p,create_div,create_button } from '../../utilities/ui_elements.js'
 
 
 
@@ -12,14 +12,14 @@ class RootFolderComponent {
          classlist:['ui_component']
       })
 
-      const heading = create_heading({
+      const heading = create_h({
          level:'h3',
          text:'Collection Root Folder'
       })
-      const tagline = create_paragraph({
+      const tagline = create_p({
          text:'Be careful here!'
       })  
-      const paragraph = create_paragraph({
+      const paragraph = create_p({
          text:'Your database records find their associated files in this location - so any change may require changes in every individual record.'
       }) 
       const root_folder = create_div({

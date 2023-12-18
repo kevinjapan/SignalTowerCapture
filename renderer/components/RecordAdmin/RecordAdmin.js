@@ -1,5 +1,5 @@
 import App from '../App/App.js'
-import { create_div,create_button,create_section,create_heading } from '../../utilities/ui_elements.js'
+import { create_div,create_button,create_section,create_h,create_p } from '../../utilities/ui_elements.js'
 
 
 
@@ -18,10 +18,11 @@ class RecordAdmin {
       let record_admin = create_section({
          attributes:[
             {key:'id',value:'record_admin'}
-         ]
+         ],
+         classlist:['border','grid_span_2']
       })
       
-      const heading = create_heading({
+      const heading = create_h({
          level:'h3',
          text:'admin'
       })
@@ -36,7 +37,7 @@ class RecordAdmin {
             {key:'id',value:'del_btn'},
             {key:'data-id',value:typeof item !== 'undefined' ? item.id : null},
          ],
-         classlist:['delete_button'],
+         classlist:['delete_button',`${this.#props.item['deleted_at'] ? 'hidden' : ''}`],
          text:'Delete'
       })
       
@@ -45,14 +46,16 @@ class RecordAdmin {
             {key:'id',value:'restore_btn'},
             {key:'data-id',value:typeof item !== 'undefined' ? item.id : null},
          ],
-         classlist:['restore_button','hidden'],
+         classlist:['restore_button',`${this.#props.item['deleted_at'] ? '' : 'hidden'}`],
          text:'Restore'
       })
 
-      let outcome = create_div({
+
+      const outcome = create_p({
          attributes:[
             {key:'id',value:'outcome'}
-         ]
+         ],
+         classlist:['bg_yellow_100']
       })
 
       // assemble
@@ -70,14 +73,11 @@ class RecordAdmin {
          del_btn.addEventListener('click',async() => {
 
             const record_id = del_btn.getAttribute('data-id')
-            console.log('record_id',record_id)
 
             if(confirm('Are you sure you want to delete this record?')) {
                try {
                   const result = await window.collection_items_api.deleteCollectionItem(record_id)
                   const outcome = document.getElementById('outcome')
-                  console.log('result',result)
-                  console.log('still got item:',this.#props.item)
                   if(result.outcome === 'success'){
                      this.show_restore_btn()
                      outcome.innerText = result.message
@@ -114,6 +114,8 @@ class RecordAdmin {
                const result = await window.collection_items_api.restoreCollectionItem(record_id)
 
                if(result.outcome === 'success'){
+                  outcome.innerText = result.message
+                  restore_btn.classList.add('hidden')
                }
                else {
 

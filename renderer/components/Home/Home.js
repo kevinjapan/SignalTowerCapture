@@ -1,5 +1,5 @@
 import DevTools from '../DevTools/DevTools.js'
-import { create_section,create_heading,create_form } from '../../utilities/ui_elements.js'
+import { create_section,create_h,create_form } from '../../utilities/ui_elements.js'
 
 
 
@@ -9,7 +9,7 @@ class Home {
 
       let home = create_section()
       
-      const home_heading = create_heading({
+      const home_heading = create_h({
          level:'h1',
          classlist:['logo_heading'],
          text:'Signal Capture'

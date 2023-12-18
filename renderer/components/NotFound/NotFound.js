@@ -1,4 +1,4 @@
-import { create_section,create_heading } from '../../utilities/ui_elements.js'
+import { create_section,create_h } from '../../utilities/ui_elements.js'
 
 
 
@@ -8,7 +8,7 @@ class NotFound {
 
       let not_found = create_section()
 
-      const not_found_heading = create_heading({
+      const not_found_heading = create_h({
          level:'h1',
          text:'Not Found'
       })

@@ -1,4 +1,4 @@
-import { create_section,create_heading, create_paragraph } from '../../utilities/ui_elements.js'
+import { create_section,create_h, create_p } from '../../utilities/ui_elements.js'
 
 
 
@@ -14,15 +14,15 @@ class Error {
 
       let not_found = create_section()
 
-      const heading = create_heading({
+      const heading = create_h({
          level:'h3',
          text:'Error'
       })
 
-      const msg = create_paragraph({
+      const msg = create_p({
          text:this.#props.msg
       })
-      const error = create_paragraph({
+      const error = create_p({
          text:this.#props.error
       })
 
