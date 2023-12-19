@@ -55,6 +55,7 @@ const is_valid_date = (value) => {
       return true
    }
    else {
+      // we need to throw a message to notify user on form errors.
       throw 'value is not a valid date'
    }
 }
@@ -248,6 +249,7 @@ module.exports = {
    is_valid_collection_item,
    is_valid_int,
    is_valid_string,
+   is_valid_date,
    is_valid_search,
    is_valid_app_config_record
 }

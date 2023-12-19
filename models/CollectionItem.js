@@ -1,6 +1,6 @@
 const sqlite3 = require('sqlite3').verbose()
-const { get_sqlready_datetime } = require('../app/utilities/datetime')
-
+const { get_sqlready_datetime,get_sqlready_date_from_js_date } = require('../app/utilities/datetime')
+const { is_valid_date } = require('../app/utilities/validation')
 
 
 
@@ -522,6 +522,56 @@ class CollectionItem {
             query:'hard_delete_collection_item',
             outcome:'fail',
             message:'There was an error attempting to permanently delete the record. [CollectionItem.hard_delete]  ' + this.#last_error.message
+         }
+         this.clear_last_error()
+         return fail_response
+      }
+   }
+
+   //
+   // Flush all soft deleted items (permanent delete)
+   //
+   async flush_deleted(cut_off_date) {
+
+      let str_date = get_sqlready_date_from_js_date(cut_off_date)
+      console.log(' > Permanently deleting all records soft deleted before',str_date)
+
+      // verify date
+      try {
+         is_valid_date(str_date)
+      }
+      catch(e) {
+         return {
+            query:'flush_deleted',
+            outcome:'success',
+            message:e
+         }
+      }
+      
+      const result = await new Promise((resolve,reject) => {
+         this.#database.run(
+            `DELETE FROM collection_items WHERE deleted_at IS NOT NULL AND deleted_at < ?`,[str_date], function(error) {
+               if(error) {
+                  reject(error)
+               }
+               resolve(true)
+            }
+         )
+      }).catch((error) => this.set_last_error(error))
+
+      // return result
+      if(result) {
+         return {
+            query:'flush_deleted',
+            outcome:'success',
+            message:'The records were successfully and permanently deleted.'
+         }
+      }
+      else {
+         let fail_response = {
+            query:'flush_deleted',
+            outcome:'fail',
+            message:'There was an error attempting to permanently delete multiple records. [CollectionItem.flush_deleted]  ' + this.#last_error.message
          }
          this.clear_last_error()
          return fail_response

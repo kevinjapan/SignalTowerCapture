@@ -143,6 +143,7 @@ app.whenReady().then(async() => {
    }
    database = result.database
 
+   house_keeping()
 
    // AppConfig initialization
    try {
@@ -155,7 +156,6 @@ app.whenReady().then(async() => {
          setTimeout(() => notify_client_alert('AppConfig Initialization failed.\n' + error),2000)
       }
    }
-
 })
 
 function notify_client_alert(message) {
@@ -170,6 +170,28 @@ function set_title (event, title) {
    const win = BrowserWindow.fromWebContents(webContents)
    win.setTitle(title)   
  }
+
+
+function house_keeping() {
+   console.log('HouseKeeping')
+   flush_deleted_items()
+
+}
+
+async function flush_deleted_items() {
+
+   if(!database) return NOTIFY.DATABASE_UNAVAILABLE
+   
+   console.log(' Flushing Deleted Items')
+
+   const today = new Date()
+   const cut_off_date = new Date(new Date().setDate(today.getDate() - 30))
+   let collection_item = new CollectionItem(database)
+   const results = await collection_item.flush_deleted(cut_off_date)
+
+   console.log(' >',results.message)
+   return results
+}
 
 
 

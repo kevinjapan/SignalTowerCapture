@@ -96,13 +96,15 @@ class AppConfig {
                               return reject(error)
                            }
                            else {
-                              console.log('AppConfig Initialization: successfully completed.')
+                              console.log('AppConfig Initialization')
+                              console.log(' > Successfully completed.')
                            }
                        }
                   )
                }
                else {
-                  console.log('AppConfig Initialization: already completed.')
+                  console.log('AppConfig Initialization')
+                  console.log(' > Already completed.')
                }
             })
          })

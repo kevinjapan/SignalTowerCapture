@@ -10,7 +10,14 @@ const get_sqlready_datetime = (inc_time = true) => {
    return str
 }
 
+const get_sqlready_date_from_js_date = (date) => {
+   // to do : check date is valid.
+   let str = date.toISOString().split('T')[0] 
+   return str
+}
+
 
 module.exports = {
-   get_sqlready_datetime
+   get_sqlready_datetime,
+   get_sqlready_date_from_js_date
 }
