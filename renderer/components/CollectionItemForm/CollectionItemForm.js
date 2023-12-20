@@ -222,6 +222,7 @@ class CollectionItemForm {
                   else {
                      // FormData only returns the non-disabled input key/value pairs - so we have to add 'id'
                      updated_collection_item.id = this.#record_id
+                     console.log('updated_collection_item',updated_collection_item)
                      response = await window.collection_items_api.updateCollectionItem(updated_collection_item)
                   }
 

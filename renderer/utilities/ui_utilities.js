@@ -38,7 +38,7 @@ const is_img_ext = (file_name) => {
 
 export const build_img_elem = async(id,folder_path,file_name) => {
    
-   // to do : alt
+   // to do : alt - imgs should pass in as an attribute - verify syntax below is correct
    
    const sep = await window.files_api.filePathSep()
    let separator = folder_path.slice(-1) !== sep ? sep : ''
@@ -46,7 +46,8 @@ export const build_img_elem = async(id,folder_path,file_name) => {
    let img = create_img({
       attributes:[
          {key:'id',value:id},
-         {key:'src',value:folder_path + separator + file_name}
+         {key:'src',value:folder_path + separator + file_name},
+         {key:'alt',value:''}
       ],
       classlist:['record_image']
    })

@@ -56,6 +56,10 @@ class CollectionItem {
       return copy_fields_list
    }
 
+   test() {
+      console.log('static test')
+   }
+
    //
    // READ ALL : Paginated
    //
@@ -268,7 +272,9 @@ class CollectionItem {
 
    //
    // CREATE
-   //
+   // we rely on single inserts even for batch inserts since -
+   // - the code w/ prepared statements becomes unclear with multiple inserts
+   // - batch inserts is a seldom used feature
    async create(collection_item) {
       
       const fields = CollectionItem.#full_fields_list.filter((field) => {

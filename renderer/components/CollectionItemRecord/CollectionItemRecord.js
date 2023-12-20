@@ -45,8 +45,6 @@ class CollectionItemRecord {
       })
 
       if(this.#props.item['deleted_at']) {
-         // to do : mark this as a deleted record / console.log(this.#props.item['deleted_at'])
-         // to do : enable only 'restore' button
          const notify_deleted = create_p({
             classlist:['bg_yellow_100','grid_span_2'],
             text:'This record has previously been deleted and will soon be permanently auto-deleted from the system.'
@@ -109,7 +107,6 @@ class CollectionItemRecord {
       this.#record.append(text_col,img_col,img_view,record_admin.render())
 
       if(this.#props.item['deleted_at']) {
-         // to do : enable only 'restore' button
          const notify_deleted = create_p({
             classlist:['bg_yellow_100','grid_span_2'],
             text:'This record has previously been deleted and will soon be permanently auto-deleted from the system.'

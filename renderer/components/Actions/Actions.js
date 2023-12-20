@@ -1,5 +1,7 @@
 import BackupComponent from '../BackupComponent/BackupComponent.js'
-import ExportComponent from '../ExportComponent/ExportComponent.js'
+import ExportCSVComponent from '../ExportCSVComponent/ExportCSVComponent.js'
+import ExportJSONComponent from '../ExportJSONComponent/ExportJSONComponent.js'
+import ImportJSONComponent from '../ImportJSONComponent/ImportJSONComponent.js'
 import DeletedRecordsTeaser from '../DeletedRecordsTeaser/DeletedRecordsTeaser.js'
 import { create_section,create_h } from '../../utilities/ui_elements.js'
 
@@ -41,13 +43,44 @@ class Actions {
          attributes:[
             {key:'id',value:'export_section'}
          ]
+      })   
+      const heading = create_h({
+         level:'h3',
+         text:'Export Files'
       })
-      const export_component = new ExportComponent()
+      
+      const export_component = new ExportCSVComponent()
       if(export_section) {
          export_section.append(export_component.render())
          export_component.activate()
       }
+
+      const export_json_component = new ExportJSONComponent()
+      if(export_json_component) {
+         export_section.append(export_json_component.render())
+         export_json_component.activate()
+      }
       
+
+
+      // Imports
+
+      let import_section = create_section({
+         attributes:[
+            {key:'id',value:'import_section'}
+         ]
+      })   
+      const import_heading = create_h({
+         level:'h3',
+         text:'Import Files'
+      })
+      const import_json_component = new ImportJSONComponent()
+      if(import_json_component) {
+         import_section.append(import_json_component.render())
+         import_json_component.activate()
+      }
+
+
 
       // Soft Deleted Files Admin
 
@@ -64,7 +97,7 @@ class Actions {
 
 
       // assemble
-      actions_section.append(actions_heading,backup_section,export_section,deleted_files_section)
+      actions_section.append(actions_heading,backup_section,export_section,import_section,deleted_files_section)
       return actions_section
    }
 

@@ -14,7 +14,7 @@ class Database {
    // the sqlite database
    #db
 
-   #database_path = './database/lighthouse-archive-database.sqlite'     // to do : rename
+   #database_path = './database/signal-capture-database.sqlite'
 
    #last_error
 

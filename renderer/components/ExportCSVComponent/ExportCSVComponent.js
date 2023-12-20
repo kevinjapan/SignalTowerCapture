@@ -4,68 +4,68 @@ import { create_h,create_p,create_div,create_button } from '../../utilities/ui_e
 
 
 
-class ExportComponent {
+class ExportCSVComponent {
 
    
    render = () => {
 
-      const export_component = create_div({
+      const export_csv_component = create_div({
          attributes:[
-            {key:'id',value:'export_component'}
+            {key:'id',value:'export_csv_component'}
          ],
          classlist:['ui_component']
       })
    
       const heading = create_h({
          level:'h3',
-         text:'Export Files'
+         text:'Export CSV File'
       })
 
       const paragraph = create_p({
          text:'Select destination folder.'
       }) 
 
-      const export_folder = create_div({
+      const export_csv_folder = create_div({
          attributes:[
-            {key:'id',value:'export_folder'}
+            {key:'id',value:'export_csv_folder'}
          ],
-         classlist:['export_folder','bg_lightgrey','mt_1','pl_1','pr_1']
+         classlist:['export_csv_folder','bg_lightgrey','mt_1','pl_1','pr_1']
       })   
   
-      let export_btn = create_button({
+      let export_csv_btn = create_button({
          attributes:[
-            {key:'id',value:'export_btn'}
+            {key:'id',value:'export_csv_btn'}
          ],
          text:'Export CSV File'
       })  
 
-      const export_folder_outcome = create_div({
+      const export_csv_folder_outcome = create_div({
          attributes:[
-            {key:'id',value:'export_folder_outcome'}
+            {key:'id',value:'export_csv_folder_outcome'}
          ],
          classlist:['bg_lightgrey','mt_1','pl_1','pr_1']
       })
 
-      const export_outcome = create_div({
+      const export_csv_outcome = create_div({
          classlist:['bg_lightgrey','mt_1','pl_1','pr_1'],
          attributes:[
-            {key:'id',value:'export_outcome'}
+            {key:'id',value:'export_csv_outcome'}
          ]
       })
 
-      const export_fields = create_div({
+      const export_csv_fields = create_div({
          classlist:['break_words','bg_lightgrey','text_grey','italic','pl_1','pr_1'],
          attributes:[
-            {key:'id',value:'export_fields'}
+            {key:'id',value:'export_csv_fields'}
          ]
       })
       
       // assemble
-      export_component.append(heading,paragraph,export_folder,export_btn,export_folder_outcome,export_outcome,export_fields)
+      export_csv_component.append(heading,paragraph,export_csv_folder,export_csv_btn,export_csv_folder_outcome,export_csv_outcome,export_csv_fields)
       
       this.activate()
-      this.get_export_folder(export_folder)
-      return export_component
+      this.get_export_folder(export_csv_folder)
+      return export_csv_component
    }
 
 
@@ -77,30 +77,30 @@ class ExportComponent {
 
       const sep = await window.files_api.filePathSep()
 
-      const export_btn = document.getElementById('export_btn')
-      const export_outcome = document.getElementById('export_outcome')
+      const export_csv_btn = document.getElementById('export_csv_btn')
+      const export_csv_outcome = document.getElementById('export_csv_outcome')
 
-      if(export_btn) {
+      if(export_csv_btn) {
 
-            export_btn.addEventListener('click', async(event) => {
+            export_csv_btn.addEventListener('click', async(event) => {
 
                event.preventDefault()
                
-               const export_results_obj = await window.config_api.exportFile()  
+               const export_results_obj = await window.config_api.exportCSVFile()  
 
                if (typeof export_results_obj != "undefined") { 
 
                   if(export_results_obj.outcome === 'success') {
 
-                     if(export_outcome) {
-                        export_outcome.innerText = 
+                     if(export_csv_outcome) {
+                        export_csv_outcome.innerText = 
                            `\nThe export on ${get_ui_ready_date(Date(),true)} at ${get_ui_ready_time(Date())} was successful.\n                 
                            The created file is ${export_results_obj.file_path}${sep}${export_results_obj.file_name}`
                      }
                   }
                   else {
-                     if(export_outcome) {
-                        export_outcome.innerText = export_results_obj.message
+                     if(export_csv_outcome) {
+                        export_csv_outcome.innerText = export_results_obj.message
                      }
                   }
                }
@@ -109,9 +109,9 @@ class ExportComponent {
    }
 
    
-   get_export_folder = async (export_folder_elem) => {
+   get_export_folder = async (export_csv_folder_elem) => {
 
-      if(export_folder_elem) {
+      if(export_csv_folder_elem) {
 
          let result = await window.config_api.getExportFolder()
 
@@ -120,13 +120,13 @@ class ExportComponent {
             if(result.outcome === 'success') {
 
                // store id of the relevant app_config record 
-               export_folder_elem.setAttribute('data-id',result.app_config.id)
+               export_csv_folder_elem.setAttribute('data-id',result.app_config.id)
                
                // display current root folder
-               export_folder_elem.innerText = result.app_config.export_folder
+               export_csv_folder_elem.innerText = result.app_config.export_folder
             }
             else {
-               export_folder_elem.innerText = result.message
+               export_csv_folder_elem.innerText = result.message
             }
 
          }  
@@ -137,4 +137,4 @@ class ExportComponent {
 
 
 
-export default ExportComponent
+export default ExportCSVComponent

@@ -49,7 +49,9 @@ contextBridge.exposeInMainWorld('config_api', {
    getRootFolderPath: () => ipcRenderer.invoke('config:getRootFolderPath'),
    setRootFolderPath: (app_config) => ipcRenderer.invoke('config:setRootFolderPath',app_config),
    backupDatabase: () => ipcRenderer.invoke('config:backupDatabase'),
-   exportFile: (folder_path) => ipcRenderer.invoke('config:exportFile',folder_path),
+   exportCSVFile: (folder_path) => ipcRenderer.invoke('config:exportCSVFile',folder_path),
+   exportJSONFile: (folder_path) => ipcRenderer.invoke('config:exportJSONFile',folder_path),
+   importJSONFile: (file_path) => ipcRenderer.invoke('config:importJSONFile',file_path),
    getExportFolder: () => ipcRenderer.invoke('config:getExportFolder')
 })
 

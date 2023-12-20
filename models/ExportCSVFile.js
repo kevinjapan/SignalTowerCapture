@@ -6,7 +6,7 @@ const { get_sqlready_datetime } = require('../app/utilities/datetime')
 // Create a csv file of the CollectionItem records dataset.
 
 
-class ExportFile {
+class ExportCSVFile {
 
    #database
 
@@ -79,4 +79,4 @@ class ExportFile {
 }
 
 
-module.exports = ExportFile
+module.exports = ExportCSVFile

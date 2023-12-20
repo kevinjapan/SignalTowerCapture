@@ -1,6 +1,6 @@
 // 
 // Signal Capture
-// Ad-hoc Local Desktop Collection Archive Solution (to do : 'ad hoc' ok?)
+// Desktop Collection Archive Solution
 // 
 // development:
 // npx electronmon .  
@@ -17,7 +17,9 @@ const Database = require('./app/database/database')
 const AppConfig = require('./models/AppConfig')
 const CollectionItem = require('./models/CollectionItem')
 const DatabaseBackup = require('./models/DatabaseBackup')
-const ExportFile = require('./models/ExportFile')
+const ExportCSVFile = require('./models/ExportCSVFile')
+const ExportJSONFile = require('./models/ExportJSONFile')
+const ImportJSONFile = require('./models/ImportJSONFile')
 const { is_valid_collection_item,is_valid_int,is_valid_search,is_valid_app_config_record } = require('./app/utilities/validation')
 const { NOTIFY } = require('./app/utilities/notifications')
 
@@ -111,7 +113,9 @@ app.whenReady().then(async() => {
    ipcMain.handle('config:getRootFolderPath',get_root_folder_path) 
    ipcMain.handle('config:setRootFolderPath',set_root_folder_path)
    ipcMain.handle('config:backupDatabase',backup_database)  
-   ipcMain.handle('config:exportFile',export_file)
+   ipcMain.handle('config:exportCSVFile',export_csv_file)
+   ipcMain.handle('config:exportJSONFile',export_json_file)
+   ipcMain.handle('config:importJSONFile',import_json_file)
    ipcMain.handle('config:getExportFolder',get_export_folder)
    ipcMain.handle('config:getBackupFolder',get_backup_folder)
 
@@ -209,6 +213,7 @@ async function get_collection_items (event,context) {
 }
 
 async function get_collection_item_fields (event) {
+
    let result = CollectionItem.get_full_fields_list()
    if(result) {
       let response_obj = {
@@ -249,7 +254,8 @@ async function add_collection_item (event,new_collection_item) {
 
    if(!database) return NOTIFY.DATABASE_UNAVAILABLE
    
-   let result = is_valid_collection_item(new_collection_item)
+   const full_fields_list = CollectionItem.get_full_fields_list()
+   let result = is_valid_collection_item(full_fields_list,new_collection_item)
 
    if(result.outcome === 'success') {
       let collection_item = new CollectionItem(database)
@@ -269,7 +275,8 @@ async function update_collection_item (event,updated_collection_item) {
 
    if(!database) return NOTIFY.DATABASE_UNAVAILABLE
 
-   let result = is_valid_collection_item(updated_collection_item)
+   const full_fields_list = CollectionItem.get_full_fields_list()
+   const result = is_valid_collection_item(full_fields_list,updated_collection_item)
 
    if(result.outcome === 'success') {
       let collection_item = new CollectionItem(database)
@@ -374,7 +381,8 @@ async function update_app_config(event,app_config_record) {
 
    if(!database) return NOTIFY.DATABASE_UNAVAILABLE
    
-   let result = is_valid_app_config_record(app_config_record)
+   const full_fields_list = AppConfig.get_full_fields_list()
+   const result = is_valid_app_config_record(full_fields_list,app_config_record)
 
    if(typeof result !== 'undefined' && result.outcome === 'success') {
       let app_config = new AppConfig(database)
@@ -502,28 +510,54 @@ async function open_file () {
 }
 
 async function backup_database() {
+   
    if(!database) return NOTIFY.DATABASE_UNAVAILABLE
+
    let database_backup = new DatabaseBackup(database)
    const results = await database_backup.create()
    return results
 }
 
-async function export_file(event) {
+async function export_csv_file(event) {
+
    if(!database) return NOTIFY.DATABASE_UNAVAILABLE
-   let export_file = new ExportFile(database)
-   const results = await export_file.create()
+
+   let export_csv_file = new ExportCSVFile(database)
+   const results = await export_csv_file.create()
+   return results
+}
+
+async function export_json_file(event) {
+
+   if(!database) return NOTIFY.DATABASE_UNAVAILABLE
+
+   let export_json_file = new ExportJSONFile(database)
+   const results = await export_json_file.create()
+   return results
+}
+
+async function import_json_file(event,file_path) {
+
+   if(!database) return NOTIFY.DATABASE_UNAVAILABLE
+
+   let import_json_file = new ImportJSONFile(database)
+   const results = await import_json_file.import(file_path)
    return results
 }
 
 async function get_export_folder() {
+
    if(!database) return NOTIFY.DATABASE_UNAVAILABLE
+
    let app_config = new AppConfig(database)
    const app_config_record = await app_config.read_single()
    return app_config_record
 }
 
 async function get_backup_folder() {
+
    if(!database) return NOTIFY.DATABASE_UNAVAILABLE
+
    let app_config = new AppConfig(database)
    const app_config_record = await app_config.read_single()
    return app_config_record

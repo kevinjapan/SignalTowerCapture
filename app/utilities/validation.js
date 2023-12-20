@@ -1,6 +1,3 @@
-const CollectionItem = require('../../models/CollectionItem')
-const AppConfig = require('../../models/AppConfig')
-
 
 //
 // String
@@ -64,9 +61,8 @@ const is_valid_date = (value) => {
 //
 // Collection Item
 //
-const is_valid_collection_item = (collection_item) => {
+const is_valid_collection_item = (fields_list,collection_item) => {
 
-   let full_fields_list = CollectionItem.get_full_fields_list()
    let errors = []
    let is_valid = true
 
@@ -76,7 +72,7 @@ const is_valid_collection_item = (collection_item) => {
    ci_array.forEach((key) => {
 
       // extract 'test' from the blueprint for this key
-      let blueprint = full_fields_list.filter((col) => {
+      let blueprint = fields_list.filter((col) => {
          return col.key === key
       })
 
@@ -177,9 +173,9 @@ const is_valid_file_name = (file_name) => {
 // AppConfig Record
 // AppConfig may not include all valid fields
 // we should check those present are permitted and valid
-const is_valid_app_config_record = (app_config_record) => {
+//
+const is_valid_app_config_record = (fields_list,app_config_record) => {
    
-   let full_fields_list = AppConfig.get_full_fields_list()
    let errors = []
    let is_valid = true
    
@@ -189,7 +185,7 @@ const is_valid_app_config_record = (app_config_record) => {
    rcvd_form_keys.forEach((key) => {
 
       // extract 'test' from the blueprint for this key
-      let blueprint = full_fields_list.filter((col) => {
+      let blueprint = fields_list.filter((col) => {
          return col.key === key
       })
       

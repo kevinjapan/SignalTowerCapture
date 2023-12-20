@@ -230,7 +230,7 @@ class AppConfigForm {
                      if (typeof collection_item_obj != "undefined") {
                         if(collection_item_obj.outcome === 'success') {
 
-                           console.log('to do : on cancel (cancel btn required?)')
+                           // to do : on cancel - cancel btn required? msg here?
                         }
                         else {
                            throw 'No records were returned.'
