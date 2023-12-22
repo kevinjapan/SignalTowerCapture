@@ -300,8 +300,7 @@ class CollectionItemForm {
                }
                else {
                   let props = {
-                     msg:'Sorry, we were unable to locate the Record.',
-                     error:error
+                     msg:'Sorry, we were unable to locate the Record.'
                   }
                   App.switch_to_component('Error',props)
                }

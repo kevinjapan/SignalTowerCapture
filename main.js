@@ -199,6 +199,14 @@ async function flush_deleted_items() {
 
 
 
+
+//
+// APP API
+//
+
+
+
+
 //
 // (COLLECTION) ITEMS API
 //
@@ -452,7 +460,7 @@ async function get_folder_path () {
    if(!canceled) {
       return filePaths
    }
- }
+}
  
 async function get_file_path () {
    const fs = require('fs')
@@ -536,14 +544,33 @@ async function export_json_file(event) {
    return results
 }
 
+
+
 async function import_json_file(event,file_path) {
 
    if(!database) return NOTIFY.DATABASE_UNAVAILABLE
 
    let import_json_file = new ImportJSONFile(database)
-   const results = await import_json_file.import(file_path)
+
+   console.log('main.import_json_file : START')
+
+   let results = null
+   try {
+      results = await import_json_file.import(file_path)
+   }
+   catch(error) {
+      console.log('caught:',error)
+   }
+
+   console.log('in main . results',results)
+   
+   console.log('main.import_json_file : END')
+
    return results
 }
+
+
+
 
 async function get_export_folder() {
 

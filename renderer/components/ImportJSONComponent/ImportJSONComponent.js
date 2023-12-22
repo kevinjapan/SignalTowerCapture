@@ -1,10 +1,9 @@
+import WaitDialog from '../WaitDialog/WaitDialog.js'
 import { get_ui_ready_date,get_ui_ready_time } from '../../utilities/ui_datetime.js'
 import { create_h,create_p,create_div,create_section,create_button } from '../../utilities/ui_elements.js'
 
 
 
-// to do : we need to lock app while it is working (and notify user 'working' and then 'done')
-//         currently, it reports success before job is finished... and app unresponsive..
 
 
 class ImportJSONComponent {
@@ -16,7 +15,7 @@ class ImportJSONComponent {
          attributes:[
             {key:'id',value:'import_json_component'}
          ],
-         classlist:['ui_component']
+         classlist:['ui_component','h_100']
       })
    
       const heading = create_h({
@@ -48,6 +47,7 @@ class ImportJSONComponent {
             {key:'id',value:'import_json_fields'}
          ]
       })
+
       
       // assemble
       import_json_component.append(heading,paragraph,import_json_btn,import_json_outcome,import_json_fields)
@@ -60,13 +60,14 @@ class ImportJSONComponent {
    activate = async () => {
 
       const import_json_btn = document.getElementById('import_json_btn')
-      const import_json_outcome = document.getElementById('import_json_outcome')
 
       if(import_json_btn) {
 
             import_json_btn.addEventListener('click', async(event) => {
 
                event.preventDefault()
+
+               this.notify_outcome('')
        
                // user select file dialog
                const result = await window.files_api.getFilePath()
@@ -75,29 +76,46 @@ class ImportJSONComponent {
 
                   let file_path = result.files[0]
 
+                  this.notify_outcome('\nWorking - please wait...\n\n')
+
+                  // open 'please wait..' msg dlg
+                  const wait_dlg_component = new WaitDialog()
+                  let actions_section = document.getElementById('actions_section')
+                  if(actions_section) {
+                     actions_section.append(wait_dlg_component.render())
+                  }
+
                   const import_results_obj = await window.config_api.importJSONFile(file_path)  
 
                   if (typeof import_results_obj != "undefined") { 
 
                      if(import_results_obj.outcome === 'success') {
-
-                        if(import_json_outcome) {
-                           import_json_outcome.innerText = 
-                              `\nThe import on ${get_ui_ready_date(Date(),true)} at ${get_ui_ready_time(Date())} was successful.\n                 
-                              `
-                              // to do : report no. of records created
-                        }
+                        this.close_wait_dlg(actions_section)
+                        this.notify_outcome(`\nThe import on ${get_ui_ready_date(Date(),true)} at ${get_ui_ready_time(Date())} was successful.\n\n`)
                      }
                      else {
-                        if(import_json_outcome) {
-                           import_json_outcome.innerText = 'falling through' //import_results_obj.message
-                        }
+                        this.close_wait_dlg(actions_section)
+                        this.notify_outcome(import_results_obj.message)
                      }
                   }
                }
-               // to do : else - failed to get file_path
+               else {
+                  this.notify_outcome("Sorry, we couldn't find or open the file.")
+               }
             })
          }
+   }
+
+   close_wait_dlg = (parent_section) => {
+      let wait_dlg = document.getElementById('wait_dlg')
+      if(wait_dlg) parent_section.removeChild(wait_dlg)
+   }
+
+   notify_outcome = (msg) => {
+      const import_json_outcome = document.getElementById('import_json_outcome')
+      if(import_json_outcome) {
+         import_json_outcome.innerText = msg
+      }
    }
 
 }

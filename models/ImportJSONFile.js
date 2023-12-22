@@ -1,17 +1,28 @@
-const AppConfig = require('./AppConfig')
 const CollectionItem = require('./CollectionItem')
-const { get_sqlready_datetime } = require('../app/utilities/datetime')
 
 
-// Create a json file of the CollectionItem records dataset.
+// Import a JSON file of CollectionItem records.
+// Currently we insert single CollectionItem records at a time,
+// inefficient but sufficient for current use-cases (primarily dev)
+
+// risks
+// - large import files (>300 records) will noticeably lock the app
+//
+// mitigations
+// - batch inserts (see below)
+// - limit size of export files we create (say 500 records) but create multiples if required.
+//
+// future:
+// - build batch insert statements - say 100 records each insert (max permitted is 1000 values)
+//
 
 
-
-// to do : notify user while it is working - prevent other actions.
 
 class ImportJSONFile {
 
    #database
+
+   #last_error
 
    // sql - the maximum number of rows in one VALUES clause is 1000
    #batch_size = 100
@@ -23,35 +34,69 @@ class ImportJSONFile {
 
    async import(file_path) {
       
-      // to do : check - does file exist?        
-      // if (!fs.existsSync(dir)){
-      //    fs.mkdirSync(dir, { recursive: true })
-      // }
-
-      // to do : verify import_json_file is valid json or bail
-
+      const fs = require('fs')
 
       try {
-         const collection_items = await this.get_json_file_contents(file_path)
-         const total = collection_items.length
-         for(let i = 0; i < total; i = i + this.#batch_size) {
-            this.insert_batch(collection_items.slice(i,i + this.#batch_size))
+         if(fs.existsSync(file_path)) {
+
+            console.log('opening file')
+            const collection_items = await this.get_json_file_contents(file_path)
+
+            await this.process_records(collection_items)
+
+            return {
+               query:'import_json_file',
+               outcome:'success',
+               message:'The records were successfully imported into the database.'
+            }
+         }
+         else {
+            throw 'The import file was not found.'
          }
       }
       catch(error) {
+         // Errors caught: JSON,file not found
          return {
             query:'import_json_file',
             outcome:'fail',
             message:'There was an error attempting to import the records. [ImportJSONFile.import]  ' + error
          }
       }
-      return {
-         query:'import_json_file',
-         outcome:'success',
-         message:'The records were successfully imported into the database.'
+   }
+
+
+   process_records = async(collection_items) => {
+
+      const collection_item = new CollectionItem(this.#database)
+      const total = collection_items.length
+      let result = null
+
+      // using for(..of..) instead of forEach() allows us to await successfully
+      for(const item of collection_items) {
+
+         delete item.id
+
+         result = await new Promise(async(resolve,reject) => {
+            let result = await collection_item.create(item)
+            if(result.outcome !== 'success') {
+               reject(result.message)
+            }
+            else {
+               resolve(result.collection_item.id)
+            }
+         }).catch((error) => this.set_last_error(error))
+         
+         // successful result will contain id of newly created record
+         console.log(result)
       }
    }
 
+
+   //
+   // retrieve the import file's JSON content
+   // since we are calling JSON.parse, any errors in JSON will throw error 
+   // which we will catch in import()
+   //
    get_json_file_contents = async (filePath, encoding = 'utf8') => {
       const fs = require('fs')
       return new Promise((resolve, reject) => {
@@ -65,24 +110,17 @@ class ImportJSONFile {
       .then(JSON.parse)
    }
 
-      
-   
-   insert_batch = async(items_batch) => {
 
-      let collection_item = new CollectionItem(this.#database)
 
-      items_batch.forEach(async(item) => {
-         
-         // 'id' is autoincrement, so we want the database to handle
-         delete item['id']
-      
-         try {
-            await collection_item.create(item)
-         }
-         catch(error) {
-            throw 'Creating record failed in ImportJSONFile action.'
-         }
-      })
+   //
+   // error handlers for our promise wrappers around database calls
+   // any client method calling set_last_error should clear after use to prevent leaking 
+   //
+   set_last_error = (error) => {
+      this.#last_error = error
+   }
+   clear_last_error = () => {
+      this.#last_error = ''
    }
 }
 

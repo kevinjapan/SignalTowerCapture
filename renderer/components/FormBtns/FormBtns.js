@@ -4,7 +4,8 @@ import { create_div,create_button } from '../../utilities/ui_elements.js'
 
 class FormBtns {
 
-   static render = (item) => {
+   
+   static render = (item = null,inc_cancel = true) => {
       
       const btn_group = create_div({
          attributes:[
@@ -14,23 +15,25 @@ class FormBtns {
       }) 
 
       const apply_btn = create_button({
-            attributes:[
-               {key:'data-id',value:typeof item !== 'undefined' ? item.id : null}
-            ],
-            classlist:['apply_btn'],
-            text:'Apply'
-         })
+         attributes:[
+            {key:'data-id',value:item && typeof item !== 'undefined' ? item.id : null}
+         ],
+         classlist:['apply_btn'],
+         text:'Apply'
+      })
+      btn_group.append(apply_btn)
 
-      const cancel_btn = create_button({
+      if(inc_cancel) {
+         const cancel_btn = create_button({
             attributes:[
-               {key:'data-id',value:typeof item !== 'undefined' ? item.id : null}
+               {key:'data-id',value:item && typeof item !== 'undefined' ? item.id : null}
             ],
             classlist:['cancel_btn'],
             text:'Cancel'
          })
+         btn_group.append(cancel_btn)
+      }
 
-      // assemble
-      btn_group.append(apply_btn,cancel_btn)
       return btn_group
    }
 

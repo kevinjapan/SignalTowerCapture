@@ -40,7 +40,7 @@ class AppConfigForm {
          classlist:['config_form']
       })
       
-      let btn_group_1 = FormBtns.render()
+      let btn_group_1 = FormBtns.render(null,false)
       form.append(btn_group_1)
 
       const text_col = create_div({
@@ -138,7 +138,7 @@ class AppConfigForm {
          this.#id = app_config_record.id
       }
 
-      let btn_group_2 = FormBtns.render()
+      let btn_group_2 = FormBtns.render(null,false)
 
       let submit_outcome = create_section({
          attributes:[
@@ -209,57 +209,7 @@ class AppConfigForm {
          })
       }
 
-      
-      // On 'Cancel' return to the CollectionItemRecord for same record
-      
-      const cancel_btns = document.querySelectorAll('.cancel_btn')
-
-      if(cancel_btns) {
-
-         cancel_btns.forEach((cancel_btn) => {
-
-            cancel_btn.addEventListener('click',async(event) => {
-               
-               event.preventDefault()
-               
-               if(typeof cancel_btn.attributes['data-id'] !== 'undefined') {
-
-                  try {
-                     const collection_item_obj = await window.collection_items_api.getCollectionItem(cancel_btn.attributes['data-id'].value)
-
-                     if (typeof collection_item_obj != "undefined") {
-                        if(collection_item_obj.outcome === 'success') {
-
-                           // to do : on cancel - cancel btn required? msg here?
-                        }
-                        else {
-                           throw 'No records were returned.'
-                        }
-                     }
-                     else {
-                        throw 'No records were returned.'
-                     }
-                  }
-                  catch(error) {
-                     let props = {
-                        msg:'Sorry, we were unable to access the Records.',
-                        error:error
-                     }
-                     App.switch_to_component('Error',props)
-                  }
-               }
-               else {
-                  let props = {
-                     msg:'Sorry, we were unable to access the Records.',
-                     error:error
-                  }
-                  App.switch_to_component('Error',props)
-               }
-            })
-         })
-      }
-
-      
+   
       // on Find File select w/ dialog
       
       const find_file_btn = document.getElementById('find_file_button')
@@ -307,7 +257,7 @@ class AppConfigForm {
 
 
    // display if we have a valid img file
-   // is_image_file queries main process if the file exists and also if the ext is img ext
+   // is_image_file queries main process if the file exists and also if the .ext is img .ext
    display_if_img_file = async (parent_elem,folder_path,file_name) => {
 
       let res = await is_image_file(folder_path,file_name)  

@@ -39,9 +39,9 @@ class Actions {
 
       // Exports
 
-      let export_section = create_section({
+      let export_csv_section = create_section({
          attributes:[
-            {key:'id',value:'export_section'}
+            {key:'id',value:'export_csv_section'}
          ]
       })   
       const heading = create_h({
@@ -50,14 +50,19 @@ class Actions {
       })
       
       const export_component = new ExportCSVComponent()
-      if(export_section) {
-         export_section.append(export_component.render())
+      if(export_csv_section) {
+         export_csv_section.append(export_component.render())
          export_component.activate()
       }
 
+      let export_json_section = create_section({
+         attributes:[
+            {key:'id',value:'export_json_section'}
+         ]
+      }) 
       const export_json_component = new ExportJSONComponent()
       if(export_json_component) {
-         export_section.append(export_json_component.render())
+         export_json_section.append(export_json_component.render())
          export_json_component.activate()
       }
       
@@ -77,7 +82,7 @@ class Actions {
       const import_json_component = new ImportJSONComponent()
       if(import_json_component) {
          import_section.append(import_json_component.render())
-         import_json_component.activate()
+         setTimeout(() => import_json_component.activate(),200)
       }
 
 
@@ -97,7 +102,7 @@ class Actions {
 
 
       // assemble
-      actions_section.append(actions_heading,backup_section,export_section,import_section,deleted_files_section)
+      actions_section.append(actions_heading,backup_section,export_csv_section,export_json_section,import_section,deleted_files_section)
       return actions_section
    }
 
