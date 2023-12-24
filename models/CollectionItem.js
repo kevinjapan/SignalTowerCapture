@@ -6,7 +6,7 @@ const {
    get_status_condition,
    tokenize_search_term,
    remove_stopwords 
-} = require('../app/utilities/search')
+} = require('../app/utilities/search_utilities')
 
 
 

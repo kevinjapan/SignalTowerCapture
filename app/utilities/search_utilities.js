@@ -1,6 +1,5 @@
 
 
-
 const MIN_SEARCH_TERM_LEN = 3       // future : packagethis w/ similar in Search object / enum
 
 

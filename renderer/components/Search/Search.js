@@ -54,8 +54,19 @@ class Search {
          ]
       })
 
+
+      // to do : get max len for search_term input from main process..
+      let search_term_max_len = 36
+      try {
+         search_term_max_len = await window.app_api.maxSearchTermLen()
+      }
+      catch(error) {
+         // we just use fallback initially assigned to search_term_max_len
+      }
+      
       let form_props = {
          search_term:this.#props ? this.#props.context.search_term : '',
+         search_term_max_len:search_term_max_len,
          submit_search_term:this.submit_search_term,
          clear_search:this.clear_search
       }
@@ -104,7 +115,7 @@ class Search {
          
                   if(collection_items_obj.collection_items.length > 0) {
                      
-                     const top_pagination_nav = new PaginationNav('top',this.go_to_page,page_count,this.#search_context.page)  //this.go_to_page,page_count,this.#browse_context.page
+                     const top_pagination_nav = new PaginationNav('top',this.go_to_page,page_count,this.#search_context.page)
                      this.#browse_results_container.append(top_pagination_nav.render())
                      top_pagination_nav.activate()
 

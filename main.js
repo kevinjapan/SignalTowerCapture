@@ -22,6 +22,7 @@ const ExportJSONFile = require('./models/ExportJSONFile')
 const ImportJSONFile = require('./models/ImportJSONFile')
 const { is_valid_collection_item,is_valid_int,is_valid_search,is_valid_app_config_record } = require('./app/utilities/validation')
 const { NOTIFY } = require('./app/utilities/notifications')
+const { LENS } = require('./app/utilities/validation')
 
 const is_dev = process.env.NODE_ENV !== 'production'
 const is_mac = process.platform === 'darwin'
@@ -95,6 +96,7 @@ app.whenReady().then(async() => {
    // App handlers
    // ipcMain.handle('app:getActiveComponentPage',get_active_component_page)
    // ipcMain.handle('app:setActiveComponentPage',set_active_component_page)
+   ipcMain.handle('app:maxSearchTermLen',get_max_search_term_len)
 
    // Items handlers
    ipcMain.handle('items:getItems',get_collection_items)
@@ -204,7 +206,10 @@ async function flush_deleted_items() {
 // APP API
 //
 
-
+async function get_max_search_term_len(event) {
+   console.log('get_max_search_term_len',LENS.MAX_SEARCH)
+   return LENS.MAX_SEARCH
+}
 
 
 //
@@ -338,6 +343,7 @@ async function search_collection_items (event,search_obj) {
 
    if(!database) return NOTIFY.DATABASE_UNAVAILABLE
    
+   // to do : we want to know more info on invalid - specifically if too long.
    if(is_valid_search(search_obj)) {
       let collection_item = new CollectionItem(database)
       const result = await collection_item.search(search_obj)

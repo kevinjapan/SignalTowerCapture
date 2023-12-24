@@ -31,12 +31,14 @@ class SearchForm {
          ]
       })
 
+      // to do : assign dynamic value to maxlength
       let search_term_input = create_input({
          attributes:[
             {key:'id',value:'search_term_input'},
             {key:'name',value:'search_term'},
             {key:'type',value:'text'},
             {key:'value',value:this.#props.search_term},
+            {key:'maxlength',value:this.#props.search_term_max_len}
          ],
          classlist:['input_field','m_1']
       })

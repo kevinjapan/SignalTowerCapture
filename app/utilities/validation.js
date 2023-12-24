@@ -1,4 +1,9 @@
 
+const LENS = {
+   MAX_SEARCH:25
+}
+
+
 //
 // String
 //
@@ -149,7 +154,7 @@ const is_valid_search = (search_obj) => {
 // Search Term
 //
 const is_valid_search_term = (search_term) => {
-   if( (typeof search_term  === 'string') && (search_term.length > 0) && (search_term.length < 255) ) {
+   if( (typeof search_term  === 'string') && (search_term.length > 0) && (search_term.length <= LENS.MAX_SEARCH) ) {
       return true
    }
    return false
@@ -242,6 +247,7 @@ const is_valid_app_config_record = (fields_list,app_config_record) => {
 
 
 module.exports = {
+   LENS,
    is_valid_collection_item,
    is_valid_int,
    is_valid_string,

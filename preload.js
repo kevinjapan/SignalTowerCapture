@@ -29,6 +29,7 @@ contextBridge.exposeInMainWorld('pages_api',{
 contextBridge.exposeInMainWorld('app_api', {
    // setActiveComponentPage: (page) => ipcRenderer.invoke('app:setActiveComponentPage',page),
    // getActiveComponentPage: (page) => ipcRenderer.invoke('app:getActiveComponentPage',page)
+   maxSearchTermLen: () => ipcRenderer.invoke('app:maxSearchTermLen')
 })
 
 contextBridge.exposeInMainWorld('collection_items_api', {
