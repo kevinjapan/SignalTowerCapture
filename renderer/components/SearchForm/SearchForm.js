@@ -1,9 +1,14 @@
+import AdvancedSearch from '../AdvancedSearch/AdvancedSearch.js'
 import { 
    create_section,
    create_form,
    create_button,
-   create_input
+   create_input,
+   create_h,
+   create_div
 } from '../../utilities/ui_elements.js'
+
+
 
 
 class SearchForm {
@@ -16,8 +21,8 @@ class SearchForm {
 
    render = () => {
 
-      const search_results = create_section({
-         classlist:['flex','mr_auto','w_400','p_0']
+      const search_form_wrap = create_section({
+         classlist:['flex_col','mr_auto','w_full','p_0','border']
       })
 
       const search_form = create_form({
@@ -35,6 +40,7 @@ class SearchForm {
          ],
          classlist:['input_field','m_1']
       })
+      search_form.append(search_term_input)
 
       // to do : ensure btns are showing when selected on tab..  accessibility
 
@@ -46,7 +52,7 @@ class SearchForm {
          text:'Search'
       }) 
 
-      // magnifying glass icon
+      // magnifying glass btn icon
       let icon = document.createElementNS('http://www.w3.org/2000/svg','svg')
       icon.classList.add('pt_.5','ml_1','mt_0.5')
       const icon_path = document.createElementNS('http://www.w3.org/2000/svg','path')
@@ -57,11 +63,33 @@ class SearchForm {
       search_btn.append(icon)
 
 
-      // assemble
-      search_form.append(search_term_input)
-      search_results.append(search_form,search_btn)
+      // advanced search 
+      let advanced_search_link = create_section({
+         attributes:[
+            {key:'id',value:'advanced_search_link'}
+         ],
+         classlist:['w_full','cursor_pointer'],
+         text:'Advanced Search'
+      })
 
-      return search_results
+      let advanced_search_dropdown = create_section({
+         attributes:[
+            {key:'id',value:'advanced_search_dropdown'}
+         ]
+      })
+      const advanced_search = new AdvancedSearch()
+      if(advanced_search_dropdown) {
+         advanced_search_dropdown.append(advanced_search.render())
+         setTimeout(() => advanced_search.activate(),200)
+      }
+
+      // assemble
+      let form_n_btn = create_div({
+         classlist:['flex','w_full']
+      })
+      form_n_btn.append(search_form,search_btn)
+      search_form_wrap.append(form_n_btn,advanced_search_link,advanced_search_dropdown)
+      return search_form_wrap
    }
 
    // enable buttons/links displayed in the render
@@ -99,11 +127,23 @@ class SearchForm {
             if(search_status) {
                search_status.innerText = ''
             }
-            // to do : when should we clear the search results?
             this.#props.clear_search()
          })
 
          // search_term_input.focus()
+      }
+
+      // Advanced Search 'dropdown'
+      const advanced_search_link = document.getElementById('advanced_search_link')
+      if(advanced_search_link) {
+
+         advanced_search_link.addEventListener('click',() => {
+            
+            const advanced_search = document.getElementById('advanced_search')
+            if(advanced_search) {
+               advanced_search.classList.toggle('hidden')
+            }
+         })
       }
 
    }

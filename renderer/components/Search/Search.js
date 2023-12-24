@@ -7,6 +7,7 @@ import { create_section,create_div } from '../../utilities/ui_elements.js'
 
 
 
+
 class Search {
 
    // layout container
@@ -17,6 +18,9 @@ class Search {
 
    // props
    #props
+
+   // advanced search is extended
+   #show_advanced
 
 
    constructor(props) {
@@ -106,7 +110,7 @@ class Search {
 
                      let number_records = document.getElementById('number_records')
                      if(number_records) {             
-                        number_records.innerText = `${ui_display_number_as_str(collection_items_obj.count)} maching records were found.`
+                        number_records.innerText = `${ui_display_number_as_str(collection_items_obj.count)} matching records were found.`
                      }
                      
                      let props = {
