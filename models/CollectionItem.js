@@ -1,6 +1,12 @@
 const sqlite3 = require('sqlite3').verbose()
 const { get_sqlready_datetime,get_sqlready_date_from_js_date } = require('../app/utilities/datetime')
 const { is_valid_date } = require('../app/utilities/validation')
+const { 
+   MIN_SEARCH_TERM_LEN,
+   get_status_condition,
+   tokenize_search_term,
+   remove_stopwords 
+} = require('../app/utilities/search')
 
 
 
@@ -23,10 +29,10 @@ class CollectionItem {
    // from these arrays in the renderer, so the order of this array is carried over to front-end views.
    //
    static #full_fields_list = [
+      {key:'title',sql:'TEXT NOT NULL',editable:true,in_card:true,export:true,test:{type:'string',min:3,max:100}},
       {key:'file_name',sql:'TEXT NOT NULL',editable:true,in_card:true,export:true,test:{type:'string',min:5,max:255}},
       {key:'parent_folder_path',sql:'TEXT NOT NULL',editable:true,in_card:false,export:true,test:{type:'string',min:1,max:255}},
       {key:'id',sql:'INTEGER PRIMARY KEY',editable:false,in_card:false,export:true,test:{type:'int',min:1,max:9999999999}},
-      {key:'title',sql:'TEXT NOT NULL',editable:true,in_card:true,export:true,test:{type:'string',min:3,max:100}},
       {key:'item_ref',sql:'INTEGER',editable:true,in_card:false,export:true,test:{type:'string',min:1,max:100}},
       {key:'item_date',sql:'TEXT',editable:true,in_card:true,export:true,test:{type:'date',min:0,max:24},placeholder:'YYYY-MM-DD'},
       {key:'item_type',sql:'TEXT NOT NULL',editable:true,in_card:true,export:true,test:{type:'string',min:3,max:50}},
@@ -105,16 +111,10 @@ class CollectionItem {
          })
       }).catch((error) => this.set_last_error(error))
  
-         
-      const in_card_fields = CollectionItem.#full_fields_list.filter((field) => {
-         if(field.in_card === true) return field
-      })
-      const fields = in_card_fields.map((field) => {
-         return {
-            key:field.key,
-            test:field.test
-         }
-      })
+
+      // reduce fields to those required in CollectionItemCard (also requires 'type' for displaying dates)
+      const in_card_fields = this.get_in_card_fields(CollectionItem.#full_fields_list)
+
       
       if(result) {
          let response_obj = {
@@ -122,7 +122,7 @@ class CollectionItem {
             outcome:'success',
             count:total_count,
             per_page:this.#items_per_page,
-            collection_item_fields:fields,
+            collection_item_fields:in_card_fields,
             collection_items:result
          }
          return response_obj
@@ -585,86 +585,139 @@ class CollectionItem {
    }
 
 
+
+
    //
    // SEARCH
+   // sql search 
+   // we use 'INSTR' and '||' instead of 'LIKE ?' - easier to manage columns / removes using inefficient 'OR's / removes % wildcard (cleaner)
    //
    async search(search_obj) {
 
-      const record_status = search_obj.record_status ? search_obj.record_status : ''
+      // pagination
       let offset = (parseInt(search_obj.page) - 1) * this.#items_per_page
       let total_count = 0
-      let sql
 
-      let status = `collection_items.deleted_at IS NULL`
-      if(record_status === 'DELETED') {
-         status = `collection_items.deleted_at IS NOT NULL`
+      // record status - show [active|deleted|all] records
+      let status = get_status_condition(search_obj.record_status)
+
+      // process search_term
+      let full_search_term = search_obj.search_term.trim()
+      if(full_search_term.length < MIN_SEARCH_TERM_LEN) {  
+         return {
+            query:'search_collection_items',
+            outcome:'fail',
+            message:'The search term you entered has too few characters - please enter 3 or more characters.'
+         }
       }
-      if(record_status === 'ALL') {
-         status = ``
-      }
+
+      // package search_term into valid search token(s) array
+      let search_term_tokens = tokenize_search_term(full_search_term)
+
+      // exlude common words from our searches
+      let filtered_search_term_tokens = remove_stopwords(search_term_tokens)
+
+      // build sql INSTR functions
+      let instr_funcs = this.build_instr_funcs_sql(filtered_search_term_tokens)
 
       // wrap in a promise to await result
       const result = await new Promise((resolve,reject) => {
          
          this.#database.serialize(() => {
                
-            let stmt = this.#database.prepare(`SELECT COUNT(id) as count FROM collection_items WHERE title LIKE ? AND ${status}`);
-            stmt.each(`%${search_obj.search_term}%`, function(err, row) {
+            // get total count
+            const count_query = `SELECT COUNT(DISTINCT id) as count 
+                                 FROM collection_items 
+                                 WHERE
+                                    ${instr_funcs} > 0
+                                 AND ${status}`
+            let stmt = this.#database.prepare(count_query)
+
+            stmt.each(filtered_search_term_tokens, function(err, row) {
+               // each() runs the callback for each row - hence we calc total
                 total_count=row.count
+                console.log('row.search_term',row.count)
             }, function(err, count) {
                 stmt.finalize()
             })
 
+            
+            // get results dataset (paginated by offset)
             const fields = CollectionItem.#full_fields_list.map((field) => {
                return field.key
             })
+            const search_query = `SELECT ${fields.toString()}
+                  FROM collection_items 
+                  WHERE 
+                     ${instr_funcs} > 0               
+                  AND 
+                     ${status}
+                  LIMIT ${this.#items_per_page}
+                  OFFSET ${offset}`
 
-            sql = `SELECT ${fields.toString()} 
-                   FROM collection_items 
-                   WHERE title LIKE ?                   
-                   AND ${status}
-                   LIMIT ${this.#items_per_page}
-                   OFFSET ${offset}`
-            this.#database.all(sql,`%${search_obj.search_term}%`, (error, rows) => {
+            this.#database.all(search_query,filtered_search_term_tokens, (error, rows) => {
+               // all() returns the selected rows
                if(error) reject(error)
                resolve(rows)            
             })
          })
+
       }).catch((error) => this.set_last_error(error))
 
-      let search_results_obj
-       
-      const in_card_fields = CollectionItem.#full_fields_list.filter((field) => {
-         if(field.in_card === true) return field
-      })
-      const fields = in_card_fields.map((field) => {
-         return {
-            key:field.key,
-            test:field.test
-         }
-      })
+      // reduce fields to those required in CollectionItemCard (inc 'type' for displaying dates)
+      const in_card_fields = this.get_in_card_fields(CollectionItem.#full_fields_list)
       
+      // response
       if(result) {
-         search_results_obj = {
+         return {
             query:'search_collection_items',
             outcome:'success',
             search_obj:search_obj,
             count:total_count,
             per_page:this.#items_per_page,
-            collection_item_fields:fields,
+            collection_item_fields:in_card_fields,
             collection_items:result
          }
-         return search_results_obj
       }
-      else {         
-         search_results_obj = {
+      else {    
+         this.clear_last_error()     
+         return {
             query:'search_collection_items',
             outcome:'fail',
             message:'There was an error accessing the database. [CollectionItem.search] ' + this.#last_error.message
          }
-         this.clear_last_error()
-         return search_results_obj
       }
+   }
+
+
+   //
+   // filter to those fields required in CollectionItemCard display
+   //
+   get_in_card_fields = (fields) => {
+      const temp = fields.filter((field) => {
+         if(field.in_card === true) return field
+      })
+      return temp.map((field) => {
+         return {
+            key:field.key,
+            test:field.test
+         }
+      })
+   }
+
+
+   //
+   // Dynamically build the INSTR sql constuct for our search tokens
+   // future : the list of cols here are the fields we search against - improve/review
+   //
+   build_instr_funcs_sql = (tokens) => {
+
+      let sql = ''
+      for(let i in tokens) {
+         sql += ` INSTR( title || content_desc , ? ) +`
+      }
+      return sql.slice(0,-1)
+
    }
 
 
