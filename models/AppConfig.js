@@ -20,7 +20,6 @@ class AppConfig {
       {key:'root_folder',sql:'TEXT',editable:true,in_card:true,desc:DESC.ROOT_FOLDER.body,is_folder:true,test:{type:'string',min:1,max:255}},
       {key:'export_folder',sql:'TEXT',editable:true,in_card:false,desc:DESC.EXPORT_FOLDER.body,is_folder:true,test:{type:'string',min:1,max:255}},
       {key:'backup_folder',sql:'TEXT',editable:true,in_card:false,desc:DESC.BACKUP_FOLDER.body,is_folder:true,test:{type:'string',min:1,max:255}},
-      {key:'additional_fields',sql:'TEXT',editable:false,in_card:true,desc:DESC.ADDITIONAL_FIELDS.body,test:{type:'string',min:0,max:2000}},
       {key:'created_at',sql:'TEXT NOT NULL',editable:false,in_card:false,test:{type:'date',min:10,max:24}},
       {key:'updated_at',sql:'TEXT NOT NULL',editable:false,in_card:false,test:{type:'date',min:10,max:24}},
       {key:'deleted_at',sql:'TEXT',editable:false,in_card:false,test:{type:'date',min:10,max:24}},

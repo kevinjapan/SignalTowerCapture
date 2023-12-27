@@ -7,10 +7,6 @@ const DESC = {
    EXPORT_FOLDER: {
       body:'Export CSV files will be saved in this folder.'
    },
-   
-   ADDITIONAL_FIELDS: {
-      body:'Users can add additional fields to the Collection Item Record.'
-   },
 
    ITEM_FIELDS: {
       body:'The complete list of fields in a Collection Item Record.'
