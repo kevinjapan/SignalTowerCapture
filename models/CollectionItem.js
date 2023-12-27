@@ -61,9 +61,7 @@ class CollectionItem {
       return copy_fields_list
    }
 
-   test() {
-      console.log('static test')
-   }
+
 
    //
    // READ ALL : Paginated
@@ -533,6 +531,7 @@ class CollectionItem {
       }
    }
 
+
    //
    // Flush all soft deleted items (permanent delete)
    //
@@ -585,7 +584,6 @@ class CollectionItem {
 
 
 
-
    //
    // SEARCH
    // sql search 
@@ -597,7 +595,9 @@ class CollectionItem {
       let offset = (parseInt(search_obj.page) - 1) * this.#items_per_page
       let total_count = 0
 
+      // execution time
       let execution_time = 0
+      const start = Date.now()
 
       // record status - show [active|deleted|all] records
       let status = get_status_condition(search_obj.record_status)
@@ -621,50 +621,64 @@ class CollectionItem {
       // build sql INSTR functions
       let instr_funcs = this.build_instr_funcs_sql(filtered_search_term_tokens)
 
-      const start = Date.now()
 
-      // wrap in a promise to await result
+      // get total count
       const result = await new Promise((resolve,reject) => {
          
-         this.#database.serialize(() => {
-
-            // get total count
-            const count_query = `SELECT COUNT(DISTINCT id) as count 
-                                 FROM collection_items 
-                                 WHERE
-                                    ${instr_funcs} > 0
-                                 AND ${status}`
-            let stmt = this.#database.prepare(count_query)
-
-            stmt.each(filtered_search_term_tokens, function(err, row) {
-               if(err) {
-                  console.log('err',err.message)
-               }
-                total_count=row.count
-                stmt.finalize()
-            })
-
-            // get results dataset (paginated by offset)
-            const fields = CollectionItem.#full_fields_list.map((field) => {
-               return field.key
-            })
-            const search_query = `SELECT ${fields.toString()}
-                  FROM collection_items 
-                  WHERE 
-                     ${instr_funcs} > 0               
-                  AND 
-                     ${status}
-                  LIMIT ${this.#items_per_page}
-                  OFFSET ${offset}`
-
-            this.#database.all(search_query,filtered_search_term_tokens, (error, rows) => {
-               // all() returns the selected rows
-               if(error) reject(error)
-               resolve(rows)            
-            })
+         const count_query = `SELECT COUNT(DISTINCT id) as count 
+                              FROM collection_items 
+                              WHERE
+                                 ${instr_funcs} > 0
+                              AND ${status}`
+         let stmt = this.#database.prepare(count_query,(err) => {
+            if(err) reject(err)
          })
 
-      }).catch((error) => this.set_last_error(error))
+         stmt.each(filtered_search_term_tokens, function(err, row) {
+            if(err) reject(err)
+            stmt.finalize()
+            resolve(row.count)
+         })
+      }).catch((error) => {
+         this.set_last_error(error)
+         return false
+      })
+
+      
+      // execute the search
+      let search_result = null
+      
+      // to do : see in search_fts() below - if(total_count)
+      if(total_count) {
+         search_result = await new Promise((resolve,reject) => {
+            
+               const fields = CollectionItem.#full_fields_list.map((field) => {
+                  return field.key
+               })
+               
+               // get results dataset (paginated by offset)
+               const search_query = `SELECT ${fields.toString()}
+                     FROM collection_items 
+                     WHERE 
+                        ${instr_funcs} > 0               
+                     AND 
+                        ${status}
+                     LIMIT ${this.#items_per_page}
+                     OFFSET ${offset}`
+
+               this.#database.all(search_query,filtered_search_term_tokens, (error, rows) => {
+                  if(error) {
+                     this.set_last_error(error)
+                     reject(error)
+                  }
+                  resolve(rows)            
+               })
+
+         }).catch((error) => {
+            this.set_last_error(error)
+            return false
+         })
+      }
             
       // calc execution time
       const end = Date.now()
@@ -674,7 +688,7 @@ class CollectionItem {
       const in_card_fields = this.get_in_card_fields(CollectionItem.#full_fields_list)
       
       // response
-      if(result) {
+      if(search_result || search_result === null) {
          return {
             query:'search_collection_items',
             outcome:'success',
@@ -686,16 +700,17 @@ class CollectionItem {
             collection_items:result
          }
       }
-      else {
-         let response = {
-            query:'search_collection_items',
-            outcome:'fail',
-            message:'There was an error accessing the database. [CollectionItem.search] ' + this.#last_error.message
-         }
-         this.clear_last_error()
-         return response
+      
+      let response = {
+         query:'search_collection_items',
+         outcome:'fail',
+         message:'There was an error accessing the database. [CollectionItem.search] ' + this.#last_error.message
       }
+      this.clear_last_error()
+      return response
+   
    }
+
 
    
    //
@@ -704,13 +719,20 @@ class CollectionItem {
    // dependency: virtual table / triggers
    // future: do we need to remove stopwords - see search()
    //
+   // future : to vary search cols at user request - can modify MATCH term to limit cols -
+   //     eg   ci_fts MATCH 'title: eland';
+   //          ci_fts MATCH '{title content_desc}:eland';
+   //
    async search_fts(search_obj) {
+
+      // to do : changes made here (separate promises) - duplicate in search()
 
       // pagination
       let offset = (parseInt(search_obj.page) - 1) * this.#items_per_page
-      let total_count = 0
 
+      // execution time
       let execution_time = 0
+      const start = Date.now()
 
       // record status - show [active|deleted|all] records
       let status = get_status_condition(search_obj.record_status)
@@ -725,47 +747,47 @@ class CollectionItem {
          }
       }
 
-      // future : to vary search cols at user request - can modify MATCH term to limit cols -
-      //     eg   ci_fts MATCH 'title: eland';
-      //          ci_fts MATCH '{title content_desc}:eland';
+      // get total count
+      const total_count = await new Promise((resolve,reject) => {
 
-      // to do : review exception handling below - not working (try w/ non-matching column name in count_query.) (see also search())
-      //         tried w/ try/catch but unsuccesful so far. perhaps break up count and select? (serialize conflicting w/ catch?)
+         const count_query = `SELECT 
+                                 COUNT(collection_items.id) as count 
+                              FROM collection_items
+                                 INNER JOIN collection_items_fts ci_fts
+                                 ON ci_fts.id = collection_items.id
+                              WHERE
+                                 collection_items_fts MATCH ?
+                              AND 
+                                 ${status}`
+
+         let stmt = this.#database.prepare(count_query,(err) => {
+            if(err) reject(err)
+         })
+         stmt.each(`${full_search_term}*`, (err, row) => {
+            if(err) reject(err)
+            stmt.finalize()
+            resolve(row.count)
+         })
+      }).catch((error) => {
+         this.set_last_error(error)
+         return false
+      })
 
 
-      const start = Date.now()
+      // execute the search
+      let search_result = null
+         
+      // to do : review - if total count is 0 ?
+      // also, good efficiency - we could prevent needless search execution ;)
+      if(total_count) {
 
-      // we wrap in a promise to await result
-      const result = await new Promise((resolve,reject) => {
-      
-         this.#database.serialize(async() => {
-
-
-            // get total count
-            const count_query = `SELECT 
-                                    COUNT(collection_items.id) as count 
-                                 FROM collection_items
-                                    INNER JOIN collection_items_fts ci_fts
-                                    ON ci_fts.id = collection_items.id
-                                 WHERE
-                                    collection_items_fts MATCH ?
-                                 AND 
-                                    ${status}`
-
-            let stmt = this.#database.prepare(count_query)
-            await stmt.each(`${full_search_term}*`, (err, row) => {
-               if(err) {
-                  console.log('err',err.message)
-               }
-               total_count=row.count
-               stmt.finalize()
-            })
+         search_result = await new Promise((resolve,reject) => {
             
-            // get results dataset (paginated by offset)
             const fields = CollectionItem.#full_fields_list.map((field) => {
                return `collection_items.${field.key}`
             })
 
+            // get results dataset (paginated by offset)
             // we order using bm25() rather than 'rank' col to permit weighting cols.
             const search_query = `
                   SELECT
@@ -783,16 +805,17 @@ class CollectionItem {
                   OFFSET ${offset}`
 
             this.#database.all(search_query,`${full_search_term}*`, (error, rows) => {
-               if(error) reject(error)
+               if(error) {
+                  this.set_last_error(error)
+                  reject(error)
+               }
                resolve(rows)            
             })
-            
-
+         }).catch((error) => {
+            this.set_last_error(error)
+            return false
          })
-      }).catch((error) => {
-         console.log('error is',error)
-         this.set_last_error(error)
-      })
+      }
 
       // calc execution time
       const end = Date.now()
@@ -802,7 +825,7 @@ class CollectionItem {
       const in_card_fields = this.get_in_card_fields(CollectionItem.#full_fields_list)
 
       // response
-      if(result) {
+      if(search_result || search_result === null) {
          return {
             query:'search_collection_items',
             outcome:'success',
@@ -811,18 +834,17 @@ class CollectionItem {
             per_page:this.#items_per_page,
             execution_time:execution_time,
             collection_item_fields:in_card_fields,
-            collection_items:result
+            collection_items:search_result
          }
       }
-      else {
-         let response =  {
-            query:'search_collection_items',
-            outcome:'fail',
-            message:'There was an error accessing the database. [CollectionItem.search_fts] ' + this.#last_error.message
-         }
-         this.clear_last_error()
-         return response
+
+      let response =  {
+         query:'search_collection_items',
+         outcome:'fail',
+         message:'There was an error accessing the database. [CollectionItem.search_fts] ' + this.#last_error.message
       }
+      this.clear_last_error()
+      return response
    }
 
 
