@@ -343,10 +343,11 @@ async function search_collection_items (event,search_obj) {
 
    if(!database) return NOTIFY.DATABASE_UNAVAILABLE
    
+   try {
    // to do : we want to know more info on invalid - specifically if too long.
    if(is_valid_search(search_obj)) {
       let collection_item = new CollectionItem(database)
-      const result = await collection_item.search(search_obj)
+      const result = await collection_item.search_fts(search_obj)
       return result
    }
    else {
@@ -355,6 +356,9 @@ async function search_collection_items (event,search_obj) {
          message:'Please enter a valid search term.'
       }
    }
+}catch(error) {
+   console.log('caught')
+}
 }
 
 

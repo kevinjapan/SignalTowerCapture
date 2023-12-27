@@ -61,6 +61,8 @@ class CollectionItemRecord {
       })
       text_col.append(form_layout)
 
+      // to do : remove 'back' button if we have no context (eg we are adding a new record)
+
       form_layout.append(RecordBtns.render(this.#props.item))
 
       let field_label
@@ -191,8 +193,11 @@ class CollectionItemRecord {
          back_btns.forEach(back_btn => {
 
             back_btn.addEventListener('click',async(event) => {
-               // the context token identifies the current user context inc. component      
-               App.switch_to_component(this.#props.context.key,this.#props)             
+               // the context token identifies the current user context inc. component
+
+               if(this.#props.context) {
+                  App.switch_to_component(this.#props.context.key,this.#props)
+               }             
             })
          })
       }

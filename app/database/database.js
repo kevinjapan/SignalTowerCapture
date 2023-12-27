@@ -43,8 +43,6 @@ class Database {
             }
             else {
                this.create_tables()
-
-
                resolve('Database was successfully opened')
             }
          })
@@ -96,6 +94,66 @@ class Database {
             }
          )
 
+
+         // CollectionItems FTS virtual table
+         // support FTS5 full text search extension
+         // to do : create cols dynamically 'title,content_desc' - these two only sufficient?
+         // to do : verify 'id' is ok - eg on create new it will be assigned first..
+         this.#db.run(`CREATE VIRTUAL TABLE IF NOT EXISTS 
+                        collection_items_fts USING fts5 (id,title,content_desc)`,
+            function (error) {
+               if(error) {
+                  console.log('There was an error initializing the database. ',error.message)
+               }
+            }
+         )
+
+
+         // Triggers for collection_items_fts
+         // synch collection_items_fts w/ collection_items
+         // to do : verfiy .run() is correct method for creating TRIGGERs
+         this.#db.run(`CREATE TRIGGER IF NOT EXISTS insert_collection_items_fts 
+                        after INSERT on collection_items
+                        begin
+                           INSERT INTO collection_items_fts (id,title,content_desc)
+                           VALUES(NEW.id,NEW.title,NEW.content_desc);
+                        end;`,
+            function (error) {
+               if(error) {
+                  console.log('There was an error initializing the database. ',error.message)
+               }
+            }
+         )
+         this.#db.run(`CREATE TRIGGER IF NOT EXISTS update_collection_items_fts 
+                        after UPDATE on collection_items
+                        begin
+                           UPDATE collection_items_fts
+                           SET
+                              title = NEW.title,
+                              content_desc = NEW.content_desc
+                           WHERE id = NEW.id;
+                        end;`,
+            function (error) {
+               if(error) {
+                  console.log('There was an error initializing the database. ',error.message)
+               }
+            }
+         )
+         // to do : this relies on titles being unique - rollout to front-end 'add item'
+         this.#db.run(`CREATE TRIGGER IF NOT EXISTS delete_collection_items_fts 
+                        after DELETE on collection_items
+                        begin
+                           DELETE FROM collection_items_fts
+                           WHERE id = OLD.id;
+                        end;`,
+            function (error) {
+               if(error) {
+                  console.log('There was an error initializing the database. ',error.message)
+               }
+            }
+         )
+
+         
          // AppConfig table
         
          let app_config_fields = AppConfig.get_full_fields_list()

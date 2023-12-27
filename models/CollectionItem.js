@@ -598,6 +598,8 @@ class CollectionItem {
       let offset = (parseInt(search_obj.page) - 1) * this.#items_per_page
       let total_count = 0
 
+      let execution_time = 0
+
       // record status - show [active|deleted|all] records
       let status = get_status_condition(search_obj.record_status)
 
@@ -620,11 +622,13 @@ class CollectionItem {
       // build sql INSTR functions
       let instr_funcs = this.build_instr_funcs_sql(filtered_search_term_tokens)
 
+      const start = Date.now()
+
       // wrap in a promise to await result
       const result = await new Promise((resolve,reject) => {
          
          this.#database.serialize(() => {
-               
+
             // get total count
             const count_query = `SELECT COUNT(DISTINCT id) as count 
                                  FROM collection_items 
@@ -634,14 +638,13 @@ class CollectionItem {
             let stmt = this.#database.prepare(count_query)
 
             stmt.each(filtered_search_term_tokens, function(err, row) {
-               // each() runs the callback for each row - hence we calc total
+               if(err) {
+                  console.log('err',err.message)
+               }
                 total_count=row.count
-                console.log('row.search_term',row.count)
-            }, function(err, count) {
                 stmt.finalize()
             })
 
-            
             // get results dataset (paginated by offset)
             const fields = CollectionItem.#full_fields_list.map((field) => {
                return field.key
@@ -663,6 +666,10 @@ class CollectionItem {
          })
 
       }).catch((error) => this.set_last_error(error))
+            
+      // calc execution time
+      const end = Date.now()
+      execution_time = `${(end - start) / 1000} seconds`
 
       // reduce fields to those required in CollectionItemCard (inc 'type' for displaying dates)
       const in_card_fields = this.get_in_card_fields(CollectionItem.#full_fields_list)
@@ -675,17 +682,147 @@ class CollectionItem {
             search_obj:search_obj,
             count:total_count,
             per_page:this.#items_per_page,
+            execution_time:execution_time,
             collection_item_fields:in_card_fields,
             collection_items:result
          }
       }
-      else {    
-         this.clear_last_error()     
-         return {
+      else {
+         let response = {
             query:'search_collection_items',
             outcome:'fail',
             message:'There was an error accessing the database. [CollectionItem.search] ' + this.#last_error.message
          }
+         this.clear_last_error()
+         return response
+      }
+   }
+
+   
+   //
+   // FULL TEXT SEARCH
+   // sql search using fts5 extension
+   // dependency: virtual table / triggers
+   // future: do we need to remove stopwords - see search()
+   //
+   async search_fts(search_obj) {
+
+      // pagination
+      let offset = (parseInt(search_obj.page) - 1) * this.#items_per_page
+      let total_count = 0
+
+      let execution_time = 0
+
+      // record status - show [active|deleted|all] records
+      let status = get_status_condition(search_obj.record_status)
+
+      // process search_term
+      let full_search_term = search_obj.search_term.trim()
+      if(full_search_term.length < MIN_SEARCH_TERM_LEN) {  
+         return {
+            query:'search_collection_items',
+            outcome:'fail',
+            message:'The search term you entered has too few characters - please enter 3 or more characters.'
+         }
+      }
+
+      // future : to vary search cols at user request - can modify MATCH term to limit cols -
+      //     eg   ci_fts MATCH 'title: eland';
+      //          ci_fts MATCH '{title content_desc}:eland';
+
+      // to do : review exception handling below - not working (try w/ non-matching column name in count_query.) (see also search())
+      //         tried w/ try/catch but unsuccesful so far. perhaps break up count and select? (serialize conflicting w/ catch?)
+
+
+      const start = Date.now()
+
+      // we wrap in a promise to await result
+      const result = await new Promise((resolve,reject) => {
+      
+         this.#database.serialize(async() => {
+
+
+            // get total count
+            const count_query = `SELECT 
+                                    COUNT(collection_items.id) as count 
+                                 FROM collection_items
+                                    INNER JOIN collection_items_fts ci_fts
+                                    ON ci_fts.id = collection_items.id
+                                 WHERE
+                                    collection_items_fts MATCH ?
+                                 AND 
+                                    ${status}`
+
+            let stmt = this.#database.prepare(count_query)
+            await stmt.each(`${full_search_term}*`, (err, row) => {
+               if(err) {
+                  console.log('err',err.message)
+               }
+               total_count=row.count
+               stmt.finalize()
+            })
+            
+            // get results dataset (paginated by offset)
+            const fields = CollectionItem.#full_fields_list.map((field) => {
+               return `collection_items.${field.key}`
+            })
+
+            // we order using bm25() rather than 'rank' col to permit weighting cols.
+            const search_query = `
+                  SELECT
+                     ${fields.toString()}
+                  FROM collection_items
+                     INNER JOIN collection_items_fts ci_fts
+                     ON ci_fts.id = collection_items.id
+                  WHERE 
+                     collection_items_fts MATCH ?
+                  AND 
+                     ${status}
+                  ORDER BY
+                     bm25(collection_items_fts,0,10,2)
+                  LIMIT ${this.#items_per_page}
+                  OFFSET ${offset}`
+
+            this.#database.all(search_query,`${full_search_term}*`, (error, rows) => {
+               if(error) reject(error)
+               resolve(rows)            
+            })
+            
+
+         })
+      }).catch((error) => {
+         console.log('error is',error)
+         this.set_last_error(error)
+      })
+
+      // calc execution time
+      const end = Date.now()
+      execution_time = `${(end - start) / 1000} seconds`
+
+      // reduce fields to those required in CollectionItemCard (inc 'type' for displaying dates)
+      const in_card_fields = this.get_in_card_fields(CollectionItem.#full_fields_list)
+
+      // response
+      if(result) {
+         return {
+            query:'search_collection_items',
+            outcome:'success',
+            search_obj:search_obj,
+            count:total_count,
+            per_page:this.#items_per_page,
+            execution_time:execution_time,
+            collection_item_fields:in_card_fields,
+            collection_items:result
+         }
+      }
+      else {
+         let response =  {
+            query:'search_collection_items',
+            outcome:'fail',
+            message:'There was an error accessing the database. [CollectionItem.search_fts] ' + this.#last_error.message
+         }
+         this.clear_last_error()
+         return response
       }
    }
 

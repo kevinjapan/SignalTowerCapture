@@ -5,6 +5,8 @@ import { create_div,create_button } from '../../utilities/ui_elements.js'
 class RecordBtns {
 
    static render = (item) => {
+
+      console.log('RecordBtns',item)
      
       let btn_group = create_div({
          classlist:['btn_grp']
