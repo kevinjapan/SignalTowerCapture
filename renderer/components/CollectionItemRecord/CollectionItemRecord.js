@@ -3,7 +3,7 @@ import RecordBtns from '../RecordBtns/RecordBtns.js'
 import RecordAdmin from '../RecordAdmin/RecordAdmin.js'
 import { ui_friendly_text } from '../../utilities/ui_strings.js'
 import { is_image_file, build_img_elem } from '../../utilities/ui_utilities.js'
-import { create_section,create_div,create_p } from '../../utilities/ui_elements.js'
+import { create_section,create_div,create_p,create_button } from '../../utilities/ui_elements.js'
 
 
 
@@ -175,6 +175,13 @@ class CollectionItemRecord {
       }
 
 
+      // open file's folder
+      let open_folder_btn = document.getElementById('open_folder_btn')
+      if(open_folder_btn) {
+         open_folder_btn.addEventListener('click',() => {
+            window.files_api.openFolder(this.#props.item.parent_folder_path)
+         })
+      }
 
 
 

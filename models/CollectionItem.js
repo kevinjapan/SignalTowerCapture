@@ -41,7 +41,6 @@ class CollectionItem {
       {key:'source',sql:'TEXT',editable:true,in_card:true,export:true,test:{type:'string',min:0,max:120}},
       {key:'content_desc',sql:'TEXT',editable:true,in_card:true,export:true,test:{type:'string',min:0,max:1200}},
       {key:'content_pages_count',sql:'INTEGER',editable:true,in_card:false,export:true,test:{type:'int',min:0,max:200}},
-      {key:'additional_fields',sql:'TEXT',editable:true,in_card:false,export:true,test:{type:'string',min:0,max:2000}},
       {key:'bookmarked_at',sql:'TEXT',editable:false,in_card:false,export:true,test:{type:'date',min:10,max:24}},
       {key:'created_at',sql:'TEXT NOT NULL',editable:false,in_card:false,export:true,test:{type:'date',min:10,max:24}},
       {key:'updated_at',sql:'TEXT NOT NULL',editable:false,in_card:false,export:true,test:{type:'date',min:10,max:24}},

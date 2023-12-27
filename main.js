@@ -339,26 +339,28 @@ async function restore_collection_item (event,id) {
    }
 }
 
+
 async function search_collection_items (event,search_obj) {
 
    if(!database) return NOTIFY.DATABASE_UNAVAILABLE
    
    try {
-   // to do : we want to know more info on invalid - specifically if too long.
-   if(is_valid_search(search_obj)) {
-      let collection_item = new CollectionItem(database)
-      const result = await collection_item.search_fts(search_obj)
-      return result
-   }
-   else {
-      return {
-         outcome:'fail',
-         message:'Please enter a valid search term.'
+      // to do : we want to know more info on invalid - specifically if too long.
+      if(is_valid_search(search_obj)) {
+         let collection_item = new CollectionItem(database)
+         const result = await collection_item.search_fts(search_obj)
+         return result
+      }
+      else {
+         return {
+            outcome:'fail',
+            message:'Please enter a valid search term.'
+         }
       }
    }
-}catch(error) {
-   console.log('caught')
-}
+   catch(error) {
+      console.log('caught')
+   }
 }
 
 
@@ -488,7 +490,13 @@ async function get_file_path () {
 }
 
 async function open_folder (event,folder_path) {
-   shell.openPath(path.resolve('.','backups'))
+   const fs = require('fs')
+   if (fs.existsSync(folder_path)) {
+      shell.openPath(path.resolve(folder_path))
+   }
+   else {
+      notify_client_alert('The folder could not be found. \nPlease check that the Parent Folder Path in the record is correct.')
+   }
 }
 
 // return OS file segement separator
@@ -562,20 +570,13 @@ async function import_json_file(event,file_path) {
 
    let import_json_file = new ImportJSONFile(database)
 
-   console.log('main.import_json_file : START')
-
    let results = null
    try {
       results = await import_json_file.import(file_path)
    }
    catch(error) {
-      console.log('caught:',error)
+      console.log('caught:',error)  // to do :
    }
-
-   console.log('in main . results',results)
-   
-   console.log('main.import_json_file : END')
-
    return results
 }
 
