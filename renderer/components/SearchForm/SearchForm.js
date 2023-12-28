@@ -99,6 +99,7 @@ class SearchForm {
 
       const search_btn = document.getElementById('search_btn')
       
+      // click 'Search' btn
       if(search_btn) {
          search_btn.addEventListener('click',() => {
             let search_context = {
@@ -110,7 +111,7 @@ class SearchForm {
          })
       }
 
-      // Keydown on search term <input> element
+      // Keydown on search_term <input> element
       const search_term_input = document.getElementById('search_term_input')
       if(search_term_input) {
 
@@ -120,6 +121,7 @@ class SearchForm {
                event.preventDefault()
 
                let search_context = {
+                  key: 'Search',
                   search_term:search_term_input.value,
                   page:1
                }
