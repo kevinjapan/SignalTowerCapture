@@ -61,9 +61,7 @@ class CollectionItemRecord {
       })
       text_col.append(form_layout)
 
-      // to do : remove 'back' button if we have no context (eg we are adding a new record)
-
-      form_layout.append(RecordBtns.render(this.#props.item))
+      form_layout.append(RecordBtns.render(this.#props.item.id,this.#props.context ? true : false))
 
       let field_label
       let field_value
@@ -99,7 +97,7 @@ class CollectionItemRecord {
          }
       })
 
-      form_layout.append(RecordBtns.render(this.#props.item))
+      form_layout.append(RecordBtns.render(this.#props.item.id,this.#props.context ? true : false))
 
       const record_admin = new RecordAdmin(this.#props)
       setTimeout(() => record_admin.activate(),300)
@@ -188,7 +186,6 @@ class CollectionItemRecord {
       // view larger image size
       let record_img = document.getElementById('record_img')
       if(record_img) {
-         console.log('reg record_img listener')
          record_img.addEventListener('click',() => {
             // we pass 'props.context' as a token for on returning to this Record
             App.switch_to_component('ImageViewer',this.#props)
