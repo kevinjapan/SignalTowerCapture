@@ -77,7 +77,7 @@ class ImportJSONFile {
          delete item.id
 
          result = await new Promise(async(resolve,reject) => {
-            let result = await collection_item.create(item)
+            let result = await collection_item.create(item,false)
             if(result.outcome !== 'success') {
                reject(result.message)
             }

@@ -272,11 +272,16 @@ class CollectionItem {
    // we rely on single inserts even for batch inserts since -
    // - the code w/ prepared statements becomes unclear with multiple inserts
    // - batch inserts is a seldom used feature
-   async create(collection_item) {
-      
-      const fields = CollectionItem.#full_fields_list.filter((field) => {
-         if(field.editable === true) return field
-      })
+   async create(collection_item,editable_only = true) {
+
+      let fields = CollectionItem.#full_fields_list
+
+      if(editable_only) {
+         fields = fields.filter((field) => {
+            if(field.editable === true) return field
+         })
+      }
+
       const field_keys = fields.map((field) => {
          return field.key
       })
@@ -333,7 +338,7 @@ class CollectionItem {
    //
    // UPDATE
    //
-   async update(collection_item) {
+   async update(collection_item,editable_only = true) {
       
       if(typeof collection_item.id === 'undefined' || !Number.isInteger(collection_item.id)) {
          return {
@@ -343,9 +348,14 @@ class CollectionItem {
          }
       }
 
-      const fields = CollectionItem.#full_fields_list.filter((field) => {
-         if(field.editable === true) return field
-      })
+      let fields = CollectionItem.#full_fields_list
+      
+      if(editable_only) {
+         fields = fields.filter((field) => {
+            if(field.editable === true) return field
+         })
+      }
+
       const field_keys = fields.map((field) => {
          return field.key
       })
@@ -593,7 +603,6 @@ class CollectionItem {
 
       // pagination
       let offset = (parseInt(search_obj.page) - 1) * this.#items_per_page
-      let total_count = 0
 
       // execution time
       let execution_time = 0
@@ -623,7 +632,7 @@ class CollectionItem {
 
 
       // get total count
-      const result = await new Promise((resolve,reject) => {
+      const total_count = await new Promise((resolve,reject) => {
          
          const count_query = `SELECT COUNT(DISTINCT id) as count 
                               FROM collection_items 
@@ -633,7 +642,6 @@ class CollectionItem {
          let stmt = this.#database.prepare(count_query,(err) => {
             if(err) reject(err)
          })
-
          stmt.each(filtered_search_term_tokens, function(err, row) {
             if(err) reject(err)
             stmt.finalize()
@@ -648,8 +656,8 @@ class CollectionItem {
       // execute the search
       let search_result = null
       
-      // to do : see in search_fts() below - if(total_count)
       if(total_count) {
+
          search_result = await new Promise((resolve,reject) => {
             
                const fields = CollectionItem.#full_fields_list.map((field) => {
@@ -724,9 +732,7 @@ class CollectionItem {
    //          ci_fts MATCH '{title content_desc}:eland';
    //
    async search_fts(search_obj) {
-
-      // to do : changes made here (separate promises) - duplicate in search()
-
+      
       // pagination
       let offset = (parseInt(search_obj.page) - 1) * this.#items_per_page
 
@@ -759,7 +765,6 @@ class CollectionItem {
                                  collection_items_fts MATCH ?
                               AND 
                                  ${status}`
-
          let stmt = this.#database.prepare(count_query,(err) => {
             if(err) reject(err)
          })
@@ -778,7 +783,10 @@ class CollectionItem {
       let search_result = null
          
       // to do : review - if total count is 0 ?
-      // also, good efficiency - we could prevent needless search execution ;)
+      // also, good efficiency - we could prevent needless search execution ;)  rollout to search() above
+
+      console.log('total_count',total_count)
+      
       if(total_count) {
 
          search_result = await new Promise((resolve,reject) => {
