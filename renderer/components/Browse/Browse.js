@@ -11,6 +11,7 @@ class Browse {
    #browse_results_container
 
    // we retain browse state (page,scroll_y,etc) by passing a 'context token'
+   // initialising here will display the list on opening this page
    #browse_context = {
       key:'Browse',
       page:1,

@@ -13,7 +13,13 @@ import {
 
 class SearchForm {
 
+
    #props
+
+
+   // advanced search changes register in filters obj
+   #filters = {}
+
 
    constructor(props) {
       this.#props = props
@@ -79,7 +85,13 @@ class SearchForm {
             {key:'id',value:'advanced_search_dropdown'}
          ]
       })
-      const advanced_search = new AdvancedSearch()
+
+      
+      let advanced_props = {
+         filter_search:this.filter_search
+      }
+
+      const advanced_search = new AdvancedSearch(advanced_props)
       if(advanced_search_dropdown) {
          advanced_search_dropdown.append(advanced_search.render())
          setTimeout(() => advanced_search.activate(),200)
@@ -105,11 +117,14 @@ class SearchForm {
             let search_context = {
                key: 'Search',
                search_term:search_term_input.value,
-               page:1
+               page:1,
+               search_filters:this.#filters
             }
             this.#props.submit_search_term(search_context)
          })
       }
+
+      // to do : duplicate code on keydown to click above..
 
       // Keydown on search_term <input> element
       const search_term_input = document.getElementById('search_term_input')
@@ -123,7 +138,8 @@ class SearchForm {
                let search_context = {
                   key: 'Search',
                   search_term:search_term_input.value,
-                  page:1
+                  page:1,
+                  search_filters:this.#filters
                }
                this.#props.submit_search_term(search_context)
             }
@@ -150,6 +166,17 @@ class SearchForm {
          })
       }
 
+   }
+
+   
+   // callback for AdvancedSearch
+   filter_search = (search_filters) => {
+
+      // register changes in AdvancedSearch 
+      let filter_keys = Object.keys(search_filters)   
+      filter_keys.forEach((key) => {
+         this.#filters[key] = search_filters[key]
+      })
    }
 }
 

@@ -16,6 +16,7 @@ class Search {
    // we retain search state (search_term,page,etc) by passing a 'search_context'
    #search_context
 
+
    // props
    #props
 
@@ -26,7 +27,6 @@ class Search {
    constructor(props) {
       // returning 'back to list' from Records will return the passed 'search_context'
       if(props) {
-         console.log('Search()',props.context)
          this.#search_context = props.context
       }
       this.#props = props
@@ -102,9 +102,7 @@ class Search {
 
          try {
 
-            const collection_items_obj = await window.collection_items_api.searchCollectionItems(this.#search_context)   
-
-            console.log(collection_items_obj)
+            const collection_items_obj = await window.collection_items_api.searchCollectionItems(this.#search_context)
 
             if (typeof collection_items_obj != "undefined") {
          
@@ -180,6 +178,8 @@ class Search {
    submit_search_term = (search_context) => {
       this.#search_context = search_context
       this.#search_context.scroll_y = 0
+
+      console.log('search_context',search_context)
       this.get_items()
    }
 

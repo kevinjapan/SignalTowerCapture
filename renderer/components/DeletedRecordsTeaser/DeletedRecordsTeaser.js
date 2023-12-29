@@ -1,4 +1,5 @@
 import App from '../App/App.js'
+import { DESC } from '../../utilities/ui_descriptions.js'
 import { 
    create_div,
    create_h,
@@ -24,11 +25,7 @@ class DeletedRecordsTeaser {
          text:'Deleted Records'
       })
 
-      let desc_text =`
-      Deleted records are kept within the database to permit restoration and recovery,
-      although they are not included in the Browse or Search results lists.
-      You can recover a deleted record by searching through all the previously deleted records here.
-      You should ensure the number of deleted records never gets too large.`
+      let desc_text = DESC.DELETED_RECORDS
 
       const desc = create_p({
          text:desc_text

@@ -2,6 +2,7 @@ import App from '../App/App.js'
 import CollectionItemCard from '../CollectionItemCard/CollectionItemCard.js'
 import PaginationNav from '../PaginationNav/PaginationNav.js'
 import { ui_display_number_as_str } from '../../utilities/ui_strings.js'
+import { DESC } from '../../utilities/ui_descriptions.js'
 import { 
    create_section,
    create_div,
@@ -17,6 +18,8 @@ class DeletedRecordsTeaser {
    #browse_results_container
 
    // we retain browse state (page,scroll_y,etc) by passing a 'context token'
+   // note : we use record_status outside of a search_obj for CollectionItem.read()
+   // to do : resolve - we have separate keys for filter deleted_at in browse/here and search.
    #browse_context = {
       key:'DeletedRecords',
       record_status:'DELETED',
@@ -51,11 +54,8 @@ class DeletedRecordsTeaser {
          text:'Deleted Records'
       })
 
-      let desc_text =`
-      Deleted records are kept within the database to permit restoration and recovery,
-      although they are not included in the Browse or Search results lists.
-      You can recover a deleted record by searching through all the previously deleted records here.
-      You should ensure the number of deleted records never gets too large.`
+      // to do : use common lib enum for text (currently we only have main process descriptions.js)
+      let desc_text = DESC.DELETED_RECORDS
 
       const desc = create_p({
          text:desc_text
@@ -90,6 +90,7 @@ class DeletedRecordsTeaser {
 
    }
 
+   // to do : order by deleted_at DESC
 
 
    //
