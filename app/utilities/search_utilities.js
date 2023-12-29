@@ -6,11 +6,14 @@ const MIN_SEARCH_TERM_LEN = 3       // future : packagethis w/ similar in Search
 
 const get_status_condition = (record_status) => {
 
-   let status = record_status === 'ALL' ? '' : `collection_items.deleted_at IS NULL`
-   if(record_status === 'DELETED') {
-      status = `collection_items.deleted_at IS NOT NULL`
+   switch(record_status) {
+      case 'ALL':
+         return ''
+      case 'DELETED':
+         return `collection_items.deleted_at IS NOT NULL`
+      default:
+         return 'collection_items.deleted_at IS NULL'
    }
-   return status
 }
 
 
