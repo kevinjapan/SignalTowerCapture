@@ -191,7 +191,7 @@ async function flush_deleted_items() {
    console.log(' Flushing Deleted Items')
 
    const today = new Date()
-   const cut_off_date = new Date(new Date().setDate(today.getDate() - 30))
+   const cut_off_date = new Date(new Date().setDate(today.getDate() - 31))
    let collection_item = new CollectionItem(database)
    const results = await collection_item.flush_deleted(cut_off_date)
 
@@ -340,15 +340,15 @@ async function restore_collection_item (event,id) {
 }
 
 
-async function search_collection_items (event,search_obj) {
+async function search_collection_items (event,context) {
 
    if(!database) return NOTIFY.DATABASE_UNAVAILABLE
    
    try {
       // to do : we want to know more info on invalid - specifically if too long.
-      if(is_valid_search(search_obj)) {
+      if(is_valid_search(context)) {
          let collection_item = new CollectionItem(database)
-         const result = await collection_item.search_fts(search_obj)
+         const result = await collection_item.search_fts(context)
          return result
       }
       else {
@@ -359,7 +359,7 @@ async function search_collection_items (event,search_obj) {
       }
    }
    catch(error) {
-      console.log('caught')
+      console.log('caught in main',error) // to do : tidy
    }
 }
 
