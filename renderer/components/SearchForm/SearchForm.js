@@ -118,7 +118,7 @@ class SearchForm {
                key: 'Search',
                search_term:search_term_input.value,
                page:1,
-               search_filters:this.#filters
+               filters:this.#filters
             }
             this.#props.submit_search_term(search_context)
          })
@@ -139,7 +139,7 @@ class SearchForm {
                   key: 'Search',
                   search_term:search_term_input.value,
                   page:1,
-                  search_filters:this.#filters
+                  filters:this.#filters
                }
                this.#props.submit_search_term(search_context)
             }
@@ -170,12 +170,12 @@ class SearchForm {
 
    
    // callback for AdvancedSearch
-   filter_search = (search_filters) => {
+   filter_search = (filters) => {
 
       // register changes in AdvancedSearch 
-      let filter_keys = Object.keys(search_filters)   
+      let filter_keys = Object.keys(filters)   
       filter_keys.forEach((key) => {
-         this.#filters[key] = search_filters[key]
+         this.#filters[key] = filters[key]
       })
    }
 }

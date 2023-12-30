@@ -143,8 +143,8 @@ const is_valid_collection_item = (fields_list,collection_item) => {
 //
 // Search
 //
-const is_valid_search = (search_obj) => {
-   if(is_valid_search_term(search_obj.search_term)) {
+const is_valid_search = (context) => {
+   if(is_valid_search_term(context.search_term)) {
       return true
    }
    return false
