@@ -18,11 +18,9 @@ class DeletedRecordsTeaser {
    #browse_results_container
 
    // we retain browse state (page,scroll_y,etc) by passing a 'context token'
-   // note : we use record_status outside of a search_obj for CollectionItem.read()
-   // to do : resolve - we have separate keys for filter deleted_at in browse/here and search.
    #browse_context = {
       key:'DeletedRecords',
-      record_status:'DELETED',
+      filters:{record_status:'deleted_records'},
       page:1,
       scroll_y:0
    }
@@ -44,7 +42,7 @@ class DeletedRecordsTeaser {
 
       const deleted_Records_component = create_section({
          attributes:[
-            {key:'id',value:'deleted_Records_component'}
+            {key:'id',value:'deleted_records_component'}
          ],
          classlist:['ui_component']
       })
@@ -54,7 +52,6 @@ class DeletedRecordsTeaser {
          text:'Deleted Records'
       })
 
-      // to do : use common lib enum for text (currently we only have main process descriptions.js)
       let desc_text = DESC.DELETED_RECORDS
 
       const desc = create_p({

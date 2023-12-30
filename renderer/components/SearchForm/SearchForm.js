@@ -37,7 +37,6 @@ class SearchForm {
          ]
       })
 
-      // to do : assign dynamic value to maxlength
       let search_term_input = create_input({
          attributes:[
             {key:'id',value:'search_term_input'},
@@ -50,7 +49,6 @@ class SearchForm {
       })
       search_form.append(search_term_input)
 
-      // to do : ensure btns are showing when selected on tab..  accessibility
 
       let search_btn = create_button({
          attributes:[
@@ -118,13 +116,11 @@ class SearchForm {
                key: 'Search',
                search_term:search_term_input.value,
                page:1,
-               search_filters:this.#filters
+               filters:this.#filters
             }
             this.#props.submit_search_term(search_context)
          })
       }
-
-      // to do : duplicate code on keydown to click above..
 
       // Keydown on search_term <input> element
       const search_term_input = document.getElementById('search_term_input')
@@ -139,7 +135,7 @@ class SearchForm {
                   key: 'Search',
                   search_term:search_term_input.value,
                   page:1,
-                  search_filters:this.#filters
+                  filters:this.#filters
                }
                this.#props.submit_search_term(search_context)
             }
@@ -170,12 +166,12 @@ class SearchForm {
 
    
    // callback for AdvancedSearch
-   filter_search = (search_filters) => {
+   filter_search = (filters) => {
 
       // register changes in AdvancedSearch 
-      let filter_keys = Object.keys(search_filters)   
+      let filter_keys = Object.keys(filters)   
       filter_keys.forEach((key) => {
-         this.#filters[key] = search_filters[key]
+         this.#filters[key] = filters[key]
       })
    }
 }

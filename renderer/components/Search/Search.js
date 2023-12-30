@@ -55,13 +55,12 @@ class Search {
       })
 
 
-      // to do : get max len for search_term input from main process..
       let search_term_max_len = 36
       try {
          search_term_max_len = await window.app_api.maxSearchTermLen()
       }
       catch(error) {
-         // we just use fallback initially assigned to search_term_max_len
+         // use initially assigned
       }
       
       let form_props = {

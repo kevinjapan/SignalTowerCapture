@@ -73,15 +73,12 @@ class CollectionItem {
       let total_count = 0  
       let sql
 
-      // to do : review - we use search_obj.search_filters now  : 
-      //         but we don't have search_obj in browse mode..  -  cf search_fts() handling of this
-      let status = `collection_items.deleted_at IS NULL`
-      if(record_status === 'DELETED') {
-         status = `collection_items.deleted_at IS NOT NULL`
+      // record status - show [active|deleted|all] records
+      let status = 'collection_items.deleted_at IS NULL'
+      if(context.filters) {
+         status = get_status_condition(context.filters.record_status)
       }
-      if(record_status === 'ALL') {
-         status = ``
-      }
+
 
       // wrap in a promise to await result
       const result = await new Promise((resolve,reject) => {
@@ -601,23 +598,23 @@ class CollectionItem {
    // sql search 
    // we use 'INSTR' and '||' instead of 'LIKE ?' - easier to manage columns / removes using inefficient 'OR's / removes % wildcard (cleaner)
    //
-   async search(search_obj) {
+   async search(context) {
 
       // pagination
-      let offset = (parseInt(search_obj.page) - 1) * this.#items_per_page
+      let offset = (parseInt(context.page) - 1) * this.#items_per_page
 
       // execution time
       let execution_time = 0
       const start = Date.now()
 
       // record status - show [active|deleted|all] records
-      let status = get_status_condition(search_obj.search_filters.record_status)
+      let status = get_status_condition(context.filters.record_status)
 
       // process search_term
-      if(!search_obj.search_term) {
+      if(!context.search_term) {
          console.log('no search term - should bail') // to do : bail
       }
-      let full_search_term = search_obj.search_term.trim()
+      let full_search_term = context.search_term.trim()
       if(full_search_term.length < MIN_SEARCH_TERM_LEN) {  
          return {
             query:'search_collection_items',
@@ -705,7 +702,7 @@ class CollectionItem {
          return {
             query:'search_collection_items',
             outcome:'success',
-            search_obj:search_obj,
+            context:context,
             count:total_count,
             per_page:this.#items_per_page,
             execution_time:execution_time,
@@ -736,40 +733,40 @@ class CollectionItem {
    //     eg   ci_fts MATCH 'title: eland';
    //          ci_fts MATCH '{title content_desc}:eland';
    //
-   async search_fts(search_obj) {
+   async search_fts(context) {
 
-      console.log('search_obj',search_obj)
+      console.log('context',context)
 
       // ---------------------------------------------------------------------------
       //
       //
-      //    to do :  process search_obj.search_filters
+      //    to do :  process context.filters
       //
-      //             eg.    search_filters: { record_status: 'deleted_records' }
+      //             eg.    filters: { record_status: 'deleted_records' }
       //
       //
       //    note: we currently set record_status 
       // ---------------------------------------------------------------------------
       
       // pagination
-      let offset = (parseInt(search_obj.page) - 1) * this.#items_per_page
+      let offset = (parseInt(context.page) - 1) * this.#items_per_page
 
       // execution time
       let execution_time = 0
       const start = Date.now()
 
       // record status - show [active|deleted|all] records
-      let status = get_status_condition(search_obj.search_filters.record_status)
+      let status = get_status_condition(context.filters.record_status)
 
       // process search_term
-      if(!search_obj.search_term) {
+      if(!context.search_term) {
          return {
             query:'search_collection_items',
             outcome:'fail',
             message:'Please enter a valid search term.'
          }
       }
-      let full_search_term = search_obj.search_term.trim()
+      let full_search_term = context.search_term.trim()
       if(full_search_term.length < MIN_SEARCH_TERM_LEN) {  
          return {
             query:'search_collection_items',
@@ -862,7 +859,7 @@ class CollectionItem {
          return {
             query:'search_collection_items',
             outcome:'success',
-            search_obj:search_obj,
+            context:context,
             count:total_count,
             per_page:this.#items_per_page,
             execution_time:execution_time,
