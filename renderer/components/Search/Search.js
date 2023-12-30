@@ -13,8 +13,8 @@ class Search {
    // layout container
    #browse_results_container
 
-   // we retain search state (search_term,page,etc) by passing a 'context'
-   #context
+   // we retain search state (search_term,page,etc) by passing a 'search_context'
+   #search_context
 
 
    // props
@@ -25,9 +25,9 @@ class Search {
 
 
    constructor(props) {
-      // returning 'back to list' from Records will return the passed 'context'
+      // returning 'back to list' from Records will return the passed 'search_context'
       if(props) {
-         this.#context = props.context
+         this.#search_context = props.context
       }
       this.#props = props
    }
@@ -82,8 +82,8 @@ class Search {
          classlist:['p_2']
       })
 
-      // required for re-instating context on 'back' to list actions
-      if(this.#context) {
+      // required for re-instating search_context on 'back' to list actions
+      if(this.#search_context) {
          this.#browse_results_container.append(this.get_items())
       }
 
@@ -98,11 +98,11 @@ class Search {
    //
    get_items = async () => {
 
-      if(this.#context) {
+      if(this.#search_context) {
 
          try {
 
-            const collection_items_obj = await window.collection_items_api.searchCollectionItems(this.#context)
+            const collection_items_obj = await window.collection_items_api.searchCollectionItems(this.#search_context)
 
             if (typeof collection_items_obj != "undefined") {
          
@@ -115,7 +115,7 @@ class Search {
          
                   if(collection_items_obj.collection_items && collection_items_obj.collection_items.length > 0) {
                      
-                     const top_pagination_nav = new PaginationNav('top',this.go_to_page,page_count,this.#context.page)
+                     const top_pagination_nav = new PaginationNav('top',this.go_to_page,page_count,this.#search_context.page)
                      this.#browse_results_container.append(top_pagination_nav.render())
                      top_pagination_nav.activate()
 
@@ -125,7 +125,7 @@ class Search {
                      }
                      
                      let props = {
-                        context:this.#context
+                        context:this.#search_context
                      }
 
                      const collection_item_card = new CollectionItemCard(props)
@@ -138,7 +138,7 @@ class Search {
          
                      setTimeout(() => collection_item_card.activate(),200)
 
-                     const bottom_pagination_nav = new PaginationNav('bottom',this.go_to_page,page_count,this.#context.page)  //this.go_to_page,page_count,this.#browse_context.page
+                     const bottom_pagination_nav = new PaginationNav('bottom',this.go_to_page,page_count,this.#search_context.page)  //this.go_to_page,page_count,this.#browse_context.page
                      this.#browse_results_container.append(bottom_pagination_nav.render())
                      bottom_pagination_nav.activate()
                   }
@@ -147,7 +147,7 @@ class Search {
                   }
 
                   // re-instate scroll position if user had scrolled list before opening a record
-                  window.scroll(0,this.#context.scroll_y)
+                  window.scroll(0,this.#search_context.scroll_y)
                }
                else {
                   let search_status = document.getElementById('search_status')
@@ -175,11 +175,11 @@ class Search {
 
 
    // callback for SearchForm
-   submit_search_term = (context) => {
-      this.#context = context
-      this.#context.scroll_y = 0
+   submit_search_term = (search_context) => {
+      this.#search_context = search_context
+      this.#search_context.scroll_y = 0
 
-      console.log('context',context)
+      console.log('search_context',search_context)
       this.get_items()
    }
 
@@ -196,8 +196,8 @@ class Search {
 
    // callback for PageNavigation
    go_to_page = (page) => {
-      this.#context.page = page
-      this.#context.scroll_y = 0
+      this.#search_context.page = page
+      this.#search_context.scroll_y = 0
       this.get_items()
    }
 

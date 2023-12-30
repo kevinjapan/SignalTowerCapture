@@ -29,7 +29,7 @@ class CollectionItemForm {
    #record
 
    // Props
-   // fields, item, [context]
+   // fields, item, [search_obj]
    // 'props.fields' preserves the display order
    #props
 
