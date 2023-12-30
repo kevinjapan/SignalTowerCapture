@@ -68,6 +68,52 @@ export const create_h = (props) => {
    return null
 }
 
+
+export const create_radio = (props) => {
+   
+   // fieldset
+   const fieldset = document.createElement('fieldset')
+   fieldset.classList.add('flex')
+   const legend = document.createElement('legend')
+   legend.innerText = props.legend
+   fieldset.append(legend)
+   const btn_group = create_div({
+      classlist:['flex','flex_col']
+   })
+
+   // radio buttons
+   props.radio_buttons.forEach((radio_button) => {
+      
+      const label_input = create_label({
+         text:radio_button.label,
+         classlist:['flex']
+      })
+      
+      const radio_input = create_input({
+         attributes:[
+            {key:'id',value:radio_button.key},
+            {key:'name',value:props.name},
+            {key:'type',value:'radio'},
+            {key:'value',value:radio_button.value},
+         ],
+         classlist:['to do']  // to do : style as w/ contemporary search styling
+      })
+      if(radio_button.checked) radio_input.checked = true
+      label_input.prepend(radio_input)
+
+      btn_group.append(label_input)
+   })
+
+   // assemble
+   fieldset.append(btn_group)
+   return fieldset
+
+   // if(props) hydrate_element(elem,props)  
+   // to do : ensure we are fully hydrating all..
+   //    prob all done since we use sub-element func calls ..
+}
+
+
 // create the dom element
 const create_element = (tag,props) => {
    let elem = document.createElement(tag)
@@ -87,7 +133,7 @@ const hydrate_element = (elem,props) => {
       }
       if(typeof props.classlist !== 'undefined') {
          props.classlist.forEach((class_name) => {
-            if(class_name && class_name !== '') {
+            if(class_name && class_name !== '' && class_name.indexOf(' ') === -1) {
                elem.classList.add(class_name)
             }
          })
