@@ -3,7 +3,8 @@ const { get_sqlready_datetime,get_sqlready_date_from_js_date } = require('../app
 const { is_valid_date } = require('../app/utilities/validation')
 const { 
    MIN_SEARCH_TERM_LEN,
-   get_status_condition,
+   get_status_condition_sql,
+   get_order_by_condition_sql,
    tokenize_search_term,
    remove_stopwords 
 } = require('../app/utilities/search_utilities')
@@ -51,6 +52,7 @@ class CollectionItem {
       this.#database = database
    }
 
+
    //
    // 'full_fields_list' is private - but clients can access a copy
    //
@@ -68,17 +70,19 @@ class CollectionItem {
    //
    async read(context) {
 
-      const record_status = context.record_status ? context.record_status : ''
       let offset = (parseInt(context.page) - 1) * this.#items_per_page
       let total_count = 0  
       let sql
 
-      // record status - show [active|deleted|all] records
+      // filters
       let status = 'collection_items.deleted_at IS NULL'
+      let order_by = 'title'
       if(context.filters) {
-         status = get_status_condition(context.filters.record_status)
+         status = get_status_condition_sql(context.filters.record_status)
+         order_by = get_order_by_condition_sql(context.filters.order_by,context.filters.order_by_direction)
       }
 
+      // to do : currently orders by 'title' correctly but is case-sensitive - so eg   ' A B a b '   - make it case-insensitive
 
       // wrap in a promise to await result
       const result = await new Promise((resolve,reject) => {
@@ -98,6 +102,7 @@ class CollectionItem {
             sql = `SELECT ${fields.toString()} 
                      FROM collection_items 
                      WHERE ${status}
+                     ORDER BY ${order_by}
                      LIMIT ${this.#items_per_page} 
                      OFFSET ${offset}`
             this.#database.all(sql, (error, rows) => {
@@ -147,12 +152,20 @@ class CollectionItem {
       let total_count = 0 //this.count().count   
       let sql
 
+      // filters
+      let status = 'collection_items.deleted_at IS NULL'
+      let order_by = 'title'
+      if(context.filters) {
+         status = get_status_condition_sql(context.filters.record_status)
+         order_by = get_order_by_condition_sql(context.filters.order_by,context.filters.order_by_direction)
+      }
+
       // wrap in a promise to await result
       const result = await new Promise((resolve,reject) => {
 
          this.#database.serialize(() => {
             
-            sql = `SELECT COUNT(id) as count FROM collection_items`
+            sql = `SELECT COUNT(id) as count FROM collection_items WHERE ${status}`
             this.#database.get(sql, (error, rows) => {
                if(error) reject(error)
                total_count = rows.count           
@@ -163,8 +176,10 @@ class CollectionItem {
             })
 
             sql = `SELECT ${fields.toString()} 
-                   FROM collection_items 
-                   LIMIT ${this.#limit_read_all_records}`
+                     FROM collection_items 
+                     WHERE ${status}
+                     ORDER BY ${order_by}
+                     LIMIT ${this.#limit_read_all_records}`
             this.#database.all(sql, (error, rows) => {
                if(error) reject(error)
                resolve(rows)            
@@ -607,8 +622,13 @@ class CollectionItem {
       let execution_time = 0
       const start = Date.now()
 
-      // record status - show [active|deleted|all] records
-      let status = get_status_condition(context.filters.record_status)
+      // filters
+      let status = 'collection_items.deleted_at IS NULL'
+      let order_by = 'title'  // to do : enable order_by in search() ?
+      if(context.filters) {
+         status = get_status_condition_sql(context.filters.record_status)
+         order_by = get_order_by_condition_sql(context.filters.order_by,context.filters.order_by_direction)
+      }
 
       // process search_term
       if(!context.search_term) {
@@ -755,8 +775,12 @@ class CollectionItem {
       let execution_time = 0
       const start = Date.now()
 
-      // record status - show [active|deleted|all] records
-      let status = get_status_condition(context.filters.record_status)
+      // filters
+      // - we don't enable client-supplied 'order_by' since we order by rank (bm25)
+      let status = 'collection_items.deleted_at IS NULL'
+      if(context.filters) {
+         status = get_status_condition_sql(context.filters.record_status)
+      }
 
       // process search_term
       if(!context.search_term) {

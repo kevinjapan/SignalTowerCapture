@@ -15,12 +15,16 @@ import {
 
 class DeletedRecordsTeaser {
 
-   #browse_results_container
+   #results_container
 
    // we retain browse state (page,scroll_y,etc) by passing a 'context token'
-   #browse_context = {
+   #context = {
       key:'DeletedRecords',
-      filters:{record_status:'deleted_records'},
+      filters:{
+         record_status:'deleted_records',
+         order_by:'deleted_at',
+         order_by_direction:'DESC'
+      },
       page:1,
       scroll_y:0
    }
@@ -31,7 +35,7 @@ class DeletedRecordsTeaser {
    constructor(props) {
       // returning 'back to list' from Records will return the passed 'context token'
       if(props) {
-         this.#browse_context = props.context
+         this.#context = props.context
       }
       this.#props = props
    }
@@ -66,22 +70,22 @@ class DeletedRecordsTeaser {
          classlist:['p_2']
       })
 
-      this.#browse_results_container = create_div({
+      this.#results_container = create_div({
          attributes:[
-            {key:'id',value:'browse_results_container'}
+            {key:'id',value:'results_container'}
          ],
          classlist:['deleted_records']
       })
 
       // required for re-instating search_context on 'back' to list actions
-      if(this.#browse_context) {
-         this.#browse_results_container.append(this.get_items())
+      if(this.#context) {
+         this.#results_container.append(this.get_items())
       }
 
 
       
       // assemble
-      deleted_Records_component.append(heading,desc,number_records,this.#browse_results_container)
+      deleted_Records_component.append(heading,desc,number_records,this.#results_container)
 
       return deleted_Records_component
 
@@ -95,22 +99,22 @@ class DeletedRecordsTeaser {
    //
    get_items = async (retain_actives = true) => {
 
-      if(this.#browse_context) {
+      if(this.#context) {
 
          try {
 
-            const collection_items_obj = await window.collection_items_api.getItems(this.#browse_context)
+            const collection_items_obj = await window.collection_items_api.getItems(this.#context)
          
             if (typeof collection_items_obj != "undefined") {
          
                if(collection_items_obj.outcome === 'success') {
                   
-                  this.#browse_results_container.replaceChildren()
+                  this.#results_container.replaceChildren()
 
                   let page_count = Math.ceil(collection_items_obj.count / collection_items_obj.per_page)
 
-                  const top_pagination_nav = new PaginationNav('top',this.go_to_page,page_count,this.#browse_context.page)
-                  this.#browse_results_container.append(top_pagination_nav.render())
+                  const top_pagination_nav = new PaginationNav('top',this.go_to_page,page_count,this.#context.page)
+                  this.#results_container.append(top_pagination_nav.render())
                   top_pagination_nav.activate()
          
                   if(collection_items_obj.collection_items.length > 0) {
@@ -120,27 +124,27 @@ class DeletedRecordsTeaser {
                         number_records.innerText = `There are ${ui_display_number_as_str(collection_items_obj.count)} deleted records.`
                      }
             
-                     let props = {context: this.#browse_context}
+                     let props = {context: this.#context}
                      const collection_item_card = new CollectionItemCard(props) 
                      collection_items_obj.collection_items.forEach((item) => {        
-                        this.#browse_results_container.appendChild(collection_item_card.render(collection_items_obj.collection_item_fields,item))
+                        this.#results_container.appendChild(collection_item_card.render(collection_items_obj.collection_item_fields,item))
                      })
          
                      // retain some spacing on short lists
-                     this.#browse_results_container.style.minHeight = '70vh'
+                     this.#results_container.style.minHeight = '70vh'
          
                      setTimeout(() => collection_item_card.activate(),200)
                   }
                   else {
-                     this.#browse_results_container.innerText = 'No records were found. '
+                     this.#results_container.innerText = 'No records were found. '
                   }
 
-                  const bottom_pagination_nav = new PaginationNav('bottom',this.go_to_page,page_count,this.#browse_context.page)
-                  this.#browse_results_container.append(bottom_pagination_nav.render())
+                  const bottom_pagination_nav = new PaginationNav('bottom',this.go_to_page,page_count,this.#context.page)
+                  this.#results_container.append(bottom_pagination_nav.render())
                   bottom_pagination_nav.activate()
                   
                   // re-instate scroll position if user had scrolled list before opening a record
-                  window.scroll(0,this.#browse_context.scroll_y)
+                  window.scroll(0,this.#context.scroll_y)
                }
                else {
                   throw 'No records were returned.'
@@ -162,8 +166,8 @@ class DeletedRecordsTeaser {
 
    // callback for PageNavigation
    go_to_page = (page) => {
-      this.#browse_context.page = page
-      this.#browse_context.scroll_y = 0
+      this.#context.page = page
+      this.#context.scroll_y = 0
       this.get_items()
    }
    

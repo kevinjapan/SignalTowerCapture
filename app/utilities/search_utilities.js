@@ -1,10 +1,16 @@
 
-
 const MIN_SEARCH_TERM_LEN = 3       // future : packagethis w/ similar in Search object / enum
 
 
 
-const get_status_condition = (record_status) => {
+//
+// Filters
+// we always translate condition filters into our own sql 
+// - even simple cases - we never user client input directly.
+//   ensures we both whitelist and avoid 'user' input.
+//
+
+const get_status_condition_sql = (record_status) => {
 
    switch(record_status) {
       case 'all_records':
@@ -16,6 +22,20 @@ const get_status_condition = (record_status) => {
    }
 }
 
+const get_order_by_condition_sql = (order_by,direction) => {
+
+   switch(order_by) {
+      case 'deleted_at':
+         return direction === 'ASC' ? 'deleted_at ASC' : 'deleted_at DESC'
+      default:
+         return ''
+   }
+}
+
+
+//
+// Search tokenization - for basic search
+//
 
 const tokenize_search_term = (full_search_term) => {
 
@@ -28,7 +48,6 @@ const tokenize_search_term = (full_search_term) => {
    }
    return [...tokens.filter(token => token.length >= MIN_SEARCH_TERM_LEN) ]
 }
-
 
 const remove_stopwords = (search_term_tokens) => {
    // exlude common words from our searches
@@ -43,7 +62,6 @@ const remove_stopwords = (search_term_tokens) => {
    }
    return tokens
 }
-
 
 // stopword list
 const search_excluded_words = [
@@ -63,7 +81,8 @@ const search_excluded_words = [
 
 module.exports = {
    MIN_SEARCH_TERM_LEN,
-   get_status_condition,
+   get_status_condition_sql,
+   get_order_by_condition_sql,
    tokenize_search_term,
    remove_stopwords,
 }
