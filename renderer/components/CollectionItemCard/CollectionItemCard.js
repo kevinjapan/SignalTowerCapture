@@ -105,14 +105,11 @@ class CollectionItemCard {
                                  // get search context to inject scroll_y
                                  let context = this.#props.context ? this.#props.context : null
 
-                                 console.log('in Card',context ? {...context,scroll_y:window.scrollY} : null)
-
                                  let props = {
                                     fields:collection_item_obj.collection_item_fields,
                                     item:collection_item_obj.collection_item,
                                     context:context ? {...context,scroll_y:window.scrollY} : null
                                  }
-
                                  App.switch_to_component('Record',props)
                               }
                            }

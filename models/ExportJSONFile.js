@@ -3,9 +3,9 @@ const CollectionItem = require('./CollectionItem')
 const { get_sqlready_datetime } = require('../app/utilities/datetime')
 
 
-// Create a json file of the CollectionItem records dataset.
 
-// to do : currently doesn't export 'soft deleted' records - review
+// Create a JSON file of the CollectionItem records dataset.
+
 
 class ExportJSONFile {
 
