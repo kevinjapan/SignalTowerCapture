@@ -26,6 +26,7 @@ class AdvancedSearch {
          name:'record_status',
          text:'select record status',
          legend:'Record status',
+         classlist:['bg_yellow'],
          radio_buttons:[
             {key:'active_records',label:'Active Records',value:'active_records',checked:true},
             {key:'deleted_records',label:'Deleted Records',value:'deleted_records'},

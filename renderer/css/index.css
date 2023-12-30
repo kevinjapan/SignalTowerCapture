@@ -154,6 +154,9 @@ button:hover {
 .align_items_center {
    align-items:center;
 }
+.row_reverse {
+   flex-direction: row-reverse;
+}
 
 
 .gap_0\.5, 

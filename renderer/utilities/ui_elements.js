@@ -74,9 +74,10 @@ export const create_radio = (props) => {
    // fieldset
    const fieldset = document.createElement('fieldset')
    fieldset.classList.add('flex')
+
    const legend = document.createElement('legend')
    legend.innerText = props.legend
-   fieldset.append(legend)
+
    const btn_group = create_div({
       classlist:['flex','flex_col']
    })
@@ -96,7 +97,7 @@ export const create_radio = (props) => {
             {key:'type',value:'radio'},
             {key:'value',value:radio_button.value},
          ],
-         classlist:['to do']  // to do : style as w/ contemporary search styling
+         classlist:['bg_yellow']
       })
       if(radio_button.checked) radio_input.checked = true
       label_input.prepend(radio_input)
@@ -105,12 +106,10 @@ export const create_radio = (props) => {
    })
 
    // assemble
-   fieldset.append(btn_group)
-   return fieldset
+   fieldset.append(legend,btn_group)
 
-   // if(props) hydrate_element(elem,props)  
-   // to do : ensure we are fully hydrating all..
-   //    prob all done since we use sub-element func calls ..
+   hydrate_element(fieldset,props)
+   return fieldset
 }
 
 
