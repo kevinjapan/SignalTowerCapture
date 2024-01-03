@@ -10,10 +10,12 @@ const get_sqlready_datetime = (inc_time = true) => {
    return str
 }
 
-const get_sqlready_date_from_js_date = (date) => {
-   // to do : check date is valid.
-   let str = date.toISOString().split('T')[0] 
-   return str
+const get_sqlready_date_from_js_date = (date_obj) => {
+   if(date_obj instanceof Date && !isNaN(date_obj)) {
+      let str = date_obj.toISOString().split('T')[0] 
+      return str
+   }
+   return ''
 }
 
 
