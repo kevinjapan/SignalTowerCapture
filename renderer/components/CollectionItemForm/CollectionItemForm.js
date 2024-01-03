@@ -29,7 +29,7 @@ class CollectionItemForm {
    #record
 
    // Props
-   // fields, item, [search_obj]
+   // fields, item, [context]
    // 'props.fields' preserves the display order
    #props
 
@@ -97,13 +97,14 @@ class CollectionItemForm {
 
          let field_input
 
-         if(field.test.type === 'string' && field.test.len > 255) {
+         if(field.test.type === 'string' && field.test.max > 120) {
             field_input = create_textarea({
                attributes:[
                   {key:'id',value:field.key},
                   {key:'name',value:field.key},
                   {key:'type',value:'text'},
                   {key:'value',value:value},
+                  {key:'maxlength',value:field.test.max}
                ],
                classlist:['input_field']
             })
@@ -118,6 +119,7 @@ class CollectionItemForm {
                   {key:'name',value:field.key},
                   {key:'type',value:'text'},
                   {key:'value',value:value},
+                  {key:'maxlength',value:field.test.max}
                ],
                classlist:['input_field']
             })
@@ -133,8 +135,16 @@ class CollectionItemForm {
             classlist:['error_bar','bg_yellow']
          })
 
+         let field_stats = create_div({
+            classlist:['field_info'],
+            text:`max ${field.test.max} chars`
+         })
+
          // assemble
-         form.append(field_label,field_input,create_div(),field_error)
+         // form.append(field_label,field_input,create_div(),field_error)
+         form.append(field_label,field_input)
+         if(field.editable) form.append(create_div(),field_stats)
+         form.append(create_div(),field_error)
 
          // btn to select file for 'file_name' field
          if(field.key === 'file_name') {       
