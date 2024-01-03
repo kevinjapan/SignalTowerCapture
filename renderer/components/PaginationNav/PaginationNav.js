@@ -39,7 +39,7 @@ class PaginationNav {
          classlist:['page_nav','flex', 'space_between', 'gap_.5']
       })
       
-      // the links
+      // prev page
       const prev_link = create_div({
          attributes:[
             {key:'data-page',value:parseInt(this.#current_page) - 1}
@@ -47,13 +47,17 @@ class PaginationNav {
          classlist:this.#current_page > 1 ? [`${this.#key}_page_selector`,'page_selector'] : ['text_grey'],
          text: '< previous page'
       })
+
+      // page n of n
       const now_link = create_div({
          attributes:[
             {key:'data-page',value:parseInt(this.#current_page)}
          ],
          classlist:['page_selector'],
-         text: `page ${this.#current_page} of ${this.#page_count.length}`
+         text: `page ${this.#page_count.length > 0 ? this.#current_page : '0'} of ${this.#page_count.length}`
       })
+
+      // next page
       const next_link = create_div({
          attributes:[
             {key:'data-page',value:parseInt(this.#current_page) + 1}
