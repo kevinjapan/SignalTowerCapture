@@ -43,6 +43,15 @@ contextBridge.exposeInMainWorld('collection_items_api', {
    searchCollectionItems: (search_term) => ipcRenderer.invoke('items:searchCollectionItems',search_term)
 })
 
+contextBridge.exposeInMainWorld('tags_api', {
+   getTags: (context) => ipcRenderer.invoke('tags:getTags',context),
+   getTagFields: () => ipcRenderer.invoke('tags:getTagFields'),
+   getTag: (id) => ipcRenderer.invoke('tags:getTag',id),
+   addTag: (tag) => ipcRenderer.invoke('tags:addTag',tag),   
+   updateTag: (tag) => ipcRenderer.invoke('tags:updateTag',tag),
+   deleteTag: (id) => ipcRenderer.invoke('tags:deleteTag',id),
+})
+
 contextBridge.exposeInMainWorld('config_api', {
    getAppConfigFields: () => ipcRenderer.invoke('config:getAppConfigFields'),
    getAppConfigRecord: (id) => ipcRenderer.invoke('config:getAppConfigRecord',id),
