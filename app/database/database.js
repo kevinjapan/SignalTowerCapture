@@ -1,6 +1,7 @@
 const sqlite3 = require('sqlite3').verbose()
 const AppConfig = require('../../models/AppConfig')
 const CollectionItem = require('../../models/CollectionItem')
+const Tag = require('../../models/Tag')
 
 
 //
@@ -32,7 +33,11 @@ class Database {
          }
       }
       catch(error) {
-         console.log('error making database folder',error)
+         let response_obj = {
+            outcome:'fail',
+            message: 'There was an error making the database folder', error
+         }
+         return response_obj
       }
 
       // open database - creates a database file if doesn't already exist
@@ -42,13 +47,13 @@ class Database {
                reject(`There was an error attempting to open the database.\nPlease check that the database file and it's parent folder exist.\n\nYou could try starting the application again.\nIf the problem persists, it may be recoverable by restoring the database file.\n\n${this.#database_path}`,error.message)
             }
             else {
-               this.create_tables()
+               await this.create_tables()
                resolve('Database was successfully opened')
             }
          })
       }).catch((error) => this.set_last_error(error))
 
-      // this class is just a wrapper - we essentially return the encapsulted sqlite3 database obj
+      // this class is just a wrapper for encapsulted sqlite3 database obj
       if(result) {
          let response_obj = {
             outcome:'success',
@@ -70,13 +75,13 @@ class Database {
    // create the database tables
    // sqlite PRIMARY KEY auto-increments by default (we do not explicitly use AUTOINCREMENT)
    //
-   create_tables = () => {
+   create_tables = async() => {
 
 
       this.#db.serialize(() => {
 
          // CollectionItems table
-
+         //
          let collection_items_fields = CollectionItem.get_full_fields_list()
          let sql = ''
          if(Array.isArray(collection_items_fields)) {
@@ -97,10 +102,9 @@ class Database {
 
          // CollectionItems FTS virtual table
          // support FTS5 full text search extension
-         // to do : create cols dynamically 'title,content_desc' - these two only sufficient?
-         // to do : verify 'id' is ok - eg on create new it will be assigned first..
+         //
          this.#db.run(`CREATE VIRTUAL TABLE IF NOT EXISTS 
-                        collection_items_fts USING fts5 (id,title,content_desc)`,
+                        collection_items_fts USING fts5 (id,title,content_desc,tags)`,
             function (error) {
                if(error) {
                   console.log('There was an error initializing the database. ',error.message)
@@ -109,14 +113,33 @@ class Database {
          )
 
 
+         // Tags table
+         //
+         let tag_fields = Tag.get_full_fields_list()
+         let tags_table_sql = ''
+         if(Array.isArray(tag_fields)) {
+            tag_fields.forEach((tag) => {
+               tags_table_sql += tag.key + ' ' + tag.sql + ','
+            })
+         }
+         tags_table_sql = tags_table_sql.slice(0,-1)
+
+         this.#db.run(`CREATE TABLE IF NOT EXISTS tags (${tags_table_sql})`,
+            function (error) {
+               if(error) {
+                  console.log('There was an error initializing the database. ',error.message)
+               }
+            }
+         )
+         
+
          // Triggers for collection_items_fts
          // synch collection_items_fts w/ collection_items
-         // to do : verfiy .run() is correct method for creating TRIGGERs
          this.#db.run(`CREATE TRIGGER IF NOT EXISTS insert_collection_items_fts 
                         after INSERT on collection_items
                         begin
-                           INSERT INTO collection_items_fts (id,title,content_desc)
-                           VALUES(NEW.id,NEW.title,NEW.content_desc);
+                           INSERT INTO collection_items_fts (id,title,content_desc,tags)
+                           VALUES(NEW.id,NEW.title,NEW.content_desc,NEW.tags);
                         end;`,
             function (error) {
                if(error) {
@@ -130,7 +153,8 @@ class Database {
                            UPDATE collection_items_fts
                            SET
                               title = NEW.title,
-                              content_desc = NEW.content_desc
+                              content_desc = NEW.content_desc,
+                              tags = NEW.tags
                            WHERE id = NEW.id;
                         end;`,
             function (error) {
@@ -139,7 +163,6 @@ class Database {
                }
             }
          )
-         // to do : this relies on titles being unique - rollout to front-end 'add item'
          this.#db.run(`CREATE TRIGGER IF NOT EXISTS delete_collection_items_fts 
                         after DELETE on collection_items
                         begin
