@@ -1,4 +1,5 @@
 import AppConfigForm from '../AppConfigForm/AppConfigForm.js'
+import TagsConfig from '../TagsConfig/TagsConfig.js'
 import { create_section,create_h,create_div } from '../../utilities/ui_elements.js'
 
 
@@ -6,7 +7,7 @@ import { create_section,create_h,create_div } from '../../utilities/ui_elements.
 class Config {
 
 
-   render = () => {
+   render = async() => {
 
       let config_component = create_div({
          classlist:['ui_component']
@@ -23,14 +24,28 @@ class Config {
          ]
       })
 
+      // Tags
+      let tags_section = create_section({
+         attributes:[
+            {key:'id',value:'tags_section'}
+         ]
+      })   
+      const tags_config_component = new TagsConfig()
+      if(tags_section) {
+         tags_section.append(await tags_config_component.render())
+         tags_config_component.activate()
+      }
+
       this.build_form(config_form_wrap)
 
       // assemble
-      config_component.append(heading,config_form_wrap)
+      config_component.append(heading,tags_section,config_form_wrap)
       return config_component
    }
 
    build_form = async(config_form_wrap) => {
+      // to do : review - we will simplify export/backup folder - so user selects folder
+      // and we simply create a timestamped file in that folder - user is responsible for managing.
       const app_config_form = new AppConfigForm()
       config_form_wrap.append(await app_config_form.render())
       app_config_form.activate()

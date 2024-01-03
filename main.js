@@ -16,6 +16,7 @@ const path = require('node:path')
 const Database = require('./app/database/database')
 const AppConfig = require('./models/AppConfig')
 const CollectionItem = require('./models/CollectionItem')
+const Tag = require('./models/Tag')
 const DatabaseBackup = require('./models/DatabaseBackup')
 const ExportCSVFile = require('./models/ExportCSVFile')
 const ExportJSONFile = require('./models/ExportJSONFile')
@@ -108,6 +109,15 @@ app.whenReady().then(async() => {
    ipcMain.handle('items:restoreCollectionItem',restore_collection_item)
    ipcMain.handle('items:searchCollectionItems',search_collection_items)
 
+   // Tags handlers
+   ipcMain.handle('tags:getTags',get_tags)
+   ipcMain.handle('tags:getTagFields',get_tag_fields)
+   ipcMain.handle('tags:getTag',get_single_tag)
+   ipcMain.handle('tags:addTag',add_tag)
+   ipcMain.handle('tags:updateTag',update_tag)
+   ipcMain.handle('tags:deleteTag',delete_tag)
+
+
    // Config handlers
    ipcMain.handle('config:getAppConfigFields',get_app_config_fields)
    ipcMain.handle('config:getAppConfigRecord',get_app_config_record)
@@ -139,7 +149,7 @@ app.whenReady().then(async() => {
    }
 
    createWindow()
-
+   
    // connect to database, verify the db file exists and we can open it
    let result = await new Database().open_safely()
    if(result.outcome === 'fail') {
@@ -149,7 +159,9 @@ app.whenReady().then(async() => {
    }
    database = result.database
 
-   house_keeping()
+   // workaround for initial setup, we delay house_keeping to allow table creation to complete
+   // future : wait on 'database.open_safely->create_tables' to finish (promisify create_tables sql actions)
+   setTimeout(() => house_keeping(),200)
 
    // AppConfig initialization
    try {
@@ -157,7 +169,7 @@ app.whenReady().then(async() => {
    }
    catch(error) {
       if(database) {
-         // we only notify ifthe database is valid - so as to prevent notifications if db also failed
+         // we only notify if the database is valid to prevent multiple notifications if db also failed
          // delay to allow window to finish initializing
          setTimeout(() => notify_client_alert('AppConfig Initialization failed.\n' + error),2000)
       }
@@ -193,6 +205,7 @@ async function flush_deleted_items() {
    const today = new Date()
    const cut_off_date = new Date(new Date().setDate(today.getDate() - 31))
    let collection_item = new CollectionItem(database)
+
    const results = await collection_item.flush_deleted(cut_off_date)
 
    console.log(' >',results.message)
@@ -345,7 +358,6 @@ async function search_collection_items (event,context) {
    if(!database) return NOTIFY.DATABASE_UNAVAILABLE
    
    try {
-      // to do : we want to know more info on invalid - specifically if too long.
       if(is_valid_search(context)) {
          let collection_item = new CollectionItem(database)
          const result = await collection_item.search_fts(context)
@@ -359,9 +371,130 @@ async function search_collection_items (event,context) {
       }
    }
    catch(error) {
-      console.log('caught in main',error) // to do : tidy
+      return {
+         outcome:'fail',
+         message:'Sorry, there was a problem trying to search the database.' + error
+      }
    }
 }
+
+
+// to do : review - file getting bigger - do we want 'controllers'?
+
+//
+// TAGS API
+//
+
+async function get_tags(event,context) {
+
+   if(!database) return NOTIFY.DATABASE_UNAVAILABLE
+
+   let tag = new Tag(database)
+   const results = await tag.read(context)
+   console.log('main.get_tags',results)
+   return results
+}
+
+async function get_tag_fields (event) { 
+
+   let result = Tag.get_full_fields_list()
+   if(result) {
+      return {
+         query:'get_tag_fields',
+         outcome:'success',
+         fields:result
+      }
+   }
+   else {
+      return {
+         query:'get_tag_fields',
+         outcome:'fail',
+         message:'There was an error attempting to retrieve the Tag fields list. [Tag.get_tag_fields]' 
+      }
+   }
+}
+
+async function get_single_tag(event,id) {
+
+   if(!database) return NOTIFY.DATABASE_UNAVAILABLE
+
+   if(is_valid_int(id)) {
+      let tag = new Tag(database)
+      const result = await tag.read_single(id)
+      return result
+   }
+   else {
+      return {
+         outcome:'fail',
+         message:'The id was invalid and no matching record could be found.'
+      }       
+   }
+}
+
+async function add_tag(event,new_tag) {
+
+   if(!database) return NOTIFY.DATABASE_UNAVAILABLE
+   
+   const full_fields_list = Tag.get_full_fields_list()
+   
+   // to do : 
+   // let result = is_valid_collection_item(full_fields_list,new_collection_item)
+   let result = {outcome:'success'}
+   if(result.outcome === 'success') {
+      let tag = new Tag(database)
+      const result = await tag.create(new_tag)
+      return result
+   }
+   else {
+      return {
+         outcome:'fail',
+         message:'The form contains invalid or missing data and we couldn\'t create a new record.',
+         errors: result.errors
+      }       
+   }
+}
+
+async function update_tag(event,updated_tag) {
+   
+   if(!database) return NOTIFY.DATABASE_UNAVAILABLE
+
+   const full_fields_list = Tag.get_full_fields_list()
+   
+   // to do :
+   // const result = is_valid_collection_item(full_fields_list,updated_collection_item)
+   const result = {outcome:'success'}
+
+   if(result.outcome === 'success') {
+      let tag = new Tag(database)
+      const result = await tag.update(updated_tag)
+      return result
+   }
+   else {
+      return {
+         outcome:'fail',
+         message:'The form contains invalid or missing data and we couldn\'t update the record.',
+         errors: result.errors
+      }       
+   }
+}
+
+async function delete_tag(event,id) {
+   
+   if(!database) return NOTIFY.DATABASE_UNAVAILABLE
+
+   if(is_valid_int(id)) {
+      let tag = new Tag(database)
+      const result = permanent ? await tag.hard_delete(id) : await tag.delete(id)
+      return result
+   }
+   else {
+      return {
+         outcome:'fail',
+         message:'The id was invalid and no matching record could be found to delete.'
+      }       
+   }
+}
+
 
 
 //
@@ -575,7 +708,10 @@ async function import_json_file(event,file_path) {
       results = await import_json_file.import(file_path)
    }
    catch(error) {
-      console.log('caught:',error)  // to do :
+      return {
+         outcome:'fail',
+         message:'Sorry, there was a problem trying to import the JSON file.' + error
+      }
    }
    return results
 }

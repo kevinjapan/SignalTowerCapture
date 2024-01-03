@@ -132,19 +132,25 @@ button:hover {
 .flex {
    display:-webkit-box;
    display:-ms-flexbox;
-   display:flex;
+   display:flex;   
+   -ms-flex-wrap:wrap;
+   flex-wrap:wrap;
 }
 .flex_row {
    -webkit-box-orient:horizontal;
    -webkit-box-direction:normal;
    -ms-flex-direction:row;
    flex-direction:row;
+   -ms-flex-wrap:wrap;
+   flex-wrap:wrap;
 }
 .flex_col {
    -webkit-box-orient:vertical;
    -webkit-box-direction:normal;
    -ms-flex-direction:column;
    flex-direction:column;
+   -ms-flex-wrap:wrap;
+   flex-wrap:wrap;
 }
 .space_between {
    -webkit-box-pack:justify;
@@ -195,6 +201,9 @@ button:hover {
 .mt_0\.5,mt_\.5   {margin-top:.5rem;}
 .mt_1             {margin-top:1rem;}
 .ml_1             {margin-left:1rem;}
+.mb_0\.5,mb_\.5   {margin-bottom:.5rem;}
+.mb_1             {margin-bottom:1rem;}
+.ml_1             {margin-left:1rem;}
 .mr_0\.5,mr_\.5   {margin-right:.5rem;}
 .mr_2             {margin-right:2rem;}
 
@@ -213,19 +222,29 @@ button:hover {
 .p_2     {padding:2rem;}
 .p_3     {padding:3rem;}
 .p_4     {padding:4rem;}
-.pt_0\.5,
+.pt_\.5,
 .pt_0\.5 {padding-top:.5rem;}
-.pt_0\.75,
+.pt_\.75,
 .pt_0\.75 {padding-top:.75rem;}
 .pt_1     {padding-top:1rem;}
 .pt_2     {padding-top:2rem;}
 .pt_3     {padding-top:3rem;}
 .pt_4     {padding-top:4rem;}
+.pb_\.25,
+.pb_0\.25 {padding-bottom:.25rem;}
+.pb_\.5,
+.pb_0\.5 {padding-bottom:.5rem;}
+.pb_\.75,
+.pb_0\.75 {padding-bottom:.75rem;}
 .pb_1     {padding-bottom:1rem;}
 .pb_2     {padding-bottom:2rem;}
 .pb_3     {padding-bottom:3rem;}
 .pb_4     {padding-bottom:4rem;}
+.pl_\.5,
+.pl_0\.5 {padding-left:.5rem;}
 .pl_1     {padding-left:1rem;}
+.pr_\.5,
+.pr_0\.5 {padding-right:.5rem;}
 .pr_1     {padding-right:1rem;}
 
 
@@ -275,6 +294,9 @@ button:hover {
 }
 .border_3 {
    border:solid 3px orange;
+}
+.rounded {
+   border-radius:.5rem;
 }
 .text_center {
    text-align:center;
@@ -385,7 +407,9 @@ textarea {
    border:solid 1px hsl(0, 0%, 80%);
    resize: vertical;
 }
-textarea {background:pink;}
+textarea {
+   visibility:visible;
+}
 
 input[disabled] {
    outline:none;
@@ -430,6 +454,12 @@ label,.label {
    grid-column-start: 1;
    -ms-grid-column-span: 2;
    grid-column-end: 3;
+}
+.field_info {
+   font-size:.95rem;
+   color:hsl(0, 0%, 45%);
+   font-style:italic;
+   text-align:right;
 }
 
 /* 
@@ -554,3 +584,4 @@ label/[value|input] layout for Record and Form views
    border:solid 1px lightgrey;
    border-radius:.5rem;
 }
+

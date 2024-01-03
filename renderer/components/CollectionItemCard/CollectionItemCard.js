@@ -1,4 +1,5 @@
 import App from '../App/App.js'
+import TagsList from '../TagsList/TagsList.js'
 import { get_ui_ready_date } from '../../utilities/ui_datetime.js'
 import { create_section,create_div,create_h } from '../../utilities/ui_elements.js'
 
@@ -20,6 +21,7 @@ class CollectionItemCard {
       })
       
       let field_element
+      let tags_list_elem
  
       fields.forEach((field) => {
 
@@ -65,6 +67,29 @@ class CollectionItemCard {
             card.append(file_name_block)
 
          }
+
+            // currently, we won't show tags on result's cards   to do : remove this once confirmed.
+            // to do : if we do add 'tags' to card - let's keep it v. low key. (so as not to expect click works!)
+            //         consider, we can search but don't see the search_term in results cards..
+
+            // else if(field.key === 'tags') {
+
+            //    tags_list_elem = create_div({
+            //       attributes:[
+            //          {key:'id',value:'tags_list_elem'}
+            //       ],
+            //       classlist:['m_0']
+            //    }) 
+            //    const tags_list = new TagsList()
+            //    if(tags_list) {
+            //       console.log('field_value',field_value)
+            //       tags_list_elem.append(tags_list.render(item.id,field_value))
+            //       tags_list.activate()
+            //    }
+            //    card.append(tags_list_elem)
+
+            // }
+
          else {
             field_element = create_div({
                text:field_value

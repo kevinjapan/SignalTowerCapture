@@ -69,7 +69,7 @@ class App {
                break
             case 'Config':
                component = new Config()
-               component_container.replaceChildren(component.render())
+               component_container.replaceChildren(await component.render())
                break
             case 'Files':
                component = new Files()
