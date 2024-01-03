@@ -1,4 +1,6 @@
 
+
+const SEARCH_FIELDS = 'title || content_desc || tags'
 const MIN_SEARCH_TERM_LEN = 3       // future : packagethis w/ similar in Search object / enum
 
 
@@ -10,17 +12,22 @@ const MIN_SEARCH_TERM_LEN = 3       // future : packagethis w/ similar in Search
 //   ensures we both whitelist and avoid 'user' input.
 //
 
-const get_status_condition_sql = (record_status) => {
+const get_status_condition_sql = (table,record_status) => {
+
+   // to do : check 'table'
 
    switch(record_status) {
       case 'all_records':
          return ''
       case 'deleted_records':
-         return `collection_items.deleted_at IS NOT NULL`
+         return `${table}.deleted_at IS NOT NULL`
       default:
-         return 'collection_items.deleted_at IS NULL'
+         return `${table}.deleted_at IS NULL`
    }
 }
+
+// future : enum order_by inputs so client input can never mistakenly be used directly in sql.
+//          although this doesn't ensure client will always come through this func..?
 
 const get_order_by_condition_sql = (order_by,direction) => {
 
@@ -80,6 +87,7 @@ const search_excluded_words = [
 
 
 module.exports = {
+   SEARCH_FIELDS,
    MIN_SEARCH_TERM_LEN,
    get_status_condition_sql,
    get_order_by_condition_sql,
