@@ -21,6 +21,8 @@ class TagsConfig {
 
    #tags_list_elem
 
+
+
    render = async() => {
 
       const tags_config_component = create_div({
@@ -46,8 +48,8 @@ class TagsConfig {
 
       const tags_list = new TagsList('tags_list')
       if(tags_list) {
-         this.#tags_list_elem.append(tags_list.render(tags))
-         tags_list.activate()
+         this.#tags_list_elem.append(tags_list.render(tags,this.actions))
+         setTimeout(() => tags_list.activate(),100)
       }
 
       // to do : max_len for tag ?
@@ -160,7 +162,10 @@ class TagsConfig {
 
    }
 
-   
+
+   //
+   // add tag and refresh view
+   //
    add_tag = async (tag_name) => {
 
       const outcome_div = document.getElementById('outcome_div')
@@ -187,8 +192,8 @@ class TagsConfig {
 
             const tags_list = new TagsList('tags_list')
             if(tags_list) {
-               this.#tags_list_elem.replaceChildren(tags_list.render(tags))
-               tags_list.activate()
+               this.#tags_list_elem.replaceChildren(tags_list.render(tags,this.actions))
+               setTimeout(() => tags_list.activate(),100)
             }
             
          }
@@ -198,6 +203,47 @@ class TagsConfig {
             }
          }
       }
+   }
+
+   actions = async(key,id) => {
+      
+      switch(key) {
+         case 'delete':
+            
+            const del_tag_results = await window.tags_api.deleteTag(id)  
+
+            if (typeof del_tag_results != "undefined") { 
+
+               if(del_tag_results.outcome === 'success') {
+      
+                  // to do : wrap in a lib func and rollout all components using 'outcome' messaging
+                  //         w/ option to fade out after certain time.
+                  if(outcome_div) {
+                     outcome_div.innerText = 
+                        `\nThe tag was successfully deleted.\n\n`
+                  }
+      
+                  // update list of tags on this page..
+                  let tags = await this.get_tags()
+      
+                  const tags_list = new TagsList('tags_list')
+                  if(tags_list) {
+                     this.#tags_list_elem.replaceChildren(tags_list.render(tags,this.actions))
+                     setTimeout(() => tags_list.activate(),100)
+                  }
+                  
+               }
+               else {
+                  if(outcome_div) {
+                     outcome_div.innerText = del_tag_results.message
+                  }
+               }
+            }
+            break
+         default:
+            console.log('actions key was not recognized')
+      }
+      
    }
 
 }

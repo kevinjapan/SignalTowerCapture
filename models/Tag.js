@@ -66,6 +66,7 @@ class Tag {
          //order_by = get_order_by_condition_sql('tags',context.filters.order_by,context.filters.order_by_direction)
       }
 
+      // to do : review all console.log() - remove/replace w/ logging or notifications
       console.log(status,order_by)
 
       // wrap in a promise to await result
