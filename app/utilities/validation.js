@@ -13,7 +13,7 @@ const is_valid_string = (value,min_len = 0,max_len = 255) => {
       return true
    }
    else {
-      throw `value is not a valid string`    // to do : improve message
+      throw `This value is not a valid string.`
    }
 }
 
@@ -26,7 +26,7 @@ const is_valid_int = (value, min = 0, max = 10000) => {
       return true
    }
    else {
-      throw `value is not a valid number`
+      throw `This value is not a valid number.`
    }
 }
 
@@ -58,7 +58,7 @@ const is_valid_date = (value) => {
    }
    else {
       // we need to throw a message to notify user on form errors.
-      throw 'value is not a valid date'
+      throw 'This value is not a valid date.'
    }
 }
 
