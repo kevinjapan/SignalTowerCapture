@@ -157,6 +157,10 @@ button:hover {
    -ms-flex-pack:justify;
    justify-content:space-between;
 }
+.space_around {
+   /* to do : webkit */
+   justify-content:space-around;
+}
 .align_items_center {
    align-items:center;
 }
@@ -198,6 +202,7 @@ button:hover {
 .m_2              {margin:2rem;}
 .m_3              {margin:3rem;}
 .m_4              {margin:4rem;}
+.mt_0\.25,mt_\.25   {margin-top:.25rem;}
 .mt_0\.5,mt_\.5   {margin-top:.5rem;}
 .mt_1             {margin-top:1rem;}
 .ml_1             {margin-left:1rem;}
@@ -295,8 +300,11 @@ button:hover {
 .border_3 {
    border:solid 3px orange;
 }
+.no_border {
+   border:none;
+}
 .rounded {
-   border-radius:.5rem;
+   border-radius:1rem;
 }
 .text_center {
    text-align:center;
@@ -324,6 +332,9 @@ button:hover {
 */
 .text_grey {
    color:hsl(0, 0%, 40%);
+}
+.text_lightgrey {
+   color:lightgrey;
 }
 .text_blue {
    color:hsl(240, 100%, 50%);
