@@ -36,9 +36,7 @@ class Actions {
          setTimeout(() => backup_component.activate(),200)
       }
 
-
       // Exports
-
       let export_csv_section = create_section({
          attributes:[
             {key:'id',value:'export_csv_section'}
@@ -52,7 +50,7 @@ class Actions {
       const export_component = new ExportCSVComponent()
       if(export_csv_section) {
          export_csv_section.append(export_component.render())
-         export_component.activate()
+         setTimeout(() => export_component.activate(),200)
       }
 
       let export_json_section = create_section({
@@ -63,7 +61,7 @@ class Actions {
       const export_json_component = new ExportJSONComponent()
       if(export_json_component) {
          export_json_section.append(export_json_component.render())
-         export_json_component.activate()
+         setTimeout(() => export_json_component.activate(),200)
       }
       
 

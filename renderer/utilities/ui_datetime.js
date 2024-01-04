@@ -33,3 +33,17 @@ export const get_day = (days_index,num_chars = 3) => {
    ]
    return truncate(days[days_index],num_chars,false)
 }
+
+
+//
+// Get sql formatted date (for file names/slugs)
+//
+export const get_sqlready_datetime = (inc_time = true) => {
+
+   const d = new Date()
+   let str = d.toISOString().split('T')[0] 
+   if(inc_time) {
+      str += ' ' + d.toTimeString().split(' ')[0]
+   }
+   return str
+}

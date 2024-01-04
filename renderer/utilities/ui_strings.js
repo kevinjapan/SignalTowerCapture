@@ -40,3 +40,9 @@ export const ui_display_number_as_str = (num) => {
    }
    return num
 }
+
+export const extract_file_name = (full_path) => {
+
+   return full_path.substring(full_path.lastIndexOf('\\')+1)
+
+}

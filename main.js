@@ -41,6 +41,8 @@ let main_window
 // the Database object
 let database
 
+
+
 //
 // Create the Main Window
 //
@@ -118,7 +120,7 @@ app.whenReady().then(async() => {
    ipcMain.handle('tags:deleteTag',delete_tag)
 
 
-   // Config handlers
+   // Config handlers  // to do : some of these are Action handlers..
    ipcMain.handle('config:getAppConfigFields',get_app_config_fields)
    ipcMain.handle('config:getAppConfigRecord',get_app_config_record)
    ipcMain.handle('config:updateAppConfig',update_app_config)
@@ -138,6 +140,7 @@ app.whenReady().then(async() => {
    ipcMain.handle('files:getFilePath',get_file_path)
    ipcMain.handle('files:openFolder',open_folder)
    ipcMain.handle('files:filePathSep',file_path_sep)
+   ipcMain.handle('files:saveFile',save_file)
 
    // Dev handlers
    if(is_dev) {
@@ -478,7 +481,7 @@ async function update_tag(event,updated_tag) {
    }
 }
 
-async function delete_tag(event,id) {
+async function delete_tag(event,id,permanent = false) {
    
    if(!database) return NOTIFY.DATABASE_UNAVAILABLE
 
@@ -606,7 +609,23 @@ async function get_folder_path () {
       return filePaths
    }
 }
- 
+
+async function save_file (event,options) {
+
+   const fs = require('fs')
+   const  { canceled, filePath  } = await dialog.showSaveDialog(options)
+   if(!canceled) {
+      return {
+         outcome:'success',
+         file_path:filePath 
+      }
+   }
+   return {
+      outcome:'fail',
+      message:'Sorry, we failed to save a file.'
+   }
+}
+
 async function get_file_path () {
    const fs = require('fs')
    const { canceled, filePaths } = await dialog.showOpenDialog()
@@ -668,30 +687,30 @@ async function open_file () {
    }
 }
 
-async function backup_database() {
+async function backup_database(event,file_name,file_path) {
    
    if(!database) return NOTIFY.DATABASE_UNAVAILABLE
 
    let database_backup = new DatabaseBackup(database)
-   const results = await database_backup.create()
+   const results = await database_backup.create(file_name,file_path)
    return results
 }
 
-async function export_csv_file(event) {
+async function export_csv_file(event,file_name,file_path) {
 
    if(!database) return NOTIFY.DATABASE_UNAVAILABLE
 
    let export_csv_file = new ExportCSVFile(database)
-   const results = await export_csv_file.create()
+   const results = await export_csv_file.create(file_name,file_path)
    return results
 }
 
-async function export_json_file(event) {
+async function export_json_file(event,file_name,file_path) {
 
    if(!database) return NOTIFY.DATABASE_UNAVAILABLE
 
    let export_json_file = new ExportJSONFile(database)
-   const results = await export_json_file.create()
+   const results = await export_json_file.create(file_name,file_path)
    return results
 }
 

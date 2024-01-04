@@ -1,14 +1,17 @@
-import { get_ui_ready_date,get_ui_ready_time } from '../../utilities/ui_datetime.js'
-import { create_h,create_p,create_div,create_button } from '../../utilities/ui_elements.js'
+import { create_h,create_div,create_button } from '../../utilities/ui_elements.js'
+import { get_sqlready_datetime } from '../../utilities/ui_datetime.js'
+import { extract_file_name } from '../../utilities/ui_strings.js'
 
 
 
 class BackupComponent {
 
-
    render = () => {
       
       const backup_component = create_div({
+         attributes:[
+            {key:'id',value:'backup_component'}
+         ],
          classlist:['ui_component']
       })
 
@@ -16,15 +19,14 @@ class BackupComponent {
          level:'h3',
          text:'Backups'
       })
-      const paragraph = create_p({
-         text:'Make a new timestamped folder containing a copy of the database.'
-      })                
-      let backup_btn = create_button({
+      
+      let backup_database_btn = create_button({
          attributes:[
-            {key:'id',value:'backup_db_btn'}
+            {key:'id',value:'backup_database_btn'}
          ],
          text:'Backup Database'
       }) 
+
       const backup_outcome = create_div({
          attributes:[
             {key:'id',value:'backup_outcome'}
@@ -33,8 +35,7 @@ class BackupComponent {
       })
 
       // assemble
-      backup_component.append(heading,paragraph,backup_btn,backup_outcome)
-
+      backup_component.append(heading,backup_database_btn,backup_outcome)
       return backup_component
    }
 
@@ -42,55 +43,71 @@ class BackupComponent {
    // enable buttons/links displayed in the render
    activate = () => {
 
-      const backup_db_btn = document.getElementById('backup_db_btn')
+      // Backup the database
+      const backup_database_btn = document.getElementById('backup_database_btn')
       const backup_outcome = document.getElementById('backup_outcome')
 
-      if(backup_db_btn) {
+      if(backup_database_btn) {
 
-         backup_db_btn.addEventListener('click', async() => {
+         backup_database_btn.addEventListener('click',async(event) => {
 
-            const backup_results_obj = await window.config_api.backupDatabase()
+            event.preventDefault()   
 
-            let outcome_nofication = create_div({
-               text:`\nThe backup on ${get_ui_ready_date(Date(),true)} at ${get_ui_ready_time(Date())} was successful.\n`
-            })
+            // datestamp file
+            const date_time_stamp = get_sqlready_datetime(false).replaceAll(':','-').replaceAll(' ','-')
+ 
+            const options = {
+               defaultPath:`signal-capture-database-${date_time_stamp}`,
+               filters:[{ name: 'Database', extensions: ['sqlite'] },]
+            }
 
-            if(backup_outcome) {
+            const result = await window.files_api.saveFile(options)
 
-               let msg = 
-                  `\nThe backup on ${get_ui_ready_date(Date(),true)} at ${get_ui_ready_time(Date())} was successful.\n
+            if(result.outcome === 'success') {
+
+               const file_name = extract_file_name(result.file_path)
                
-                  The created file is ${backup_results_obj.file_name}
-                  The file path is ${backup_results_obj.file_path}`                  
-               let backup_folder_btn = create_button({
-                  attributes:[
-                     {key:'id',value:'open_backup_folder_btn'}
-                  ],
-                  text:'Open Backup Folders'
-               }) 
+               const backup_results_obj = await window.config_api.backupDatabase(file_name,result.file_path)
 
-               backup_outcome.replaceChildren(msg)
-               backup_outcome.append(backup_folder_btn)
+               if(backup_results_obj.outcome === 'success') {
+                                  
+                  let folder_path_only = backup_results_obj.file_path.replace(backup_results_obj.file_name,'')
+                  
+                  let backup_folder_btn = create_button({
+                     attributes:[
+                        {key:'data-folder-path',value:folder_path_only},
+                        {key:'id',value:'open_backup_folder_btn'},
+                     ],
+                     text:'Open Backup Folder'
+                  }) 
 
-               // we overwrite notificaton if failed
-               if(backup_results_obj.outcome) {
-                  if(backup_results_obj.outcome === 'fail') {
-                     backup_outcome.innerText = `Sorry, the backup failed.\nPlease check the file paths below are correct.\n` + backup_results_obj.message
+                  if(backup_outcome) {
+                     backup_outcome.replaceChildren('The backup was successful.')
+                     backup_outcome.append(backup_folder_btn)
+                  }
+
+                  // to do : this.activate_folder_btn - so as not to risk double up eventlistener on backup_database_btn                  
+                  this.activate()
+               }
+               else {
+                  if(backup_outcome) {
+                     backup_outcome.innerText = backup_results_obj.message
                   }
                }
-               this.activate()
+            }
+            else {
+               // to do :
             }
          })
       }
 
+
+      // Open the backup folder user selected
       const open_backup_folder_btn = document.getElementById('open_backup_folder_btn')
       if(open_backup_folder_btn) {
          open_backup_folder_btn.addEventListener('click', async() => {
-            // we currently only permit saving backups to the 'backups' folder in our product folder
-            // but allow direct access to this folder here (opening folder explorer)
-            const sep = await window.files_api.filePathSep()
-            const file_path = await window.files_api.openFolder(`.${sep}backups${sep}`)
-            // ...this is to give user access to the folder containing their backups - we don't do anything in-app here
+            const folder_path = open_backup_folder_btn.getAttribute('data-folder-path')
+            await window.files_api.openFolder(folder_path)
          })
       }
    }
