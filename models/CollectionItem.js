@@ -156,10 +156,6 @@ class CollectionItem {
       // filters
       let status = 'collection_items.deleted_at IS NULL'
       let order_by = 'title'
-      if(context.filters) {
-         status = get_status_condition_sql('collection_items',context.filters.record_status)
-         order_by = get_order_by_condition_sql('collection_items',context.filters.order_by,context.filters.order_by_direction)
-      }
 
       // wrap in a promise to await result
       const result = await new Promise((resolve,reject) => {
