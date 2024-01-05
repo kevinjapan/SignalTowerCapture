@@ -15,11 +15,6 @@ contextBridge.exposeInMainWorld('electronAPI', {
    setTitle: (title) => ipcRenderer.send('set-title', title)
 })
 
-contextBridge.exposeInMainWorld('pages_api',{
-   setPage: (page,retain_actives) => ipcRenderer.send('set-page',page,retain_actives),
-   openRecordPage: (page,collection_item_obj) => ipcRenderer.send('open-record-page',page,collection_item_obj)
-})
-
 
 // Pattern 2: Renderer to main (two-way)
 // Two-way IPC calling a main process module from your renderer and waiting for a result. 

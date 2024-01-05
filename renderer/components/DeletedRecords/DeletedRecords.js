@@ -91,13 +91,10 @@ class DeletedRecordsTeaser {
 
    }
 
-   // to do : order by deleted_at DESC
-
-
    //
    // retrieve the paginated items results 
-   //
-   get_items = async (retain_actives = true) => {
+   // 
+   get_items = async () => {
 
       if(this.#context) {
 

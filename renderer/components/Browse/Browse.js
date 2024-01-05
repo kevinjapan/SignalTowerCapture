@@ -76,7 +76,7 @@ class Browse {
    //
    // retrieve the paginated items results 
    //
-   get_items = async (retain_actives = true) => {
+   get_items = async () => {
 
       if(this.#browse_context) {
 
