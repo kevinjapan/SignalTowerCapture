@@ -17,7 +17,6 @@ class ExportJSONFile {
 
    async create(file_name,file_path) {
 
-      console.log('create',file_name,file_path)
       
       let collection_item = new CollectionItem(this.#database)
 
@@ -29,24 +28,10 @@ class ExportJSONFile {
          const json_output = JSON.stringify(results.collection_items,null,4)
 
          const fs = require('fs')
-         
-         // get export_folder
-         // const app_config = new AppConfig(this.#database)
-         // const app_config_obj = await app_config.read_single()
-         // const export_folder = app_config_obj.app_config.export_folder
-         
-         // make datestamped folder eg '2024-01-23'
-         // const new_folder = get_sqlready_datetime(false).replaceAll(':','-').replaceAll(' ','-')
-         // const dir = `${export_folder}${path.sep}${new_folder}`
 
          try {
 
-            // to do : tidy all export/backup models files
-            // if (!fs.existsSync(dir)){
-            //    fs.mkdirSync(dir, { recursive: true })
-            // }
-
-            var file = fs.createWriteStream(`${file_path}`)
+            let file = fs.createWriteStream(`${file_path}`)
 
             file.on('error', function(error) {
                return {
