@@ -1,8 +1,7 @@
 import App from '../App/App.js'
 import TagsList from '../TagsList/TagsList.js'
-import { get_ui_ready_date,get_ui_ready_time } from '../../utilities/ui_datetime.js'
 import { create_h,create_input,create_div,create_button } from '../../utilities/ui_elements.js'
-
+import { is_valid_tag } from '../../utilities/ui_strings.js'
 
 
 class TagsConfig {
@@ -21,7 +20,7 @@ class TagsConfig {
 
    #tags_list_elem
 
-
+   #tags
 
    render = async() => {
 
@@ -44,23 +43,21 @@ class TagsConfig {
          classlist:['m_0']
       }) 
       
-      let tags = await this.get_tags()
+      this.#tags = await this.get_tags()
 
       const tags_list = new TagsList('tags_list')
       if(tags_list) {
-         this.#tags_list_elem.append(tags_list.render(tags,this.actions))
+         this.#tags_list_elem.append(tags_list.render(this.#tags,this.actions))
          setTimeout(() => tags_list.activate(),100)
       }
 
-      // to do : max_len for tag ?
-  
       let add_tag_input = create_input({
          attributes:[
             {key:'id',value:'add_tag_input'},
             {key:'name',value:'add_tag_input'},
             {key:'type',value:'text'},
             {key:'value',value:''},
-            {key:'maxlength',value:50}
+            {key:'maxlength',value:24}
          ],
          classlist:['input_field','m_1']
       })
@@ -72,15 +69,6 @@ class TagsConfig {
          text:'Add Tag'
       })  
 
-      const action_outcome = create_div({
-         attributes:[
-            {key:'id',value:'action_outcome'}
-         ],
-         classlist:['bg_lightgrey','mt_1','pl_1','pr_1']
-      })
-
-      // to do : rename 'borrowed' code/vars from export etc.
-
       const outcome_div = create_div({
          classlist:['bg_lightgrey','mt_1','pl_1','pr_1'],
          attributes:[
@@ -89,7 +77,7 @@ class TagsConfig {
       })
       
       // assemble
-      tags_config_component.append(heading,this.#tags_list_elem,add_tag_input,add_tag_btn,action_outcome,outcome_div)
+      tags_config_component.append(heading,this.#tags_list_elem,add_tag_input,add_tag_btn,outcome_div)
       
 
       return tags_config_component
@@ -139,9 +127,25 @@ class TagsConfig {
 
          add_tag_btn.addEventListener('click', async(event) => {
             event.preventDefault()
+            let outcome_div = document.getElementById('outcome_div')
             let add_tag_input = document.getElementById('add_tag_input')
-            if(add_tag_input) {         
-               this.add_tag(add_tag_input.value)               
+            if(add_tag_input) {
+               if(is_valid_tag(add_tag_input.value)) {
+                  if(this.is_unique_tag(add_tag_input.value)) {
+                     this.add_tag(add_tag_input.value)
+                     add_tag_input.value = ''
+                  }
+                  else {
+                     if(outcome_div) {
+                        outcome_div.innerText = 'This tag already exists, please enter a unique tag.'
+                     }
+                  }
+               }
+               else {
+                  if(outcome_div) {
+                     outcome_div.innerText = 'Please enter a valid tag.'
+                  }
+               }
             }
          })
       }
@@ -154,12 +158,34 @@ class TagsConfig {
          add_tag_input.addEventListener('keydown', async(event) => {
             if(event.key === 'Enter') {
                event.preventDefault()
-               this.add_tag(add_tag_input.value)               
+               let outcome_div = document.getElementById('outcome_div')
+               if(is_valid_tag(add_tag_input.value)) {
+                  if(this.is_unique_tag(add_tag_input.value)) {
+                     this.add_tag(add_tag_input.value)  
+                     add_tag_input.value = ''
+                  }
+                  else {
+                     if(outcome_div) {
+                        outcome_div.innerText = 'This tag already exists, please enter a unique tag.'
+                     }
+                  }
+               }
+               else {
+                  if(outcome_div) {
+                     outcome_div.innerText = 'Please enter a valid tag.'
+                  }
+               }      
             }
          })
       }
+   }
 
 
+   //
+   // verify tag is unique
+   //
+   is_unique_tag = (new_tag) => {
+      return !this.#tags.some(tag => new_tag === tag.tag)
    }
 
 
@@ -170,37 +196,43 @@ class TagsConfig {
 
       const outcome_div = document.getElementById('outcome_div')
 
-      // to do : validate 'tag_name'
+      if(is_valid_tag(tag_name)) {
 
-      let new_tag = {
-         tag:tag_name
-      }
-      
-      const add_tag_results = await window.tags_api.addTag(new_tag)  
-
-      if (typeof add_tag_results != "undefined") { 
-
-         if(add_tag_results.outcome === 'success') {
-
-            if(outcome_div) {
-               outcome_div.innerText = 
-                  `\nThe tag was successfully added.\n\n`
-            }
-
-            // update list of tags on this page..
-            let tags = await this.get_tags()
-
-            const tags_list = new TagsList('tags_list')
-            if(tags_list) {
-               this.#tags_list_elem.replaceChildren(tags_list.render(tags,this.actions))
-               setTimeout(() => tags_list.activate(),100)
-            }
-            
+         let new_tag = {
+            tag:tag_name
          }
-         else {
-            if(outcome_div) {
-               outcome_div.innerText = add_tag_results.message
+         
+         const add_tag_results = await window.tags_api.addTag(new_tag)  
+
+         if (typeof add_tag_results != "undefined") { 
+
+            if(add_tag_results.outcome === 'success') {
+
+               if(outcome_div) {
+                  outcome_div.innerText = 
+                     `\nThe tag was successfully added.\n\n`
+               }
+
+               // update list of tags on this page..
+               this.#tags = await this.get_tags()
+
+               const tags_list = new TagsList('tags_list')
+               if(tags_list) {
+                  this.#tags_list_elem.replaceChildren(tags_list.render(this.#tags,this.actions))
+                  setTimeout(() => tags_list.activate(),100)
+               }
+               
             }
+            else {
+               if(outcome_div) {
+                  outcome_div.innerText = add_tag_results.message
+               }
+            }
+         }
+      }
+      else {
+         if(outcome_div) {
+            outcome_div.innerText = 'Please enter a valid tag.'
          }
       }
    }
@@ -224,11 +256,11 @@ class TagsConfig {
                   }
       
                   // update list of tags on this page..
-                  let tags = await this.get_tags()
+                  this.#tags = await this.get_tags()
       
                   const tags_list = new TagsList('tags_list')
                   if(tags_list) {
-                     this.#tags_list_elem.replaceChildren(tags_list.render(tags,this.actions))
+                     this.#tags_list_elem.replaceChildren(tags_list.render(this.#tags,this.actions))
                      setTimeout(() => tags_list.activate(),100)
                   }
                   

@@ -46,3 +46,19 @@ export const extract_file_name = (full_path) => {
    return full_path.substring(full_path.lastIndexOf('\\')+1)
 
 }
+
+//
+// is valid tag
+// future : any other checks here?
+//
+export const is_valid_tag = (tag) => {
+
+   // to do : if tag already exists? no duplicates
+   
+   if(typeof tag !== 'string') return false
+   
+   if(tag.length >= 3 && tag.length <= 24) {
+      return true
+   }
+   return false
+}
