@@ -67,7 +67,7 @@ class BackupComponent {
 
                const file_name = extract_file_name(result.file_path)
                
-               const backup_results_obj = await window.config_api.backupDatabase(file_name,result.file_path)
+               const backup_results_obj = await window.actions_api.backupDatabase(file_name,result.file_path)
 
                if(backup_results_obj.outcome === 'success') {
                                   
@@ -85,9 +85,8 @@ class BackupComponent {
                      backup_outcome.replaceChildren('The backup was successful.')
                      backup_outcome.append(backup_folder_btn)
                   }
-
-                  // to do : this.activate_folder_btn - so as not to risk double up eventlistener on backup_database_btn                  
-                  this.activate()
+                 
+                  this.activate_folder_btn()
                }
                else {
                   if(backup_outcome) {
@@ -96,11 +95,17 @@ class BackupComponent {
                }
             }
             else {
-               // to do :
+               if(backup_outcome) {
+                  backup_outcome.innerText = result.message
+               }
             }
          })
       }
 
+
+   }
+
+   activate_folder_btn = () => {
 
       // Open the backup folder user selected
       const open_backup_folder_btn = document.getElementById('open_backup_folder_btn')

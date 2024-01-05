@@ -120,18 +120,20 @@ app.whenReady().then(async() => {
    ipcMain.handle('tags:deleteTag',delete_tag)
 
 
-   // Config handlers  // to do : some of these are Action handlers..
+   // Config handlers
    ipcMain.handle('config:getAppConfigFields',get_app_config_fields)
    ipcMain.handle('config:getAppConfigRecord',get_app_config_record)
    ipcMain.handle('config:updateAppConfig',update_app_config)
    ipcMain.handle('config:getRootFolderPath',get_root_folder_path) 
    ipcMain.handle('config:setRootFolderPath',set_root_folder_path)
-   ipcMain.handle('config:backupDatabase',backup_database)  
-   ipcMain.handle('config:exportCSVFile',export_csv_file)
-   ipcMain.handle('config:exportJSONFile',export_json_file)
-   ipcMain.handle('config:importJSONFile',import_json_file)
    ipcMain.handle('config:getExportFolder',get_export_folder)
    ipcMain.handle('config:getBackupFolder',get_backup_folder)
+
+   // Actions handlers
+   ipcMain.handle('actions:backupDatabase',backup_database)  
+   ipcMain.handle('actions:exportCSVFile',export_csv_file)
+   ipcMain.handle('actions:exportJSONFile',export_json_file)
+   ipcMain.handle('actions:importJSONFile',import_json_file)
 
    // Files handlers
    ipcMain.handle('files:openFile',open_file)

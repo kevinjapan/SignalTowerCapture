@@ -67,15 +67,13 @@ class ExportJSONComponent {
 
                const result = await window.files_api.saveFile(options)
 
-               console.log('the result',result)
-
                if(result.outcome === 'success') {
                   try {
                      
                      const file_name = extract_file_name(result.file_path)
                            
 
-                     const export_results_obj = await window.config_api.exportJSONFile(file_name,result.file_path)  
+                     const export_results_obj = await window.actions_api.exportJSONFile(file_name,result.file_path)  
 
                      console.log('export_results_obj',export_results_obj)
 
@@ -112,7 +110,9 @@ class ExportJSONComponent {
                   }
                }
                else {
-                  // to do :
+                  if(export_json_outcome) {
+                     export_json_outcome.innerText = result.message
+                  }
                }
             })
          }

@@ -58,11 +58,14 @@ contextBridge.exposeInMainWorld('config_api', {
    updateAppConfig: (app_config) => ipcRenderer.invoke('config:updateAppConfig',app_config),
    getRootFolderPath: () => ipcRenderer.invoke('config:getRootFolderPath'),
    setRootFolderPath: (app_config) => ipcRenderer.invoke('config:setRootFolderPath',app_config),
-   backupDatabase: (file_name,file_path) => ipcRenderer.invoke('config:backupDatabase',file_name,file_path),
-   exportCSVFile: (file_name,folder_path) => ipcRenderer.invoke('config:exportCSVFile',file_name,folder_path),
-   exportJSONFile: (file_name,folder_path) => ipcRenderer.invoke('config:exportJSONFile',file_name,folder_path),
-   importJSONFile: (file_path) => ipcRenderer.invoke('config:importJSONFile',file_path),
    getExportFolder: () => ipcRenderer.invoke('config:getExportFolder')
+})
+
+contextBridge.exposeInMainWorld('actions_api', {
+   backupDatabase: (file_name,file_path) => ipcRenderer.invoke('actions:backupDatabase',file_name,file_path),
+   exportCSVFile: (file_name,folder_path) => ipcRenderer.invoke('actions:exportCSVFile',file_name,folder_path),
+   exportJSONFile: (file_name,folder_path) => ipcRenderer.invoke('actions:exportJSONFile',file_name,folder_path),
+   importJSONFile: (file_path) => ipcRenderer.invoke('actions:importJSONFile',file_path)
 })
 
 contextBridge.exposeInMainWorld('files_api', {

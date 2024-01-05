@@ -46,7 +46,7 @@ class ExportCSVComponent {
       // assemble
       export_csv_component.append(heading,export_csv_btn,export_csv_outcome,export_csv_fields)
       
-      setTimeout(() => this.activate(),200)
+      
       return export_csv_component
    }
 
@@ -81,7 +81,7 @@ class ExportCSVComponent {
 
                      const file_name = extract_file_name(result.file_path)
                            
-                     const export_results_obj = await window.config_api.exportCSVFile(file_name,result.file_path)  
+                     const export_results_obj = await window.actions_api.exportCSVFile(file_name,result.file_path)  
 
                      if (typeof export_results_obj != "undefined") { 
 
@@ -100,8 +100,8 @@ class ExportCSVComponent {
                               export_csv_outcome.replaceChildren('The export was successful.')
                               export_csv_outcome.append(export_csv_folder_btn)
                            }
-                           // to do : this.activate_folder_btn - so as not to risk double up eventlistener on export_csv_btn
-                           setTimeout(() => this.activate(),200)
+                           
+                           setTimeout(() => this.activate_folder_btn(),200)
                         }
                         else {
                            if(export_csv_outcome) {
@@ -117,10 +117,17 @@ class ExportCSVComponent {
                   }
                }
                else {
-                  // to do :
+                  if(export_csv_outcome) {
+                     export_csv_outcome.innerText = result.message
+                  }
                }
             })
          }
+
+
+   }
+
+   activate_folder_btn = () => {
 
          // Open the export folder user selected
          const export_csv_folder_btn = document.getElementById('export_csv_folder_btn')
@@ -130,7 +137,6 @@ class ExportCSVComponent {
                await window.files_api.openFolder(folder_path)
             })
          }
-
    }
 }
 

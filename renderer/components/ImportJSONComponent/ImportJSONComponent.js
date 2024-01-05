@@ -85,7 +85,7 @@ class ImportJSONComponent {
                      actions_section.append(wait_dlg_component.render())
                   }
 
-                  const import_results_obj = await window.config_api.importJSONFile(file_path)  
+                  const import_results_obj = await window.actions_api.importJSONFile(file_path)  
 
                   if (typeof import_results_obj != "undefined") { 
 
