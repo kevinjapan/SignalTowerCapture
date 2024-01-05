@@ -12,18 +12,25 @@ const MIN_SEARCH_TERM_LEN = 3       // future : packagethis w/ similar in Search
 //   ensures we both whitelist and avoid 'user' input.
 //
 
+const is_permitted_table = (table_name) => {
+   const tables_whitelist = ['collection_items','tags',]
+   return tables_whitelist.some(table => table_name === table)
+}
+
+
 const get_status_condition_sql = (table,record_status) => {
 
-   // to do : check 'table'
-
-   switch(record_status) {
-      case 'all_records':
-         return ''
-      case 'deleted_records':
-         return `${table}.deleted_at IS NOT NULL`
-      default:
-         return `${table}.deleted_at IS NULL`
+   if(is_permitted_table(table)) {
+      switch(record_status) {
+         case 'all_records':
+            return ''
+         case 'deleted_records':
+            return `${table}.deleted_at IS NOT NULL`
+         default:
+            return `${table}.deleted_at IS NULL`
+      }
    }
+   return ''
 }
 
 // future : enum order_by inputs so client input can never mistakenly be used directly in sql.
@@ -84,6 +91,7 @@ const search_excluded_words = [
 // unlikely stopwords we exclude from above since we don't expect any frequent issue
 // 'because','however','whatever',whether','which','would'
 //
+
 
 
 module.exports = {
