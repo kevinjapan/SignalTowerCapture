@@ -77,7 +77,7 @@ class ImportJSONComponent {
 
                   let file_path = result.files[0]
 
-                  this.notify_outcome('\nWorking - please wait...\n\n')
+                  Notification.notify('Working - please wait...\n\n')
 
                   // open 'please wait..' msg dlg
                   const wait_dlg_component = new WaitDialog()
