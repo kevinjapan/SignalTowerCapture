@@ -1,6 +1,7 @@
 import { get_sqlready_datetime } from '../../utilities/ui_datetime.js'
 import { create_h,create_div,create_button } from '../../utilities/ui_elements.js'
 import { extract_file_name } from '../../utilities/ui_strings.js'
+import Notification from '../../components/Notification/Notification.js'
 
 
 
@@ -54,7 +55,6 @@ class ExportJSONComponent {
          
             export_json_btn.addEventListener('click', async(event) => {
                
-
                event.preventDefault()
                
                // datestamp file
@@ -71,11 +71,8 @@ class ExportJSONComponent {
                   try {
                      
                      const file_name = extract_file_name(result.file_path)
-                           
 
                      const export_results_obj = await window.actions_api.exportJSONFile(file_name,result.file_path)  
-
-                     console.log('export_results_obj',export_results_obj)
 
                      if (typeof export_results_obj != "undefined") { 
 
@@ -91,28 +88,22 @@ class ExportJSONComponent {
                               text:'Open Export Folder'
                            }) 
                            if(export_json_outcome) {
-                              export_json_outcome.replaceChildren('The export was successful.')
+                              Notification.notify('export_json_outcome',`The export was successful.`)
                               export_json_outcome.append(export_json_folder_btn)
                            }
                            setTimeout(() => this.activate_folder_btn(),200)
                         }
                         else {
-                           if(export_json_outcome) {
-                              export_json_outcome.innerText = export_results_obj.message
-                           }
+                           Notification.notify('export_json_outcome',export_results_obj.message)
                         }
                      }
                   }
                   catch(error) {
-                     if(export_json_outcome) {
-                        export_json_outcome.innerText = 'There was an error attempting to export the records.' + error
-                     }
+                     Notification.notify('export_json_outcome','There was an error attempting to export the records.' + error)
                   }
                }
                else {
-                  if(export_json_outcome) {
-                     export_json_outcome.innerText = result.message
-                  }
+                  Notification.notify('export_json_outcome',result.message)
                }
             })
          }

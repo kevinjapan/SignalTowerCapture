@@ -1,5 +1,6 @@
 import App from '../App/App.js'
 import FormBtns from '../FormBtns/FormBtns.js'
+import Notification from '../../components/Notification/Notification.js'
 import { ui_friendly_text } from '../../utilities/ui_strings.js'
 import { is_image_file, build_img_elem } from '../../utilities/ui_utilities.js'
 
@@ -190,6 +191,7 @@ class CollectionItemForm {
    //
    activate = (action = 'update') => {
 
+
       // On 'Apply' add or update CollectionItemForm
 
       const apply_btns = document.querySelectorAll('.apply_btn')
@@ -210,7 +212,8 @@ class CollectionItemForm {
                event.preventDefault()
                this.clear_errors()
 
-               if(submit_outcome) submit_outcome.innerText = ''
+               Notification.notify('submit_outcome',``)
+
                const item_form = document.getElementById('item_form')
                if(item_form) {
 
@@ -232,7 +235,6 @@ class CollectionItemForm {
                   else {
                      // FormData only returns the non-disabled input key/value pairs - so we have to add 'id'
                      updated_collection_item.id = this.#record_id
-                     console.log('updated_collection_item',updated_collection_item)
                      response = await window.collection_items_api.updateCollectionItem(updated_collection_item)
                   }
 
@@ -350,13 +352,15 @@ class CollectionItemForm {
                   parent_folder_path.value = path
                }
                
-               // auto-gen candidate title from the file name
+               // auto-gen candidate title from the file name if non-exists
                let title = document.getElementById('title')
                if(title) {
-                  let temp = file_name_input.value
-                  let candidate = temp.substring(0,temp.length - 4).replaceAll('-',' ')
-                  candidate = candidate.charAt(0).toUpperCase() + candidate.slice(1)             
-                  title.value = candidate
+                  if(title.value === '') {
+                     let temp = file_name_input.value
+                     let candidate = temp.substring(0,temp.length - 4).replaceAll('-',' ')
+                     candidate = candidate.charAt(0).toUpperCase() + candidate.slice(1)             
+                     title.value = candidate
+                  }
                }
 
                // display if new file is an img file
@@ -364,7 +368,7 @@ class CollectionItemForm {
                
             }
             else {
-                  console.log(result.message)
+               Notification.notify('submit_outcome',result.message)
             }
          })
       }

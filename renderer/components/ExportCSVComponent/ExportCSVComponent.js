@@ -1,6 +1,7 @@
 import { create_h,create_div,create_button } from '../../utilities/ui_elements.js'
 import { get_sqlready_datetime } from '../../utilities/ui_datetime.js'
 import { extract_file_name } from '../../utilities/ui_strings.js'
+import Notification from '../../components/Notification/Notification.js'
 
 
 
@@ -35,7 +36,6 @@ class ExportCSVComponent {
          ]
       })
 
-      // to do : display these..
       const export_csv_fields = create_div({
          classlist:['break_words','bg_lightgrey','text_grey','italic','pl_1','pr_1'],
          attributes:[
@@ -74,11 +74,9 @@ class ExportCSVComponent {
                
                const result = await window.files_api.saveFile(options)
 
-               console.log('result',result)
-
                if(result.outcome === 'success') {
-                  try {
 
+                  try {
                      const file_name = extract_file_name(result.file_path)
                            
                      const export_results_obj = await window.actions_api.exportCSVFile(file_name,result.file_path)  
@@ -86,7 +84,7 @@ class ExportCSVComponent {
                      if (typeof export_results_obj != "undefined") { 
 
                         if(export_results_obj.outcome === 'success') {
-                           
+
                            let folder_path_only = export_results_obj.file_path.replace(export_results_obj.file_name,'')
                   
                            let export_csv_folder_btn = create_button({
@@ -97,29 +95,42 @@ class ExportCSVComponent {
                               text:'Open Export Folder'
                            }) 
                            if(export_csv_outcome) {
-                              export_csv_outcome.replaceChildren('The export was successful.')
+                              Notification.notify('export_csv_outcome','The export was successful.')
                               export_csv_outcome.append(export_csv_folder_btn)
                            }
-                           
+
                            setTimeout(() => this.activate_folder_btn(),200)
+
+                           // display fields in csv
+                           const fields_obj = await window.collection_items_api.getCollectionItemFields()
+
+                           console.log(typeof fields,fields_obj.fields)
+                           
+                           if (typeof fields_obj != "undefined") {
+                              
+                              if(fields_obj.outcome === 'success') {
+
+                                 const field_keys = fields_obj.fields.map(field => {
+                                    return field.key
+                                 })
+                                 let export_csv_fields = document.getElementById('export_csv_fields')
+                                 if(export_csv_fields) {
+                                    export_csv_fields.innerText = 'The ordered fields are:\n' + field_keys.toString().replaceAll(',',', ')
+                                 }
+                              }
+                           }
                         }
                         else {
-                           if(export_csv_outcome) {
-                              export_csv_outcome.innerText = export_results_obj.message
-                           }
+                           Notification.notify('export_csv_outcome',export_results_obj.message)
                         }
                      }
                   }
                   catch(error) {
-                     if(export_csv_outcome) {
-                        export_csv_outcome.innerText = 'There was an error attempting to export the records.' + error
-                     }
+                     Notification.notify('export_csv_outcome','There was an error attempting to export the records.' + error)
                   }
                }
                else {
-                  if(export_csv_outcome) {
-                     export_csv_outcome.innerText = result.message
-                  }
+                  Notification.notify('export_csv_outcome',result.message)
                }
             })
          }

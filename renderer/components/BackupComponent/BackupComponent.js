@@ -1,8 +1,7 @@
 import { create_h,create_div,create_button } from '../../utilities/ui_elements.js'
 import { get_sqlready_datetime } from '../../utilities/ui_datetime.js'
 import { extract_file_name } from '../../utilities/ui_strings.js'
-
-
+import Notification from '../../components/Notification/Notification.js'
 
 class BackupComponent {
 
@@ -82,22 +81,18 @@ class BackupComponent {
                   }) 
 
                   if(backup_outcome) {
-                     backup_outcome.replaceChildren('The backup was successful.')
+                     Notification.notify('backup_outcome','The backup was successful.')
                      backup_outcome.append(backup_folder_btn)
                   }
                  
                   this.activate_folder_btn()
                }
                else {
-                  if(backup_outcome) {
-                     backup_outcome.innerText = backup_results_obj.message
-                  }
+                  Notification.notify('backup_outcome',backup_results_obj.message)
                }
             }
             else {
-               if(backup_outcome) {
-                  backup_outcome.innerText = result.message
-               }
+               Notification.notify('backup_outcome',result.message)
             }
          })
       }

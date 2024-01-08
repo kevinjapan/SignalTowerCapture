@@ -1,4 +1,5 @@
 import WaitDialog from '../WaitDialog/WaitDialog.js'
+import Notification from '../../components/Notification/Notification.js'
 import { get_ui_ready_date,get_ui_ready_time } from '../../utilities/ui_datetime.js'
 import { create_h,create_p,create_div,create_section,create_button } from '../../utilities/ui_elements.js'
 
@@ -67,7 +68,7 @@ class ImportJSONComponent {
 
                event.preventDefault()
 
-               this.notify_outcome('')
+               Notification.notify('import_json_outcome','')
        
                // user select file dialog
                const result = await window.files_api.getFilePath()
@@ -91,16 +92,16 @@ class ImportJSONComponent {
 
                      if(import_results_obj.outcome === 'success') {
                         this.close_wait_dlg(actions_section)
-                        this.notify_outcome(`\nThe import on ${get_ui_ready_date(Date(),true)} at ${get_ui_ready_time(Date())} was successful.\n\n`)
+                        Notification.notify('import_json_outcome',`The import on ${get_ui_ready_date(Date(),true)} at ${get_ui_ready_time(Date())} was successful.`)
                      }
                      else {
                         this.close_wait_dlg(actions_section)
-                        this.notify_outcome(import_results_obj.message)
+                        Notification.notify('import_json_outcome',import_results_obj.message)
                      }
                   }
                }
                else {
-                  this.notify_outcome("Sorry, we couldn't find or open the file.")
+                  Notification.notify('import_json_outcome',result.message)
                }
             })
          }
@@ -111,12 +112,6 @@ class ImportJSONComponent {
       if(wait_dlg) parent_section.removeChild(wait_dlg)
    }
 
-   notify_outcome = (msg) => {
-      const import_json_outcome = document.getElementById('import_json_outcome')
-      if(import_json_outcome) {
-         import_json_outcome.innerText = msg
-      }
-   }
 
 }
 

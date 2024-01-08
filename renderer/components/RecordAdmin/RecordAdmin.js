@@ -1,5 +1,6 @@
 import App from '../App/App.js'
 import { create_div,create_button,create_section,create_h,create_p } from '../../utilities/ui_elements.js'
+import Notification from '../../components/Notification/Notification.js'
 
 
 
@@ -80,7 +81,7 @@ class RecordAdmin {
                   const outcome = document.getElementById('outcome')
                   if(result.outcome === 'success'){
                      this.show_restore_btn()
-                     outcome.innerText = result.message
+                     Notification.notify('outcome',result.message)
                   }
                   else {
 
@@ -114,11 +115,11 @@ class RecordAdmin {
                const result = await window.collection_items_api.restoreCollectionItem(record_id)
 
                if(result.outcome === 'success'){
-                  outcome.innerText = result.message
+                  Notification.notify('outcome',result.message)
                   restore_btn.classList.add('hidden')
                }
                else {
-
+                  Notification.notify('outcome',result.message)
                }
             }
             catch(error) {

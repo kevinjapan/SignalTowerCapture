@@ -1,6 +1,7 @@
 import App from '../App/App.js'
 import SelectFolderComponent from '../SelectFolderComponent/SelectFolderComponent.js'
 import FormBtns from '../FormBtns/FormBtns.js'
+import Notification from '../../components/Notification/Notification.js'
 import { ui_friendly_text } from '../../utilities/ui_strings.js'
 import { is_image_file, build_img_elem } from '../../utilities/ui_utilities.js'
 
@@ -173,7 +174,7 @@ class AppConfigForm {
                event.preventDefault()
                this.clear_errors()
 
-               if(submit_outcome) submit_outcome.innerText = ''
+               Notification.notify('submit_outcome',``)
 
                const item_form = document.getElementById('item_form')
 
@@ -196,13 +197,13 @@ class AppConfigForm {
                   let response = await window.config_api.updateAppConfig(update_app_config)
                   
                   if(response.outcome === 'success') {
-                     submit_outcome.innerText = `${action} successfully applied.`
+                     Notification.notify('submit_outcome',`${action} successfully applied.`)
                   }
                   else {
                      if(Array.isArray(response.errors)) {
                         this.highlight_errors(response.errors)
                      }
-                     submit_outcome.innerText = `${action} attempt failed. ${response.message}`
+                     Notification.notify('submit_outcome',`${action} attempt failed. ${response.message}`)
                   }               
                }
             })
@@ -241,7 +242,7 @@ class AppConfigForm {
                } 
             }
             else {
-                  console.log(result.message)
+               Notification.notify('submit_outcome',result.message)
             }
          })
       }
