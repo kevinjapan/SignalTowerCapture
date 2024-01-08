@@ -309,6 +309,12 @@ button:hover {
 .text_center {
    text-align:center;
 }
+.text_left {
+   text-align:left;
+}
+.text_right {
+   text-align:right;
+}
 .inline_block {
    display:inline-block;
 }
@@ -505,9 +511,6 @@ label/[value|input] layout for Record and Form views
 }
 .record_image {
    width:100%;
-   max-width:50vw;
-   min-height:300px;
-   border:solid 1px lightgrey;
 }
 
 
@@ -562,8 +565,16 @@ label/[value|input] layout for Record and Form views
    cursor:pointer;
 }
 
-.x_btn {
-   position:absolute;
+.img_btn_group {
+   position:fixed;
+   z-index:9999;
+   top:6rem;
+   left:3rem;
+   background:white;
+}
+.img_scroll_btn_group {
+   position:fixed;
+   z-index:9999;
    top:6rem;
    right:3rem;
    background:white;
@@ -596,3 +607,6 @@ label/[value|input] layout for Record and Form views
    border-radius:.5rem;
 }
 
+.overflow_hidden {
+   overflow:hidden;
+}

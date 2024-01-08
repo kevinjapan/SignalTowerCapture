@@ -36,17 +36,20 @@ const is_img_ext = (file_name) => {
 }
 
 
-export const build_img_elem = async(id,folder_path,file_name,alt_text = 'image') => {
+export const build_img_elem = async(id,folder_path,file_name,alt_text = 'image',attributes = []) => {
    
    const sep = await window.files_api.filePathSep()
    let separator = folder_path.slice(-1) !== sep ? sep : ''
 
+   let attrs = [
+      {key:'id',value:id},
+      {key:'src',value:folder_path + separator + file_name},
+      {key:'alt',value:alt_text},
+      ...attributes
+   ]
+
    let img = create_img({
-      attributes:[
-         {key:'id',value:id},
-         {key:'src',value:folder_path + separator + file_name},
-         {key:'alt',value:alt_text},
-      ],
+      attributes:attrs,
       classlist:['record_image']
    })
    return img
