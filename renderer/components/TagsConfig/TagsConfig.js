@@ -1,8 +1,8 @@
 import App from '../App/App.js'
 import TagsList from '../TagsList/TagsList.js'
-import { create_h,create_input,create_div,create_button } from '../../utilities/ui_elements.js'
+import { create_input,create_div,create_button } from '../../utilities/ui_elements.js'
 import { is_valid_tag } from '../../utilities/ui_strings.js'
-
+import Notification from '../../components/Notification/Notification.js'
 
 class TagsConfig {
 
@@ -31,11 +31,6 @@ class TagsConfig {
          classlist:['ui_component']
       })
    
-      const heading = create_h({
-         level:'h3',
-         text:'Tags'
-      })
-
       this.#tags_list_elem = create_div({
          attributes:[
             {key:'id',value:'tags_list_elem'}
@@ -45,9 +40,11 @@ class TagsConfig {
       
       this.#tags = await this.get_tags()
 
+
+
       const tags_list = new TagsList('tags_list')
       if(tags_list) {
-         this.#tags_list_elem.append(tags_list.render(this.#tags,this.actions))
+         this.#tags_list_elem.append(await tags_list.render(this.#tags,this.actions))
          setTimeout(() => tags_list.activate(),100)
       }
 
@@ -77,7 +74,7 @@ class TagsConfig {
       })
       
       // assemble
-      tags_config_component.append(heading,this.#tags_list_elem,add_tag_input,add_tag_btn,outcome_div)
+      tags_config_component.append(this.#tags_list_elem,add_tag_input,add_tag_btn,outcome_div)
       
 
       return tags_config_component
@@ -118,33 +115,30 @@ class TagsConfig {
    // enable buttons/links displayed in the render
    activate = async () => {
 
-      const sep = await window.files_api.filePathSep()
-
       // Add Tag btn
       const add_tag_btn = document.getElementById('add_tag_btn')
 
       if(add_tag_btn) {
 
          add_tag_btn.addEventListener('click', async(event) => {
+
             event.preventDefault()
-            let outcome_div = document.getElementById('outcome_div')
+            
             let add_tag_input = document.getElementById('add_tag_input')
             if(add_tag_input) {
+
                if(is_valid_tag(add_tag_input.value)) {
+
                   if(this.is_unique_tag(add_tag_input.value)) {
                      this.add_tag(add_tag_input.value)
                      add_tag_input.value = ''
                   }
                   else {
-                     if(outcome_div) {
-                        outcome_div.innerText = 'This tag already exists, please enter a unique tag.'
-                     }
+                     Notification.notify('outcome_div',`This tag already exists, please enter a unique tag.`)
                   }
                }
                else {
-                  if(outcome_div) {
-                     outcome_div.innerText = 'Please enter a valid tag.'
-                  }
+                  Notification.notify('outcome_div',`Please enter a valid tag.`)
                }
             }
          })
@@ -156,24 +150,22 @@ class TagsConfig {
       if(add_tag_input) {
 
          add_tag_input.addEventListener('keydown', async(event) => {
+
             if(event.key === 'Enter') {
+
                event.preventDefault()
-               let outcome_div = document.getElementById('outcome_div')
+               
                if(is_valid_tag(add_tag_input.value)) {
                   if(this.is_unique_tag(add_tag_input.value)) {
                      this.add_tag(add_tag_input.value)  
                      add_tag_input.value = ''
                   }
                   else {
-                     if(outcome_div) {
-                        outcome_div.innerText = 'This tag already exists, please enter a unique tag.'
-                     }
+                     Notification.notify('outcome_div',`This tag already exists, please enter a unique tag.`)
                   }
                }
                else {
-                  if(outcome_div) {
-                     outcome_div.innerText = 'Please enter a valid tag.'
-                  }
+                  Notification.notify('outcome_div',`Please enter a valid tag.`)
                }      
             }
          })
@@ -194,8 +186,6 @@ class TagsConfig {
    //
    add_tag = async (tag_name) => {
 
-      const outcome_div = document.getElementById('outcome_div')
-
       if(is_valid_tag(tag_name)) {
 
          let new_tag = {
@@ -208,32 +198,25 @@ class TagsConfig {
 
             if(add_tag_results.outcome === 'success') {
 
-               if(outcome_div) {
-                  outcome_div.innerText = 
-                     `\nThe tag was successfully added.\n\n`
-               }
+               Notification.notify('outcome_div',`The tag was successfully added.`)
 
                // update list of tags on this page..
                this.#tags = await this.get_tags()
 
                const tags_list = new TagsList('tags_list')
                if(tags_list) {
-                  this.#tags_list_elem.replaceChildren(tags_list.render(this.#tags,this.actions))
+                  this.#tags_list_elem.replaceChildren(await tags_list.render(this.#tags,this.actions))
                   setTimeout(() => tags_list.activate(),100)
                }
                
             }
             else {
-               if(outcome_div) {
-                  outcome_div.innerText = add_tag_results.message
-               }
+               Notification.notify('outcome_div',add_tag_results.message)
             }
          }
       }
       else {
-         if(outcome_div) {
-            outcome_div.innerText = 'Please enter a valid tag.'
-         }
+         Notification.notify('outcome_div','Please enter a valid tag.')
       }
    }
 
@@ -248,32 +231,25 @@ class TagsConfig {
 
                if(del_tag_results.outcome === 'success') {
       
-                  // to do : wrap in a lib func and rollout all components using 'outcome' messaging
-                  //         w/ option to fade out after certain time.
-                  if(outcome_div) {
-                     outcome_div.innerText = 
-                        `\nThe tag was successfully deleted.\n\n`
-                  }
+                  Notification.notify('outcome_div','The tag was successfully deleted')
       
                   // update list of tags on this page..
                   this.#tags = await this.get_tags()
       
                   const tags_list = new TagsList('tags_list')
                   if(tags_list) {
-                     this.#tags_list_elem.replaceChildren(tags_list.render(this.#tags,this.actions))
+                     this.#tags_list_elem.replaceChildren(await tags_list.render(this.#tags,this.actions))
                      setTimeout(() => tags_list.activate(),100)
                   }
                   
                }
                else {
-                  if(outcome_div) {
-                     outcome_div.innerText = del_tag_results.message
-                  }
+                  Notification.notify('outcome_div',del_tag_results.message)
                }
             }
             break
          default:
-            console.log('actions key was not recognized')
+            Notification.notify('outcome_div','The action was not recognized.')
       }
       
    }

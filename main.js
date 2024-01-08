@@ -24,6 +24,7 @@ const ImportJSONFile = require('./models/ImportJSONFile')
 const { is_valid_collection_item,is_valid_int,is_valid_search,is_valid_app_config_record } = require('./app/utilities/validation')
 const { NOTIFY } = require('./app/utilities/notifications')
 const { LENS } = require('./app/utilities/validation')
+const { is_valid_tag } = require('./app/utilities/strings')
 
 const is_dev = process.env.NODE_ENV !== 'production'
 const is_mac = process.platform === 'darwin'
@@ -80,9 +81,8 @@ const createWindow = async() => {
       ])
    )
    // open devtools if dev env
-   if(is_dev) {
-      main_window.webContents.openDevTools()
-   }
+   if(is_dev) main_window.webContents.openDevTools()
+
    main_window.loadFile(`.${path.sep}renderer${path.sep}index.html`)
 }
 
@@ -97,9 +97,8 @@ app.whenReady().then(async() => {
    // init handlers for two-way requests from renderer
 
    // App handlers
-   // ipcMain.handle('app:getActiveComponentPage',get_active_component_page)
-   // ipcMain.handle('app:setActiveComponentPage',set_active_component_page)
    ipcMain.handle('app:maxSearchTermLen',get_max_search_term_len)
+   ipcMain.handle('app:maxTagsCount',get_max_tags_count)
 
    // Items handlers
    ipcMain.handle('items:getItems',get_collection_items)
@@ -119,7 +118,6 @@ app.whenReady().then(async() => {
    ipcMain.handle('tags:updateTag',update_tag)
    ipcMain.handle('tags:deleteTag',delete_tag)
 
-
    // Config handlers
    ipcMain.handle('config:getAppConfigFields',get_app_config_fields)
    ipcMain.handle('config:getAppConfigRecord',get_app_config_record)
@@ -130,7 +128,7 @@ app.whenReady().then(async() => {
    ipcMain.handle('config:getBackupFolder',get_backup_folder)
 
    // Actions handlers
-   ipcMain.handle('actions:backupDatabase',backup_database)  
+   ipcMain.handle('actions:backupDatabase',backup_database)
    ipcMain.handle('actions:exportCSVFile',export_csv_file)
    ipcMain.handle('actions:exportJSONFile',export_json_file)
    ipcMain.handle('actions:importJSONFile',import_json_file)
@@ -225,8 +223,12 @@ async function flush_deleted_items() {
 //
 
 async function get_max_search_term_len(event) {
-   console.log('get_max_search_term_len',LENS.MAX_SEARCH)
    return LENS.MAX_SEARCH
+}
+
+async function get_max_tags_count(event) {
+   const tag = new Tag(database)
+   return tag.get_max_tags_count()
 }
 
 
@@ -384,7 +386,7 @@ async function search_collection_items (event,context) {
 }
 
 
-// to do : review - file getting bigger - do we want 'controllers'?
+// future- file getting bigger - do we want 'controllers'?
 
 //
 // TAGS API
@@ -396,7 +398,6 @@ async function get_tags(event,context) {
 
    let tag = new Tag(database)
    const results = await tag.read(context)
-   console.log('main.get_tags',results)
    return results
 }
 
@@ -439,13 +440,9 @@ async function get_single_tag(event,id) {
 async function add_tag(event,new_tag) {
 
    if(!database) return NOTIFY.DATABASE_UNAVAILABLE
-   
-   const full_fields_list = Tag.get_full_fields_list()
-   
-   // to do : 
-   // let result = is_valid_collection_item(full_fields_list,new_collection_item)
-   let result = {outcome:'success'}
-   if(result.outcome === 'success') {
+
+   let result = is_valid_tag(new_tag)
+   if(result) {
       let tag = new Tag(database)
       const result = await tag.create(new_tag)
       return result
@@ -453,7 +450,7 @@ async function add_tag(event,new_tag) {
    else {
       return {
          outcome:'fail',
-         message:'The form contains invalid or missing data and we couldn\'t create a new record.',
+         message:`Sorry, we couldn\'t create a new tag.`,
          errors: result.errors
       }       
    }
@@ -463,13 +460,8 @@ async function update_tag(event,updated_tag) {
    
    if(!database) return NOTIFY.DATABASE_UNAVAILABLE
 
-   const full_fields_list = Tag.get_full_fields_list()
-   
-   // to do :
-   // const result = is_valid_collection_item(full_fields_list,updated_collection_item)
-   const result = {outcome:'success'}
-
-   if(result.outcome === 'success') {
+   let result = is_valid_tag(updated_tag)
+   if(result) {
       let tag = new Tag(database)
       const result = await tag.update(updated_tag)
       return result
@@ -624,7 +616,7 @@ async function save_file (event,options) {
    }
    return {
       outcome:'fail',
-      message:'Sorry, we failed to save a file.'
+      message:''     // we don't notify canceled
    }
 }
 
@@ -639,7 +631,7 @@ async function get_file_path () {
    }
    return {
       outcome:'fail',
-      message:'Sorry, we failed to select a file.'
+      message:''
    }
 }
 
@@ -690,10 +682,7 @@ async function open_file () {
 }
 
 async function backup_database(event,file_name,file_path) {
-   
-   if(!database) return NOTIFY.DATABASE_UNAVAILABLE
-
-   let database_backup = new DatabaseBackup(database)
+   let database_backup = new DatabaseBackup()
    const results = await database_backup.create(file_name,file_path)
    return results
 }

@@ -22,9 +22,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
 // 'api-key' is accessible via 'window.', 'api' is your api in main process.
 
 contextBridge.exposeInMainWorld('app_api', {
-   // setActiveComponentPage: (page) => ipcRenderer.invoke('app:setActiveComponentPage',page),
-   // getActiveComponentPage: (page) => ipcRenderer.invoke('app:getActiveComponentPage',page)
-   maxSearchTermLen: () => ipcRenderer.invoke('app:maxSearchTermLen')
+   maxSearchTermLen: () => ipcRenderer.invoke('app:maxSearchTermLen'),
+   maxTagsCount: () => ipcRenderer.invoke('app:maxTagsCount')
 })
 
 contextBridge.exposeInMainWorld('collection_items_api', {

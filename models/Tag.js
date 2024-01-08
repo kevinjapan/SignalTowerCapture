@@ -47,6 +47,10 @@ class Tag {
       return copy_fields_list
    }
 
+   get_max_tags_count() {
+      let copy = this.#max_tags_count
+      return copy
+   }
 
 
    //
@@ -61,13 +65,8 @@ class Tag {
       let status = 'tags.deleted_at IS NULL'
       let order_by = 'tag'
       if(context.filters) {
-         // to do : this func returns sql for 'tags.'...
          status = get_status_condition_sql('tags',context.filters.record_status)
-         //order_by = get_order_by_condition_sql('tags',context.filters.order_by,context.filters.order_by_direction)
       }
-
-      // to do : review all console.log() - remove/replace w/ logging or notifications
-      console.log(status,order_by)
 
       // wrap in a promise to await result
       const result = await new Promise((resolve,reject) => {
@@ -77,10 +76,8 @@ class Tag {
             sql = `SELECT COUNT(id) as count FROM tags WHERE ${status}`
             this.#database.get(sql, (error, rows) => {
                if(error) {
-                  console.log(error)
                   reject(error)
                }
-               console.log('rows',rows)
                total_count = rows.count
             })
 
@@ -104,8 +101,6 @@ class Tag {
 
       // reduce fields to those required in CollectionItemCard (also requires 'type' for displaying dates)
       const in_card_fields = Tag.#full_fields_list
-
-      console.log('result',result)
       
       if(result) {
          let response_obj = {
@@ -119,7 +114,6 @@ class Tag {
          return response_obj
       }
       else {
-         console.log('got here')
          let fail_response = {
             query:'read_tags',
             outcome:'fail',
@@ -292,8 +286,6 @@ class Tag {
          return field.key
       })
 
-      console.log('field_keys',field_keys)
-
       // build '?' string
       // const inserts = Array(fields.length).fill(0)
       const inserts = field_keys.map((field) => {
@@ -309,8 +301,6 @@ class Tag {
 
       const sql = `INSERT INTO tags(${field_keys.toString()},created_at,updated_at) 
                    VALUES(${inserts.toString()},'${created_at}','${created_at}')`
-
-      console.log('sql',sql)
 
       const result = await new Promise((resolve,reject) => {
          this.#database.run(
@@ -557,8 +547,6 @@ class Tag {
    //
    async flush_deleted(cut_off_date) {
 
-      console.log('cut_off_date',typeof cut_off_date)
-
       let str_date = get_sqlready_date_from_js_date(cut_off_date)
       console.log(' > Permanently deleting all records soft deleted before',str_date)
 
@@ -605,294 +593,6 @@ class Tag {
    }
 
 
-
-   //
-   // SEARCH
-   // sql search 
-   // we use 'INSTR' and '||' instead of 'LIKE ?' - easier to manage columns / removes using inefficient 'OR's / removes % wildcard (cleaner)
-   //
-   async search(context) {
-
-      // pagination
-      let offset = (parseInt(context.page) - 1) * this.#max_tags_count
-
-      // execution time
-      let execution_time = 0
-      const start = Date.now()
-
-      // filters
-      let status = 'tags.deleted_at IS NULL'
-      let order_by = 'title'
-      if(context.filters) {
-         status = get_status_condition_sql('tags',context.filters.record_status)
-         order_by = get_order_by_condition_sql('tags',context.filters.order_by,context.filters.order_by_direction)
-      }
-
-      // process search_term
-      if(!context.search_term) {
-         return {
-            query:'search_tags',
-            outcome:'fail',
-            message:'Please enter a valid search term.'
-         }
-      }
-      let full_search_term = context.search_term.trim()
-      if(full_search_term.length < MIN_SEARCH_TERM_LEN) {  
-         return {
-            query:'search_tags',
-            outcome:'fail',
-            message:'The search term you entered has too few characters - please enter 3 or more characters.'
-         }
-      }
-
-      // package search_term into valid search token(s) array
-      let search_term_tokens = tokenize_search_term(full_search_term)
-
-      // exlude common words from our searches
-      let filtered_search_term_tokens = remove_stopwords(search_term_tokens)
-
-      // build sql INSTR functions
-      let instr_funcs = this.build_instr_funcs_sql(filtered_search_term_tokens)
-
-
-      // get total count
-      const total_count = await new Promise((resolve,reject) => {
-         
-         const count_query = `SELECT COUNT(DISTINCT id) as count 
-                              FROM tags 
-                              WHERE
-                                 ${instr_funcs} > 0
-                              AND ${status}`
-         let stmt = this.#database.prepare(count_query,(err) => {
-            if(err) reject(err)
-         })
-         stmt.each(filtered_search_term_tokens, function(err, row) {
-            if(err) reject(err)
-            stmt.finalize()
-            resolve(row.count)
-         })
-      }).catch((error) => {
-         this.set_last_error(error)
-         return false
-      })
-
-      
-      // execute the search
-      let search_result = null
-      
-      // only retrieve records if they exist
-      if(total_count) {
-
-         search_result = await new Promise((resolve,reject) => {
-            
-               const fields = Tag.#full_fields_list.map((field) => {
-                  return field.key
-               })
-               
-               // get results dataset (paginated by offset)
-               const search_query = `SELECT ${fields.toString()}
-                     FROM tags 
-                     WHERE 
-                        ${instr_funcs} > 0               
-                     AND 
-                        ${status}
-                     ORDER BY
-                        ${order_by}
-                     LIMIT ${this.#max_tags_count}
-                     OFFSET ${offset}`
-
-               this.#database.all(search_query,filtered_search_term_tokens, (error, rows) => {
-                  if(error) {
-                     this.set_last_error(error)
-                     reject(error)
-                  }
-                  resolve(rows)            
-               })
-
-         }).catch((error) => {
-            this.set_last_error(error)
-            return false
-         })
-      }
-            
-      // calc execution time
-      const end = Date.now()
-      execution_time = `${(end - start) / 1000} seconds`
-
-      // reduce fields to those required in CollectionItemCard (inc 'type' for displaying dates)
-      const in_card_fields = this.get_in_card_fields(Tag.#full_fields_list)
-      
-      // response
-      if(search_result || search_result === null) {
-         return {
-            query:'search_tags',
-            outcome:'success',
-            context:context,
-            count:total_count,
-            per_page:this.#max_tags_count,
-            execution_time:execution_time,
-            tag_fields:in_card_fields,
-            tags:result
-         }
-      }
-      
-      let response = {
-         query:'search_tags',
-         outcome:'fail',
-         message:'There was an error accessing the database. [Tag.search] ' + this.#last_error.message
-      }
-      this.clear_last_error()
-      return response
-   
-   }
-
-
-   
-   //
-   // FULL TEXT SEARCH
-   // sql search using fts5 extension
-   // dependency: virtual table / triggers
-   // future: do we need to remove stopwords - see search()
-   //
-   // future : to vary search cols at user request - can modify MATCH term to limit cols -
-   //     eg   ci_fts MATCH 'title: eland';
-   //          ci_fts MATCH '{title content_desc}:eland';
-   //
-   async search_fts(context) {
-      
-      // pagination
-      let offset = (parseInt(context.page) - 1) * this.#max_tags_count
-
-      // execution time
-      let execution_time = 0
-      const start = Date.now()
-
-      // filters
-      // - we don't enable client-supplied 'order_by' since we order by rank (bm25)
-      let status = 'tags.deleted_at IS NULL'
-      if(context.filters) {
-         status = get_status_condition_sql('tags',context.filters.record_status)
-      }
-
-      // process search_term
-      if(!context.search_term) {
-         return {
-            query:'search_tags',
-            outcome:'fail',
-            message:'Please enter a valid search term.'
-         }
-      }
-      let full_search_term = context.search_term.trim()
-      if(full_search_term.length < MIN_SEARCH_TERM_LEN) {  
-         return {
-            query:'search_tags',
-            outcome:'fail',
-            message:'The search term you entered has too few characters - please enter 3 or more characters.'
-         }
-      }
-
-      // get total count
-      const total_count = await new Promise((resolve,reject) => {
-
-         const count_query = `SELECT 
-                                 COUNT(tags.id) as count 
-                              FROM tags
-                                 INNER JOIN tags_fts ci_fts
-                                 ON ci_fts.id = tags.id
-                              WHERE
-                                 tags_fts MATCH ?
-                              AND 
-                                 ${status}`
-         let stmt = this.#database.prepare(count_query,(err) => {
-            if(err) reject(err)
-         })
-         stmt.each(`${full_search_term}*`, (err, row) => {
-            if(err) reject(err)
-            stmt.finalize()
-            resolve(row.count)
-         })
-      }).catch((error) => {
-         this.set_last_error(error)
-         return false
-      })
-
-
-      // execute the search
-      let search_result = null
-         
-      // only retrieve records if they exist
-      if(total_count) {
-
-         search_result = await new Promise((resolve,reject) => {
-            
-            const fields = Tag.#full_fields_list.map((field) => {
-               return `tags.${field.key}`
-            })
-
-            // get results dataset (paginated by offset)
-            // we order using bm25() rather than 'rank' col to permit weighting cols.
-            const search_query = `
-                  SELECT
-                     ${fields.toString()}
-                  FROM tags
-                     INNER JOIN tags_fts ci_fts
-                     ON ci_fts.id = tags.id
-                  WHERE 
-                     tags_fts MATCH ?
-                  AND 
-                     ${status}
-                  ORDER BY
-                     bm25(tags_fts,0,10,2,6)
-                  LIMIT ${this.#max_tags_count}
-                  OFFSET ${offset}`
-
-                  // to do : weighting here we need to make easier to configure/find if changes.. 
-                  //         relate to database.js create table.
-
-            this.#database.all(search_query,`${full_search_term}*`, (error, rows) => {
-               if(error) {
-                  this.set_last_error(error)
-                  reject(error)
-               }
-               resolve(rows)            
-            })
-         }).catch((error) => {
-            this.set_last_error(error)
-            return false
-         })
-      }
-
-      // calc execution time
-      const end = Date.now()
-      execution_time = `${(end - start) / 1000} seconds`
-
-      // reduce fields to those required in CollectionItemCard (inc 'type' for displaying dates)
-      const in_card_fields = this.get_in_card_fields(Tag.#full_fields_list)
-
-      // response
-      if(search_result || search_result === null) {
-         return {
-            query:'search_tags',
-            outcome:'success',
-            context:context,
-            count:total_count,
-            per_page:this.#max_tags_count,
-            execution_time:execution_time,
-            tag_fields:in_card_fields,
-            tags:search_result
-         }
-      }
-
-      let response =  {
-         query:'search_tags',
-         outcome:'fail',
-         message:'There was an error accessing the database. [Tag.search_fts] ' + this.#last_error.message
-      }
-      this.clear_last_error()
-      return response
-   }
-
-
    //
    // error handlers for our promise wrappers around database calls
    // any client method calling set_last_error should clear after use to prevent leaking 
@@ -903,8 +603,6 @@ class Tag {
    clear_last_error = () => {
       this.#last_error = ''
    }
-
-
 
 }
 
