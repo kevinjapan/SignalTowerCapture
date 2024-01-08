@@ -558,8 +558,6 @@ class CollectionItem {
    //
    async flush_deleted(cut_off_date) {
 
-      console.log('cut_off_date',typeof cut_off_date)
-
       let str_date = get_sqlready_date_from_js_date(cut_off_date)
       console.log(' > Permanently deleting all records soft deleted before',str_date)
 
@@ -761,6 +759,8 @@ class CollectionItem {
    //
    async search_fts(context) {
       
+      console.log('search_fts')
+
       // pagination
       let offset = (parseInt(context.page) - 1) * this.#items_per_page
 
@@ -792,6 +792,10 @@ class CollectionItem {
          }
       }
 
+      // package search_term into valid search token(s) array
+      let search_term_tokens = tokenize_search_term(full_search_term)
+      full_search_term = search_term_tokens.join('* OR ')
+
       // get total count
       const total_count = await new Promise((resolve,reject) => {
 
@@ -807,6 +811,7 @@ class CollectionItem {
          let stmt = this.#database.prepare(count_query,(err) => {
             if(err) reject(err)
          })
+
          stmt.each(`${full_search_term}*`, (err, row) => {
             if(err) reject(err)
             stmt.finalize()
