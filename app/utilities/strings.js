@@ -25,7 +25,22 @@ const get_random_string = (min_len = 5, max_len = 25) => {
 }
 
 
+//
+// is valid tag
+// future : any other checks here?
+//
+const is_valid_tag = (tag) => {
+
+   if(typeof tag.tag !== 'string') return false
+   
+   if(tag.tag.length >= 3 && tag.tag.length <= 24) {
+      return true
+   }
+   return false
+}
+
 
 module.exports = {
-   get_random_string
+   get_random_string,
+   is_valid_tag
 }
