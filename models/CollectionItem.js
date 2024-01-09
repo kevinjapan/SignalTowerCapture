@@ -102,10 +102,11 @@ class CollectionItem {
             sql = `SELECT ${fields.toString()} 
                      FROM collection_items 
                      WHERE ${status}
-                     ORDER BY ${order_by}
                      COLLATE NOCASE
+                     ORDER BY ${order_by}
                      LIMIT ${this.#items_per_page} 
                      OFFSET ${offset}`
+
             this.#database.all(sql, (error, rows) => {
                if(error) reject(error)
                resolve(rows)            
@@ -113,11 +114,9 @@ class CollectionItem {
          })
       }).catch((error) => this.set_last_error(error))
  
-
       // reduce fields to those required in CollectionItemCard (also requires 'type' for displaying dates)
       const in_card_fields = this.get_in_card_fields(CollectionItem.#full_fields_list)
 
-      
       if(result) {
          let response_obj = {
             query:'read_collection_items',

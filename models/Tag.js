@@ -88,8 +88,8 @@ class Tag {
             sql = `SELECT ${fields.toString()} 
                      FROM tags 
                      WHERE ${status}
-                     ORDER BY ${order_by}
                      COLLATE NOCASE
+                     ORDER BY ${order_by}
                      LIMIT ${this.#max_tags_count}`
             this.#database.all(sql, (error, rows) => {
                if(error) reject(error)
