@@ -63,7 +63,7 @@ class Tag {
 
       // filters
       let status = 'tags.deleted_at IS NULL'
-      let order_by = 'tag'
+      let order_by = 'tag COLLATE NOCASE ASC'
       if(context.filters) {
          status = get_status_condition_sql('tags',context.filters.record_status)
       }
@@ -87,8 +87,7 @@ class Tag {
 
             sql = `SELECT ${fields.toString()} 
                      FROM tags 
-                     WHERE ${status}
-                     COLLATE NOCASE
+                     WHERE ${status}                     
                      ORDER BY ${order_by}
                      LIMIT ${this.#max_tags_count}`
             this.#database.all(sql, (error, rows) => {

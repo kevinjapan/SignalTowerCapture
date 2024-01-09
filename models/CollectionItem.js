@@ -78,7 +78,7 @@ class CollectionItem {
 
       // filters
       let status = 'collection_items.deleted_at IS NULL'
-      let order_by = 'title'
+      let order_by = 'title COLLATE NOCASE ASC'
       if(context.filters) {
          status = get_status_condition_sql('collection_items',context.filters.record_status)
          order_by = get_order_by_condition_sql('collection_items',context.filters.order_by,context.filters.order_by_direction)
@@ -102,10 +102,11 @@ class CollectionItem {
             sql = `SELECT ${fields.toString()} 
                      FROM collection_items 
                      WHERE ${status}
-                     COLLATE NOCASE
-                     ORDER BY ${order_by}
+                     ORDER BY ${order_by}                     
                      LIMIT ${this.#items_per_page} 
                      OFFSET ${offset}`
+
+            console.log('sql',sql)
 
             this.#database.all(sql, (error, rows) => {
                if(error) reject(error)
