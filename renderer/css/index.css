@@ -345,6 +345,13 @@ button:hover {
 .text_blue {
    color:hsl(240, 100%, 50%);
 }
+.font_normal {
+   font-weight: normal;
+}
+.font_0\.9 {
+   font-size:.9rem;
+}
+
 /* semantic utility colors */
 .bg_positive {
    color:var(--bg_semantic_positive_text);
@@ -513,7 +520,25 @@ label/[value|input] layout for Record and Form views
    width:100%;
 }
 
+/* remove radio button border */
+fieldset {
+   border:none;
+}
 
+input[type='radio'] {
+   box-sizing: border-box;
+   appearance: none;
+   background: white;
+   outline: 1px solid hsl(0, 0%, 70%);
+   border: 1px solid white;
+   width: 12px;
+   height: 12px;
+   margin-top:6px;
+ }
+ 
+ input[type='radio']:checked {
+   background: hsl(0, 0%, 70%);
+ }
 
 /* 
    errors occupy space when they are active 

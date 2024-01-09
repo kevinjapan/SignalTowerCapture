@@ -18,27 +18,21 @@ class AdvancedSearch {
          attributes:[
             {key:'id',value:'advanced_search'}
          ],
-         classlist:['flex_col','mr_auto','p_3','border','hidden'],
-         text:'Advanced Search sub-component'
+         classlist:['flex','m_0','p_0','hidden']
       })
 
-      let record_status_radio = create_radio({
+      const record_status_radio = create_radio({
          name:'record_status',
-         text:'select record status',
-         legend:'Record status',
-         classlist:['bg_yellow'],
+         // legend:'Record status',
+         classlist:['m_0'],
          radio_buttons:[
             {key:'active_records',label:'Active Records',value:'active_records',checked:true},
             {key:'deleted_records',label:'Deleted Records',value:'deleted_records'},
          ]
       })
 
-
-      
-
       // assemble
-      advanced_search.append(record_status_radio)
-      
+      advanced_search.append(record_status_radio)      
       return advanced_search
    }
 
@@ -59,14 +53,8 @@ class AdvancedSearch {
          })
       }
 
-      let search_filter = {
-
-      }
-      
-      // this.#props.filter_search(search_filter)
-      
-
    }
+
 }
 
 

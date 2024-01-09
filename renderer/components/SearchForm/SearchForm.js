@@ -34,7 +34,8 @@ class SearchForm {
       const search_form = create_form({
          attributes:[
             {key:'id',value:'search_form'}
-         ]
+         ],
+         classlist:['flex']
       })
 
       let search_term_input = create_input({
@@ -60,7 +61,7 @@ class SearchForm {
 
       // magnifying glass btn icon
       let icon = document.createElementNS('http://www.w3.org/2000/svg','svg')
-      icon.classList.add('pt_.5','ml_1','mt_0.5')
+      icon.classList.add('pt_.5','ml_1','mt_0')
       const icon_path = document.createElementNS('http://www.w3.org/2000/svg','path')
       icon.setAttribute('width','16')
       icon.setAttribute('height','16')               
@@ -99,7 +100,8 @@ class SearchForm {
       let form_n_btn = create_div({
          classlist:['flex','w_full']
       })
-      form_n_btn.append(search_form,search_btn)
+      search_form.append(search_btn)
+      form_n_btn.append(search_form)
       search_form_wrap.append(form_n_btn,advanced_search_link,advanced_search_dropdown)
       return search_form_wrap
    }
@@ -111,7 +113,10 @@ class SearchForm {
       
       // click 'Search' btn
       if(search_btn) {
-         search_btn.addEventListener('click',() => {
+         search_btn.addEventListener('click',(event) => {
+
+            event.preventDefault()
+            console.log('in here')
             let search_context = {
                key: 'Search',
                search_term:search_term_input.value,

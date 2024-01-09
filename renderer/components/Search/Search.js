@@ -142,7 +142,10 @@ class Search {
                      bottom_pagination_nav.activate()
                   }
                   else {
-                     this.#browse_results_container.innerText = 'No matching records were found. '
+                     let number_records = document.getElementById('number_records')
+                     if(number_records) {             
+                        number_records.innerText = 'No matching records were found. '
+                     }
                   }
 
                   // re-instate scroll position if user had scrolled list before opening a record
@@ -177,8 +180,6 @@ class Search {
    submit_search_term = (search_context) => {
       this.#search_context = search_context
       this.#search_context.scroll_y = 0
-
-      console.log('search_context',search_context)
       this.get_items()
    }
 
