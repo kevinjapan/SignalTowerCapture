@@ -33,17 +33,20 @@ const get_status_condition_sql = (table,record_status) => {
    return ''
 }
 
-// future : enum order_by inputs so client input can never mistakenly be used directly in sql.
-//          although this doesn't ensure client will always come through this func..?
 
-const get_order_by_condition_sql = (order_by,direction) => {
+const get_order_by_condition_sql = (table_name,order_by,direction) => {
 
-   switch(order_by) {
-      case 'deleted_at':
-         return direction === 'ASC' ? 'deleted_at ASC' : 'deleted_at DESC'
-      default:
-         return ''
+   // if we want case-insensitive - eg 'title COLLATE NOCASE ASC'
+
+   if(is_permitted_table(table_name)) {
+      switch(order_by) {
+         case 'deleted_at':
+            return direction === 'ASC' ? 'deleted_at ASC ' : 'deleted_at DESC '
+         default:
+            return ''
+      }
    }
+   return ''
 }
 
 
