@@ -76,7 +76,7 @@ export const create_radio = (props) => {
    fieldset.classList.add('flex')
 
    const legend = document.createElement('legend')
-   legend.innerText = props.legend
+   if(props.legend) legend.innerText = props.legend
 
    const btn_group = create_div({
       classlist:['flex','flex_col']
@@ -87,7 +87,7 @@ export const create_radio = (props) => {
       
       const label_input = create_label({
          text:radio_button.label,
-         classlist:['flex']
+         classlist:['flex','gap_1','text_grey','font_normal']
       })
       
       const radio_input = create_input({
@@ -96,8 +96,7 @@ export const create_radio = (props) => {
             {key:'name',value:props.name},
             {key:'type',value:'radio'},
             {key:'value',value:radio_button.value},
-         ],
-         classlist:['bg_yellow']
+         ]
       })
       if(radio_button.checked) radio_input.checked = true
       label_input.prepend(radio_input)
@@ -106,21 +105,29 @@ export const create_radio = (props) => {
    })
 
    // assemble
-   fieldset.append(legend,btn_group)
+   if(props.legend) fieldset.append(legend)
+   fieldset.append(btn_group)
 
    hydrate_element(fieldset,props)
    return fieldset
 }
 
 
+
+
+//
 // create the dom element
+//
 const create_element = (tag,props) => {
    let elem = document.createElement(tag)
    if(props) hydrate_element(elem,props)
    return elem
 }
 
+
+//
 // hydrate the element with the given props - attributes/class/text
+//
 const hydrate_element = (elem,props) => {
    if(props) {
       if(typeof props.attributes !== 'undefined') {
