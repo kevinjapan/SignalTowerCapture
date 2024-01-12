@@ -1,4 +1,4 @@
-const sqlite3 = require('sqlite3').verbose()
+const CollectionItemFTS = require('./CollectionItemFTS')
 const { get_sqlready_datetime,get_sqlready_date_from_js_date } = require('../app/utilities/datetime')
 const { is_valid_date } = require('../app/utilities/validation')
 const { 
@@ -9,7 +9,6 @@ const {
    tokenize_search_term,
    remove_stopwords 
 } = require('../app/utilities/search_utilities')
-
 
 
 class CollectionItem {
@@ -30,6 +29,13 @@ class CollectionItem {
    // Our methods return appropriate filtered arrays of eg 'field_names', and we build rows/forms/etc  
    // from these arrays in the renderer, so the order of this array is carried over to front-end views.
    //
+
+   // to do : change 'sql' property to 'data_type' property (correct term for sql syntax)
+   //         will require changes to:
+   //         - all models
+   //         - database_utilities.js
+   
+
    static #full_fields_list = [
       {key:'title',sql:'TEXT NOT NULL',editable:true,in_card:true,export:true,test:{type:'string',min:3,max:100}},
       {key:'tags',sql:'TEXT',editable:true,in_card:false,export:true,test:{type:'string',min:0,max:200}},
@@ -72,6 +78,8 @@ class CollectionItem {
    //
    async read(context) {
 
+      console.log('context',context)
+
       let offset = (parseInt(context.page) - 1) * this.#items_per_page
       let total_count = 0  
       let sql
@@ -79,9 +87,13 @@ class CollectionItem {
       // filters
       let status = 'collection_items.deleted_at IS NULL'
       let order_by = 'title COLLATE NOCASE ASC'
+      let filter_by_char = ''
       if(context.filters) {
-         status = get_status_condition_sql('collection_items',context.filters.record_status)
-         order_by = get_order_by_condition_sql('collection_items',context.filters.order_by,context.filters.order_by_direction)
+         if(context.filters.record_status) status = get_status_condition_sql('collection_items',context.filters.record_status)
+         if(context.filters.order_by) order_by = get_order_by_condition_sql('collection_items',context.filters.order_by,context.filters.order_by_direction)
+         if(context.filters.filter_char) {
+            filter_by_char = ` AND title LIKE '${context.filters.filter_char}%' `
+         }
       }
 
       // wrap in a promise to await result
@@ -89,7 +101,7 @@ class CollectionItem {
 
          this.#database.serialize(() => {
             
-            sql = `SELECT COUNT(id) as count FROM collection_items WHERE ${status}`
+            sql = `SELECT COUNT(id) as count FROM collection_items WHERE ${status} ${filter_by_char}`
             this.#database.get(sql, (error, rows) => {
                if(error) reject(error)
                total_count = rows.count           
@@ -101,8 +113,8 @@ class CollectionItem {
 
             sql = `SELECT ${fields.toString()} 
                      FROM collection_items 
-                     WHERE ${status}
-                     ORDER BY ${order_by}                     
+                     WHERE ${status} ${filter_by_char} 
+                     ORDER BY ${order_by}                      
                      LIMIT ${this.#items_per_page} 
                      OFFSET ${offset}`
 
@@ -835,11 +847,14 @@ class CollectionItem {
                return `collection_items.${field.key}`
             })
 
+            const fts_ordered_weightings = CollectionItemFTS.get_ordered_weightings()
+
             // get results dataset (paginated by offset)
             // we order using bm25() rather than 'rank' col to permit weighting cols.
             const search_query = `
                   SELECT
-                     ${fields.toString()}
+                     ${fields.toString()},
+                     bm25(collection_items_fts,${fts_ordered_weightings})
                   FROM collection_items
                      INNER JOIN collection_items_fts ci_fts
                      ON ci_fts.id = collection_items.id
@@ -848,12 +863,9 @@ class CollectionItem {
                   AND 
                      ${status}
                   ORDER BY
-                     bm25(collection_items_fts,0,10,2,6)
+                     bm25(collection_items_fts,${fts_ordered_weightings})
                   LIMIT ${this.#items_per_page}
                   OFFSET ${offset}`
-
-                  // to do : weighting here we need to make easier to configure/find if changes.. 
-                  //         relate to database.js create table.
 
             this.#database.all(search_query,`${full_search_term}*`, (error, rows) => {
                if(error) {

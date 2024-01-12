@@ -1,6 +1,7 @@
 import App from '../App/App.js'
 import CollectionItemCard from '../CollectionItemCard/CollectionItemCard.js'
 import PaginationNav from '../PaginationNav/PaginationNav.js'
+import AlphabetCtrl from '../AlphabetCtrl/AlphabetCtrl.js'
 import { ui_display_number_as_str } from '../../utilities/ui_strings.js'
 import { create_section,create_div,create_h } from '../../utilities/ui_elements.js'
 
@@ -18,13 +19,24 @@ class Browse {
       scroll_y:0
    }
 
+   #filter_char = null  // future - just use browse_context directly?
+
    // props 
    #props = null
 
    constructor(props) {
-      // returning 'back to list' from Records will return the passed 'context token'
+
+      // 'back' to list from Records will return the passed 'context token'
       if(props) {
+         
          this.#browse_context = props.context
+
+         // retain 'filter_char' if 'back' from list item (CollectionItemRecord)
+         if(props.context.filters) {
+            if(props.context.filters.filter_char) {
+               this.#filter_char = props.context.filters.filter_char
+            }
+         }
       }
       this.#props = props
    }
@@ -39,16 +51,11 @@ class Browse {
       })
             
       const browse_heading = create_h({
-         level:'h1',
-         text:'Browse All Records',
+         level:'h2',
+         text:'Browse Records',
          classlist:['m_0']
       })
-
-      let app_status = create_section({
-         attributes:[
-            {key:'id',value:'app_status'}
-         ]
-      })
+      browse_section.append(browse_heading)
 
       let number_records = create_div({
          attributes:[
@@ -62,6 +69,16 @@ class Browse {
             {key:'id',value:'browse_results_container'}
          ]
       })
+
+      let alphabet_ctrl_props = {
+         submit_alpha_filter:this.submit_alpha_filter,
+         reset_alpha_filter:this.reset_alpha_filter
+      }
+      
+      const alphabet_ctrl = new AlphabetCtrl(alphabet_ctrl_props)
+      browse_section.append(alphabet_ctrl.render())
+      setTimeout(() => alphabet_ctrl.activate(),100)
+      
       
       // required for re-instating search_context on 'back' to list actions
       if(this.#browse_context) {
@@ -69,7 +86,7 @@ class Browse {
       }
 
       // assemble
-      browse_section.append(browse_heading,number_records,this.#browse_results_container)
+      browse_section.append(number_records,this.#browse_results_container)
       return browse_section
    }
 
@@ -79,6 +96,13 @@ class Browse {
    get_items = async () => {
 
       if(this.#browse_context) {
+
+         if(this.#filter_char != null) {
+            this.#browse_context.filters = {filter_char:`${this.#filter_char}`}
+         }
+         else {
+            this.#browse_context.filters = null
+         }
 
          try {
 
@@ -100,10 +124,14 @@ class Browse {
                   
                      let number_records = document.getElementById('number_records')
                      if(number_records) {             
-                        number_records.innerText = `There are ${ui_display_number_as_str(collection_items_obj.count)} records.`
+                        number_records.innerText = `
+                           There are ${ui_display_number_as_str(collection_items_obj.count)} records ${this.#filter_char ? 'with titles starting with \'' + this.#filter_char + '\'': ''}`
                      }
             
                      let props = {context: this.#browse_context}
+
+                     console.log('browse props',props)
+
                      const collection_item_card = new CollectionItemCard(props) 
                      collection_items_obj.collection_items.forEach((item) => {        
                         this.#browse_results_container.appendChild(collection_item_card.render(collection_items_obj.collection_item_fields,item))
@@ -156,6 +184,19 @@ class Browse {
    }
 
 
+   // callbacks for AlphabetCtrl
+   submit_alpha_filter = (char) => {
+      this.#browse_context.page = 1
+      this.#filter_char = char
+      this.#browse_context.scroll_y = 0
+      this.get_items()
+   }
+   reset_alpha_filter = () => {
+      this.#browse_context.page = 1
+      this.#filter_char = null
+      this.#browse_context.scroll_y = 0
+      this.get_items()
+   }
 
 }
 
