@@ -152,6 +152,9 @@ button:hover {
    -ms-flex-wrap:wrap;
    flex-wrap:wrap;
 }
+.justify_center {
+   justify-content:center;
+}
 .space_between {
    -webkit-box-pack:justify;
    -ms-flex-pack:justify;
@@ -169,6 +172,8 @@ button:hover {
 }
 
 
+.gap_0\.15, 
+.gap_\.15    {gap:.15rem;}
 .gap_0\.5, 
 .gap_\.5    {gap:.5rem;}
 .gap_1      {gap:1rem;}
@@ -189,6 +194,9 @@ button:hover {
 .w_full     {width:100%;}
 .w_400      {width:400px;}
 
+.h_1  {height:1rem;}
+.h_2  {height:2rem;}
+.h_3  {height:3rem;}
 .h_100   {height:100%;}
 
 
@@ -385,7 +393,9 @@ button:hover {
    background:hsl(240, 100%, 95%);
 }
 
-
+.highlighted_btn {
+   background:var(--bg_positive);
+}
 
 /* Pagination */
 .page_selector {
