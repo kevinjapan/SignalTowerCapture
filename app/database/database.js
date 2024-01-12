@@ -1,7 +1,8 @@
 const sqlite3 = require('sqlite3').verbose()
-const AppConfig = require('../../models/AppConfig')
-const CollectionItem = require('../../models/CollectionItem')
-const Tag = require('../../models/Tag')
+const { 
+   get_table_create_fields,
+   get_table_insert_fields 
+} = require('../utilities/database_utilities')
 
 
 //
@@ -71,6 +72,8 @@ class Database {
    }
 
 
+   // to do : tidy this code / remove console.logs 
+
    //
    // create the database tables
    // sqlite PRIMARY KEY auto-increments by default (we do not explicitly use AUTOINCREMENT)
@@ -82,118 +85,85 @@ class Database {
 
          // CollectionItems table
          //
-         let collection_items_fields = CollectionItem.get_full_fields_list()
-         let sql = ''
-         if(Array.isArray(collection_items_fields)) {
-            collection_items_fields.forEach((field) => {
-               sql += field.key + ' ' + field.sql + ','
-            })
-         }
-         sql = sql.slice(0,-1)
-
-         this.#db.run(`CREATE TABLE IF NOT EXISTS collection_items (${sql})`,
-            function (error) {
-               if(error) {
-                  console.log('There was an error initializing the database. ',error.message)
-               }
+         let collection_items_fields = get_table_create_fields('collection_items')
+         this.#db.run(`CREATE TABLE IF NOT EXISTS collection_items (${collection_items_fields})`, function (error) {
+               if(error) console.log('There was an error initializing the database. ',error.message)
             }
          )
-
 
          // CollectionItems FTS virtual table
-         // support FTS5 full text search extension
+         // we don't include 'data_type' for full text search virtual table
          //
+         let collection_items_fts_fields = get_table_insert_fields('collection_items_fts')
          this.#db.run(`CREATE VIRTUAL TABLE IF NOT EXISTS 
-                        collection_items_fts USING fts5 (id,title,content_desc,tags)`,
-            function (error) {
-               if(error) {
-                  console.log('There was an error initializing the database. ',error.message)
-               }
+                        collection_items_fts USING fts5 (${collection_items_fts_fields})`, function (error) {
+               if(error) console.log('There was an error initializing the database. ',error.message)
             }
          )
-
 
          // Tags table
          //
-         let tag_fields = Tag.get_full_fields_list()
-         let tags_table_sql = ''
-         if(Array.isArray(tag_fields)) {
-            tag_fields.forEach((tag) => {
-               tags_table_sql += tag.key + ' ' + tag.sql + ','
-            })
-         }
-         tags_table_sql = tags_table_sql.slice(0,-1)
-
-         this.#db.run(`CREATE TABLE IF NOT EXISTS tags (${tags_table_sql})`,
-            function (error) {
-               if(error) {
-                  console.log('There was an error initializing the database. ',error.message)
-               }
+         let tags_fields = get_table_create_fields('tags')
+         this.#db.run(`CREATE TABLE IF NOT EXISTS tags (${tags_fields})`,function (error) {
+               if(error) console.log('There was an error initializing the database. ',error.message)
             }
          )
-         
+  
+         // AppConfig table
+         //
+         let app_config_fields = get_table_create_fields('app_config')
+         this.#db.run(`CREATE TABLE IF NOT EXISTS app_config (${app_config_fields})`, function (error) { 
+               if(error) console.log('There was an error initializing the database. ',error.message)
+            }
+         )
 
-         // Triggers for collection_items_fts
-         // synch collection_items_fts w/ collection_items
+         // Triggers for FTS
+         // synch 'collection_items_fts' w/ 'collection_items'
+         //   
+         let fts_insert_fields = get_table_insert_fields('collection_items_fts')
+         let fts_insert_fields_values = fts_insert_fields.map(field => `NEW.${field}`)
+
+         // create record trigger
          this.#db.run(`CREATE TRIGGER IF NOT EXISTS insert_collection_items_fts 
                         after INSERT on collection_items
                         begin
-                           INSERT INTO collection_items_fts (id,title,content_desc,tags)
-                           VALUES(NEW.id,NEW.title,NEW.content_desc,NEW.tags);
-                        end;`,
-            function (error) {
-               if(error) {
-                  console.log('There was an error initializing the database. ',error.message)
-               }
+                           INSERT INTO collection_items_fts (${fts_insert_fields})
+                           VALUES(${fts_insert_fields_values});
+                        end;`,function (error) {
+               if(error) console.log('There was an error initializing the database. ',error.message)
             }
          )
+
+         // update record trigger
+         let update_fields = fts_insert_fields.filter(field => {
+            return field !== 'id'
+         })
+         let new_update_fields = update_fields.map(field => {
+            return `${field} = NEW.${field}`
+         })
          this.#db.run(`CREATE TRIGGER IF NOT EXISTS update_collection_items_fts 
                         after UPDATE on collection_items
                         begin
                            UPDATE collection_items_fts
-                           SET
-                              title = NEW.title,
-                              content_desc = NEW.content_desc,
-                              tags = NEW.tags
+                           SET ${new_update_fields}
                            WHERE id = NEW.id;
-                        end;`,
-            function (error) {
-               if(error) {
-                  console.log('There was an error initializing the database. ',error.message)
-               }
+                        end;`, function (error) {
+               if(error) console.log('There was an error initializing the database. ',error.message)
             }
          )
+
+         // delete record trigger
          this.#db.run(`CREATE TRIGGER IF NOT EXISTS delete_collection_items_fts 
                         after DELETE on collection_items
                         begin
                            DELETE FROM collection_items_fts
                            WHERE id = OLD.id;
-                        end;`,
-            function (error) {
-               if(error) {
-                  console.log('There was an error initializing the database. ',error.message)
-               }
+                        end;`, function (error) {
+               if(error) console.log('There was an error initializing the database. ',error.message)
             }
          )
 
          
-         // AppConfig table
-        
-         let app_config_fields = AppConfig.get_full_fields_list()
-         sql = ''
-         if(Array.isArray(app_config_fields)) {
-            app_config_fields.forEach((field) => {
-               sql += field.key + ' ' + field.sql + ','
-            })
-         }
-         sql = sql.slice(0,-1)
-         this.#db.run(`CREATE TABLE IF NOT EXISTS app_config (${sql})`,
-            function (error) { 
-               if(error) {
-                  console.log('There was an error initializing the database. ',error.message)
-               }
-            }
-         )
       })
    }
 
