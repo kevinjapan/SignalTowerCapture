@@ -84,9 +84,9 @@ class CollectionItemRecord {
          // display file if file_name is recognized image type
          if(field.key === 'file_name') {
 
-            if(await is_image_file(this.#props.item['parent_folder_path'],this.#props.item[field.key])) {   
+            if(await is_image_file(this.#props.item['folder_path'],this.#props.item[field.key])) {   
 
-               let img = await build_img_elem('record_img',this.#props.item['parent_folder_path'],this.#props.item[field.key])
+               let img = await build_img_elem('record_img',this.#props.item['folder_path'],this.#props.item[field.key])
                if(img) {
                   img_col.append(img)
                }
@@ -177,7 +177,7 @@ class CollectionItemRecord {
       let open_folder_btn = document.getElementById('open_folder_btn')
       if(open_folder_btn) {
          open_folder_btn.addEventListener('click',() => {
-            window.files_api.openFolder(this.#props.item.parent_folder_path)
+            window.files_api.openFolder(this.#props.item.folder_path)
          })
       }
 
@@ -198,7 +198,6 @@ class CollectionItemRecord {
 
             back_btn.addEventListener('click',async(event) => {
                // the context token identifies the current user context inc. component
-
                if(this.#props.context) {
                   App.switch_to_component(this.#props.context.key,this.#props)
                }             

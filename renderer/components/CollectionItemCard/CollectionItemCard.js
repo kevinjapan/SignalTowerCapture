@@ -76,9 +76,7 @@ class CollectionItemCard {
          // future : imgs at default size are too large - noticeable impact on browse list generation
          //          we can only include imgs in results lists if we have small sized version (manual or auto)
          
-         // else if(field.key === 'parent_folder_path') {
-
-            // to do : rename 'parent_folder_path' -> 'folder_path'
+         // else if(field.key === 'folder_path') {
 
             // if(file_name) {               
             //    if(await is_image_file(field_value,file_name)) { 

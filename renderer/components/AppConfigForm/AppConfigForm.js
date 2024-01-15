@@ -225,7 +225,7 @@ class AppConfigForm {
       
             if(result.outcome === 'success') {
 
-               // inject appropriate into file_name and parent_folder_path inputs
+               // inject appropriate into file_name and folder_path inputs
                let full_path = result.files[0]
                let sep_last_index = full_path.lastIndexOf(sep)
                let path = full_path.substring(0,sep_last_index)
@@ -236,9 +236,9 @@ class AppConfigForm {
                   file_name_input.value = file
                }
                
-               let parent_folder_path = document.getElementById('parent_folder_path')
-               if(parent_folder_path) {
-                  parent_folder_path.value = path
+               let folder_path = document.getElementById('folder_path')
+               if(folder_path) {
+                  folder_path.value = path
                } 
             }
             else {
