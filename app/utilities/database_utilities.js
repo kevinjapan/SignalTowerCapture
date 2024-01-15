@@ -27,7 +27,7 @@ const get_table_create_fields = (table_name) => {
 
    if(Array.isArray(fields)) {
       return fields.map((field) => {
-         return field.key + ' ' + field.sql
+         return field.key + ' ' + field.data_type
       })
    }
 }
