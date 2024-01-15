@@ -25,11 +25,11 @@ class Tag {
    // from these arrays in the renderer, so the order of this array is carried over to front-end views.
    //
    static #full_fields_list = [
-      {key:'tag',sql:'TEXT NOT NULL',editable:true,export:true,test:{type:'string',min:3,max:50}},
-      {key:'id',sql:'INTEGER PRIMARY KEY',export:true,test:{type:'int',min:1,max:9999999999}},
-      {key:'created_at',sql:'TEXT NOT NULL',export:true,test:{type:'date',min:10,max:24}},
-      {key:'updated_at',sql:'TEXT NOT NULL',export:true,test:{type:'date',min:10,max:24}},
-      {key:'deleted_at',sql:'TEXT',export:true,test:{type:'date',min:10,max:24}},
+      {key:'tag',data_type:'TEXT NOT NULL',editable:true,export:true,test:{type:'string',min:3,max:50}},
+      {key:'id',data_type:'INTEGER PRIMARY KEY',export:true,test:{type:'int',min:1,max:9999999999}},
+      {key:'created_at',data_type:'TEXT NOT NULL',export:true,test:{type:'date',min:10,max:24}},
+      {key:'updated_at',data_type:'TEXT NOT NULL',export:true,test:{type:'date',min:10,max:24}},
+      {key:'deleted_at',data_type:'TEXT',export:true,test:{type:'date',min:10,max:24}},
    ]
 
    constructor(database) {

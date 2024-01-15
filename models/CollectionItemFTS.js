@@ -13,10 +13,10 @@ class CollectionItemFTS {
    // from these arrays in the renderer, so the order of this array is carried over to front-end views.
    //
    static #full_fields_list = [
-      {key:'id',sql:'INTEGER PRIMARY KEY',editable:false,in_card:false,export:true,test:{type:'int',min:1,max:9999999999}},
-      {key:'title',sql:'TEXT NOT NULL',editable:true,in_card:true,export:true,test:{type:'string',min:3,max:100}},
-      {key:'content_desc',sql:'TEXT',editable:true,in_card:true,export:true,test:{type:'string',min:0,max:500}},
-      {key:'tags',sql:'TEXT',editable:true,in_card:false,export:true,test:{type:'string',min:0,max:200}},
+      {key:'id',data_type:'INTEGER PRIMARY KEY',editable:false,in_card:false,export:true,test:{type:'int',min:1,max:9999999999}},
+      {key:'title',data_type:'TEXT NOT NULL',editable:true,in_card:true,export:true,test:{type:'string',min:3,max:100}},
+      {key:'content_desc',data_type:'TEXT',editable:true,in_card:true,export:true,test:{type:'string',min:0,max:500}},
+      {key:'tags',data_type:'TEXT',editable:true,in_card:false,export:true,test:{type:'string',min:0,max:200}},
    ]
 
    //
