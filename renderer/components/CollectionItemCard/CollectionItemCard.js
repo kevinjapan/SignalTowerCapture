@@ -1,13 +1,15 @@
 import App from '../App/App.js'
-import TagsList from '../TagsList/TagsList.js'
+import TagsLiteList from '../TagsLiteList/TagsLiteList.js'
 import { get_ui_ready_date } from '../../utilities/ui_datetime.js'
 import { create_section,create_div,create_h } from '../../utilities/ui_elements.js'
+import { is_image_file, build_img_elem } from '../../utilities/ui_utilities.js'
 
 
 
 class CollectionItemCard {
 
    #props
+
 
    constructor(props) {
       this.#props = props
@@ -16,30 +18,34 @@ class CollectionItemCard {
    render = (fields,item) => {
       
       // 'fields' is an array including keys of properties in the 'item' and preserves the display order
+      // card is row flex to align minor fields at foot while primary fields occupy flex_100 (width 100%)
       let card = create_section({
-         classlist:['CollectionItemCard']
+         classlist:['CollectionItemCard','flex','gap_0.5']
       })
       
       let field_element
       let tags_list_elem
+      let file_name
  
-      fields.forEach((field) => {
+      fields.forEach(async(field) => {
 
+         // field value
          let field_value = item[field.key]
          if(field.test.type === 'date') {
             field_value = get_ui_ready_date(field_value)
          }
 
          if(field.key === 'title') {
+         
+            // title as link
 
             if(field_value === '') field_value = 'no title'
-
             field_element = create_h({
                level:'h3',
                attributes: [
                   {key:'data-id',value:item.id}
                ],
-               classlist:['text_blue','card_title_link','m_0','font_w_400','cursor_pointer','hover_line'],
+               classlist:['text_blue','card_title_link','flex_100','m_0','font_w_400','cursor_pointer','hover_line'],
                text:field_value
             })
             card.append(field_element)
@@ -47,16 +53,16 @@ class CollectionItemCard {
          }
          else if(field.key === 'file_name') {
 
+            file_name = field_value
+         
+            // display file icon
             let file_name_block = create_div({
-               classlist:['flex','gap_.5']
+               classlist:['flex','gap_.5','mt_0.25','flex_100']
             })
-
             field_element = create_div({
                text:field_value
             })
-
-            let icon = document.createElementNS('http://www.w3.org/2000/svg','svg')
-            
+            let icon = document.createElementNS('http://www.w3.org/2000/svg','svg')            
             icon.classList.add('pt_.5')
             const icon_path = document.createElementNS('http://www.w3.org/2000/svg','path')
             icon.setAttribute('width','16')
@@ -67,31 +73,53 @@ class CollectionItemCard {
             card.append(file_name_block)
 
          }
+         // future : imgs at default size are too large - noticeable impact on browse list generation
+         //          we can only include imgs in results lists if we have small sized version (manual or auto)
+         
+         // else if(field.key === 'parent_folder_path') {
 
-            // currently, we won't show tags on result's cards   to do : remove this once confirmed.
-            // to do : if we do add 'tags' to card - let's keep it v. low key. (so as not to expect click works!)
-            //         consider, we can search but don't see the search_term in results cards..
+            // to do : rename 'parent_folder_path' -> 'folder_path'
 
-            // else if(field.key === 'tags') {
-
-            //    tags_list_elem = create_div({
-            //       attributes:[
-            //          {key:'id',value:'tags_list_elem'}
-            //       ],
-            //       classlist:['m_0']
-            //    }) 
-            //    const tags_list = new TagsList()
-            //    if(tags_list) {
-            //       console.log('field_value',field_value)
-            //       tags_list_elem.append(tags_list.render(item.id,field_value))
-            //       tags_list.activate()
+            // if(file_name) {               
+            //    if(await is_image_file(field_value,file_name)) { 
+            //       let img = await build_img_elem('record_img',field_value,file_name)
+            //       if(img) {
+            //          card.append(img)
+            //       }
             //    }
-            //    card.append(tags_list_elem)
-
+            //    else {
+            //       card.append(create_div(),document.createTextNode('No image file was found.'))
+            //    }
             // }
+         // }
+         else if(field.key === 'tags') {
+
+            // to do : how to select tags in edit record?
+
+            tags_list_elem = create_div({
+               attributes:[
+                  {key:'id',value:'tags_list_elem'}
+               ],
+               classlist:['m_0']
+            }) 
+            const tags_list = new TagsLiteList('tags_list')
+            if(tags_list) {
+               tags_list_elem.append(await tags_list.render(item.tags.split(','),this.actions))
+               setTimeout(() => tags_list.activate(),100)
+            }
+            card.append(tags_list_elem)
+
+         }
 
          else {
+
+            // default field display
+            // content_desc occuppies row itself since it is btwn title and file_name (both 'flex_100' above)
+
+            if(field_value.length > 500) field_value = field_value.substring(0,500) + '..'
+
             field_element = create_div({
+               classlist:['mt_0.5','mr_2'],
                text:field_value
             })
             card.append(field_element)
@@ -167,6 +195,9 @@ class CollectionItemCard {
    }
 
 
+   actions = async(key,id) => {
+      console.log('actions')
+   }
 
 }
 

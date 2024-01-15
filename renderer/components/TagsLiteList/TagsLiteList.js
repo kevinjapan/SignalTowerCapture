@@ -6,7 +6,7 @@ import {
 } from '../../utilities/ui_elements.js'
 
 
-class TagsList {
+class TagsLiteList {
 
    // the key allows us to distinguish btwn multiple TagsLists on same view
    #key
@@ -33,15 +33,6 @@ class TagsList {
       const header = create_div({
          classlist:['flex','space_between','align_items_center','w_full']
       })
-      const heading = create_h({
-         level:'h3',
-         text:'Tags',
-         classlist:['inline_block','m_0']
-      })
-      const count = create_div({
-         classlist:['text_grey','pt_0.5','pb_0.5'],
-         text:`(${tags.length}/${max_tags_count})`
-      })
 
       const tags_list_div = create_div({
          attributes:[
@@ -49,11 +40,9 @@ class TagsList {
          ],
          classlist:['flex','gap_.5','m_0','mt_0.5','mb_1']
       })
-      header.append(heading,count)
       tags_list_div.append(header)
       let tag_elem
       let tag_text
-      let del_elem
 
       if(tags) {
          tags.forEach(tag => {
@@ -62,21 +51,14 @@ class TagsList {
                attributes:[
                   {key:'id',value:'tags_list_div'}
                ],
-               classlist:['flex','gap_1','align_items_center','tag','border','rounded','pl_1','pr_1','pt_0','pb_0.25']
+               classlist:['flex','gap_1','align_items_center','tag','border','rounded','pl_0.5','pr_0.5','pt_0','pb_0.25']
             })
             tag_text = create_div({
                classlist:[],
-               text:tag.tag
-            })
-            del_elem = create_button({
-               attributes:[
-                  {key:'id',value:tag.id}
-               ],
-               classlist:['del_tag_btn','no_border','text_lightgrey','m_0','p_0','pt_0'],
-               text:'x'
+               text:tag
             })
             
-            tag_elem.append(tag_text,del_elem)
+            tag_elem.append(tag_text)
             tags_list_div.append(tag_elem)
          })
       }
@@ -111,4 +93,4 @@ class TagsList {
 
 
 
-export default TagsList
+export default TagsLiteList
