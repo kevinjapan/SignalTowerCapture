@@ -99,6 +99,7 @@ class CollectionItemForm {
          let field_input
 
          if(field.test.type === 'string' && field.test.max > 120) {
+
             field_input = create_textarea({
                attributes:[
                   {key:'id',value:field.key},
@@ -110,6 +111,7 @@ class CollectionItemForm {
                classlist:['input_field']
             })
             field_input.value = value
+            field_input.style.height = field.test.max > 200 ? '16rem' : '4.25rem'
             if(!field.editable) field_input.disabled = 'disabled'
             if(field.placeholder) field_input.setAttribute('placeholder',field.placeholder)
          }
@@ -392,6 +394,8 @@ class CollectionItemForm {
 
       let res = await is_image_file(folder_path,file_name)  
       if(res) {    
+
+         // to do : add and assign an 'image_desc' field in CollectionItem for image alt text
          let img = await build_img_elem('record_img',folder_path,file_name)
          if(img) {
             parent_elem.replaceChildren(create_div(),img)
