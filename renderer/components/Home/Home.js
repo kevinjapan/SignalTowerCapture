@@ -12,7 +12,7 @@ class Home {
       const home_heading = create_h({
          level:'h1',
          classlist:['logo_heading'],
-         text:'Signal Capture'
+         text:'Signal Tower Capture'
       })
 
       let home_form = create_form({

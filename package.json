@@ -1,8 +1,8 @@
 {
-  "name": "signal-capture",
-  "productName": "Signal Capture",
+  "name": "signal-tower-capture",
+  "productName": "Signal Tower Capture",
   "version": "0.0.1",
-  "description": "Signal Capture",
+  "description": "Signal Tower Capture",
   "main": "main.js",
   "scripts": {
     "start": "electron-forge start",

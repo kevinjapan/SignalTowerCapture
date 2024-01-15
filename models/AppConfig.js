@@ -119,7 +119,7 @@ class AppConfig {
       // get app root folder
       let path = require('path');
       const app_parent_dir = dirname(process.cwd()) 
-      const app_folder = path.join(app_parent_dir, '/signal-capture')
+      const app_folder = path.join(app_parent_dir, '/signal-tower-capture')
 
       switch(key) {
 

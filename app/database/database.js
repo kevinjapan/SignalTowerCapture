@@ -16,7 +16,7 @@ class Database {
    // the sqlite database
    #db
 
-   #database_path = './database/signal-capture-database.sqlite'
+   #database_path = './database/signal-tower-capture-db.sqlite'
 
    #last_error
 
@@ -71,8 +71,6 @@ class Database {
       }
    }
 
-
-   // to do : tidy this code / remove console.logs 
 
    //
    // create the database tables

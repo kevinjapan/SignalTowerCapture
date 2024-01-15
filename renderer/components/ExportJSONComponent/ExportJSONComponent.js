@@ -61,7 +61,7 @@ class ExportJSONComponent {
                const date_time_stamp = get_sqlready_datetime(false).replaceAll(':','-').replaceAll(' ','-')
             
                const options = {
-                  defaultPath:`signal-capture-export-${date_time_stamp}`,
+                  defaultPath:`signal-tower-capture-export-${date_time_stamp}`,
                   filters:[{ name: 'JSON', extensions: ['json'] },]
                }
 

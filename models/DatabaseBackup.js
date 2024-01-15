@@ -14,7 +14,7 @@ class DatabaseBackup {
       const path = require('path')
 
       try {
-         fs.copyFileSync(`.${path.sep}database${path.sep}signal-capture-database.sqlite`, `${file_path}`)
+         fs.copyFileSync(`.${path.sep}database${path.sep}signal-tower-capture-db.sqlite`, `${file_path}`)
          return {
             query:'create_backup',
             outcome:'success',
