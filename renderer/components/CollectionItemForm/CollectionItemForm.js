@@ -266,6 +266,13 @@ class CollectionItemForm {
                      // highlight errors on ui
                      if(Array.isArray(response.errors)) {
                         this.highlight_errors(response.errors)
+
+                        // ensure highlighted errors are visible
+                        const first_active_error = document.getElementsByClassName('active_error')[0]
+                        if(first_active_error) {
+                           first_active_error.scrollIntoView({ block: "center" })
+                        }
+
                      }
                   }               
                }
