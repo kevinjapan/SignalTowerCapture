@@ -33,7 +33,7 @@ class Config {
       const tags_config_component = new TagsConfig()
       if(tags_section) {
          tags_section.append(await tags_config_component.render())
-         tags_config_component.activate()
+         setTimeout(() => tags_config_component.activate(),200)
       }
 
       this.build_form(config_form_wrap)
@@ -44,8 +44,6 @@ class Config {
    }
 
    build_form = async(config_form_wrap) => {
-      // to do : review - we will simplify export/backup folder - so user selects folder
-      // and we simply create a timestamped file in that folder - user is responsible for managing.
       const app_config_form = new AppConfigForm()
       config_form_wrap.append(await app_config_form.render())
       app_config_form.activate()
