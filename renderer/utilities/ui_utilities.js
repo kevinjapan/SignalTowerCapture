@@ -31,7 +31,7 @@ const is_img_ext = (file_name) => {
    ]
    let ext = file_name.slice(-3,file_name.length)
    return supported.some((supported_ext) => {
-      return supported_ext === ext
+      return supported_ext.toUpperCase() === ext.toUpperCase()
    })
 }
 
