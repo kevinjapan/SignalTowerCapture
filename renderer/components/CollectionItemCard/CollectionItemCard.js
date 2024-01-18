@@ -92,8 +92,6 @@ class CollectionItemCard {
          // }
          else if(field.key === 'tags') {
 
-            // to do : how to select tags in edit record?
-
             tags_list_elem = create_div({
                attributes:[
                   {key:'id',value:'tags_list_elem'}

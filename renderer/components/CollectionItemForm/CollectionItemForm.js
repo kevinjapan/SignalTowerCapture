@@ -11,7 +11,8 @@ import {
    create_label,
    create_button,
    create_input,
-   create_textarea
+   create_textarea,
+   create_checkbox_fieldset
 } from '../../utilities/ui_elements.js'
 
 
@@ -75,20 +76,24 @@ class CollectionItemForm {
       text_col.append(form)
       
 
-      // we build each form field row(s) in parent grid as:
       //
+      // build each field row on the form
+      //
+      // we build each form field row(s) in parent grid as:
       //    |  field_label  |   field_input   |
       //    |               |   field_error   |
       //    |               | [find_file_btn] |
 
       this.#props.fields.forEach( async(field) => {
 
+         // get the value for the current form field
          let value = ''
          if(typeof this.#props.item !== 'undefined') {
             value = this.#props.item[field.key]
          }
          if(value === null) value = ''        
          
+         // build the row label
          let field_label = create_label({
             attributes:[
                {key:'for',value:field.key}
@@ -96,10 +101,9 @@ class CollectionItemForm {
             text:ui_friendly_text(field.key)
          })
 
+         // build the row input field
          let field_input
-
          if(field.test.type === 'string' && field.test.max > 120) {
-
             field_input = create_textarea({
                attributes:[
                   {key:'id',value:field.key},
@@ -130,7 +134,7 @@ class CollectionItemForm {
             if(field.placeholder) field_input.setAttribute('placeholder',field.placeholder)
          }
 
-         // error ui
+         // build the row error notification
          let field_error = create_div({
             attributes:[
                {key:'id',value:`${field.key}_error`}
@@ -138,17 +142,17 @@ class CollectionItemForm {
             classlist:['error_bar','bg_yellow']
          })
 
+         // build the row stats
          let field_stats = create_div({
             classlist:['field_info'],
             text:`max ${field.test.max} chars`
          })
 
-         // assemble
-         // form.append(field_label,field_input,create_div(),field_error)
+
+         // assemble add current row to form grid
          form.append(field_label,field_input)
          if(field.editable) form.append(create_div(),field_stats)
          form.append(create_div(),field_error)
-
          // btn to select file for 'file_name' field
          if(field.key === 'file_name') {       
             let find_file_btn = create_button({
@@ -158,6 +162,48 @@ class CollectionItemForm {
                   text:'Find File'
                }) 
             form.append(create_div(),find_file_btn)
+         }
+         if(field.key === 'tags') {
+
+            // current tags : this.#props.item[field.key]
+            const current_tags = this.#props.item[field.key].split(',')
+
+            // placeholder - inject once promise is resolved..
+            form.append(create_div(),create_div({attributes:[{key:'id',value:'tags_placeholder'}]}))
+
+            try {
+               const tags_obj = await window.tags_api.getTags(this.#props.context)
+
+               if (typeof tags_obj != "undefined") {
+            
+                  if(tags_obj.outcome === 'success') {
+
+                     const tags_checks = tags_obj.tags.map(tag => {
+                        return {
+                           key:tag.tag,
+                           value:tag.tag,
+                           checked: current_tags.some(current_tag => {
+                              return tag.tag === current_tag
+                           }) ? 'checked' : null
+                        }
+                     })
+
+                     const tags_checkboxes = create_checkbox_fieldset({
+                        name:'tags_checkbox',
+                        classlist:[],
+                        checkboxes:tags_checks
+                     })
+                     tags_placeholder.append(create_div(),tags_checkboxes)
+                  }
+               }
+            }
+            catch(error) {
+               let props = {
+                  msg:'Sorry, we were unable to access the Tags.',
+                  error:error
+               }
+               App.switch_to_component('Error',props)// to do : too severe! just don't include tags w/ notify here..
+            }
          }
 
          // display the file if a valid img and exists
@@ -197,7 +243,6 @@ class CollectionItemForm {
       // On 'Apply' add or update CollectionItemForm
 
       const apply_btns = document.querySelectorAll('.apply_btn')
-      const submit_outcome = document.getElementById('submit_outcome')
 
       if(apply_btns) {
 
@@ -237,6 +282,9 @@ class CollectionItemForm {
                   else {
                      // FormData only returns the non-disabled input key/value pairs - so we have to add 'id'
                      updated_collection_item.id = this.#record_id
+
+                     // to do :  - keep tags as a hidden textfield and update as items are checked/un-checked
+
                      response = await window.collection_items_api.updateCollectionItem(updated_collection_item)
                   }
 
@@ -392,6 +440,34 @@ class CollectionItemForm {
             await this.display_if_img_file(img_col,folder_path.value,file_name.value)
          })
       }
+
+
+      // on change tag checkbox
+
+      const tags_checkboxes = document.querySelectorAll('.tags_checkbox')
+
+      if(tags_checkboxes) {
+
+         tags_checkboxes.forEach(checkbox => {
+
+            checkbox.addEventListener('change',(event) => {
+
+               const tags_input = document.getElementById('tags')
+               if(tags_input) {
+                  
+                  // get existing tags list
+                  const existing_tags = new Set(tags_input.value.split(',').filter(e => e)) 
+                  if(existing_tags.has(event.target.value)) {
+                     existing_tags.delete(event.target.value)
+                  }
+                  else {
+                     existing_tags.add(event.target.value)
+                  }
+                  tags_input.value = [...existing_tags]
+               }
+            })
+         })
+      }
    }
 
    // display if we have a valid img file
@@ -413,7 +489,10 @@ class CollectionItemForm {
       }
    }
 
-   
+
+
+
+
    // Errors are highlight bars beneath each input field
 
    highlight_errors = (errors) => {
