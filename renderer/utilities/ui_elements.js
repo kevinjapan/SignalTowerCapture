@@ -68,7 +68,7 @@ export const create_h = (props) => {
    return null
 }
 
-
+// to do : rename create_radio_fieldset
 export const create_radio = (props) => {
    
    // fieldset
@@ -78,7 +78,7 @@ export const create_radio = (props) => {
    const legend = document.createElement('legend')
    if(props.legend) legend.innerText = props.legend
 
-   const btn_group = create_div({
+   const radio_btn_group = create_div({
       classlist:['flex','flex_col']
    })
 
@@ -101,18 +101,64 @@ export const create_radio = (props) => {
       if(radio_button.checked) radio_input.checked = true
       label_input.prepend(radio_input)
 
-      btn_group.append(label_input)
+      radio_btn_group.append(label_input)
    })
 
    // assemble
    if(props.legend) fieldset.append(legend)
-   fieldset.append(btn_group)
+   fieldset.append(radio_btn_group)
 
    hydrate_element(fieldset,props)
    return fieldset
 }
 
 
+
+
+export const create_checkbox_fieldset = (props) => {
+
+   // fieldset
+   const fieldset = document.createElement('fieldset')
+   fieldset.setAttribute('id',props.name)
+   fieldset.classList.add('flex')
+   
+   // legend
+   const legend = document.createElement('legend')
+   if(props.legend) legend.innerText = props.legend
+
+   props.checkboxes.forEach(checkbox => {
+
+      // we ensure 'id' and 'for' work - so replace whitespace
+      // meanwhile, we ensure we keep 'value' distinct from 'id' - so it remains accurate to original/visible 'tag'
+      checkbox.key = checkbox.key.replaceAll(' ','-')
+
+      const checkbox_div = document.createElement('div')
+
+      const checkbox_elem = create_input({
+         attributes:[
+            {key:'id',value:checkbox.key},
+            {key:'value',value:checkbox.value},
+            {key:'type',value:'checkbox'},
+            {key:'checked',value:checkbox.checked},      // to do : optional - only inc if definately checked.
+         ],
+         classlist:[props.name]
+      })
+      const label_elem = create_label({
+         attributes:[
+            {key:'for',value:checkbox.value}
+         ],
+         text:checkbox.value
+      })
+      checkbox_div.append(checkbox_elem,label_elem)
+      fieldset.append(checkbox_div)
+   })
+
+   // assemble
+   if(props.legend) fieldset.append(legend)
+
+   hydrate_element(fieldset,props)
+   return fieldset
+}
 
 
 //
