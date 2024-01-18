@@ -32,9 +32,9 @@ class CollectionItem {
    static #full_fields_list = [
       {key:'title',data_type:'TEXT NOT NULL',editable:true,in_card:true,export:true,test:{type:'string',min:3,max:100}},
       {key:'tags',data_type:'TEXT',editable:true,in_card:true,export:true,test:{type:'string',min:0,max:200}},
-      {key:'content_desc',data_type:'TEXT',editable:true,in_card:true,export:true,test:{type:'string',min:0,max:500}},
       {key:'file_name',data_type:'TEXT NOT NULL',editable:true,in_card:true,export:true,test:{type:'string',min:5,max:100}},
       {key:'folder_path',data_type:'TEXT NOT NULL',editable:true,in_card:true,export:true,test:{type:'string',min:1,max:200}},
+      {key:'content_desc',data_type:'TEXT',editable:true,in_card:true,export:true,test:{type:'string',min:0,max:500}},
       {key:'item_ref',data_type:'INTEGER',editable:true,in_card:false,export:true,test:{type:'string',min:1,max:100}},
       {key:'item_date',data_type:'TEXT',editable:true,in_card:true,export:true,test:{type:'date',min:0,max:10},placeholder:'YYYY-MM-DD'},
       {key:'item_type',data_type:'TEXT NOT NULL',editable:true,in_card:true,export:true,test:{type:'string',min:3,max:50}},
