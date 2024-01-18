@@ -63,7 +63,6 @@ class CollectionItemForm {
 
 
       // form & layout - inside text_col
-      //
       let form = create_form({
          attributes:[
             {key:'id',value:'item_form'}
@@ -76,9 +75,6 @@ class CollectionItemForm {
       text_col.append(form)
       
 
-      //
-      // build each field row on the form
-      //
       // we build each form field row(s) in parent grid as:
       //    |  field_label  |   field_input   |
       //    |               |   field_error   |
@@ -148,7 +144,6 @@ class CollectionItemForm {
             text:`max ${field.test.max} chars`
          })
 
-
          // assemble add current row to form grid
          form.append(field_label,field_input)
          if(field.editable) form.append(create_div(),field_stats)
@@ -163,6 +158,8 @@ class CollectionItemForm {
                }) 
             form.append(create_div(),find_file_btn)
          }
+
+         // tags checkboxes
          if(field.key === 'tags') {
 
             // current tags : this.#props.item[field.key]
@@ -190,7 +187,7 @@ class CollectionItemForm {
 
                      const tags_checkboxes = create_checkbox_fieldset({
                         name:'tags_checkbox',
-                        classlist:[],
+                        classlist:['flex_col'],
                         checkboxes:tags_checks
                      })
                      tags_placeholder.append(create_div(),tags_checkboxes)
@@ -283,7 +280,7 @@ class CollectionItemForm {
                      // FormData only returns the non-disabled input key/value pairs - so we have to add 'id'
                      updated_collection_item.id = this.#record_id
 
-                     // to do :  - keep tags as a hidden textfield and update as items are checked/un-checked
+                     // future : tags as hidden textfield and retain operation as items are checked/un-checked : basically as-is
 
                      response = await window.collection_items_api.updateCollectionItem(updated_collection_item)
                   }

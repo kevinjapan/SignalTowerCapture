@@ -68,8 +68,8 @@ export const create_h = (props) => {
    return null
 }
 
-// to do : rename create_radio_fieldset
-export const create_radio = (props) => {
+
+export const create_radio_fieldset = (props) => {
    
    // fieldset
    const fieldset = document.createElement('fieldset')
@@ -120,7 +120,7 @@ export const create_checkbox_fieldset = (props) => {
    // fieldset
    const fieldset = document.createElement('fieldset')
    fieldset.setAttribute('id',props.name)
-   fieldset.classList.add('flex')
+   fieldset.classList.add('flex','mb_2')
    
    // legend
    const legend = document.createElement('legend')
@@ -139,7 +139,7 @@ export const create_checkbox_fieldset = (props) => {
             {key:'id',value:checkbox.key},
             {key:'value',value:checkbox.value},
             {key:'type',value:'checkbox'},
-            {key:'checked',value:checkbox.checked},      // to do : optional - only inc if definately checked.
+            {key:'checked',value:checkbox.checked},
          ],
          classlist:[props.name]
       })
@@ -147,6 +147,7 @@ export const create_checkbox_fieldset = (props) => {
          attributes:[
             {key:'for',value:checkbox.value}
          ],
+         classlist:['text_grey','font_normal'],
          text:checkbox.value
       })
       checkbox_div.append(checkbox_elem,label_elem)
