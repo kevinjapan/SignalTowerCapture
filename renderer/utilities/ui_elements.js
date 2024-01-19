@@ -120,7 +120,7 @@ export const create_checkbox_fieldset = (props) => {
    // fieldset
    const fieldset = document.createElement('fieldset')
    fieldset.setAttribute('id',props.name)
-   fieldset.classList.add('flex','mb_2')
+   fieldset.classList.add('flex','gap_0.5','mb_2')
    
    // legend
    const legend = document.createElement('legend')
@@ -132,7 +132,9 @@ export const create_checkbox_fieldset = (props) => {
       // meanwhile, we ensure we keep 'value' distinct from 'id' - so it remains accurate to original/visible 'tag'
       checkbox.key = checkbox.key.replaceAll(' ','-')
 
-      const checkbox_div = document.createElement('div')
+      const checkbox_div = create_div({
+         classlist:['flex']
+      })
 
       const checkbox_elem = create_input({
          attributes:[
@@ -141,16 +143,21 @@ export const create_checkbox_fieldset = (props) => {
             {key:'type',value:'checkbox'},
             {key:'checked',value:checkbox.checked},
          ],
-         classlist:[props.name]
+         classlist:['checkbox',props.name]
       })
       const label_elem = create_label({
          attributes:[
-            {key:'for',value:checkbox.value}
+            {key:'for',value:checkbox.key}
          ],
-         classlist:['text_grey','font_normal'],
+         classlist:['flex','row_reverse','gap_0.25','text_grey','font_normal'],
          text:checkbox.value
       })
-      checkbox_div.append(checkbox_elem,label_elem)
+      const custom_checker = create_div({
+         classlist:['checkmark']
+      })
+      // checkbox_div.append(custom_checker,checkbox_elem,label_elem)
+      label_elem.append(custom_checker,checkbox_elem)
+      checkbox_div.append(label_elem)
       fieldset.append(checkbox_div)
    })
 
