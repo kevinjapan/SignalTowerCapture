@@ -31,7 +31,7 @@ class CollectionItem {
    //
    static #full_fields_list = [
       {key:'title',data_type:'TEXT NOT NULL',editable:true,in_card:true,export:true,test:{type:'string',min:3,max:100}},
-      {key:'tags',data_type:'TEXT',editable:true,in_card:true,export:true,test:{type:'string',min:0,max:200}},
+      {key:'tags',data_type:'TEXT',editable:true,in_card:true,hidden:true,export:true,test:{type:'string',min:0,max:200}},
       {key:'file_name',data_type:'TEXT NOT NULL',editable:true,in_card:true,export:true,test:{type:'string',min:5,max:100}},
       {key:'folder_path',data_type:'TEXT NOT NULL',editable:true,in_card:true,export:true,test:{type:'string',min:1,max:200}},
       {key:'content_desc',data_type:'TEXT',editable:true,in_card:true,export:true,test:{type:'string',min:0,max:500}},
@@ -257,7 +257,8 @@ class CollectionItem {
          return {
             key:field.key,
             editable:field.editable,
-            test:field.test
+            test:field.test,
+            hidden:field.hidden ? field.hidden : null
          }
       })
       
@@ -906,6 +907,7 @@ class CollectionItem {
 
    //
    // filter to those fields required in CollectionItemCard display
+   // and those fields passed to Record and Form
    //
    get_in_card_fields = (fields) => {
       const temp = fields.filter((field) => {
@@ -914,7 +916,8 @@ class CollectionItem {
       return temp.map((field) => {
          return {
             key:field.key,
-            test:field.test
+            test:field.test,
+            hidden:field.hidden
          }
       })
    }

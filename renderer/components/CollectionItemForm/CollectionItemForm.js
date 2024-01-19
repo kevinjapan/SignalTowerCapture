@@ -35,6 +35,10 @@ class CollectionItemForm {
    // 'props.fields' preserves the display order
    #props
 
+   // tags object 
+   // containing tags fields list and config registered tags
+   #tags_obj
+
 
    constructor(props) {
       this.#props = props
@@ -75,6 +79,8 @@ class CollectionItemForm {
       text_col.append(form)
       
 
+
+
       // we build each form field row(s) in parent grid as:
       //    |  field_label  |   field_input   |
       //    |               |   field_error   |
@@ -82,13 +88,18 @@ class CollectionItemForm {
 
       this.#props.fields.forEach( async(field) => {
 
+
          // get the value for the current form field
-         let value = ''
+         let curr_field_value = ''
+
          if(typeof this.#props.item !== 'undefined') {
-            value = this.#props.item[field.key]
+            curr_field_value = this.#props.item[field.key]
          }
-         if(value === null) value = ''        
+         if(curr_field_value === null) {
+            curr_field_value = ''
+         } 
          
+
          // build the row label
          let field_label = create_label({
             attributes:[
@@ -97,20 +108,23 @@ class CollectionItemForm {
             text:ui_friendly_text(field.key)
          })
 
+
          // build the row input field
          let field_input
+
          if(field.test.type === 'string' && field.test.max > 120) {
             field_input = create_textarea({
                attributes:[
                   {key:'id',value:field.key},
                   {key:'name',value:field.key},
                   {key:'type',value:'text'},
-                  {key:'value',value:value},
-                  {key:'maxlength',value:field.test.max}
+                  {key:'value',value:curr_field_value},
+                  {key:'maxlength',value:field.test.max},
                ],
                classlist:['input_field']
             })
-            field_input.value = value
+            if(field.hidden === true) field_input.hidden = true
+            field_input.value = curr_field_value // to do : this line necessary?
             field_input.style.height = field.test.max > 200 ? '16rem' : '4.25rem'
             if(!field.editable) field_input.disabled = 'disabled'
             if(field.placeholder) field_input.setAttribute('placeholder',field.placeholder)
@@ -121,11 +135,12 @@ class CollectionItemForm {
                   {key:'id',value:field.key},
                   {key:'name',value:field.key},
                   {key:'type',value:'text'},
-                  {key:'value',value:value},
-                  {key:'maxlength',value:field.test.max}
+                  {key:'value',value:curr_field_value},
+                  {key:'maxlength',value:field.test.max},
                ],
                classlist:['input_field']
             })
+            if(field.hidden === true) field_input.hidden = true
             if(!field.editable) field_input.disabled = 'disabled'
             if(field.placeholder) field_input.setAttribute('placeholder',field.placeholder)
          }
@@ -145,9 +160,14 @@ class CollectionItemForm {
          })
 
          // assemble add current row to form grid
-         form.append(field_label,field_input)
-         if(field.editable) form.append(create_div(),field_stats)
+
+         if(field.hidden !== true) form.append(field_label)
+         form.append(field_input)
+
+         if(field.editable && field.hidden !== true) form.append(create_div(),field_stats)
+
          form.append(create_div(),field_error)
+
          // btn to select file for 'file_name' field
          if(field.key === 'file_name') {       
             let find_file_btn = create_button({
@@ -159,23 +179,38 @@ class CollectionItemForm {
             form.append(create_div(),find_file_btn)
          }
 
+
          // tags checkboxes
+
          if(field.key === 'tags') {
+
+            
+            let field_label = create_label({
+               attributes:[
+                  {key:'for',value:field.key}
+               ],
+               text:ui_friendly_text(field.key)
+            })
 
             // current tags : this.#props.item[field.key]
             const current_tags = this.#props.item[field.key].split(',')
 
             // placeholder - inject once promise is resolved..
-            form.append(create_div(),create_div({attributes:[{key:'id',value:'tags_placeholder'}]}))
+            form.append(field_label,create_div({attributes:[{key:'id',value:'tags_placeholder'}]}))
 
             try {
-               const tags_obj = await window.tags_api.getTags(this.#props.context)
+               this.#tags_obj = await window.tags_api.getTags(this.#props.context)
 
-               if (typeof tags_obj != "undefined") {
+               if (typeof this.#tags_obj != "undefined") {
             
-                  if(tags_obj.outcome === 'success') {
+                  if(this.#tags_obj.outcome === 'success') {
 
-                     const tags_checks = tags_obj.tags.map(tag => {
+                     // get existing tags list (remove any non-registered tag tokens)
+                     const verified_curr_tags = current_tags.filter(curr_tag => {
+                        return this.#tags_obj.tags.some(tag => tag.tag === curr_tag)
+                     })
+
+                     const tags_checks = this.#tags_obj.tags.map(tag => {
                         return {
                            key:tag.tag,
                            value:tag.tag,
@@ -199,7 +234,8 @@ class CollectionItemForm {
                   msg:'Sorry, we were unable to access the Tags.',
                   error:error
                }
-               App.switch_to_component('Error',props)// to do : too severe! just don't include tags w/ notify here..
+               // App.switch_to_component('Error',props)
+               // future : notify tags unavailable
             }
          }
 
@@ -451,9 +487,15 @@ class CollectionItemForm {
 
                const tags_input = document.getElementById('tags')
                if(tags_input) {
+
                   
-                  // get existing tags list
-                  const existing_tags = new Set(tags_input.value.split(',').filter(e => e)) 
+                  // get existing tags list (remove any non-registered tag tokens)
+                  const curr_tags = tags_input.value.split(',').filter(e => e)
+                  const verified_curr_tags = curr_tags.filter(curr_tag => {
+                     return this.#tags_obj.tags.some(tag => tag.tag === curr_tag)
+                  })
+
+                  const existing_tags = new Set(verified_curr_tags) 
                   if(existing_tags.has(event.target.value)) {
                      existing_tags.delete(event.target.value)
                   }

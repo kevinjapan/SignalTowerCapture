@@ -230,6 +230,7 @@ button:hover {
 .ml_2             {margin-left:2rem;}
 .mb_0\.5,mb_\.5   {margin-bottom:.5rem;}
 .mb_1             {margin-bottom:1rem;}
+.mb_2             {margin-bottom:2rem;}
 .ml_1             {margin-left:1rem;}
 .mr_0\.5,mr_\.5   {margin-right:.5rem;}
 .mr_2             {margin-right:2rem;}
@@ -535,6 +536,46 @@ label/[value|input] layout for Record and Form views
 .record_image {
    width:100%;
 }
+
+
+
+/* Checkbox */
+input[type='checkbox'] {
+   appearance:none;
+   background:white;
+   font:inherit;
+   width:1rem;
+   height:1rem;
+   transform:translate(-0.075em);
+   display:grid;
+   place-content: center;
+   margin-top:.25rem;
+}
+/* custom checkmark */
+input[type='checkbox']::before {
+   content:'';
+   width:1rem;
+   height:1rem;
+   transform: scale(0);
+   transition:.03s transform ease-in-out;
+   background:hsl(0, 0%, 80%);
+}
+input[type='checkbox']:checked::before {
+   transform: scale(.8);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+/* Radio Buttons */
 
 /* remove radio button border */
 fieldset {
