@@ -17,6 +17,9 @@ class ImageViewer {
    #scroll_top = 0
    #scroll_left = 0
 
+   // default zoom
+   #zoom = 100
+
    constructor(props) {
       this.#props = props
    }
@@ -104,7 +107,8 @@ class ImageViewer {
             event.preventDefault()
             const record_img = document.getElementById('record_img')
             if(record_img) {
-               record_img.style.minWidth = '200%'
+               this.#zoom += 100
+               record_img.style.minWidth = this.#zoom <= 300 ? `${this.#zoom}%` : `300%`
             }
 
          })
@@ -115,7 +119,8 @@ class ImageViewer {
             event.preventDefault()
             const record_img = document.getElementById('record_img')
             if(record_img) {
-               record_img.style.minWidth = '100%'
+               this.#zoom -= 100
+               record_img.style.minWidth = this.#zoom >= 100 ? `${this.#zoom}%` : `100%`
             }
 
          })        
