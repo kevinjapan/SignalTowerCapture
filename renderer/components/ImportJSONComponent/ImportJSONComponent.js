@@ -69,9 +69,13 @@ class ImportJSONComponent {
                event.preventDefault()
 
                Notification.notify('import_json_outcome','')
+
+               const options = {
+                  filters:[{name:'JSON',extensions:['json']},]
+               }
        
                // user select file dialog
-               const result = await window.files_api.getFilePath()
+               const result = await window.files_api.getFilePath(options)
 
                if(result.outcome === 'success') {
 

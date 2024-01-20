@@ -39,7 +39,6 @@ class ImportJSONFile {
       try {
          if(fs.existsSync(file_path)) {
 
-            console.log('opening file')
             const collection_items = await this.get_json_file_contents(file_path)
 
             await this.process_records(collection_items)
@@ -87,7 +86,6 @@ class ImportJSONFile {
          }).catch((error) => this.set_last_error(error))
          
          // successful result will contain id of newly created record
-         console.log(result)
       }
    }
 

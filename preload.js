@@ -65,7 +65,7 @@ contextBridge.exposeInMainWorld('actions_api', {
 contextBridge.exposeInMainWorld('files_api', {
    fileExists: (file_path) => ipcRenderer.invoke('files:fileExists',file_path),
    getFolderPath: () => ipcRenderer.invoke('files:getFolderPath'),
-   getFilePath: () => ipcRenderer.invoke('files:getFilePath'),
+   getFilePath: (filters) => ipcRenderer.invoke('files:getFilePath',filters),
    openFile: () => ipcRenderer.invoke('files:openFile'),
    openFolder: (folder_path) => ipcRenderer.invoke('files:openFolder',folder_path),
    filePathSep: () => ipcRenderer.invoke('files:filePathSep'),
