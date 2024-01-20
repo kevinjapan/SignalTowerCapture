@@ -74,10 +74,17 @@ class CollectionItemRecord {
             classlist:['label'],
             text:ui_friendly_text(field.key)
          })
-   
-         field_value = create_div({
-            text:this.#props.item[field.key]
-         })
+
+         if(field.key === 'tags') {
+            field_value = create_div()
+            field_value.append(this.display_tags(this.#props.item[field.key]))
+         }
+         else {
+            field_value = create_div({        
+               classlist:['break_words'],
+               text:this.#props.item[field.key]
+            })
+         }
             
          form_layout.append(field_label,field_value)
 
@@ -137,7 +144,6 @@ class CollectionItemRecord {
                      if(collection_item_obj.outcome === 'success') {
       
                         // display single CollectionItem for editing in CollectionItemForm
-                        
                         this.#props = {
                            fields:collection_item_obj.collection_item_fields,
                            item:collection_item_obj.collection_item,
@@ -204,6 +210,22 @@ class CollectionItemRecord {
             })
          })
       }
+   }
+
+   display_tags = (tags_csv) => {
+
+      const tags = tags_csv.split(',')
+      const tags_elem = create_div({
+         classlist:['flex','gap_0.5']
+      })
+      tags.forEach(tag => {
+         let tagger = create_div({
+            classlist:['inline_block','text_grey','border','rounded','pl_0.25','pr_0.25','pb_0.15'],
+            text:tag
+         })
+         tags_elem.append(tagger)
+      })
+      return tags_elem
    }
 }
 

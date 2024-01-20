@@ -160,6 +160,11 @@ button:hover {
    -ms-flex-pack:center;
    justify-content:center;
 }
+.justify_left {
+   -webkit-box-pack:left;
+   -ms-flex-pack:left;
+   justify-content:left;
+}
 .space_between {
    -webkit-box-pack:justify;
    -ms-flex-pack:justify;
@@ -205,12 +210,23 @@ button:hover {
 .min_w_1  {min-width: 1rem;}
 .min_w_2  {min-width: 2rem;}
 .min_w_5  {min-width: 5rem;}
+.min_w_6  {min-width: 6rem;}
+.min_w_8  {min-width: 8rem;}
+.min_w_10 {min-width: 10rem;}
 
 .h_1  {height:1rem;}
 .h_2  {height:2rem;}
 .h_3  {height:3rem;}
+.h_6  {height:6rem;}
 .h_100   {height:100%;}
 
+.max_h_3   {max-height:3rem;}
+.max_h_12 {max-height:12rem;}
+.max_h_24 {max-height:24rem;}
+
+.fit_content {
+   width:fit-content;
+}
 
 /* 
    margin 
@@ -253,6 +269,7 @@ button:hover {
 .pt_2     {padding-top:2rem;}
 .pt_3     {padding-top:3rem;}
 .pt_4     {padding-top:4rem;}
+.pb_\.15,.pb_0\.15 {padding-bottom:.15rem;}
 .pb_\.25,.pb_0\.25 {padding-bottom:.25rem;}
 .pb_\.5,.pb_0\.5 {padding-bottom:.5rem;}
 .pb_\.75,.pb_0\.75 {padding-bottom:.75rem;}
@@ -260,8 +277,10 @@ button:hover {
 .pb_2     {padding-bottom:2rem;}
 .pb_3     {padding-bottom:3rem;}
 .pb_4     {padding-bottom:4rem;}
+.pl_\.25,.pl_0\.25 {padding-left:.25rem;}
 .pl_\.5,.pl_0\.5 {padding-left:.5rem;}
 .pl_1     {padding-left:1rem;}
+.pr_\.25,.pr_0\.25 {padding-right:.25rem;}
 .pr_\.5,.pr_0\.5 {padding-right:.5rem;}
 .pr_1     {padding-right:1rem;}
 
@@ -332,8 +351,10 @@ button:hover {
    display:inline-block;
 }
 .break_words {
+   white-space:normal; 
    word-wrap:break-word;
-   white-space: normal;
+   overflow-wrap:break-word;
+   word-break:break-word;
 }
 .hidden {
    display:none;
@@ -526,6 +547,7 @@ label/[value|input] layout for Record and Form views
    grid-gap:.7rem;
 }
 
+
 .img_col {
    position:relative;
    height:100%;
@@ -696,3 +718,5 @@ input[type='radio'] {
 .overflow_hidden {
    overflow:hidden;
 }
+
+

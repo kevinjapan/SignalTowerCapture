@@ -120,7 +120,9 @@ export const create_checkbox_fieldset = (props) => {
    // fieldset
    const fieldset = document.createElement('fieldset')
    fieldset.setAttribute('id',props.name)
-   fieldset.classList.add('flex','gap_0.5','mb_2')
+   fieldset.classList.add('flex','justify_left','gap_0.25','mb_2')
+   hydrate_element(fieldset,props)
+
    
    // legend
    const legend = document.createElement('legend')
@@ -133,7 +135,7 @@ export const create_checkbox_fieldset = (props) => {
       checkbox.key = checkbox.key.replaceAll(' ','-')
 
       const checkbox_div = create_div({
-         classlist:['flex']
+         classlist:['flex','fit_content','min_w_8','m_0']
       })
 
       const checkbox_elem = create_input({
@@ -149,22 +151,22 @@ export const create_checkbox_fieldset = (props) => {
          attributes:[
             {key:'for',value:checkbox.key}
          ],
-         classlist:['flex','row_reverse','gap_0.25','text_grey','font_normal'],
+         classlist:['flex','row_reverse','gap_0.15','text_grey','font_normal'],
          text:checkbox.value
       })
       const custom_checker = create_div({
          classlist:['checkmark']
       })
-      // checkbox_div.append(custom_checker,checkbox_elem,label_elem)
-      label_elem.append(custom_checker,checkbox_elem)
+      
+      // assemble single checkbox_div
+      label_elem.append(custom_checker,checkbox_elem)      
       checkbox_div.append(label_elem)
       fieldset.append(checkbox_div)
    })
 
-   // assemble
-   if(props.legend) fieldset.append(legend)
+   // assemble fieldset
+   if(props.legend) fieldset.append(legend) 
 
-   hydrate_element(fieldset,props)
    return fieldset
 }
 

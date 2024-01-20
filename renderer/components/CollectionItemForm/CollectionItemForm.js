@@ -214,7 +214,7 @@ class CollectionItemForm {
                         return {
                            key:tag.tag,
                            value:tag.tag,
-                           checked: current_tags.some(current_tag => {
+                           checked: verified_curr_tags.some(current_tag => {
                               return tag.tag === current_tag
                            }) ? 'checked' : null
                         }
@@ -222,10 +222,9 @@ class CollectionItemForm {
 
                      const tags_checkboxes = create_checkbox_fieldset({
                         name:'tags_checkbox',
-                        classlist:['flex_col'],
                         checkboxes:tags_checks
                      })
-                     tags_placeholder.append(create_div(),tags_checkboxes)
+                     tags_placeholder.replaceChildren(create_div(),tags_checkboxes)
                   }
                }
             }
@@ -502,7 +501,7 @@ class CollectionItemForm {
                   else {
                      existing_tags.add(event.target.value)
                   }
-                  tags_input.value = [...existing_tags]
+                  tags_input.value = [...existing_tags].sort()
                }
             })
          })
