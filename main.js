@@ -440,8 +440,8 @@ async function get_single_tag(event,id) {
 async function add_tag(event,new_tag) {
 
    if(!database) return NOTIFY.DATABASE_UNAVAILABLE
-
    let result = is_valid_tag(new_tag)
+
    if(result) {
       let tag = new Tag(database)
       const result = await tag.create(new_tag)
@@ -620,9 +620,10 @@ async function save_file (event,options) {
    }
 }
 
-async function get_file_path () {
+async function get_file_path (event,options) {
+   
    const fs = require('fs')
-   const { canceled, filePaths } = await dialog.showOpenDialog()
+   const { canceled, filePaths } = await dialog.showOpenDialog(options)
    if(!canceled) {
       return {
          outcome:'success',
