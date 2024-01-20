@@ -1,6 +1,6 @@
 import { 
    create_section,
-   create_radio
+   create_radio_fieldset
 } from '../../utilities/ui_elements.js'
 
 
@@ -21,9 +21,8 @@ class AdvancedSearch {
          classlist:['flex','m_0','p_0','hidden']
       })
 
-      const record_status_radio = create_radio({
+      const record_status_radio = create_radio_fieldset({
          name:'record_status',
-         // legend:'Record status',
          classlist:['m_0'],
          radio_buttons:[
             {key:'active_records',label:'Active Records',value:'active_records',checked:true},
