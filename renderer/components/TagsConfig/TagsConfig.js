@@ -40,8 +40,6 @@ class TagsConfig {
       
       this.#tags = await this.get_tags()
 
-
-
       const tags_list = new TagsList('tags_list')
       if(tags_list) {
          this.#tags_list_elem.append(await tags_list.render(this.#tags,this.actions))
@@ -115,7 +113,9 @@ class TagsConfig {
    // enable buttons/links displayed in the render
    activate = async () => {
 
-      // Add Tag btn
+
+      // clicked Add Tag btn
+
       const add_tag_btn = document.getElementById('add_tag_btn')
 
       if(add_tag_btn) {
@@ -145,8 +145,9 @@ class TagsConfig {
       }
 
       
-      // Keydown on add_tag <input> element
+      // Keydown on Add Tag <input> element
       const add_tag_input = document.getElementById('add_tag_input')
+
       if(add_tag_input) {
 
          add_tag_input.addEventListener('keydown', async(event) => {

@@ -48,8 +48,7 @@ class Tag {
    }
 
    get_max_tags_count() {
-      let copy = this.#max_tags_count
-      return copy
+      return this.#max_tags_count
    }
 
 
@@ -101,6 +100,8 @@ class Tag {
       // reduce fields to those required in CollectionItemCard (also requires 'type' for displaying dates)
       const in_card_fields = Tag.#full_fields_list
       
+      // future : is count returning accurate/useful stat?
+
       if(result) {
          let response_obj = {
             query:'read_tags',
@@ -270,63 +271,93 @@ class Tag {
    // we rely on single inserts even for batch inserts since -
    // - the code w/ prepared statements becomes unclear with multiple inserts
    // - batch inserts is a seldom used feature
+   //
+   // future - since we check only deleted_at IS NULL - ensure that we do not soft delete tags
+   //
    async create(tag,editable_only = true) {
       
+      let sql
+      // to do : only permit add if currently < this.#max_tags_count
 
-      let fields = Tag.#full_fields_list
-
-      if(editable_only) {
-         fields = fields.filter((field) => {
-            if(field.editable === true) return field
-         })
-      }
-
-      const field_keys = fields.map((field) => {
-         return field.key
-      })
-
-      // build '?' string
-      // const inserts = Array(fields.length).fill(0)
-      const inserts = field_keys.map((field) => {
-         return '?'
-      })
-
-      // build values list - eg ["bar",2] - & add id at end
-      const field_values = fields.map((field) => {
-         return tag[field.key]
-      })
-
-      let created_at = get_sqlready_datetime()
-
-      const sql = `INSERT INTO tags(${field_keys.toString()},created_at,updated_at) 
-                   VALUES(${inserts.toString()},'${created_at}','${created_at}')`
-
-      const result = await new Promise((resolve,reject) => {
-         this.#database.run(
-            sql,field_values, function(error) {
-               if(error) {
-                  reject(error)
-               }
-               else {
-                  resolve(this.lastID)
-               }
+      const count = await new Promise((resolve,reject) => {
+         sql = `SELECT COUNT(id) as count FROM tags WHERE deleted_at IS NULL`
+         this.#database.get(sql, (error, rows) => {
+            if(error) {
+               reject(error)
             }
-         )
-      }).catch((error) => this.set_last_error(error))
+            resolve(rows.count)
+         })
+      }).catch((error) => {
+         console.log('error',error)
+         this.set_last_error(error)
+      })
+
+      if(count < this.#max_tags_count) {
+
+         let fields = Tag.#full_fields_list
+
+         if(editable_only) {
+            fields = fields.filter((field) => {
+               if(field.editable === true) return field
+            })
+         }
+
+         const field_keys = fields.map((field) => {
+            return field.key
+         })
+
+         // build '?' string
+         // const inserts = Array(fields.length).fill(0)
+         const inserts = field_keys.map((field) => {
+            return '?'
+         })
+
+         // build values list - eg ["bar",2] - & add id at end
+         const field_values = fields.map((field) => {
+            return tag[field.key]
+         })
+
+         let created_at = get_sqlready_datetime()
+
+         sql = `INSERT INTO tags(${field_keys.toString()},created_at,updated_at) 
+                     VALUES(${inserts.toString()},'${created_at}','${created_at}')`
+
+         const result = await new Promise((resolve,reject) => {
+            this.#database.run(
+               sql,field_values, function(error) {
+                  if(error) {
+                     reject(error)
+                  }
+                  else {
+                     resolve(this.lastID)
+                  }
+               }
+            )
+         }).catch((error) => this.set_last_error(error))
       
-      if(result) {
-         tag.id = result
-         return {
-            query:'create_tag',
-            outcome:'success',
-            tag:tag
+         if(result) {
+            tag.id = result
+            return {
+               query:'create_tag',
+               outcome:'success',
+               tag:tag
+            }
+         }
+         else {
+            let fail_response = {
+               query:'create_tag',
+               outcome:'fail',
+               message:'There was an error attempting to create the record. [Tag.create]  ' + this.#last_error.message
+            }
+            this.clear_last_error()
+            return fail_response
          }
       }
       else {
          let fail_response = {
             query:'create_tag',
             outcome:'fail',
-            message:'There was an error attempting to create the record. [Tag.create]  ' + this.#last_error.message
+            message:`You have already the maximum permitted number of tags (${this.#max_tags_count}).`
          }
          this.clear_last_error()
          return fail_response
