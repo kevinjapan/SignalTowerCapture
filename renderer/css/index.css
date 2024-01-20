@@ -213,6 +213,7 @@ button:hover {
 .min_w_6  {min-width: 6rem;}
 .min_w_8  {min-width: 8rem;}
 .min_w_10 {min-width: 10rem;}
+.min_w_12 {min-width: 12rem;}
 
 .h_1  {height:1rem;}
 .h_2  {height:2rem;}
@@ -677,8 +678,13 @@ input[type='radio'] {
    position:fixed;
    z-index:9999;
    top:6rem;
-   left:3rem;
+   right:4rem;
    background:white;
+   border-radius:.25rem;
+   opacity:.86;
+}
+.img_btn_group > button {
+   width:65%;
 }
 .img_scroll_btn_group {
    position:fixed;
