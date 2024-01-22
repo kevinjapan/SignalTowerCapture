@@ -1,6 +1,7 @@
 import App from '../App/App.js'
 import FormBtns from '../FormBtns/FormBtns.js'
 import Notification from '../../components/Notification/Notification.js'
+import { DESC } from '../../utilities/ui_descriptions.js'
 import { ui_friendly_text } from '../../utilities/ui_strings.js'
 import { is_image_file, build_img_elem } from '../../utilities/ui_utilities.js'
 
@@ -170,13 +171,19 @@ class CollectionItemForm {
 
          // btn to select file for 'file_name' field
          if(field.key === 'file_name') {       
+
+            
+            const file_info = create_div({
+               classlist:[''],
+               text:DESC.FILE_OR_FOLDER_ITEMS
+            })
             let find_file_btn = create_button({
                   attributes:[
                      {key:'id',value:'find_file_btn'}
                   ],
                   text:'Find File'
                }) 
-            form.append(create_div(),find_file_btn)
+            form.append(create_div(),file_info,create_div(),find_file_btn)
          }
 
 
@@ -193,13 +200,13 @@ class CollectionItemForm {
             })
 
             // current tags : this.#props.item[field.key]
-            const current_tags = this.#props.item[field.key].split(',')
+            const current_tags = this.#props.item ? this.#props.item[field.key].split(',') : []
 
             // placeholder - inject once promise is resolved..
             form.append(field_label,create_div({attributes:[{key:'id',value:'tags_placeholder'}]}))
 
             try {
-               this.#tags_obj = await window.tags_api.getTags(this.#props.context)
+               this.#tags_obj = await window.tags_api.getTags(this.#props.context ? this.#props.context : {})
 
                if (typeof this.#tags_obj != "undefined") {
             
@@ -306,6 +313,9 @@ class CollectionItemForm {
                      // we don't escape_html since we never user innerHTML
                      updated_collection_item[pair[0]] = pair[1].trim()
                   }
+
+                  // to do : tags are not being added on 'New Record'
+                  console.log('updated_collection_item',updated_collection_item)
                
                   let response
                   if(action === 'add') {
