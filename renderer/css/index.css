@@ -243,11 +243,14 @@ button:hover {
 .mt_0\.5,mt_\.5   {margin-top:.5rem;}
 .mt_0\.75,mt_\.75 {margin-top:.75rem;}
 .mt_1             {margin-top:1rem;}
+.mt_2             {margin-top:2rem;}
+.mt_3             {margin-top:3rem;}
 .ml_1             {margin-left:1rem;}
 .ml_2             {margin-left:2rem;}
 .mb_0\.5,mb_\.5   {margin-bottom:.5rem;}
 .mb_1             {margin-bottom:1rem;}
 .mb_2             {margin-bottom:2rem;}
+.mb_3             {margin-bottom:3rem;}
 .ml_1             {margin-left:1rem;}
 .mr_0\.5,mr_\.5   {margin-right:.5rem;}
 .mr_2             {margin-right:2rem;}
