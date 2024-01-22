@@ -108,6 +108,7 @@ class Browse {
 
             const collection_items_obj = await window.collection_items_api.getItems(this.#browse_context)
          
+
             if (typeof collection_items_obj != "undefined") {
          
                if(collection_items_obj.outcome === 'success') {
@@ -129,8 +130,6 @@ class Browse {
                      }
             
                      let props = {context: this.#browse_context}
-
-                     console.log('browse props',props)
 
                      const collection_item_card = new CollectionItemCard(props) 
                      collection_items_obj.collection_items.forEach((item) => {        
@@ -154,7 +153,7 @@ class Browse {
                   window.scroll(0,this.#browse_context.scroll_y)
                }
                else {
-                  throw 'No records were returned.'
+                  throw 'No records were returned.' + collection_items_obj.message
                }
             }
             else {
