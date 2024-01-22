@@ -36,7 +36,19 @@ const get_table_create_fields = (table_name) => {
 
 const get_table_insert_fields = (table_name) => {
 
+   // we switch to whitelist the tables
+
    switch(table_name) {
+
+      case 'collection_items':
+
+         let collection_items_fields = CollectionItem.get_full_fields_list()
+
+         if(Array.isArray(collection_items_fields)) {
+            return collection_items_fields.map((field) => {
+               return field.key
+            })
+         }
 
       case 'collection_items_fts':
 
