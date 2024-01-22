@@ -101,6 +101,8 @@ class DeletedRecordsTeaser {
          try {
 
             const collection_items_obj = await window.collection_items_api.getItems(this.#context)
+
+            console.log('collection_items_obj',collection_items_obj)
          
             if (typeof collection_items_obj != "undefined") {
          
@@ -144,11 +146,11 @@ class DeletedRecordsTeaser {
                   window.scroll(0,this.#context.scroll_y)
                }
                else {
-                  throw 'No records were returned.'
+                  throw 'No records were returned. ' + collection_items_obj.message
                }
             }
             else {
-               throw 'No records were returned.'
+               throw 'No records were returned. 2'
             }
          }
          catch(error) {
