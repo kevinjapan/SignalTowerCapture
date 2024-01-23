@@ -13,7 +13,7 @@ class Tag {
    #last_error
 
    // we limit number of possible tags (proliferation loses value of the system)
-   #max_tags_count = 36
+   #max_tags_count = 24
 
    // every read-all needs an absolute upper limit!
    #limit_read_all_records = this.#max_tags_count
