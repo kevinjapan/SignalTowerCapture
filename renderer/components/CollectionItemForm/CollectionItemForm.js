@@ -13,7 +13,8 @@ import {
    create_button,
    create_input,
    create_textarea,
-   create_checkbox_fieldset
+   create_checkbox_fieldset,
+   create_radio_fieldset
 } from '../../utilities/ui_elements.js'
 
 
@@ -81,14 +82,12 @@ class CollectionItemForm {
       
 
 
-
       // we build each form field row(s) in parent grid as:
       //    |  field_label  |   field_input   |
       //    |               |   field_error   |
       //    |               | [find_file_btn] |
 
       this.#props.fields.forEach( async(field) => {
-
 
          // get the value for the current form field
          let curr_field_value = ''
@@ -99,7 +98,6 @@ class CollectionItemForm {
          if(curr_field_value === null) {
             curr_field_value = ''
          } 
-         
 
          // build the row label
          let field_label = create_label({
@@ -108,7 +106,6 @@ class CollectionItemForm {
             ],
             text:ui_friendly_text(field.key)
          })
-
 
          // build the row input field
          let field_input
@@ -172,7 +169,6 @@ class CollectionItemForm {
          // btn to select file for 'file_name' field
          if(field.key === 'file_name') {       
 
-            
             const file_info = create_div({
                classlist:[''],
                text:DESC.FILE_OR_FOLDER_ITEMS
@@ -186,12 +182,9 @@ class CollectionItemForm {
             form.append(create_div(),file_info,create_div(),find_file_btn)
          }
 
-
          // tags checkboxes
-
          if(field.key === 'tags') {
 
-            
             let field_label = create_label({
                attributes:[
                   {key:'for',value:field.key}
@@ -202,7 +195,7 @@ class CollectionItemForm {
             // current tags : this.#props.item[field.key]
             const current_tags = this.#props.item ? this.#props.item[field.key].split(',') : []
 
-            // placeholder - inject once promise is resolved..
+            // placeholder - we inject once promise is resolved..
             form.append(field_label,create_div({attributes:[{key:'id',value:'tags_placeholder'}]}))
 
             try {
@@ -233,6 +226,8 @@ class CollectionItemForm {
                      })
                      tags_placeholder.replaceChildren(create_div(),tags_checkboxes)
                   }
+                  // we activate tags separately to tie activation to completion of getTags()
+                  this.activate_tags()
                }
             }
             catch(error) {
@@ -244,6 +239,32 @@ class CollectionItemForm {
                // future : notify tags unavailable
             }
          }
+
+         
+         // file_type checkboxes
+
+         if(field.key === 'file_type') {
+
+            let field_label = create_label({
+               attributes:[
+                  {key:'for',value:field.key}
+               ],
+               text:ui_friendly_text(field.key)
+            })
+
+            const file_type_radio = create_radio_fieldset({
+               name:'file_type_radio_btns',
+               classlist:['m_0'],
+               radio_buttons:[
+                  {key:'file',label:'File',value:'File',checked:curr_field_value === 'File' ? true : false},
+                  {key:'folder',label:'Folder',value:'Folder',checked:curr_field_value === 'Folder' ? true : false}
+               ]
+            })
+
+            form.append(field_label,file_type_radio)
+
+         }
+
 
          // display the file if a valid img and exists
          if(field.key === 'file_name' && this.#props.item) {
@@ -278,6 +299,7 @@ class CollectionItemForm {
    //
    activate = (action = 'update') => {
 
+      console.log('activate')
 
       // On 'Apply' add or update CollectionItemForm
 
@@ -483,9 +505,26 @@ class CollectionItemForm {
          })
       }
 
+      // on change file_type radio btn
 
+      const file_type_radio_btns = document.querySelectorAll('input[name="file_type_radio_btns"]')
+      if(file_type_radio_btns) {
+         file_type_radio_btns.forEach((radio_btn) => {            
+            radio_btn.addEventListener('change',(event) => {
+               
+               const file_type = document.getElementById('file_type')
+               if(file_type) {
+                  file_type.value = event.target.value
+               }              
+            })
+         })
+      }
+   }
+
+
+   activate_tags = () => {
+      
       // on change tag checkbox
-
       const tags_checkboxes = document.querySelectorAll('.tags_checkbox')
 
       if(tags_checkboxes) {
@@ -497,13 +536,11 @@ class CollectionItemForm {
                const tags_input = document.getElementById('tags')
                if(tags_input) {
 
-                  
                   // get existing tags list (remove any non-registered tag tokens)
                   const curr_tags = tags_input.value.split(',').filter(e => e)
                   const verified_curr_tags = curr_tags.filter(curr_tag => {
                      return this.#tags_obj.tags.some(tag => tag.tag === curr_tag)
                   })
-
                   const existing_tags = new Set(verified_curr_tags) 
                   if(existing_tags.has(event.target.value)) {
                      existing_tags.delete(event.target.value)

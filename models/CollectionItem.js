@@ -31,10 +31,10 @@ class CollectionItem {
    //
    static #full_fields_list = [
       {key:'title',data_type:'TEXT NOT NULL',editable:true,in_card:true,export:true,test:{type:'string',min:3,max:100}},
-      {key:'tags',data_type:'TEXT',editable:true,in_card:true,hidden:true,export:true,test:{type:'string',min:0,max:200}},
-      {key:'file_name',data_type:'TEXT NOT NULL',editable:true,in_card:true,export:true,test:{type:'string',min:5,max:100}},
-      {key:'folder_path',data_type:'TEXT NOT NULL',editable:true,in_card:true,export:true,test:{type:'string',min:1,max:200}},
       {key:'content_desc',data_type:'TEXT',editable:true,in_card:true,export:true,test:{type:'string',min:0,max:500}},
+      {key:'file_name',data_type:'TEXT NOT NULL',editable:true,in_card:true,export:true,test:{type:'string',min:5,max:100}},
+      {key:'file_type',data_type:'TEXT NOT NULL',editable:true,in_card:true,hidden:true,export:true,test:{type:'string',min:3,max:20}},
+      {key:'folder_path',data_type:'TEXT NOT NULL',editable:true,in_card:true,export:true,test:{type:'string',min:1,max:200}},
       {key:'item_ref',data_type:'INTEGER',editable:true,in_card:false,export:true,test:{type:'string',min:1,max:100}},
       {key:'item_date',data_type:'TEXT',editable:true,in_card:true,export:true,test:{type:'date',min:0,max:10},placeholder:'YYYY-MM-DD'},
       {key:'item_type',data_type:'TEXT NOT NULL',editable:true,in_card:true,export:true,test:{type:'string',min:3,max:50}},
@@ -42,6 +42,7 @@ class CollectionItem {
       {key:'people',data_type:'TEXT',editable:true,in_card:false,export:true,test:{type:'string',min:0,max:100}},
       {key:'source',data_type:'TEXT',editable:true,in_card:true,export:true,test:{type:'string',min:0,max:100}},
       {key:'content_pages_count',data_type:'INTEGER',editable:true,in_card:false,export:true,test:{type:'int',min:0,max:50}},
+      {key:'tags',data_type:'TEXT',editable:true,in_card:true,hidden:true,export:true,test:{type:'string',min:0,max:200}},
       // {key:'bookmarked_at',data_type:'TEXT',editable:false,in_card:false,export:true,test:{type:'date',min:10,max:24}},
       {key:'id',data_type:'INTEGER PRIMARY KEY',editable:false,in_card:false,export:true,test:{type:'int',min:1,max:9999999999}},
       {key:'created_at',data_type:'TEXT NOT NULL',editable:false,in_card:false,export:true,test:{type:'date',min:10,max:24}},
@@ -111,14 +112,15 @@ class CollectionItem {
                      LIMIT ${this.#items_per_page} 
                      OFFSET ${offset}`
 
-            console.log('sql',sql)
-
             this.#database.all(sql, (error, rows) => {
                if(error) reject(error)
                resolve(rows)            
             })
          })
-      }).catch((error) => this.set_last_error(error))
+      }).catch((error) => {
+         this.set_last_error(error)
+         return false
+      })
  
       // reduce fields to those required in CollectionItemCard (also requires 'type' for displaying dates)
       const in_card_fields = this.get_in_card_fields(CollectionItem.#full_fields_list)
