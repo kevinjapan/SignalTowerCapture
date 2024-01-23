@@ -483,9 +483,16 @@ input[disabled] {
    border:none;
 }
 label,.label {
-   color:hsl(0, 0%, 20%);
-   font-weight:500;
+   color:hsl(0, 0%, 70%);
+   font-weight:400;
+   font-size:1.1rem;
+   align-self:start;
 }
+.form_layout div {   
+   align-self:start;
+}
+
+
 .form_row_divider {
    -ms-grid-column: 1;
    grid-column:1;
@@ -539,6 +546,28 @@ label,.label {
    grid-template-columns: 1.5fr 1fr;
    grid-gap:.7rem;
 }
+@media screen and (max-width: 768px) {
+   /* we vertically stack record on sm widths */
+   .collection_item_record {
+      display:flex;
+      -webkit-box-orient:vertical;
+      -webkit-box-direction:normal;
+      -ms-flex-direction:column;
+      flex-direction:column;
+      -ms-flex-wrap:wrap-reverse;
+      flex-wrap:wrap-reverse;
+      gap:.7rem;
+   }
+   .collection_item_record .text_col{
+      order:2;
+   }
+   .collection_item_record .img_col{
+      order:1;
+   }
+   .collection_item_record #record_admin{
+      order:3;
+   }
+}
 
 /* 
 label/[value|input] layout for Record and Form views 
@@ -546,9 +575,29 @@ label/[value|input] layout for Record and Form views
 .form_layout {
    display:-ms-grid;
    display:grid;
-   -ms-grid-columns: 1fr .7rem 2fr;
-   grid-template-columns: 1fr 2fr;
+   -ms-grid-columns: 1fr .7rem 4fr;
+   grid-template-columns: 1fr 4fr;
    grid-gap:.7rem;
+}
+@media screen and (max-width: 768px) {
+   /* we vertically stack form on sm widths */
+   .form_layout {
+      display:flex;
+      -webkit-box-orient:vertical;
+      -webkit-box-direction:normal;
+      -ms-flex-direction:column;
+      flex-direction:column;
+      -ms-flex-wrap:wrap;
+      flex-wrap:wrap;
+      gap:.7rem;
+   }
+   .form_layout .label {
+      margin-top:1rem;
+      margin-bottom:0;
+   }
+   .form_layout div {
+      margin-top:0;
+   }
 }
 
 
@@ -591,6 +640,12 @@ input[type='checkbox']:checked::before {
 }
 
 
+/* 
+   CollectionItemRecord styles 
+*/
+.ci_form_title {
+   font-size:1.4rem;
+}
 
 
 
