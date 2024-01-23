@@ -167,16 +167,17 @@ app.whenReady().then(async() => {
    setTimeout(() => house_keeping(),200)
 
    // AppConfig initialization
-   try {
-      await new AppConfig(database).initialize_config(database)
-   }
-   catch(error) {
-      if(database) {
-         // we only notify if the database is valid to prevent multiple notifications if db also failed
-         // delay to allow window to finish initializing
-         setTimeout(() => notify_client_alert('AppConfig Initialization failed.\n' + error),2000)
+   // future : requires timeout to wait on previous db jobs finishing (db initialization only) - why? can we tidy?
+   setTimeout(async() => {
+      try {
+         await new AppConfig(database).initialize_config(database)
       }
-   }
+      catch(error) {
+         if(database) {
+            // we only notify if the database is valid to prevent multiple notifications if db also failed
+            notify_client_alert('AppConfig Initialization failed.\n' + error)
+         }
+      }},1200)
 })
 
 function notify_client_alert(message) {
