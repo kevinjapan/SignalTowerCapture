@@ -4,6 +4,33 @@ const Tag = require('../../models/Tag')
 const AppConfig = require('../../models/AppConfig')
 
 
+const get_full_fields = table_name => {
+   
+   let fields = null
+
+   switch(table_name) {
+      case 'collection_items':
+         fields = CollectionItem.get_full_fields_list()
+         break
+      case 'collection_items_fts':         
+         fields = CollectionItemFTS.get_full_fields_list()
+         break
+      case 'tags':      
+         fields = Tag.get_full_fields_list()
+         break
+      case 'app_config':
+         fields = AppConfig.get_full_fields_list()
+         break
+      default:
+         return ''
+   }
+
+   if(Array.isArray(fields)) {
+      return fields
+   }
+   return []
+}
+
 const get_table_create_fields = (table_name) => {
 
    let fields = null
@@ -30,6 +57,7 @@ const get_table_create_fields = (table_name) => {
          return field.key + ' ' + field.data_type
       })
    }
+   return []
 }
 
 
@@ -72,6 +100,7 @@ const get_table_insert_fields = (table_name) => {
 
 
 module.exports = {
+   get_full_fields,
    get_table_create_fields,
    get_table_insert_fields
 }
