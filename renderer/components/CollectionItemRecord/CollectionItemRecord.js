@@ -32,11 +32,12 @@ class CollectionItemRecord {
       let text_col = create_div({
          classlist:['text_col']
       })
-
       let img_col = create_div({
          classlist:['img_col']
       })
 
+
+      // img viewer (hidden initially)
       let img_view = create_div({
          attributes:[
             {key:'id',value:'img_view'}
@@ -63,6 +64,7 @@ class CollectionItemRecord {
 
       form_layout.append(RecordBtns.render(this.#props.item.id,this.#props.context ? true : false))
 
+      // let form_row
       let field_label
       let field_value
 
@@ -70,10 +72,24 @@ class CollectionItemRecord {
       // append form element for each Record field
       this.#props.fields.forEach( async (field) => { 
 
+         // form_row = create_div({
+         //    classlist:['flex','border']
+         // })
+
          field_label = create_div({
             classlist:['label'],
             text:ui_friendly_text(field.key)
          })
+
+         if(field.key === 'title') {
+            
+            // title above img if stacked on sm views
+            let img_col_title = create_div({
+               classlist:[`ci_form_${field.key}`,'stacked_img_title'],
+               text:this.#props.item[field.key]
+            })
+            img_col.append(img_col_title)
+         }
 
          if(field.key === 'tags') {
             field_value = create_div()
@@ -81,7 +97,7 @@ class CollectionItemRecord {
          }
          else {
             field_value = create_div({        
-               classlist:['break_words'],
+               classlist:['break_words',`ci_form_${field.key}`],
                text:this.#props.item[field.key]
             })
          }
@@ -103,6 +119,7 @@ class CollectionItemRecord {
             }
          }
       })
+      
 
       form_layout.append(RecordBtns.render(this.#props.item.id,this.#props.context ? true : false))
 
@@ -189,7 +206,8 @@ class CollectionItemRecord {
 
 
 
-      // view larger image size
+      // image viewer
+
       let record_img = document.getElementById('record_img')
       if(record_img) {
          record_img.addEventListener('click',() => {

@@ -546,6 +546,9 @@ label,.label {
    grid-template-columns: 1.5fr 1fr;
    grid-gap:.7rem;
 }
+.img_col div.stacked_img_title {
+   display:none;
+}
 @media screen and (max-width: 768px) {
    /* we vertically stack record on sm widths */
    .collection_item_record {
@@ -566,6 +569,9 @@ label,.label {
    }
    .collection_item_record #record_admin{
       order:3;
+   }
+   .img_col div.stacked_img_title {
+      display:block;
    }
 }
 
