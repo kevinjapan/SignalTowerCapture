@@ -44,19 +44,18 @@ class CollectionItemForm {
 
    constructor(props) {
       this.#props = props
+      console.log('props',props)
    }
 
 
    render = () =>  {
 
       // component container
-      //
       this.#record = create_section({
          classlist:['collection_item_record']
       })
 
       // 2-col layout
-      //
       let text_col = create_div({
          classlist:['text_col']
       })
@@ -81,7 +80,7 @@ class CollectionItemForm {
       text_col.append(form)
       
 
-
+      // form_layout is grid inside text_col
       // we build each form field row(s) in parent grid as:
       //    |  field_label  |   field_input   |
       //    |               |   field_error   |
@@ -166,21 +165,6 @@ class CollectionItemForm {
 
          form.append(create_div(),field_error)
 
-         // btn to select file for 'file_name' field
-         if(field.key === 'file_name') {       
-
-            const file_info = create_div({
-               classlist:[''],
-               text:DESC.FILE_OR_FOLDER_ITEMS
-            })
-            let find_file_btn = create_button({
-                  attributes:[
-                     {key:'id',value:'find_file_btn'}
-                  ],
-                  text:'Find File'
-               }) 
-            form.append(create_div(),file_info,create_div(),find_file_btn)
-         }
 
          // tags checkboxes
          if(field.key === 'tags') {
@@ -245,6 +229,8 @@ class CollectionItemForm {
 
          if(field.key === 'file_type') {
 
+            if(curr_field_value === '') curr_field_value = 'File'
+
             let field_label = create_label({
                attributes:[
                   {key:'for',value:field.key}
@@ -256,15 +242,34 @@ class CollectionItemForm {
                name:'file_type_radio_btns',
                classlist:['m_0'],
                radio_buttons:[
-                  {key:'file',label:'File',value:'File',checked:curr_field_value === 'File' ? true : false},
-                  {key:'folder',label:'Folder',value:'Folder',checked:curr_field_value === 'Folder' ? true : false}
+                  {key:'file',label:'File',value:'File',checked:curr_field_value.toUpperCase() === 'FILE' ? true : false},
+                  {key:'folder',label:'Folder',value:'Folder',checked:curr_field_value.toUpperCase() === 'FOLDER' ? true : false}
                ]
             })
+            
+            const file_type_info = create_div({
+               attributes:[
+                  {key:'id',value:'file_type_info'}
+               ],
+               classlist:['text_grey','border','rounded','mb_3','p_1'],
+               text:curr_field_value.toUpperCase() === 'FILE' ? DESC.FILE_ITEM_FILETYPE : DESC.FOLDER_ITEM_FILETYPE
+            })
 
-            form.append(field_label,file_type_radio)
+            form.append(field_label,file_type_radio,create_div(),file_type_info)
 
          }
 
+         // btn to select file for 'file_name' field
+         if(field.key === 'file_type') {       
+
+            let find_file_btn = create_button({
+                  attributes:[
+                     {key:'id',value:'find_file_btn'}
+                  ],
+                  text:'Find File'
+               }) 
+            form.append(create_div(),find_file_btn)
+         }
 
          // display the file if a valid img and exists
          if(field.key === 'file_name' && this.#props.item) {
@@ -298,8 +303,6 @@ class CollectionItemForm {
    // enable buttons/links displayed in the render
    //
    activate = (action = 'update') => {
-
-      console.log('activate')
 
       // On 'Apply' add or update CollectionItemForm
 
@@ -515,7 +518,12 @@ class CollectionItemForm {
                const file_type = document.getElementById('file_type')
                if(file_type) {
                   file_type.value = event.target.value
-               }              
+               }           
+               
+               const file_type_info = document.getElementById('file_type_info')
+               if(file_type_info) {
+                  file_type_info.innerText = event.target.value === 'File' ? DESC.FILE_ITEM_FILETYPE : DESC.FOLDER_ITEM_FILETYPE
+               }
             })
          })
       }
