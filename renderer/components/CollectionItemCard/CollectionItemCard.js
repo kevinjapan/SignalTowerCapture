@@ -96,7 +96,7 @@ class CollectionItemCard {
                attributes:[
                   {key:'id',value:'tags_list_elem'}
                ],
-               classlist:['m_0']
+               classlist:['m_0','w_full']
             }) 
             const tags_list = new TagsLiteList('tags_list')
             if(tags_list) {
@@ -115,7 +115,7 @@ class CollectionItemCard {
             if(field_value.length > 500) field_value = field_value.substring(0,500) + '..'
 
             field_element = create_div({
-               classlist:['mt_0.5','mr_2'],
+               classlist:['break_words','mt_0.5','mr_2'],
                text:field_value
             })
             card.append(field_element)
