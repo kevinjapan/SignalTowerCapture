@@ -27,6 +27,9 @@ class ImageViewer {
    render = async() => {
 
       let viewer = create_section({
+         attributes:[
+            {key:'id',value:'viewer'}
+         ],
          classlist:['']
       })
 
@@ -87,6 +90,8 @@ class ImageViewer {
    // enable buttons/links displayed in the render
    activate = () => {
 
+      // we will register eventlisteners w/ 'viewer' to ensure cleaned up on leaving this component
+      const viewer = document.getElementById('viewer')
 
       // Close image view
 
@@ -130,17 +135,17 @@ class ImageViewer {
       // Click and move zoomed img
       // future : change to 'move' cursor while moving - it's a bit flakey (can't both show 'move' and return to 'pointer')
 
-      document.addEventListener('mousedown',(event) => {
+      viewer.addEventListener('mousedown',(event) => {
          event.preventDefault()
-         document.addEventListener('mousemove',this.on_mouse_move)
+         viewer.addEventListener('mousemove',this.on_mouse_move)
          this.#start_x = event.clientX
          this.#start_y = event.clientY
          this.#scroll_top = document.documentElement.scrollTop
          this.#scroll_left = document.documentElement.scrollLeft
       })
-      document.addEventListener('mouseup',(event) => {
+      viewer.addEventListener('mouseup',(event) => {
          event.preventDefault()
-         document.removeEventListener('mousemove',this.on_mouse_move)
+         viewer.removeEventListener('mousemove',this.on_mouse_move)
       })
 
    }
