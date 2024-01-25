@@ -44,7 +44,6 @@ class CollectionItemForm {
 
    constructor(props) {
       this.#props = props
-      console.log('props',props)
    }
 
 
@@ -90,14 +89,10 @@ class CollectionItemForm {
 
          // get the value for the current form field
          let curr_field_value = ''
-
-         if(typeof this.#props.item !== 'undefined') {
-            curr_field_value = this.#props.item[field.key]
-         }
-         if(curr_field_value === null) {
-            curr_field_value = ''
-         } 
-
+         if(typeof this.#props.item !== 'undefined') curr_field_value = this.#props.item[field.key]
+         if(curr_field_value === null) curr_field_value = ''
+         if(field.key === 'file_type' && curr_field_value === '') curr_field_value = 'File'
+      
          // build the row label
          let field_label = create_label({
             attributes:[
@@ -121,7 +116,7 @@ class CollectionItemForm {
                classlist:['input_field']
             })
             if(field.hidden === true) field_input.hidden = true
-            field_input.value = curr_field_value // to do : this line necessary?
+            field_input.value = curr_field_value   // req for textareas
             field_input.style.height = field.test.max > 200 ? '16rem' : '4.25rem'
             if(!field.editable) field_input.disabled = 'disabled'
             if(field.placeholder) field_input.setAttribute('placeholder',field.placeholder)
@@ -229,8 +224,6 @@ class CollectionItemForm {
 
          if(field.key === 'file_type') {
 
-            if(curr_field_value === '') curr_field_value = 'File'
-
             let field_label = create_label({
                attributes:[
                   {key:'for',value:field.key}
@@ -257,11 +250,7 @@ class CollectionItemForm {
 
             form.append(field_label,file_type_radio,create_div(),file_type_info)
 
-         }
-
-         // btn to select file for 'file_name' field
-         if(field.key === 'file_type') {       
-
+            // btn to select file for 'file_name' field
             let find_file_btn = create_button({
                   attributes:[
                      {key:'id',value:'find_file_btn'}
@@ -273,7 +262,7 @@ class CollectionItemForm {
 
          // display the file if a valid img and exists
          if(field.key === 'file_name' && this.#props.item) {
-            await this.display_if_img_file(img_col,this.#props.item['folder_path'],this.#props.item[field.key])
+            await this.display_if_img_file(img_col,this.#props.item['folder_path'],this.#props.item[field.key],this.#props.item['img_desc'])
          }
       })
 
@@ -339,9 +328,6 @@ class CollectionItemForm {
                      updated_collection_item[pair[0]] = pair[1].trim()
                   }
 
-                  // to do : tags are not being added on 'New Record'
-                  console.log('updated_collection_item',updated_collection_item)
-               
                   let response
                   if(action === 'add') {
                      response = await window.collection_items_api.addCollectionItem(updated_collection_item)
@@ -488,7 +474,7 @@ class CollectionItemForm {
                }
 
                // display if new file is an img file
-               await this.display_if_img_file(img_col,path,file)
+               await this.display_if_img_file(img_col,path,file,this.#props.item['img_desc'])
                
             }
             else {
@@ -504,7 +490,7 @@ class CollectionItemForm {
       const img_col = document.getElementById('img_col')
       if(file_name && folder_path && img_col) {            
          file_name.addEventListener('change',async(event) => {
-            await this.display_if_img_file(img_col,folder_path.value,file_name.value)
+            await this.display_if_img_file(img_col,folder_path.value,file_name.value,this.#props.item['img_desc'])
          })
       }
 
@@ -566,13 +552,11 @@ class CollectionItemForm {
    // display if we have a valid img file
    // is_image_file queries main process if the file exists and also if the ext is img ext
 
-   display_if_img_file = async (parent_elem,folder_path,file_name) => {
+   display_if_img_file = async (parent_elem,folder_path,file_name,alt_text) => {
 
       let res = await is_image_file(folder_path,file_name)  
-      if(res) {    
-
-         // to do : add and assign an 'image_desc' field in CollectionItem for image alt text
-         let img = await build_img_elem('record_img',folder_path,file_name)
+      if(res) {
+         let img = await build_img_elem('record_img',folder_path,file_name,alt_text)
          if(img) {
             parent_elem.replaceChildren(create_div(),img)
          }
@@ -583,9 +567,6 @@ class CollectionItemForm {
    }
 
 
-
-
-
    // Errors are highlight bars beneath each input field
 
    highlight_errors = (errors) => {
@@ -593,7 +574,7 @@ class CollectionItemForm {
          let elem = document.getElementById(`${error.name}_error`)
          if(elem) {
             elem.classList.add('active_error')
-            elem.innerText = error.message
+            elem.innerText = `[${error.name}] ${error.message}`
          }
       })
    }

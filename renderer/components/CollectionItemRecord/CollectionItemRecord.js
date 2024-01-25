@@ -85,7 +85,7 @@ class CollectionItemRecord {
             
             // title above img if stacked on sm views
             let img_col_title = create_div({
-               classlist:[`ci_form_${field.key}`,'stacked_img_title'],
+               classlist:[`ci_form_${field.key}`,'stacked_img_title','mb_1'],
                text:this.#props.item[field.key]
             })
             img_col.append(img_col_title)
@@ -109,7 +109,7 @@ class CollectionItemRecord {
 
             if(await is_image_file(this.#props.item['folder_path'],this.#props.item[field.key])) {   
 
-               let img = await build_img_elem('record_img',this.#props.item['folder_path'],this.#props.item[field.key])
+               let img = await build_img_elem('record_img',this.#props.item['folder_path'],this.#props.item[field.key],this.#props.item['img_desc'])
                if(img) {
                   img_col.append(img)
                }
