@@ -126,7 +126,7 @@ class Database {
          cols_not_in_database.forEach(col => {
             try {
                const data_type = collection_items_full_fields.filter(field => field.key === col)[0].data_type
-               this.#db.run(`ALTER TABLE collection_items ADD COLUMN ${col} ${data_type} DEFAULT "file"`)
+               this.#db.run(`ALTER TABLE collection_items ADD COLUMN ${col} ${data_type}`)
             } 
             catch (error) {
                console.log(`Failed to ADD COLUMN ${col} ${data_type} to collection_items table`,error)
