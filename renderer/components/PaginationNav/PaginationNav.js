@@ -62,7 +62,7 @@ class PaginationNav {
          attributes:[
             {key:'data-page',value:parseInt(this.#current_page) + 1}
          ],
-         classlist:this.#current_page < this.#page_count.length ? [`${this.#key}_page_selector`,'page_selector'] : ['text_grey'],
+         classlist:this.#current_page < this.#page_count.length ? [`${this.#key}_page_selector`,'page_selector'] : ['text_lightgrey'],
          text: 'next page >'
       })
 
