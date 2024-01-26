@@ -1,4 +1,4 @@
-# signal-tower-capture
+# Signal Tower Capture
 
 ## Local Collections Management
 
