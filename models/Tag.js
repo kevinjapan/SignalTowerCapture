@@ -99,8 +99,6 @@ class Tag {
 
       // reduce fields to those required in CollectionItemCard (also requires 'type' for displaying dates)
       const in_card_fields = Tag.#full_fields_list
-      
-      // future : is count returning accurate/useful stat?
 
       if(result) {
          let response_obj = {
@@ -129,7 +127,7 @@ class Tag {
    // READ ALL - non-paginated
    //
    // for generating csv file we want to extract all records,
-   // future : we want to avoid performance issues with memory -
+   // we want to avoid performance issues with memory -
    // using db.all will put all records into memory, so use db.each and offsets to chunk load and write to file?
    //
    async read_all() {
@@ -277,7 +275,6 @@ class Tag {
    async create(tag,editable_only = true) {
       
       let sql
-      // to do : only permit add if currently < this.#max_tags_count
 
       const count = await new Promise((resolve,reject) => {
          sql = `SELECT COUNT(id) as count FROM tags WHERE deleted_at IS NULL`

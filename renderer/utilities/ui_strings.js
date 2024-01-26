@@ -49,12 +49,9 @@ export const extract_file_name = (full_path) => {
 
 //
 // is valid tag
-// future : any other checks here?
 //
 export const is_valid_tag = (tag) => {
 
-   // to do : if tag already exists? no duplicates
-   
    if(typeof tag !== 'string') return false
    
    if(tag.length >= 3 && tag.length <= 24) {

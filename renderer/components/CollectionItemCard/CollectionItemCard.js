@@ -73,8 +73,6 @@ class CollectionItemCard {
             card.append(file_name_block)
 
          }
-         // future : imgs at default size are too large - noticeable impact on browse list generation
-         //          we can only include imgs in results lists if we have small sized version (manual or auto)
          
          // else if(field.key === 'folder_path') {
 

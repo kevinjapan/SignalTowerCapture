@@ -133,7 +133,7 @@ class ImageViewer {
 
       
       // Click and move zoomed img
-      // future : change to 'move' cursor while moving - it's a bit flakey (can't both show 'move' and return to 'pointer')
+      // we failed to change to 'move' cursor while moving - it's a bit flakey (can't both show 'move' and return to 'pointer')
 
       viewer.addEventListener('mousedown',(event) => {
          event.preventDefault()

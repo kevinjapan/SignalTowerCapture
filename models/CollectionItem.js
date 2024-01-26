@@ -20,7 +20,6 @@ class CollectionItem {
    #items_per_page = 20
 
    // every read-all needs an absolute upper limit!
-   // future : permit limitless w/ batches
    #limit_read_all_records = 20000
 
 
@@ -152,7 +151,7 @@ class CollectionItem {
    // READ ALL - non-paginated
    //
    // for generating csv file we want to extract all records,
-   // future : we want to avoid performance issues with memory -
+   // we want to avoid performance issues with memory -
    // using db.all will put all records into memory, so use db.each and offsets to chunk load and write to file?
    //
    async read_all() {
@@ -759,15 +758,12 @@ class CollectionItem {
    // FULL TEXT SEARCH
    // sql search using fts5 extension
    // dependency: virtual table / triggers
-   // future: do we need to remove stopwords - see search()
    //
-   // future : to vary search cols at user request - can modify MATCH term to limit cols -
+   // to vary search cols at user request - we can modify MATCH term to limit cols -
    //     eg   ci_fts MATCH 'title: eland';
    //          ci_fts MATCH '{title content_desc}:eland';
    //
    async search_fts(context) {
-      
-      console.log('search_fts')
 
       // pagination
       let offset = (parseInt(context.page) - 1) * this.#items_per_page

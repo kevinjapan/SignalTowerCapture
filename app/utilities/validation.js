@@ -34,7 +34,6 @@ const is_valid_int = (value, min = 0, max = 10000) => {
 //
 // Date
 // currently we check only expected format, not if actual legit date
-// future : use Date (is problematic but reduces mistakes from human error)
 //
 const is_valid_date = (value) => {
 
@@ -51,7 +50,6 @@ const is_valid_date = (value) => {
    if((parseInt(parts[0]) < 1700) || (parseInt(parts[0]) > curr_year)) result = false   
    if((parseInt(parts[1]) < 1) || (parseInt(parts[1]) > 12)) result = false  
    if((parseInt(parts[2]) < 1) || (parseInt(parts[2]) > 31)) result = false
-   // future : number days per month issue : if we don't go Date() option, we could use Month to determine max date in Day here..
 
    if(result) {   
       return true
@@ -198,7 +196,6 @@ const is_valid_app_config_record = (fields_list,app_config_record) => {
       {
          test = blueprint[0].test
 
-         // future : share this code w/ is_valid_collection_item()
          switch(test.type) {
             case 'string':
                try {

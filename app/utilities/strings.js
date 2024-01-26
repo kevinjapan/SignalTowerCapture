@@ -47,7 +47,6 @@ const get_random_test_string = (min_len = 5, max_len = 25) => {
 
 //
 // is valid tag
-// future : any other checks here?
 //
 const is_valid_tag = (tag) => {
 

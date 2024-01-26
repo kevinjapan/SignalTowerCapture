@@ -1,7 +1,7 @@
 
 
 const SEARCH_FIELDS = 'title || content_desc || tags'
-const MIN_SEARCH_TERM_LEN = 3       // future : packagethis w/ similar in Search object / enum
+const MIN_SEARCH_TERM_LEN = 3
 
 
 
