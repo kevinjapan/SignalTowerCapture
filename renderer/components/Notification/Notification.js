@@ -1,6 +1,6 @@
+import { create_div } from '../../utilities/ui_elements.js'
 
 
-// to do : make this fade in and out - use classlist..   
 
 class Notification {
 
@@ -9,8 +9,14 @@ class Notification {
       if(message === '') return
 
       let target = document.getElementById(element_id)
-      if(target) {            
-         target.innerText = message         
+
+      if(target) { 
+
+         const notification_card = create_div({
+            classlist:['notification_card'],
+            text:message
+         })
+         target.append(notification_card) 
          if(fade_out) setTimeout(() => this.remove_notification(element_id),4000)
       }
    }
@@ -19,7 +25,7 @@ class Notification {
 
       let target = document.getElementById(element_id)
       if(target) {
-         target.innerText = ''
+         target.replaceChildren()
       }
    }
 
