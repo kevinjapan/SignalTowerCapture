@@ -50,7 +50,6 @@ class SearchForm {
       })
       search_form.append(search_term_input)
 
-
       let search_btn = create_button({
          attributes:[
             {key:'id',value:'search_btn'}
@@ -151,7 +150,6 @@ class SearchForm {
             this.#props.clear_search()
          })
 
-         // search_term_input.focus()
       }
 
       // Advanced Search 'dropdown'
@@ -166,6 +164,9 @@ class SearchForm {
             }
          })
       }
+
+      
+      search_term_input.focus()
 
    }
 
