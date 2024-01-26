@@ -22,7 +22,6 @@ class CollectionItemRecord {
 
    render = () => {
 
-
       // component container
       this.#record = create_section({
          classlist:['collection_item_record']
@@ -45,6 +44,7 @@ class CollectionItemRecord {
          classlist:['img_view']
       })
 
+      // mark/highlight if record has been soft-deleted
       if(this.#props.item['deleted_at']) {
          const notify_deleted = create_p({
             classlist:['bg_yellow_100','grid_span_2'],
@@ -64,26 +64,21 @@ class CollectionItemRecord {
 
       form_layout.append(RecordBtns.render(this.#props.item.id,this.#props.context ? true : false))
 
-      // let form_row
+      
+      // build each field row on the form
       let field_label
       let field_value
-
       
       // append form element for each Record field
       this.#props.fields.forEach( async (field) => { 
 
-         // form_row = create_div({
-         //    classlist:['flex','border']
-         // })
-
          field_label = create_div({
-            classlist:['label'],
+            classlist:['label',`${field.key === 'title' ? 'line_2' : ''}`],
             text:ui_friendly_text(field.key)
          })
 
-         if(field.key === 'title') {
-            
-            // title above img if stacked on sm views
+         if(field.key === 'title') {            
+            // we rpt display of title above img when stacked on sm views
             let img_col_title = create_div({
                classlist:[`ci_form_${field.key}`,'stacked_img_title','mb_1'],
                text:this.#props.item[field.key]
