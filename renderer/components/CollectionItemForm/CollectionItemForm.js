@@ -210,12 +210,7 @@ class CollectionItemForm {
                }
             }
             catch(error) {
-               let props = {
-                  msg:'Sorry, we were unable to access the Tags.',
-                  error:error
-               }
-               // App.switch_to_component('Error',props)
-               // future : notify tags unavailable
+               setTimeout(() => Notification.notify('tags_placeholder','Sorry, we were unable to access the Tags.',false),1500)
             }
          }
 
@@ -335,9 +330,6 @@ class CollectionItemForm {
                   else {
                      // FormData only returns the non-disabled input key/value pairs - so we have to add 'id'
                      updated_collection_item.id = this.#record_id
-
-                     // future : tags as hidden textfield and retain operation as items are checked/un-checked : basically as-is
-
                      response = await window.collection_items_api.updateCollectionItem(updated_collection_item)
                   }
 
@@ -474,7 +466,7 @@ class CollectionItemForm {
                }
 
                // display if new file is an img file
-               await this.display_if_img_file(img_col,path,file,this.#props.item['img_desc'])
+               await this.display_if_img_file(img_col,path,file,this.#props.item ? this.#props.item['img_desc'] : 'image')
                
             }
             else {
