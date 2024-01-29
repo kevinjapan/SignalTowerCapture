@@ -6,9 +6,8 @@ const DESC = {
    FILE_ITEM_FILETYPE:
       `Add a single page or file item. Use 'Find File' to select the file in your collections folders.`,
    FOLDER_ITEM_FILETYPE:
-      `Add a multiple page or multiple file item - such as a photo collection - by referencing the folder 
-       containing your files here.
-       Use 'Find File' to choose one of the images inside that folder as an example to display on the record.`,
+      `Add a multiple page or multiple file item - such as a photo collection - by referencing the folder containing your files here.
+       Use the 'Find File' button below to choose one of the images inside that folder as an example to display on the record.`,
 
 }
 
