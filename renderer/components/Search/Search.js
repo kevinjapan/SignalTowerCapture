@@ -3,7 +3,7 @@ import SearchForm from '../SearchForm/SearchForm.js'
 import CollectionItemCard from '../CollectionItemCard/CollectionItemCard.js'
 import PaginationNav from '../PaginationNav/PaginationNav.js'
 import { ui_display_number_as_str } from '../../utilities/ui_strings.js'
-import { create_section,create_div } from '../../utilities/ui_elements.js'
+import { create_section,create_h,create_div } from '../../utilities/ui_elements.js'
 
 
 
@@ -40,6 +40,13 @@ class Search {
             {key:'id',value:'browse_section'}
          ]
       })
+    
+      const heading = create_h({
+         level:'h1',
+         text:'Search',
+         classlist:['m_0']
+      })
+      browse_section.append(heading)
 
       let search_status = create_section({
          attributes:[
