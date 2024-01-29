@@ -33,8 +33,8 @@ class CollectionItem {
       {key:'content_desc',data_type:'TEXT',editable:true,in_card:true,export:true,test:{type:'string',min:0,max:500}},
       {key:'file_type',data_type:'TEXT DEFAULT "File" NOT NULL',editable:true,in_card:true,hidden:true,export:true,test:{type:'string',min:3,max:20}},
       {key:'file_name',data_type:'TEXT NOT NULL',editable:true,in_card:true,export:true,test:{type:'string',min:5,max:100}},
-      {key:'folder_path',data_type:'TEXT NOT NULL',editable:true,in_card:true,export:true,test:{type:'string',min:1,max:200}},
-      {key:'img_desc',data_type:'TEXT DEFAULT "" NOT NULL',editable:true,in_card:false,export:true,test:{type:'string',min:1,max:80}},
+      {key:'folder_path',data_type:'TEXT NOT NULL',editable:true,in_card:false,export:true,test:{type:'string',min:1,max:200}},
+      {key:'img_desc',data_type:'TEXT DEFAULT "image"',editable:true,in_card:false,export:true,test:{type:'string',min:1,max:80}},
       {key:'item_ref',data_type:'INTEGER',editable:true,in_card:false,export:true,test:{type:'string',min:1,max:100}},
       {key:'item_date',data_type:'TEXT',editable:true,in_card:true,export:true,test:{type:'date',min:0,max:10},placeholder:'YYYY-MM-DD'},
       {key:'item_type',data_type:'TEXT NOT NULL',editable:true,in_card:true,export:true,test:{type:'string',min:3,max:50}},
@@ -71,22 +71,29 @@ class CollectionItem {
    //
    async read(context) {
 
-      console.log('context',context)
-
       let offset = (parseInt(context.page) - 1) * this.#items_per_page
       let total_count = 0  
       let sql
 
       // filters
-      let status = 'collection_items.deleted_at IS NULL'
-      let order_by = 'title COLLATE NOCASE ASC'
-      let filter_by_char = ''
+      // filters target known specific conditional tests
+      let status = 'collection_items.deleted_at IS NULL'    // our default 'WHERE' clause (always present or overwritten below)
+      let order_by = 'title COLLATE NOCASE ASC'             // our default 'ORDER BY' clause
+      let filter_by_char = ''                               // where 'title' starts with _char 
       if(context.filters) {
          if(context.filters.record_status) status = get_status_condition_sql('collection_items',context.filters.record_status)
          if(context.filters.order_by) order_by = get_order_by_condition_sql('collection_items',context.filters.order_by,context.filters.order_by_direction)
-         if(context.filters.filter_char) {
-            filter_by_char = ` AND title LIKE '${context.filters.filter_char}%' `
-         }
+         if(context.filters.filter_char) filter_by_char = ` AND title LIKE '${context.filters.filter_char}%' `
+      }
+
+      // field_filters target conditional tests against fields/cols within the record
+      let field_filters_sql = ''
+      if(context.field_filters) {         
+         context.field_filters.forEach(filter => {
+            // to do : whitelist fitler.field and '?' placeholder for filter.value
+            console.log('filter',filter.field,filter.value)
+            field_filters_sql += ` AND ${filter.field} = "${filter.value}"`
+         })
       }
 
       // wrap in a promise to await result
@@ -106,7 +113,7 @@ class CollectionItem {
 
             sql = `SELECT ${fields.toString()} 
                      FROM collection_items 
-                     WHERE ${status} ${filter_by_char} 
+                     WHERE ${status} ${filter_by_char} ${field_filters_sql} 
                      ORDER BY ${order_by}                      
                      LIMIT ${this.#items_per_page} 
                      OFFSET ${offset}`
