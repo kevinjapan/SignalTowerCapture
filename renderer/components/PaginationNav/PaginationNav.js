@@ -36,7 +36,7 @@ class PaginationNav {
          attributes:[
             {key:'id',value:'page_nav'}
          ],
-         classlist:['page_nav','flex', 'space_between', 'gap_.5']
+         classlist:['page_nav']
       })
       
       // prev page
@@ -45,7 +45,7 @@ class PaginationNav {
             {key:'data-page',value:parseInt(this.#current_page) - 1}
          ],
          classlist:this.#current_page > 1 ? [`${this.#key}_page_selector`,'page_selector'] : ['text_lightgrey'],
-         text: '< previous page'
+         text: '< prev page'
       })
 
       // page n of n
