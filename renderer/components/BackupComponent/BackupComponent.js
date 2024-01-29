@@ -96,18 +96,20 @@ class BackupComponent {
             }
          })
       }
-
-
    }
 
    activate_folder_btn = () => {
 
       // Open the backup folder user selected
       const open_backup_folder_btn = document.getElementById('open_backup_folder_btn')
+
       if(open_backup_folder_btn) {
+
          open_backup_folder_btn.addEventListener('click', async() => {
+
             const folder_path = open_backup_folder_btn.getAttribute('data-folder-path')
             await window.files_api.openFolder(folder_path)
+
          })
       }
    }
