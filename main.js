@@ -74,7 +74,7 @@ const createWindow = async() => {
             submenu: [
                {
                   label: 'About',
-                  // click: () => set_page('set-page',`.${sep}renderer${sep}about.html`,true)
+                  click: () => load_client_component('About')
                }
             ]
          }
@@ -119,13 +119,10 @@ app.whenReady().then(async() => {
    ipcMain.handle('tags:deleteTag',delete_tag)
 
    // Config handlers
+   ipcMain.handle('config:getAppConfig',get_app_config) 
    ipcMain.handle('config:getAppConfigFields',get_app_config_fields)
-   ipcMain.handle('config:getAppConfigRecord',get_app_config_record)
    ipcMain.handle('config:updateAppConfig',update_app_config)
-   ipcMain.handle('config:getRootFolderPath',get_root_folder_path) 
    ipcMain.handle('config:setRootFolderPath',set_root_folder_path)
-   ipcMain.handle('config:getExportFolder',get_export_folder)
-   ipcMain.handle('config:getBackupFolder',get_backup_folder)
 
    // Actions handlers
    ipcMain.handle('actions:backupDatabase',backup_database)
@@ -134,7 +131,7 @@ app.whenReady().then(async() => {
    ipcMain.handle('actions:importJSONFile',import_json_file)
 
    // Files handlers
-   ipcMain.handle('files:openFile',open_file)
+   ipcMain.handle('files:openFolderDlg',open_folder_dlg)
    ipcMain.handle('files:fileExists',file_exists)
    ipcMain.handle('files:getFolderPath',get_folder_path)
    ipcMain.handle('files:getFilePath',get_file_path)
@@ -180,13 +177,22 @@ app.whenReady().then(async() => {
       }},1200)
 })
 
+
+
+// client utility funcs
+
 function notify_client_alert(message) {
    main_window.webContents.send(
       'notify',
       message
    )
 }
-
+function load_client_component(component_name = 'About') {
+   main_window.webContents.send(
+      'switch_component',
+      component_name
+   )
+}
 function set_title (event, title) {
    const webContents = event.sender
    const win = BrowserWindow.fromWebContents(webContents)
@@ -194,8 +200,11 @@ function set_title (event, title) {
  }
 
 
+
+// main process utility funcs
+
 function house_keeping() {
-   console.log('HouseKeeping')
+   
    flush_deleted_items()
 
 }
@@ -521,12 +530,7 @@ async function get_app_config_fields() {
    }
 }
 
-async function get_app_config_record() {
-   if(!database) return NOTIFY.DATABASE_UNAVAILABLE
-   let app_config = new AppConfig(database)
-   const result = await app_config.read_single()
-   return result
-}
+
 
 async function update_app_config(event,app_config_record) {
 
@@ -549,7 +553,7 @@ async function update_app_config(event,app_config_record) {
    }
 }
 
-async function get_root_folder_path() {
+async function get_app_config() {
    if(!database) return NOTIFY.DATABASE_UNAVAILABLE
    let app_config = new AppConfig(database)
    const app_config_record = await app_config.read_single()
@@ -652,7 +656,7 @@ async function file_path_sep () {
    return path.sep
 }
 
-async function open_file () {
+async function open_folder_dlg () {
 
    const fs = require('fs')
    const { canceled, filePaths } = await dialog.showOpenDialog({ properties: ['openDirectory'] })
@@ -682,6 +686,7 @@ async function open_file () {
       return file_objects_list
    }
 }
+
 
 async function backup_database(event,file_name,file_path) {
    let database_backup = new DatabaseBackup()

@@ -47,12 +47,10 @@ contextBridge.exposeInMainWorld('tags_api', {
 })
 
 contextBridge.exposeInMainWorld('config_api', {
+   getAppConfig: () => ipcRenderer.invoke('config:getAppConfig'),
    getAppConfigFields: () => ipcRenderer.invoke('config:getAppConfigFields'),
-   getAppConfigRecord: (id) => ipcRenderer.invoke('config:getAppConfigRecord',id),
    updateAppConfig: (app_config) => ipcRenderer.invoke('config:updateAppConfig',app_config),
-   getRootFolderPath: () => ipcRenderer.invoke('config:getRootFolderPath'),
-   setRootFolderPath: (app_config) => ipcRenderer.invoke('config:setRootFolderPath',app_config),
-   getExportFolder: () => ipcRenderer.invoke('config:getExportFolder')
+   setRootFolderPath: (app_config) => ipcRenderer.invoke('config:setRootFolderPath',app_config)
 })
 
 contextBridge.exposeInMainWorld('actions_api', {
@@ -66,7 +64,7 @@ contextBridge.exposeInMainWorld('files_api', {
    fileExists: (file_path) => ipcRenderer.invoke('files:fileExists',file_path),
    getFolderPath: () => ipcRenderer.invoke('files:getFolderPath'),
    getFilePath: (filters) => ipcRenderer.invoke('files:getFilePath',filters),
-   openFile: () => ipcRenderer.invoke('files:openFile'),
+   openFolderDlg: () => ipcRenderer.invoke('files:openFolderDlg'),
    openFolder: (folder_path) => ipcRenderer.invoke('files:openFolder',folder_path),
    filePathSep: () => ipcRenderer.invoke('files:filePathSep'),
    saveFile: (filters) => ipcRenderer.invoke('files:saveFile',filters)
@@ -82,6 +80,9 @@ contextBridge.exposeInMainWorld('dev_api_key', {
 
 contextBridge.exposeInMainWorld('notify_api',{
    onNotification: (callback) => ipcRenderer.on('notify',callback)
+})
+contextBridge.exposeInMainWorld('component_api',{
+   onSwitchComponent: (callback) => ipcRenderer.on('switch_component',callback)
 })
 
 

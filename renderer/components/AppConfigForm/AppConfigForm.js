@@ -38,7 +38,7 @@ class AppConfigForm {
          attributes:[
             {key:'id',value:'item_form'}
          ],
-         classlist:['config_form']
+         classlist:['config_form','border','mt_3','mb_2']
       })
       
       let btn_group_1 = FormBtns.render(null,false)
@@ -253,7 +253,7 @@ class AppConfigForm {
    }
    
    async get_app_config_record() {
-      return await window.config_api.getAppConfigRecord()
+      return await window.config_api.getAppConfig()
    }
 
 

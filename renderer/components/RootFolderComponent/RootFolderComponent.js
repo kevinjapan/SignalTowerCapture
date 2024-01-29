@@ -116,7 +116,7 @@ class RootFolderComponent {
 
       if(root_folder_element) {
 
-         let result = await window.config_api.getRootFolderPath()
+         let result = await window.config_api.getAppConfig()
 
          if(typeof result != "undefined") {
 
