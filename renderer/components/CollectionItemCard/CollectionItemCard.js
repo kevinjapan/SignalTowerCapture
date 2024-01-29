@@ -38,14 +38,22 @@ class CollectionItemCard {
          if(field.key === 'title') {
          
             // title as link
-
             if(field_value === '') field_value = 'no title'
             field_element = create_h({
                level:'h3',
                attributes: [
                   {key:'data-id',value:item.id}
                ],
-               classlist:['text_blue','card_title_link','flex_100','m_0','font_w_400','cursor_pointer','hover_line'],
+               classlist:['text_blue','card_title_link','flex_100','m_0','font_w_400','cursor_pointer','hover_line','break_words'],
+               text:field_value
+            })
+            card.append(field_element)
+
+         }
+         else if(field.key === 'file_type') {
+
+            field_element = create_div({
+               classlist:['flex_100'],
                text:field_value
             })
             card.append(field_element)
@@ -57,9 +65,10 @@ class CollectionItemCard {
          
             // display file icon
             let file_name_block = create_div({
-               classlist:['flex','gap_.5','mt_0.25','flex_100']
+               classlist:['flex','gap_.5','mt_0.25','flex_100','break_words']
             })
             field_element = create_div({
+               classlist:['pt_0.3'],
                text:field_value
             })
             let icon = document.createElementNS('http://www.w3.org/2000/svg','svg')            
@@ -88,6 +97,7 @@ class CollectionItemCard {
             //    }
             // }
          // }
+
          else if(field.key === 'tags') {
 
             tags_list_elem = create_div({
