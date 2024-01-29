@@ -35,28 +35,28 @@ class ImageViewer {
 
       // ctrls
       let img_btn_group = create_div({
-         classlist:['img_btn_group','flex','flex_col']
+         classlist:['img_btn_group','flex','flex_col','align_items_center','pt_1','pb_1']
       })
       let x_btn = create_button({
          attributes:[
             {key:'id',value:'x_btn'}
          ],
          classlist:['x_btn'],
-         text:'x'
+         text:'Close'
       })
       let zoom_in_btn = create_button({
          attributes:[
             {key:'id',value:'zoom_in_btn'}
          ],
          classlist:['x_btn'],
-         text:'+'
+         text:'Zoom In'
       })
       let zoom_out_btn = create_button({
          attributes:[
             {key:'id',value:'zoom_out_btn'}
          ],
          classlist:['x_btn'],
-         text:'-'
+         text:'Zoom Out'
       })
 
       img_btn_group.append(x_btn,zoom_in_btn,zoom_out_btn)
