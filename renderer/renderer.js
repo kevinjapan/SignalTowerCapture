@@ -86,21 +86,24 @@ window.notify_api.onNotification((event,value) => {
 })
 
 
+window.component_api.onSwitchComponent((event,value) => {
+   App.switch_to_component(value)
+})
+
 
 
 let back_btns = document.querySelectorAll('.back_btn')
 if(back_btns){
    back_btns.forEach(back_btn => {
       back_btn.addEventListener('click',(event) => {
-         console.log('back')
          history.back()
       })
    })
 }
 
 
-
-
+// load Home page on startup
+setTimeout(() => App.switch_to_component('Home'),100)
 
 
 //

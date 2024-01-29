@@ -26,7 +26,7 @@ class Nav {
                attributes:[
                   {key:'data-component',value:nav_item.component}
                ],
-               classlist:['select_page_btn'],
+               classlist:['select_page_btn',`${nav_item.component === 'Home' ? 'selected_page' : ''}`],
                text:nav_item.label
             })
 
