@@ -10,11 +10,11 @@ class Config {
    render = async() => {
 
       let config_component = create_div({
-         classlist:['ui_component']
+         classlist:['ui_component','no_border']
       })
       
       const heading = create_h({
-         level:'h3',
+         level:'h1',
          text:'Config'
       })
 
