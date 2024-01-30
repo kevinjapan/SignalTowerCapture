@@ -47,11 +47,12 @@ class Browse {
       let browse_section = create_section({
          attributes:[
             {key:'id',value:'browse_section'}
-         ]
+         ],
+         classlist:['max_w_full']
       })
             
       const browse_heading = create_h({
-         level:'h2',
+         level:'h1',
          text:'Browse Records',
          classlist:['m_0']
       })
