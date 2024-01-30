@@ -92,7 +92,7 @@ class AppConfigForm {
                   {key:'type',value:'text'},
                   {key:'value',value:value},
                ],
-               classlist:['input_field']
+               classlist:['input_field','w_full','m_1']
             })
             if(!field.editable) field_input.disabled = 'disabled'
             if(field.placeholder) field_input.setAttribute('placeholder',field.placeholder)
@@ -144,7 +144,8 @@ class AppConfigForm {
       let submit_outcome = create_section({
          attributes:[
             {key:'id',value:'submit_outcome'}
-         ]
+         ],
+         classlist:['bg_lightgrey','mt_1','pl_1','pr_1'],
       })
       
       // assemble
@@ -160,7 +161,7 @@ class AppConfigForm {
 
       // On 'Apply' add or update AppConfigForm
 
-      const apply_btns = document.querySelectorAll('.ci_apply_btn')
+      const apply_btns = document.querySelectorAll('.apply_btn')
       const submit_outcome = document.getElementById('submit_outcome')
 
       if(apply_btns) {
@@ -190,7 +191,6 @@ class AppConfigForm {
                      // we don't escape_html since we never user innerHTML
                      update_app_config[pair[0]] = pair[1].trim()
                   }
-
          
                   // FormData only returns the non-disabled input key/value pairs - so we add 'id'
                   update_app_config.id = this.#id
