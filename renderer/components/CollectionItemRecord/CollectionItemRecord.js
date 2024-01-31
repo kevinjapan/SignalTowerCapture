@@ -20,7 +20,13 @@ class CollectionItemRecord {
       this.#props = props
    }
 
-   render = () => {
+   render = async() => {
+      
+      // get root_folder
+      const app_config_obj = await window.config_api.getAppConfig()
+      if(app_config_obj.outcome === 'success') {
+         this.#props.root_folder = app_config_obj.app_config.root_folder
+      }
 
       // component container
       this.#record = create_section({
@@ -102,28 +108,22 @@ class CollectionItemRecord {
          // display file if file_name is recognized image type
          if(field.key === 'file_name') {
 
-            // get root_folder
-            const app_config_obj = await window.config_api.getAppConfig()
-
-            if(app_config_obj.outcome === 'success') {
                
-               // build the file_path
-               let root_folder = app_config_obj.app_config.root_folder
-               let relative_folder_path = this.#props.item['folder_path']
+            // build the file_path
+            let relative_folder_path = this.#props.item['folder_path']
 
-               // to do : handle both above w/ or w/out trailing '\\' (we currently assume they are absent below)
+            // to do : handle both above w/ or w/out trailing '\\' (we currently assume they are absent below)
 
-               let file_path = `${root_folder}\\${relative_folder_path}\\${this.#props.item[field.key]}`
+            let file_path = `${this.#props.root_folder}\\${relative_folder_path}\\${this.#props.item[field.key]}`
 
-               if(await is_image_file(file_path)) {          
-                  let img = await build_img_elem('record_img',file_path,this.#props.item['img_desc'])
-                  if(img) {
-                     img_col.append(img)
-                  }
+            if(await is_image_file(file_path)) {          
+               let img = await build_img_elem('record_img',file_path,this.#props.item['img_desc'])
+               if(img) {
+                  img_col.append(img)
                }
-               else {
-                  img_col.append(create_div(),document.createTextNode('No image file was found.'))
-               }
+            }
+            else {
+               img_col.append(create_div(),document.createTextNode('No image file was found.'))
             }
          }
       })
@@ -219,7 +219,7 @@ class CollectionItemRecord {
       let record_img = document.getElementById('record_img')
       if(record_img) {
          record_img.addEventListener('click',() => {
-            // we pass 'props.context' as a token for on returning to this Record
+            // we pass 'props.context' as a token for info and to enable returning to this Record
             App.switch_to_component('ImageViewer',this.#props)
          })
       }
