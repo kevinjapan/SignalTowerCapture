@@ -2,17 +2,17 @@ import { create_img } from '../utilities/ui_elements.js'
 
 
 
-export const is_image_file = async (folder_path,file_name) => {
+export const is_image_file = async (file_path) => {
    
-   const sep = await window.files_api.filePathSep()
-   const separator = folder_path.slice(-1) !== sep ? sep : ''   
-   const full_path = folder_path + separator + file_name
+   // const sep = await window.files_api.filePathSep()
+   // const separator = folder_path.slice(-1) !== sep ? sep : ''   
+   // const full_path = folder_path + separator + file_name
 
-   const file_exist_result = await window.files_api.fileExists(full_path.toString())
+   const file_exist_result = await window.files_api.fileExists(file_path)
 
    if (typeof file_exist_result != "undefined") {
       if(file_exist_result.outcome === 'success') {
-         if(is_img_ext(file_name)) {
+         if(is_img_ext(file_path)) {
             return true
          }
          else {
@@ -36,14 +36,11 @@ const is_img_ext = (file_name) => {
 }
 
 
-export const build_img_elem = async(id,folder_path,file_name,alt_text = 'image',attributes = []) => {
+export const build_img_elem = async(id,file_path,alt_text = 'image',attributes = []) => {
    
-   const sep = await window.files_api.filePathSep()
-   let separator = folder_path.slice(-1) !== sep ? sep : ''
-
    let attrs = [
       {key:'id',value:id},
-      {key:'src',value:folder_path + separator + file_name},
+      {key:'src',value:file_path},
       {key:'alt',value:alt_text},
       ...attributes
    ]

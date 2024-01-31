@@ -41,13 +41,23 @@ class CollectionItemForm {
    // containing tags fields list and config registered tags
    #tags_obj
 
+   // Collection root folder
+   #root_folder = ''
+
 
    constructor(props) {
       this.#props = props
+ 
    }
 
 
-   render = () =>  {
+   render = async() =>  {
+     
+      // get root_folder
+      const app_config_obj = await window.config_api.getAppConfig()
+      if(app_config_obj.outcome === 'success') {
+         this.#root_folder = app_config_obj.app_config.root_folder                     
+      }
 
       // component container
       this.#record = create_section({
@@ -112,14 +122,15 @@ class CollectionItemForm {
                   {key:'type',value:'text'},
                   {key:'value',value:curr_field_value},
                   {key:'maxlength',value:field.test.max},
+                  {key:'readonly',value:field.readonly ? 'readonly' : false},
                ],
                classlist:['input_field']
             })
             if(field.hidden === true) field_input.hidden = true
             field_input.value = curr_field_value   // req for textareas
             field_input.style.height = field.test.max > 200 ? '16rem' : '4.25rem'
-            if(!field.editable) field_input.disabled = 'disabled'
             if(field.placeholder) field_input.setAttribute('placeholder',field.placeholder)
+            if(!field.editable) field_input.disabled = 'disabled'
          }
          else {
             field_input = create_input({
@@ -129,12 +140,13 @@ class CollectionItemForm {
                   {key:'type',value:'text'},
                   {key:'value',value:curr_field_value},
                   {key:'maxlength',value:field.test.max},
+                  {key:'readonly',value:field.readonly ? 'readonly' : false},
                ],
                classlist:['input_field']
             })
             if(field.hidden === true) field_input.hidden = true
-            if(!field.editable) field_input.disabled = 'disabled'
             if(field.placeholder) field_input.setAttribute('placeholder',field.placeholder)
+            if(!field.editable) field_input.disabled = 'disabled'
          }
 
          // build the row error notification
@@ -160,7 +172,7 @@ class CollectionItemForm {
 
          form.append(create_div(),field_error)
 
-
+         
          // tags checkboxes
          if(field.key === 'tags') {
 
@@ -255,9 +267,11 @@ class CollectionItemForm {
             form.append(create_div(),find_file_btn)
          }
 
-         // display the file if a valid img and exists
+         // display the file if it's a valid img and it exists
          if(field.key === 'file_name' && this.#props.item) {
-            await this.display_if_img_file(img_col,this.#props.item['folder_path'],this.#props.item[field.key],this.#props.item['img_desc'])
+            let relative_folder_path = this.#props.item['folder_path']
+            let file_path = `${this.#root_folder}\\${relative_folder_path}\\${this.#props.item[field.key]}`
+            await this.display_if_img_file(img_col,file_path,this.#props.item['img_desc'])
          }
       })
 
@@ -328,8 +342,12 @@ class CollectionItemForm {
                      response = await window.collection_items_api.addCollectionItem(updated_collection_item)
                   }
                   else {
-                     // FormData only returns the non-disabled input key/value pairs - so we have to add 'id'
+                     // FormData only returns the non-disabled input key/value pairs 
+                     // we have to add 'id' and any 'direct_edit === false' fields  // to do : tidy/remove
                      updated_collection_item.id = this.#record_id
+                     //updated_collection_item.file_name = document.getElementById('file_name').value
+                     //updated_collection_item.folder_path = document.getElementById('folder_path').value
+
                      response = await window.collection_items_api.updateCollectionItem(updated_collection_item)
                   }
 
@@ -451,7 +469,12 @@ class CollectionItemForm {
                
                let folder_path = document.getElementById('folder_path')
                if(folder_path) {
-                  folder_path.value = path
+                     if(path.indexOf(this.#root_folder) === 0) {                        
+                        folder_path.value = path.replace(this.#root_folder,'') // relative path
+                     }
+                     else {
+                        // to do : notify - file not on correct path
+                     }
                }
                
                // auto-gen candidate title from the file name if non-exists
@@ -466,7 +489,8 @@ class CollectionItemForm {
                }
 
                // display if new file is an img file
-               await this.display_if_img_file(img_col,path,file,this.#props.item ? this.#props.item['img_desc'] : 'image')
+               let file_path = `${path}\\${file}`
+               await this.display_if_img_file(img_col,file_path,this.#props.item ? this.#props.item['img_desc'] : 'image')
                
             }
             else {
@@ -482,7 +506,8 @@ class CollectionItemForm {
       const img_col = document.getElementById('img_col')
       if(file_name && folder_path && img_col) {            
          file_name.addEventListener('change',async(event) => {
-            await this.display_if_img_file(img_col,folder_path.value,file_name.value,this.#props.item['img_desc'])
+            let file_path = `${folder_path.value}\\${file_name.value}`
+            await this.display_if_img_file(img_col,file_path,this.#props.item ? this.#props.item['img_desc'] : 'image')
          })
       }
 
@@ -544,11 +569,11 @@ class CollectionItemForm {
    // display if we have a valid img file
    // is_image_file queries main process if the file exists and also if the ext is img ext
 
-   display_if_img_file = async (parent_elem,folder_path,file_name,alt_text) => {
+   display_if_img_file = async (parent_elem,file_path,alt_text) => {
 
-      let res = await is_image_file(folder_path,file_name)  
+      let res = await is_image_file(file_path)  
       if(res) {
-         let img = await build_img_elem('record_img',folder_path,file_name,alt_text)
+         let img = await build_img_elem('record_img',file_path,alt_text)
          if(img) {
             parent_elem.replaceChildren(create_div(),img)
          }

@@ -58,7 +58,7 @@ class App {
                break
             case 'Form':
                component = new CollectionItemForm(props)
-               component_container.replaceChildren(component.render())
+               component_container.replaceChildren(await component.render())
                break
             case 'Actions':
                component = new Actions()

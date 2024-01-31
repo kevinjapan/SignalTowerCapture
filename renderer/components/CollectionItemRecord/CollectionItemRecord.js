@@ -73,7 +73,7 @@ class CollectionItemRecord {
       this.#props.fields.forEach( async (field) => { 
 
          field_label = create_div({
-            classlist:['label',`${field.key === 'title' ? 'line_2' : ''}`],
+            classlist:['label','mb_1',`${field.key === 'title' ? 'line_2' : ''}`],
             text:ui_friendly_text(field.key)
          })
 
@@ -102,15 +102,28 @@ class CollectionItemRecord {
          // display file if file_name is recognized image type
          if(field.key === 'file_name') {
 
-            if(await is_image_file(this.#props.item['folder_path'],this.#props.item[field.key])) {   
+            // get root_folder
+            const app_config_obj = await window.config_api.getAppConfig()
 
-               let img = await build_img_elem('record_img',this.#props.item['folder_path'],this.#props.item[field.key],this.#props.item['img_desc'])
-               if(img) {
-                  img_col.append(img)
+            if(app_config_obj.outcome === 'success') {
+               
+               // build the file_path
+               let root_folder = app_config_obj.app_config.root_folder
+               let relative_folder_path = this.#props.item['folder_path']
+
+               // to do : handle both above w/ or w/out trailing '\\' (we currently assume they are absent below)
+
+               let file_path = `${root_folder}\\${relative_folder_path}\\${this.#props.item[field.key]}`
+
+               if(await is_image_file(file_path)) {          
+                  let img = await build_img_elem('record_img',file_path,this.#props.item['img_desc'])
+                  if(img) {
+                     img_col.append(img)
+                  }
                }
-            }
-            else {
-               img_col.append(create_div(),document.createTextNode('No image file was found.'))
+               else {
+                  img_col.append(create_div(),document.createTextNode('No image file was found.'))
+               }
             }
          }
       })

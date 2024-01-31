@@ -56,7 +56,7 @@ class AddCollectionItem {
                
                // display empty CollectionItemForm for data entry
                const collection_item_form = new CollectionItemForm(props)
-               item_form_wrap.appendChild(collection_item_form.render())
+               item_form_wrap.appendChild(await collection_item_form.render())
                collection_item_form.activate('add')
             }
             else {
