@@ -65,13 +65,19 @@ class ImageViewer {
          classlist:['']
       })
 
-      if(await is_image_file(this.#props.item['folder_path'],this.#props.item['file_name'])) {   
+      // build the file_path
+      let root_folder = this.#props.root_folder
+      let relative_folder_path = this.#props.item['folder_path']
+
+      let file_path = `${root_folder}\\${relative_folder_path}\\${this.#props.item['file_name']}`
+
+      if(await is_image_file(file_path)) {   
 
          let attributes = [
             {key:'draggable',value:false}
          ]
-
-         let img = await build_img_elem('record_img',this.#props.item['folder_path'],this.#props.item['file_name'],attributes)
+         
+         let img = await build_img_elem('record_img',file_path,attributes)
          if(img) {
             wrapper.append(img_btn_group,img)
          }
