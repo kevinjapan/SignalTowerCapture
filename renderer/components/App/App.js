@@ -50,7 +50,7 @@ class App {
                break
             case 'Record':
                component = new CollectionItemRecord(props)
-               component_container.replaceChildren(component.render())
+               component_container.replaceChildren(await component.render())
                break
             case 'ImageViewer':
                component = new ImageViewer(props)
