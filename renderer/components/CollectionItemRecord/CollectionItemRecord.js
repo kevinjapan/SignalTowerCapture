@@ -1,7 +1,7 @@
 import App from '../App/App.js'
 import RecordBtns from '../RecordBtns/RecordBtns.js'
 import RecordAdmin from '../RecordAdmin/RecordAdmin.js'
-import { ui_friendly_text } from '../../utilities/ui_strings.js'
+import { ui_friendly_text,trim_char,trim_end_char } from '../../utilities/ui_strings.js'
 import { is_image_file, build_img_elem } from '../../utilities/ui_utilities.js'
 import { create_section,create_div,create_p,create_button } from '../../utilities/ui_elements.js'
 
@@ -102,19 +102,17 @@ class CollectionItemRecord {
                text:this.#props.item[field.key]
             })
          }
-            
+                     
          form_layout.append(field_label,field_value)
 
          // display file if file_name is recognized image type
          if(field.key === 'file_name') {
-
                
             // build the file_path
-            let relative_folder_path = this.#props.item['folder_path']
-
-            // to do : handle both above w/ or w/out trailing '\\' (we currently assume they are absent below)
-
-            let file_path = `${this.#props.root_folder}\\${relative_folder_path}\\${this.#props.item[field.key]}`
+            let root_part = trim_end_char(this.#props.root_folder,'\\')
+            let relative_folder_part = trim_char(this.#props.item['folder_path'],'\\')
+            let file_part = this.#props.item[field.key]
+            let file_path = `${root_part}\\${relative_folder_part}\\${file_part}`
 
             if(await is_image_file(file_path)) {          
                let img = await build_img_elem('record_img',file_path,this.#props.item['img_desc'])

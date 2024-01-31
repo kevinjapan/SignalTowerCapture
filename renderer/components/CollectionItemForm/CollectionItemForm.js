@@ -2,7 +2,7 @@ import App from '../App/App.js'
 import FormBtns from '../FormBtns/FormBtns.js'
 import Notification from '../../components/Notification/Notification.js'
 import { DESC } from '../../utilities/ui_descriptions.js'
-import { ui_friendly_text } from '../../utilities/ui_strings.js'
+import { ui_friendly_text,trim_char,trim_end_char } from '../../utilities/ui_strings.js'
 import { is_image_file, build_img_elem } from '../../utilities/ui_utilities.js'
 
 import { 
@@ -56,7 +56,7 @@ class CollectionItemForm {
       // get root_folder
       const app_config_obj = await window.config_api.getAppConfig()
       if(app_config_obj.outcome === 'success') {
-         this.#root_folder = app_config_obj.app_config.root_folder                     
+         this.#root_folder = trim_end_char(app_config_obj.app_config.root_folder,'\\')                 
       }
 
       // component container
@@ -269,7 +269,7 @@ class CollectionItemForm {
 
          // display the file if it's a valid img and it exists
          if(field.key === 'file_name' && this.#props.item) {
-            let relative_folder_path = this.#props.item['folder_path']
+            let relative_folder_path = trim_char(this.#props.item['folder_path'],'\\')
             let file_path = `${this.#root_folder}\\${relative_folder_path}\\${this.#props.item[field.key]}`
             await this.display_if_img_file(img_col,file_path,this.#props.item['img_desc'])
          }
@@ -342,12 +342,8 @@ class CollectionItemForm {
                      response = await window.collection_items_api.addCollectionItem(updated_collection_item)
                   }
                   else {
-                     // FormData only returns the non-disabled input key/value pairs 
-                     // we have to add 'id' and any 'direct_edit === false' fields  // to do : tidy/remove
+                     // FormData only returns the non-disabled input key/value pairs - so we have to add 'id'
                      updated_collection_item.id = this.#record_id
-                     //updated_collection_item.file_name = document.getElementById('file_name').value
-                     //updated_collection_item.folder_path = document.getElementById('folder_path').value
-
                      response = await window.collection_items_api.updateCollectionItem(updated_collection_item)
                   }
 

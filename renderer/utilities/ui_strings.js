@@ -59,3 +59,25 @@ export const is_valid_tag = (tag) => {
    }
    return false
 }
+
+
+//
+// trim_char
+//
+export const trim_char = (str,delim) => {
+   return str.startsWith(trim_end_char(str,delim),delim) ? str.slice(1) : str
+}
+
+//
+// trim_end_char
+//
+export const trim_end_char = (str,delim) => {
+   return str.endsWith(delim) ? str.slice(0,-1) : str
+}
+
+//
+// trim_start_char
+//
+export const trim_start_char = (str,delim) => {
+   return str.startsWith(str,delim) ? str.slice(1) : str
+}
