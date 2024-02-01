@@ -1,5 +1,6 @@
 import FileInjector from '../FileInjector/FileInjector.js'
 import Notification from '../Notification/Notification.js'
+import {trim_char} from '../../utilities/ui_strings.js'
 import {
    create_section,
    create_h,
@@ -18,6 +19,9 @@ class Files {
 
    // find matching existing records in db
    #matching_records = []
+
+   // list of fields inside a record
+   #record_fields
 
    // we retain browse state (page,scroll_y,etc) by passing a 'context token'
    #context = {
@@ -122,9 +126,7 @@ class Files {
    activate = () => {
 
       // open folder
-
       const open_folder_btn = document.getElementById('open_folder_btn')
-
       if(open_folder_btn) {
 
          open_folder_btn.addEventListener('click',async(event) => {
@@ -133,39 +135,47 @@ class Files {
             
             if(files_list) {
 
-               let list = create_ul({
-                  classlist:['flex','flex_col','gap_1','m_0','p_0']
-               })
-               let list_item
                const file_list = document.getElementById('file_list')
-               
-               // build list of filenames (incs folders)
-               files_list.forEach(file => {
+               let list = create_ul({classlist:['flex','flex_col','gap_1','m_0','p_0']})
+               let list_item
 
-                  this.#context.field_filters[0].value = file.path
+               // verify we are in Collections folders
+               if(files_list[0].path.indexOf(this.#root_folder) === 0) { 
 
-                  list_item = create_li({
-                     attributes:[
-                        {key:'data-file-path',value:file.path + '\\' + file.filename}
-                     ],
-                     classlist:['folder_item','cursor_pointer','m_0','p_0'],
-                     text:file.type + ' ' + file.filename
+                  // build list of filenames (incs folders)
+                  files_list.forEach(file => {
+
+                     // assign folder_path to context remove the 'root_folder' part from path
+                     this.#context.field_filters[0].value = file.path.replace(this.#root_folder,'')
+
+                     list_item = create_li({
+                        attributes:[
+                           {key:'data-file-path',value:file.path + '\\' + file.filename},
+                           {key:'data-file-name',value:file.filename}
+                        ],
+                        classlist:['folder_item','cursor_pointer','m_0','p_0'],
+                        text:file.type + ' ' + file.filename
+                     })
+                     list.append(list_item)
                   })
-                  list.append(list_item)
-               })
-               
-               // assemble
-               file_list.replaceChildren(list)
-               setTimeout(() => this.activate_file_links(),100)
+                  
+                  // assemble
+                  file_list.replaceChildren(list)
+                  setTimeout(() => this.activate_file_links(),100)
+                  
+                  // we get list of 'folder_path' matching records w/ single db call
+                  // rather than call db to check for each file we will check against this list
+                  const result = await window.collection_items_api.getItems(this.#context)
+                  this.#matching_records = result.collection_items
+                  this.#record_fields = result.collection_item_fields
+
+                  console.log('this.#matching_records',this.#matching_records)
+               }
+               else {
+                  // to do : notify not in the Collections folders (path doesn't include root_folder)
+                  console.log('this is not on the root_folder path..')
+               }
             }
-            
-            // we get list of 'folder_path' matching records 
-            // rather than call db to check for each file we check against this list
-            // (after the file_list has been retrieved - making .path accessible)
-            this.#matching_records = await window.collection_items_api.getItems(this.#context)
-
-            console.log('this.#matching_records',this.#matching_records)
-
          })
       }
    }
@@ -176,20 +186,27 @@ class Files {
       // select file item
       const file_links = document.querySelectorAll('.folder_item')
       if(file_links) {
+
          file_links.forEach((file_link) => {
+
             file_link.addEventListener('click',(event) => {
-
-               // console.log('linked',event.target.getAttribute('data-file-path'))
-
                const file_view = document.getElementById('file_view')
+
+               // to do : field_filters is an array
+               console.log('this.#context.field_filters.folder_path',this.#context.field_filters.folder_path)
+
+               let folder_path_filter = this.#context.field_filters.find(filter => filter.field = 'folder_path' )
+
+               console.log('folder_path_filter',folder_path_filter)
+
                if(file_view) {
-
                   let props = {
-                     file:event.target.getAttribute('data-file-path'),
-                     folder:this.#context.field_filters.folder_path
+                     file_name:event.target.getAttribute('data-file-name'),
+                     file_path:event.target.getAttribute('data-file-path'),
+                     folder_path:trim_char(folder_path_filter.value,'\\'),
+                     find_matching_record:this.find_matching_record,
+                     get_record_fields:this.get_record_fields
                   }
-                  
-
                   // to do : check against this.#matching_records - 
                   //         do we already have a record for this file?
                   //         may require callback func to FileInjector ?
@@ -197,12 +214,17 @@ class Files {
                   const file_injector = new FileInjector(props)
                   file_view.replaceChildren(file_injector.render())
                   setTimeout(() => file_injector.activate(),100)
-
-
                }
             })
          })
       }
+   }
+
+   find_matching_record = (filename) => {
+      return this.#matching_records.find(item => item.file_name === filename)
+   }
+   get_record_fields = () => {
+      return this.#record_fields
    }
 }
 
