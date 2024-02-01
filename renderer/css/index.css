@@ -498,10 +498,10 @@ textarea {
    visibility:visible;
 }
 
-input[disabled] {
+input[disabled],
+textarea[disabled] {
    outline:none;
-   background:transparent;
-   border:none;
+   background:hsl(0, 0%, 96%);
 }
 label,.label {
    color:hsl(0, 0%, 30%);
