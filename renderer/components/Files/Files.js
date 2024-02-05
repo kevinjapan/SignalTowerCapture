@@ -189,7 +189,7 @@ class Files {
 
          file_links.forEach((file_link) => {
 
-            file_link.addEventListener('click',(event) => {
+            file_link.addEventListener('click',async(event) => {
                const file_view = document.getElementById('file_view')
 
                // to do : field_filters is an array
@@ -212,7 +212,7 @@ class Files {
                   //         may require callback func to FileInjector ?
 
                   const file_injector = new FileInjector(props)
-                  file_view.replaceChildren(file_injector.render())
+                  file_view.replaceChildren(await file_injector.render())
                   setTimeout(() => file_injector.activate(),100)
                }
             })
