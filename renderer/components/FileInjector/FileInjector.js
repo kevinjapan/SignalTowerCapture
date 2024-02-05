@@ -12,7 +12,7 @@ class FileInjector {
       this.#props = props
    }
 
-   render = () => {
+   render = async() => {
 
       
       let file_injector = create_section()
@@ -29,10 +29,6 @@ class FileInjector {
       if(matching_record) {
          
          // a matching record for this file was found
-
-         console.log('context',this.#props.context)
-
-         let props = {context: this.#props.context}
          
          const check_outcome = create_div({
             classlist:['bg_lightgrey','mt_1','pl_1','pr_1'],
@@ -42,10 +38,11 @@ class FileInjector {
             text:`There is already a record for this file.`
          })
 
-         Notification.notify('check_outcome',`2`)
+         Notification.notify('check_outcome',`2`)  // to do : ...
+         
          // assemble
          file_injector.append(heading,check_outcome)
-         const collection_item_card = new CollectionItemCard(props)        
+         const collection_item_card = new CollectionItemCard(this.#props)        
          file_injector.appendChild(collection_item_card.render(record_fields,matching_record))
 
          // to do : do we want to access full record in here - or just view only
@@ -75,9 +72,8 @@ class FileInjector {
    
          // assemble
          file_injector.append(heading,check_outcome,file)
-         const props = {}
-         const inject_form = new CollectionItemInjectForm(props)
-         file_injector.appendChild(inject_form.render())
+         const inject_form = new CollectionItemInjectForm(this.#props)
+         file_injector.appendChild(await inject_form.render())
 
       }
                   
