@@ -29,19 +29,19 @@ class CollectionItem {
    // from these arrays in the renderer, so the order of this array is carried over to front-end views.
    //
    static #full_fields_list = [
-      {key:'title',data_type:'TEXT NOT NULL',editable:true,in_card:true,export:true,test:{type:'string',min:3,max:100}},
-      {key:'content_desc',data_type:'TEXT',editable:true,in_card:true,export:true,test:{type:'string',min:0,max:500}},
-      {key:'file_type',data_type:'TEXT DEFAULT "File" NOT NULL',editable:true,in_card:true,hidden:true,export:true,test:{type:'string',min:3,max:20}},
-      {key:'file_name',data_type:'TEXT NOT NULL',editable:true,readonly:true,in_card:true,export:true,test:{type:'string',min:5,max:100}},
-      {key:'folder_path',data_type:'TEXT NOT NULL',editable:true,readonly:true,in_card:false,export:true,test:{type:'string',min:1,max:200}},
+      {key:'title',data_type:'TEXT NOT NULL',editable:true,injectable:true,in_card:true,export:true,test:{type:'string',min:3,max:100}},
+      {key:'content_desc',data_type:'TEXT',editable:true,injectable:true,in_card:true,export:true,test:{type:'string',min:0,max:500}},
+      {key:'file_type',data_type:'TEXT DEFAULT "File" NOT NULL',editable:true,injectable:true,in_card:true,hidden:true,export:true,test:{type:'string',min:3,max:20}},
+      {key:'file_name',data_type:'TEXT NOT NULL',editable:true,injectable:true,readonly:true,in_card:true,export:true,test:{type:'string',min:5,max:100}},
+      {key:'folder_path',data_type:'TEXT NOT NULL',editable:true,injectable:true,readonly:true,in_card:false,export:true,test:{type:'string',min:1,max:200}},
       {key:'img_desc',data_type:'TEXT DEFAULT "image"',editable:true,in_card:false,export:true,test:{type:'string',min:1,max:80}},
-      {key:'item_ref',data_type:'INTEGER',editable:true,in_card:false,export:true,test:{type:'string',min:1,max:100}},
-      {key:'item_date',data_type:'TEXT',editable:true,in_card:true,export:true,test:{type:'date',min:0,max:10},placeholder:'YYYY-MM-DD'},
-      {key:'item_type',data_type:'TEXT NOT NULL',editable:true,in_card:true,export:true,test:{type:'string',min:3,max:50}},
+      {key:'item_ref',data_type:'INTEGER',editable:true,injectable:true,in_card:false,export:true,test:{type:'string',min:1,max:100}},
+      {key:'item_date',data_type:'TEXT',editable:true,injectable:true,in_card:true,export:true,test:{type:'date',min:0,max:10},placeholder:'YYYY-MM-DD'},
+      {key:'item_type',data_type:'TEXT NOT NULL',editable:true,injectable:true,in_card:true,export:true,test:{type:'string',min:3,max:50}},
       {key:'author_creator',data_type:'TEXT',editable:true,in_card:false,export:true,test:{type:'string',min:0,max:60}},
       {key:'people',data_type:'TEXT',editable:true,in_card:false,export:true,test:{type:'string',min:0,max:100}},
       {key:'source',data_type:'TEXT',editable:true,in_card:true,export:true,test:{type:'string',min:0,max:100}},
-      {key:'content_pages_count',data_type:'INTEGER',editable:true,in_card:false,export:true,test:{type:'int',min:0,max:50}},
+      {key:'content_pages_count',data_type:'INTEGER DEFAULT 1',editable:true,in_card:false,export:true,test:{type:'int',min:0,max:50}},
       {key:'tags',data_type:'TEXT',editable:true,in_card:true,hidden:true,export:true,test:{type:'string',min:0,max:200}},
       {key:'id',data_type:'INTEGER PRIMARY KEY',editable:false,in_card:false,export:true,test:{type:'int',min:1,max:9999999999}},
       {key:'created_at',data_type:'TEXT NOT NULL',editable:false,in_card:false,export:true,test:{type:'date',min:10,max:24}},
@@ -86,12 +86,14 @@ class CollectionItem {
          if(context.filters.filter_char) filter_by_char = ` AND title LIKE '${context.filters.filter_char}%' `
       }
 
+      console.log('read_all',context.field_filters)
+
       // field_filters target conditional tests against fields/cols within the record
       let field_filters_sql = ''
       if(context.field_filters) {         
          context.field_filters.forEach(filter => {
             // to do : whitelist fitler.field and '?' placeholder for filter.value
-            console.log('filter',filter.field,filter.value)
+            // console.log('filter',filter.field,filter.value)
             field_filters_sql += ` AND ${filter.field} = "${filter.value}"`
          })
       }
