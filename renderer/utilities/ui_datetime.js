@@ -36,7 +36,7 @@ export const get_day = (days_index,num_chars = 3) => {
 
 
 //
-// Get sql formatted date (for file names/slugs)
+// Get sql formatted date (for file names/slugs) - '2024-02-05 12:00:19'
 //
 export const get_sqlready_datetime = (inc_time = true) => {
 
