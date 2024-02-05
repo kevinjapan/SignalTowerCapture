@@ -298,6 +298,31 @@ class CollectionItemForm {
 
 
    //
+   // hydrate w/ known field values
+   //
+   hydrate = (field_values) => {
+
+      let elem = null
+
+      field_values.forEach((field_value) => {
+
+         if(field_value.field === 'img') {
+            let img_col = document.getElementById('img_col')
+            if(img_col) {
+               console.log('img:',img_col,field_value.value,field_value.alt)
+               this.display_if_img_file(img_col,field_value.value,field_value.alt)
+            }
+         }
+         elem = document.getElementById(field_value.field)
+         if(elem) {
+            elem.value = field_value.value
+         }
+      })
+   }
+
+
+
+   //
    // enable buttons/links displayed in the render
    //
    activate = (action = 'update') => {
