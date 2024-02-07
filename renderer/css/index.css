@@ -563,9 +563,14 @@ label,.label {
    position:relative;
    display:-ms-grid;
    display:grid;
-   -ms-grid-columns: 1.5fr .7rem 1fr;
+   -ms-grid-columns: 1.5fr .7rem 1fr;     border:solid 4px blue;
    grid-template-columns: 1.5fr 1fr;
    grid-gap:.7rem;
+}
+.collection_item_record.min_img {
+   -ms-grid-columns: 2fr .7rem 1fr;
+   grid-template-columns: 2fr 1fr;
+   grid-gap:.35rem;
 }
 .img_col div.stacked_img_title {
    display:none;
