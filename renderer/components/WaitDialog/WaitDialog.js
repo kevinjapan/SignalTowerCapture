@@ -43,10 +43,8 @@ class WaitDialog {
 
    set_top = () => {
       const top = `${window.scrollY}px`
-      console.log('top',top)
       const dlg_box = document.getElementById('dlg_box')
       if(dlg_box) {
-         console.log('setting top ',top)
          dlg_box.style.top = top
       }
    }
