@@ -106,10 +106,12 @@ class CollectionItemCard {
                ],
                classlist:['m_0','w_full']
             }) 
-            const tags_list = new TagsLiteList('tags_list')
-            if(tags_list) {
-               tags_list_elem.append(await tags_list.render(item.tags.split(','),this.actions))
-               setTimeout(() => tags_list.activate(),100)
+            if(item.tags) {
+               const tags_list = new TagsLiteList('tags_list')
+               if(tags_list) {
+                  tags_list_elem.append(await tags_list.render(item.tags.split(','),this.actions))
+                  setTimeout(() => tags_list.activate(),100)
+               }
             }
             card.append(tags_list_elem)
 
@@ -120,13 +122,15 @@ class CollectionItemCard {
             // default field display
             // content_desc occuppies row itself since it is btwn title and file_name (both 'flex_100' above)
 
-            if(field_value.length > 500) field_value = field_value.substring(0,500) + '..'
+            if(field_value) {
+               if(field_value.length > 500) field_value = field_value.substring(0,500) + '..'
 
-            field_element = create_div({
-               classlist:['break_words','mt_0.5','mr_2'],
-               text:field_value
-            })
-            card.append(field_element)
+               field_element = create_div({
+                  classlist:['break_words','mt_0.5','mr_2'],
+                  text:field_value
+               })
+               card.append(field_element)
+            }
          }
       })
 
@@ -148,51 +152,49 @@ class CollectionItemCard {
                
                if(typeof card_title_link.attributes['data-id'] !== 'undefined') {
 
-                  const sep = await window.files_api.filePathSep()
+                  try {
+                     const collection_item_obj = await window.collection_items_api.getCollectionItem(card_title_link.attributes['data-id'].value)
 
-                     try {
-                        const collection_item_obj = await window.collection_items_api.getCollectionItem(card_title_link.attributes['data-id'].value)
+                     if (typeof collection_item_obj != "undefined") {
+                        if(collection_item_obj.outcome === 'success') {
 
-                        if (typeof collection_item_obj != "undefined") {
-                           if(collection_item_obj.outcome === 'success') {
+                           let component_container = document.getElementById('component_container')
+                           if(component_container) {
 
-                              let component_container = document.getElementById('component_container')
-                              if(component_container) {
+                              // get search context to inject scroll_y
+                              let context = this.#props.context ? this.#props.context : null
 
-                                 // get search context to inject scroll_y
-                                 let context = this.#props.context ? this.#props.context : null
-
-                                 let props = {
-                                    fields:collection_item_obj.collection_item_fields,
-                                    item:collection_item_obj.collection_item,
-                                    context:context ? {...context,scroll_y:window.scrollY} : null
-                                 }
-                                 App.switch_to_component('Record',props)
+                              let props = {
+                                 fields:collection_item_obj.collection_item_fields,
+                                 item:collection_item_obj.collection_item,
+                                 context:context ? {...context,scroll_y:window.scrollY} : null
                               }
-                           }
-                           else {
-                              throw 'No records were returned.'
+                              App.switch_to_component('Record',props)
                            }
                         }
                         else {
                            throw 'No records were returned.'
                         }
                      }
-                     catch(error) {
-                        let props = {
-                           msg:'Sorry, we were unable to access the Records',
-                           error:error
-                        }
-                        App.switch_to_component('Error',props)
+                     else {
+                        throw 'No records were returned.'
                      }
                   }
-                  else {
+                  catch(error) {
                      let props = {
-                        msg:'Sorry, no valid id was provided for the Collection Item.',
+                        msg:'Sorry, we were unable to access the Records',
                         error:error
                      }
                      App.switch_to_component('Error',props)
                   }
+               }
+               else {
+                  let props = {
+                     msg:'Sorry, no valid id was provided for the Collection Item.',
+                     error:error
+                  }
+                  App.switch_to_component('Error',props)
+               }
             })
          })
       }
@@ -200,7 +202,7 @@ class CollectionItemCard {
 
 
    actions = async(key,id) => {
-      console.log('actions')
+      
    }
 
 }
