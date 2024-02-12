@@ -17,7 +17,7 @@ class CollectionItemRecord {
    #record
 
    constructor(props) {
-      this.#props = props
+      this.#props = props   
    }
 
    render = async() => {
@@ -121,7 +121,7 @@ class CollectionItemRecord {
                }
             }
             else {
-               img_col.append(create_div(),document.createTextNode('No image file was found.'))
+               img_col.append(create_div(),document.createTextNode(`No image file was found.\n${file_path}`))
             }
          }
       })
@@ -132,7 +132,9 @@ class CollectionItemRecord {
       const record_admin = new RecordAdmin(this.#props)
       setTimeout(() => record_admin.activate(),300)
 
+
       // assemble
+
       img_col.append(img_view)
       this.#record.append(text_col,img_col,img_view,record_admin.render())
 
@@ -222,6 +224,9 @@ class CollectionItemRecord {
          })
       }
 
+
+      // 'back' btn
+
       let back_btns = document.querySelectorAll('.back_btn')
       if(back_btns){
          back_btns.forEach(back_btn => {
@@ -238,18 +243,21 @@ class CollectionItemRecord {
 
    display_tags = (tags_csv) => {
 
-      const tags = tags_csv.split(',')
-      const tags_elem = create_div({
-         classlist:['flex','gap_0.5']
-      })
-      tags.forEach(tag => {
-         let tagger = create_div({
-            classlist:['inline_block','text_grey','border','rounded','pl_0.25','pr_0.25','pb_0.15'],
-            text:tag
+      if(tags_csv) {
+         const tags = tags_csv.split(',')
+         const tags_elem = create_div({
+            classlist:['flex','gap_0.5']
          })
-         tags_elem.append(tagger)
-      })
-      return tags_elem
+         tags.forEach(tag => {
+            let tagger = create_div({
+               classlist:['inline_block','text_grey','border','rounded','pl_0.25','pr_0.25','pb_0.15'],
+               text:tag
+            })
+            tags_elem.append(tagger)
+         })
+         return tags_elem
+      }
+      return ''
    }
 }
 
