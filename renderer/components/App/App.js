@@ -73,7 +73,7 @@ class App {
                component_container.replaceChildren(await component.render())
                break
             case 'Files':
-               component = new Files()
+               component = new Files(props)
                component_container.replaceChildren(await component.render())
                break
             case 'Error':
