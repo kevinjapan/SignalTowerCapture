@@ -1,6 +1,6 @@
 import FileInjector from '../FileInjector/FileInjector.js'
 import Notification from '../Notification/Notification.js'
-import {trim_char} from '../../utilities/ui_strings.js'
+import { trim_end_char } from '../../utilities/ui_strings.js'
 import {
    create_section,
    create_h,
@@ -23,7 +23,10 @@ class Files {
    // list of fields inside a record
    #record_fields
 
-   // we retain browse state (page,scroll_y,etc) by passing a 'context token'
+   // context and other props
+   #props
+
+   // we retain state by passing a 'context token'
    #context = {
       key:'Files',
       field_filters:[
@@ -31,6 +34,16 @@ class Files {
       ],
       page:1,
       scroll_y:0
+   }
+
+   constructor(props) {
+      this.#props = props
+      console.log('Files.props',props)
+      
+      // to do : if props contains specified folder - open that folder immediately..
+
+      // this.#props.context.selected_folder  
+
    }
 
 
@@ -54,8 +67,37 @@ class Files {
             {key:'id',value:'files_outcome'}
          ]
       })
-      files_section.append(heading,files_outcome)
+      const temp = create_div({
+         text:this.#props ? this.#props.context.selected_folder : 'no folder selected'
+      })
 
+
+      // to do : open 'selected_folder' if provided - put in sep func - possible lib. func
+
+      // if we have a provided 'selected_folder', we are coming 'back' from a Record, open the folder..
+      if(this.#props) {
+         if(this.#props.context) {
+            if(this.#props.context.selected_folder) {
+               
+               // to do : do we need to prepend root_folder here?
+               console.log('folder',this.#props.context.selected_folder)
+
+               const files_list = await window.files_api.getFolderFilesList(this.#props.context.selected_folder)
+
+               console.log('files_list',files_list)
+
+               // returns array of file objects:
+               // filename: "bellrock.jpg"
+               // path: "C:\\wamp64\\www\\dev\\signal-tower-capture\\collection-dataset\\Research_A_G\\bell-rock-lighthouse"
+               // type: "file"
+
+               // to do : now display to UI
+
+            }
+         }
+      }
+
+      files_section.append(heading,temp,files_outcome)
 
       // get root_folder path
       // we only permit files under the Collection Root Folder
@@ -92,7 +134,7 @@ class Files {
                attributes:[
                   {key:'id',value:'file_list'}
                ],
-               classlist:['border','m_0','p_0']
+               classlist:['border','m_0','p_0.5','overflow_auto','max_h_24','text_sm','text_grey']
             })
             const file_view = create_div({
                attributes:[
@@ -136,7 +178,7 @@ class Files {
             if(files_list) {
 
                const file_list = document.getElementById('file_list')
-               let list = create_ul({classlist:['flex','flex_col','gap_1','m_0','p_0']})
+               let list = create_ul({classlist:['flex','flex_col','gap_0.5','m_0','p_0']})
                let list_item
 
                // verify we are in Collections folders
@@ -148,15 +190,17 @@ class Files {
                      // assign folder_path to context remove the 'root_folder' part from path
                      this.#context.field_filters[0].value = file.path.replace(this.#root_folder,'')
 
-                     list_item = create_li({
-                        attributes:[
-                           {key:'data-file-path',value:file.path + '\\' + file.filename},
-                           {key:'data-file-name',value:file.filename}
-                        ],
-                        classlist:['folder_item','cursor_pointer','m_0','p_0'],
-                        text:file.type + ' ' + file.filename
-                     })
-                     list.append(list_item)
+                     if(file.type === 'file') {
+                        list_item = create_li({
+                           attributes:[
+                              {key:'data-file-path',value:file.path + '\\' + file.filename},
+                              {key:'data-file-name',value:file.filename}
+                           ],
+                           classlist:['folder_item','cursor_pointer','m_0','p_0'],
+                           text:file.filename
+                        })
+                        list.append(list_item)
+                     }
                   })
                   
                   // assemble
@@ -165,11 +209,10 @@ class Files {
                   
                   // we get list of 'folder_path' matching records w/ single db call
                   // rather than call db to check for each file we will check against this list
+                  console.log('getting matching records',this.#context)
                   const result = await window.collection_items_api.getItems(this.#context)
                   this.#matching_records = result.collection_items
                   this.#record_fields = result.collection_item_fields
-
-                  console.log('this.#matching_records',this.#matching_records)
                }
                else {
                   // to do : notify not in the Collections folders (path doesn't include root_folder)
@@ -192,25 +235,21 @@ class Files {
             file_link.addEventListener('click',async(event) => {
                const file_view = document.getElementById('file_view')
 
-               // to do : field_filters is an array
-               console.log('this.#context.field_filters.folder_path',this.#context.field_filters.folder_path)
-
                let folder_path_filter = this.#context.field_filters.find(filter => filter.field = 'folder_path' )
 
-               console.log('folder_path_filter',folder_path_filter)
+               // to do : consider - esp. folder_path - is it bookended by '\\' or not? 
+               //         we need a robust approach to handling this.. always trim before use?
 
                if(file_view) {
                   let props = {
+                     context:this.#context,
                      file_name:event.target.getAttribute('data-file-name'),
                      file_path:event.target.getAttribute('data-file-path'),
-                     folder_path:trim_char(folder_path_filter.value,'\\'),
-                     find_matching_record:this.find_matching_record,
+                     folder_path:trim_end_char(folder_path_filter.value,'\\'),
+                     find_matching_file_record:this.find_matching_file_record,
+                     find_matching_folder_record:this.find_matching_folder_record,
                      get_record_fields:this.get_record_fields
                   }
-                  // to do : check against this.#matching_records - 
-                  //         do we already have a record for this file?
-                  //         may require callback func to FileInjector ?
-
                   const file_injector = new FileInjector(props)
                   file_view.replaceChildren(await file_injector.render())
                   setTimeout(() => file_injector.activate(),100)
@@ -220,9 +259,16 @@ class Files {
       }
    }
 
-   find_matching_record = (filename) => {
+   // return first existing record for the filename
+   find_matching_file_record = (filename) => {
       return this.#matching_records.find(item => item.file_name === filename)
    }
+
+   // return first existing record for this folder flagged as a 'folder' item type
+   find_matching_folder_record = (filename) => {
+      return this.#matching_records.find(item => item.file_type.toUpperCase() === 'FOLDER')
+   }
+
    get_record_fields = () => {
       return this.#record_fields
    }

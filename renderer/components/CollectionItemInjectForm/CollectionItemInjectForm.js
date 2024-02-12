@@ -7,7 +7,7 @@ import { trim_end_char } from '../../utilities/ui_strings.js'
 
 //
 // Files - quick inject record into system
-// shortcut honed-down alternative to CollectionItemForm for rapid multiple file injection 
+// honed-down alternative to CollectionItemForm for rapid multiple file injection 
 // only includes field marked as 'injectable'
 //
 
@@ -16,11 +16,11 @@ class CollectionItemInjectForm {
    // Collection root folder
    #root_folder = ''
 
-
    #props
 
    constructor(props) {
       this.#props = props
+      console.log('got props',this.#props)
    }
 
 
@@ -44,7 +44,7 @@ class CollectionItemInjectForm {
          attributes:[
             {key:'id',value:'item_form_wrap'}
          ],
-         classlist:['border','bg_yellow']
+         classlist:['border']
       })
 
       // let file_path = `${this.#root_folder}\\${this.#props.folder_path}\\${this.#props.file_name}`
@@ -70,8 +70,13 @@ class CollectionItemInjectForm {
 
             if(collection_item_obj.outcome === 'success') {
 
+               // provide fields and enable 'back' from CollectionItemRecord view
                let props = {
-                  fields:create_required_fields
+                  fields:create_required_fields,
+                  context:{
+                     selected_folder:this.#props.folder_path,
+                     ...this.#props.context
+                  }
                }
                
                // display empty CollectionItemForm for data entry
