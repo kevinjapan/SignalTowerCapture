@@ -65,6 +65,7 @@ contextBridge.exposeInMainWorld('files_api', {
    getFolderPath: () => ipcRenderer.invoke('files:getFolderPath'),
    getFilePath: (filters) => ipcRenderer.invoke('files:getFilePath',filters),
    openFolderDlg: () => ipcRenderer.invoke('files:openFolderDlg'),
+   getFolderFilesList: (folder_path) => ipcRenderer.invoke('files:getFolderFilesList',folder_path),
    openFolder: (folder_path) => ipcRenderer.invoke('files:openFolder',folder_path),
    filePathSep: () => ipcRenderer.invoke('files:filePathSep'),
    saveFile: (filters) => ipcRenderer.invoke('files:saveFile',filters)

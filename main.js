@@ -132,6 +132,7 @@ app.whenReady().then(async() => {
 
    // Files handlers
    ipcMain.handle('files:openFolderDlg',open_folder_dlg)
+   ipcMain.handle('files:getFolderFilesList',get_folder_files_list)
    ipcMain.handle('files:fileExists',file_exists)
    ipcMain.handle('files:getFolderPath',get_folder_path)
    ipcMain.handle('files:getFilePath',get_file_path)
@@ -587,9 +588,10 @@ async function add_test_records() {
 //
 
 async function file_exists(event,file_path) {
+   
    const fs = require('fs')
    try {
-      await fs.promises.access(file_path)
+      await fs.promises.access(file_path.trim())
       return {
          outcome:'success'
       }
@@ -687,6 +689,16 @@ async function open_folder_dlg () {
    }
 }
 
+async function get_folder_files_list (folder_path) {
+
+   // to do : enable this - 
+   // client provides folder path - return the list of files - array of:
+      // filename: "bellrock.jpg"
+      // path: "C:\\wamp64\\www\\dev\\signal-tower-capture\\collection-dataset\\Research_A_G\\bell-rock-lighthouse"
+      // type: "file"
+
+
+}
 
 async function backup_database(event,file_name,file_path) {
    let database_backup = new DatabaseBackup()
