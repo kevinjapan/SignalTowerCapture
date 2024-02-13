@@ -2,7 +2,6 @@ import App from '../App/App.js'
 import TagsLiteList from '../TagsLiteList/TagsLiteList.js'
 import { get_ui_ready_date } from '../../utilities/ui_datetime.js'
 import { create_section,create_div,create_h } from '../../utilities/ui_elements.js'
-import { is_image_file, build_img_elem } from '../../utilities/ui_utilities.js'
 
 
 
@@ -140,6 +139,8 @@ class CollectionItemCard {
    // enable buttons/links displayed in the render
    activate = async() => {
 
+      console.log('Card activate')
+
       // Card Title link to record
          
       const card_title_links = document.querySelectorAll('.card_title_link')
@@ -150,6 +151,7 @@ class CollectionItemCard {
 
             card_title_link.addEventListener('click', async(event) => {
                
+               console.log('title link clicked')
                if(typeof card_title_link.attributes['data-id'] !== 'undefined') {
 
                   try {
@@ -161,13 +163,14 @@ class CollectionItemCard {
                            let component_container = document.getElementById('component_container')
                            if(component_container) {
 
-                              // get search context to inject scroll_y
-                              let context = this.#props.context ? this.#props.context : null
-
                               let props = {
                                  fields:collection_item_obj.collection_item_fields,
                                  item:collection_item_obj.collection_item,
-                                 context:context ? {...context,scroll_y:window.scrollY} : null
+                                 context:{
+                                    selected_folder:this.#props.folder_path ? this.#props.folder_path : null,
+                                    scroll_y:window.scrollY,
+                                    ...this.#props.context
+                                 }
                               }
                               App.switch_to_component('Record',props)
                            }
