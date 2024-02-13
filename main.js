@@ -658,12 +658,14 @@ async function file_path_sep () {
    return path.sep
 }
 
-async function open_folder_dlg () {
+async function open_folder_dlg (event) {
 
    const fs = require('fs')
    const { canceled, filePaths } = await dialog.showOpenDialog({ properties: ['openDirectory'] })
 
    if(!canceled) {
+
+      // future : try/catch as get_folder_files_list() below : rollout
       
       // get array of filenames from folder
       let filenames = fs.readdirSync(filePaths[0])
@@ -689,15 +691,33 @@ async function open_folder_dlg () {
    }
 }
 
-async function get_folder_files_list (folder_path) {
+async function get_folder_files_list (event,folder_path) {
 
-   // to do : enable this - 
-   // client provides folder path - return the list of files - array of:
-      // filename: "bellrock.jpg"
-      // path: "C:\\wamp64\\www\\dev\\signal-tower-capture\\collection-dataset\\Research_A_G\\bell-rock-lighthouse"
-      // type: "file"
+   const fs = require('fs')
+   let file_objects_list = []
+   let count = 0
 
+   try {
+      const files = fs.readdirSync(folder_path)
 
+      // 
+      files.forEach(file => {
+         if (!fs.statSync(folder_path + '/' + file).isDirectory()) {
+            let file_object = {}
+            file_object['type'] = 'file'
+            file_object['filename'] = file
+            file_object['path'] = folder_path
+            file_objects_list[count] = file_object
+            count++
+         }
+      })
+      return file_objects_list
+   }
+   catch(error) {
+      // future : alerts are ugly - custom version?
+      notify_client_alert('Sorry, we could not open the folder you selected.' + error)
+      return null
+   }
 }
 
 async function backup_database(event,file_name,file_path) {
