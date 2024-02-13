@@ -2,7 +2,7 @@ import App from '../App/App.js'
 import CollectionItemForm from '../CollectionItemForm/CollectionItemForm.js'
 import { create_section,create_div,create_h } from '../../utilities/ui_elements.js'
 import { is_image_file, build_img_elem } from '../../utilities/ui_utilities.js'
-import { trim_end_char } from '../../utilities/ui_strings.js'
+import { trim_end_char,get_title_from_filename } from '../../utilities/ui_strings.js'
 
 
 //
@@ -20,7 +20,6 @@ class CollectionItemInjectForm {
 
    constructor(props) {
       this.#props = props
-      console.log('got props',this.#props)
    }
 
 
@@ -48,7 +47,7 @@ class CollectionItemInjectForm {
       })
 
       // let file_path = `${this.#root_folder}\\${this.#props.folder_path}\\${this.#props.file_name}`
-      // await this.display_if_img_file(img_block,file_path,this.get_title_from_filename(this.#props.file_name))
+      // await this.display_if_img_file(img_block,file_path,get_title_from_filename(this.#props.file_name))
       
       // assemble
       this.build_form(item_form_wrap)
@@ -84,11 +83,11 @@ class CollectionItemInjectForm {
                item_form_wrap.appendChild(await collection_item_form.render())
                collection_item_form.activate('add')
                collection_item_form.hydrate([
-                  {field:'title',value:this.get_title_from_filename(this.#props.file_name)},
+                  {field:'title',value:get_title_from_filename(this.#props.file_name)},
                   {field:'file_name',value:this.#props.file_name},
                   {field:'folder_path',value:this.#props.folder_path},
-                  {field:'item_ref',value:'ASTM_ARCHIVE_'},     // to do : have configurable for default ref naming prepend..
-                  {field:'img',value:`${this.#root_folder}\\${this.#props.folder_path}\\${this.#props.file_name}`,alt:this.get_title_from_filename(this.#props.file_name)}
+                  {field:'item_ref',value:'ASTM_ARCHIVE_'},     // future: have configurable for default ref naming prepend..
+                  {field:'img',value:`${this.#root_folder}\\${this.#props.folder_path}\\${this.#props.file_name}`,alt:get_title_from_filename(this.#props.file_name)}
                ])
             }
             else {
@@ -115,18 +114,8 @@ class CollectionItemInjectForm {
    }
 
 
-   get_title_from_filename = (file_name) => {
-      // to do : move to lib file
-      let candidate = file_name.substring(0,file_name.length - 4).replaceAll('-',' ')
-      candidate = candidate.charAt(0).toUpperCase() + candidate.slice(1)             
-      return candidate
-   }
-   
-
    // display if we have a valid img file
    // is_image_file queries main process if the file exists and also if the ext is img ext
-   // to do : move to lib file - also in CollectionItemForm
-
    display_if_img_file = async (parent_elem,file_path,alt_text) => {
 
       let res = await is_image_file(file_path)  
