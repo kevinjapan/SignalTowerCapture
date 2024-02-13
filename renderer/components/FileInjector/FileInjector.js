@@ -45,8 +45,13 @@ class FileInjector {
          })
          // assemble
          file_injector.append(heading,check_outcome)
-         const collection_item_card = new CollectionItemCard(this.#props)        
+         
+         const collection_item_card = new CollectionItemCard(this.#props)
          file_injector.appendChild(collection_item_card.render(record_fields,matching_folder_record))
+
+         console.log('props going',this.#props)
+
+         setTimeout(() => collection_item_card.activate(),200)
 
       }
       else if(matching_file_record) {
@@ -60,12 +65,9 @@ class FileInjector {
          
          // assemble
          file_injector.append(heading,check_outcome)
-         const collection_item_card = new CollectionItemCard(this.#props)        
+         const collection_item_card = new CollectionItemCard(this.#props)
          file_injector.appendChild(collection_item_card.render(record_fields,matching_file_record))
 
-         // to do : do we want to access full record in here - or just view only
-         //         if we do grant access, need a 'back' mechanism / otherwise, 
-         //          currently, best option, remove links from card (view here only)
          setTimeout(() => collection_item_card.activate(),200)
          
       }
