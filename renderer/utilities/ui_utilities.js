@@ -4,9 +4,6 @@ import { create_img } from '../utilities/ui_elements.js'
 
 export const is_image_file = async (file_path) => {
    
-   // const sep = await window.files_api.filePathSep()
-   // const separator = folder_path.slice(-1) !== sep ? sep : ''   
-   // const full_path = folder_path + separator + file_name
 
    const file_exist_result = await window.files_api.fileExists(file_path)
 
