@@ -53,15 +53,17 @@ nav {
 @media screen and (min-width: 768px) {
    nav {
       font-size:1.25rem;
-      gap:2rem;
+      gap:.15rem;
    }
 }
 /* main nav links */
 nav .select_page_btn {
    background: none;
 	color: inherit;
-	border: none;
+	border: solid 1px transparent;
 	padding: 0;
+   padding-left:.5rem;
+   padding-right:.5rem;
 	font: inherit;
 	cursor: pointer;
 	outline: inherit;
@@ -128,10 +130,14 @@ button {
    border:solid 1px hsl(0, 0%, 73%);
    border-radius:.25rem;
    width:fit-content;
+   height:fit-content;
 }
 button:hover {
    color:black;
    background:hsl(0, 0%, 93%);
+}
+button:focus {
+   border:solid 1px hsl(40, 100%, 45%);
 }
 
 
@@ -570,7 +576,7 @@ label,.label {
    position:relative;
    display:-ms-grid;
    display:grid;
-   -ms-grid-columns: 1.5fr .7rem 1fr;     border:solid 4px blue;
+   -ms-grid-columns: 1.5fr .7rem 1fr;
    grid-template-columns: 1.5fr 1fr;
    grid-gap:.7rem;
 }
@@ -856,4 +862,5 @@ input[type='radio'] {
 .overflow_hidden {
    overflow:hidden;
 }
+
 
