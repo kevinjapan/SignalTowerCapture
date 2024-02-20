@@ -11,6 +11,7 @@ class Nav {
       {component:'Files',label:'Files'},
       {component:'Actions',label:'Actions'},
       {component:'Config',label:'Config'},
+      {component:'Recent',label:'Recent'},
    ]
 
    init(){

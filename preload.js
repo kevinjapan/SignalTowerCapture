@@ -50,7 +50,8 @@ contextBridge.exposeInMainWorld('config_api', {
    getAppConfig: () => ipcRenderer.invoke('config:getAppConfig'),
    getAppConfigFields: () => ipcRenderer.invoke('config:getAppConfigFields'),
    updateAppConfig: (app_config) => ipcRenderer.invoke('config:updateAppConfig',app_config),
-   setRootFolderPath: (app_config) => ipcRenderer.invoke('config:setRootFolderPath',app_config)
+   setRootFolderPath: (app_config) => ipcRenderer.invoke('config:setRootFolderPath',app_config),
+   addRecentRecord: (record) => ipcRenderer.invoke('config:addRecentRecord',record)
 })
 
 contextBridge.exposeInMainWorld('actions_api', {

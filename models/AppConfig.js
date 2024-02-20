@@ -18,6 +18,7 @@ class AppConfig {
    static #full_fields_list = [
       {key:'id',data_type:'INTEGER PRIMARY KEY',editable:false,in_card:true,test:{type:'int',min:1,max:9999999999}},
       {key:'root_folder',data_type:'TEXT',editable:true,in_card:true,desc:DESC.ROOT_FOLDER.body,is_folder:true,test:{type:'string',min:1,max:255}},
+      {key:'recent_records',data_type:'TEXT',editable:false,in_card:false,test:{type:'string',min:1,max:500}},
       {key:'created_at',data_type:'TEXT NOT NULL',editable:false,in_card:false,test:{type:'date',min:10,max:24}},
       {key:'updated_at',data_type:'TEXT NOT NULL',editable:false,in_card:false,test:{type:'date',min:10,max:24}},
       {key:'deleted_at',data_type:'TEXT',editable:false,in_card:false,test:{type:'date',min:10,max:24}},
@@ -166,6 +167,8 @@ class AppConfig {
       const field_names = AppConfig.#full_fields_list.map((field) => {
          return field.key
       })
+
+      console.log('app_config',result)
       
       // if no rows found, app_config hasn't been initialized
       if(result.length < 1) {
@@ -239,7 +242,7 @@ class AppConfig {
                      SET ${sql_set_assign_placeholders.toString()} 
                      WHERE id = ? `
 
-         // build values list - eg ["bar",2] - & add id at end
+         // build values list - eg ["bar",2]
          const field_values = designated_fields.map((field) => {
             return app_config_record[field.key]
          })

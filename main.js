@@ -123,6 +123,7 @@ app.whenReady().then(async() => {
    ipcMain.handle('config:getAppConfigFields',get_app_config_fields)
    ipcMain.handle('config:updateAppConfig',update_app_config)
    ipcMain.handle('config:setRootFolderPath',set_root_folder_path)
+   ipcMain.handle('config:addRecentRecord',add_recent_record)
 
    // Actions handlers
    ipcMain.handle('actions:backupDatabase',backup_database)
@@ -570,6 +571,20 @@ async function set_root_folder_path(event,app_config_record) {
    let app_config = new AppConfig(database)
    const result = await app_config.update(app_config_record)
    return result
+}
+
+async function add_recent_record(event,record) {
+
+   console.log('to do : add_recent_record',record)
+   
+   // to do : register in app_config.recent_records
+   // - get app_config.recent_records
+   // - update recent_records with this record - maintain max len of list / don't duplicate etc.
+   // - save new recent_records
+
+   // note - should be able to call app_config.update() w/ eg { id: '1', recent_records: '...' }  (see above func)
+
+
 }
 
 async function add_test_records() {

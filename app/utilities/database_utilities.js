@@ -71,7 +71,6 @@ const get_table_insert_fields = (table_name) => {
       case 'collection_items':
 
          let collection_items_fields = CollectionItem.get_full_fields_list()
-
          if(Array.isArray(collection_items_fields)) {
             return collection_items_fields.map((field) => {
                return field.key
@@ -81,9 +80,17 @@ const get_table_insert_fields = (table_name) => {
       case 'collection_items_fts':
 
          let collection_items_fts_fields = CollectionItemFTS.get_full_fields_list()
-
          if(Array.isArray(collection_items_fts_fields)) {
             return collection_items_fts_fields.map((field) => {
+               return field.key
+            })
+         }
+
+      case 'app_config':
+
+         let app_config_fields = AppConfig.get_full_fields_list()
+         if(Array.isArray(app_config_fields)) {
+            return app_config_fields.map((field) => {
                return field.key
             })
          }

@@ -9,6 +9,7 @@ import Actions from '../Actions/Actions.js'
 import DeletedRecords from '../DeletedRecords/DeletedRecords.js'
 import Config from '../Config/Config.js'
 import Files from '../Files/Files.js'
+import RecentRecords from '../RecentRecords/RecentRecords.js'
 import About from '../About/About.js'
 import Error from '../Error/Error.js'
 import NotFound from '../NotFound/NotFound.js'
@@ -83,6 +84,10 @@ class App {
             case 'About':
                component = new About(props)
                component_container.replaceChildren(component.render())
+               break
+            case 'Recent':
+               component = new RecentRecords(props)
+               component_container.replaceChildren(await component.render())
                break
             default:
                component = new NotFound()
