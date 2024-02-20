@@ -89,7 +89,6 @@ class Database {
                if(error) console.log('There was an error initializing the database. ',error.message)
             }
          )
-
          this.add_new_collection_item_columns()
 
          // CollectionItems_fts table
@@ -117,6 +116,7 @@ class Database {
                if(error) console.log('There was an error initializing the database. ',error.message)
             }
          )
+         this.add_new_columns('app_config')
 
          this.create_fts_triggers()
       })
@@ -124,8 +124,9 @@ class Database {
 
 
    //
-   // exectute Add Column for any new CollectionItem fields currently not in the 'collection_items' database table
-   // future : expand this to add cols to any of the tables
+   // execute Add Column for any new CollectionItem fields currently not in the 'collection_items' database table
+   // future : user add_new_columns below
+   // to do : once we have proven recent_records is working, remove this func and use add_new_columns()
    //
    add_new_collection_item_columns = async() => {
 
@@ -162,6 +163,48 @@ class Database {
          } 
          catch (error) {
             console.log(`Failed to ADD COLUMN ${col} ${data_type} to collection_items table`,error)
+         }
+      })
+   }
+
+   //
+   // add any columns added to 'table_name' since current database initialization
+   // permits additions to integrate w/ existing records
+   //
+   add_new_columns = async(table_name) => {
+
+      // to do : whitelist 'table_name'
+      // to do : ensure we only run if table was *not* created this time.
+
+      const table_full_fields = get_full_fields(table_name)
+
+      // get current cols in database.
+      const result = await new Promise((resolve,reject) => {
+         this.#db.all(`SELECT GROUP_CONCAT(NAME,',') as cols FROM PRAGMA_TABLE_INFO('${table_name}')`, function (error,rows) {
+               if(error) console.log('There was an error reading table info from the database. ',error.message)
+               resolve(rows[0])
+            }
+         )
+      }).catch((error) => {
+         this.set_last_error(error)
+      })
+
+      // find any differences w/ fields list
+      let cols_not_in_database = []
+      const current_fields = result.cols.split(',') 
+      const table_insert_fields = get_table_insert_fields(table_name)
+      cols_not_in_database = table_insert_fields.filter(field => 
+         !current_fields.includes(field)
+      )
+
+      //sqlite has no IF NOT EXISTS for ADD COLUMN - so we handle exception if cols already exists
+      cols_not_in_database.forEach(col => {
+         try {
+            const data_type = table_full_fields.filter(field => field.key === col)[0].data_type
+            this.#db.run(`ALTER TABLE ${table_name} ADD COLUMN ${col} ${data_type}`)
+         } 
+         catch (error) {
+            console.log(`Failed to ADD COLUMN ${col} ${data_type} to ${table_name} table`,error)
          }
       })
    }
