@@ -86,17 +86,21 @@ class CollectionItem {
          if(context.filters.filter_char) filter_by_char = ` AND title LIKE '${context.filters.filter_char}%' `
       }
 
-      console.log('read_all',context.field_filters)
-
       // field_filters target conditional tests against fields/cols within the record
       let field_filters_sql = ''
       if(context.field_filters) {         
          context.field_filters.forEach(filter => {
-            // to do : whitelist fitler.field and '?' placeholder for filter.value
-            // console.log('filter',filter.field,filter.value)
-            field_filters_sql += ` AND ${filter.field} = "${filter.value}"`
+            if(filter.test === 'IN') { // to do : make case-insensitive
+               field_filters_sql += ` AND ${filter.field} IN (${filter.value})`
+            }
+            else {
+               // to do : whitelist fitler.field and '?' placeholder for filter.value
+               field_filters_sql += ` AND ${filter.field} = "${filter.value}"`
+            }
          })
       }
+
+      console.log('field_filters_sql [',field_filters_sql,']')
 
       // wrap in a promise to await result
       const result = await new Promise((resolve,reject) => {
