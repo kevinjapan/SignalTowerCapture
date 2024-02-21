@@ -242,8 +242,8 @@ class CollectionItemForm {
                name:'file_type_radio_btns',
                classlist:['m_0'],
                radio_buttons:[
-                  {key:'file',label:'File',value:'File',checked:curr_field_value.toUpperCase() === 'FILE' ? true : false},
-                  {key:'folder',label:'Folder',value:'Folder',checked:curr_field_value.toUpperCase() === 'FOLDER' ? true : false}
+                  {key:'file',label:'Single PDF,JPG or other file',value:'File',checked:curr_field_value.toUpperCase() === 'FILE' ? true : false},
+                  {key:'folder',label:'Folder of multiple PDF,JPG or other files',value:'Folder',checked:curr_field_value.toUpperCase() === 'FOLDER' ? true : false}
                ]
             })
             
@@ -309,7 +309,6 @@ class CollectionItemForm {
          if(field_value.field === 'img') {
             let img_col = document.getElementById('img_col')
             if(img_col) {
-               console.log('img:',img_col,field_value.value,field_value.alt)
                this.display_if_img_file(img_col,field_value.value,field_value.alt)
             }
          }
@@ -410,6 +409,10 @@ class CollectionItemForm {
                }
             })
          })
+
+         const title_input = document.getElementById('title')
+         if(title_input) title_input.focus()
+
       }
 
    
@@ -494,7 +497,7 @@ class CollectionItemForm {
                         folder_path.value = path.replace(this.#root_folder,'') // relative path
                      }
                      else {
-                        // to do : notify - file not on correct path
+                        Notification.notify('submit_outcome',`The folder you selected is not within the Collections Folders.`)
                      }
                }
                
@@ -589,7 +592,6 @@ class CollectionItemForm {
 
    // display if we have a valid img file
    // is_image_file queries main process if the file exists and also if the ext is img ext
-
    display_if_img_file = async (parent_elem,file_path,alt_text) => {
 
       let res = await is_image_file(file_path)  
