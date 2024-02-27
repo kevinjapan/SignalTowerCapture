@@ -2,7 +2,7 @@ import App from '../App/App.js'
 import SearchForm from '../SearchForm/SearchForm.js'
 import CollectionItemCard from '../CollectionItemCard/CollectionItemCard.js'
 import PaginationNav from '../PaginationNav/PaginationNav.js'
-import { ui_display_number_as_str } from '../../utilities/ui_strings.js'
+import { ui_display_number_as_str,trim_end_char } from '../../utilities/ui_strings.js'
 import { create_section,create_h,create_div } from '../../utilities/ui_elements.js'
 
 
@@ -23,6 +23,7 @@ class Search {
    // advanced search is extended
    #show_advanced
 
+   #root_folder
 
    constructor(props) {
       // returning 'back to list' from Records will return the passed 'search_context'
@@ -34,6 +35,12 @@ class Search {
 
 
    render = async () => {
+
+      // get root_folder
+      const app_config_obj = await window.config_api.getAppConfig()
+      if(app_config_obj.outcome === 'success') {
+         this.#root_folder = trim_end_char(app_config_obj.app_config.root_folder,'\\')                 
+      }
 
       let browse_section = create_section({
          attributes:[
@@ -131,6 +138,7 @@ class Search {
                      }
                      
                      let props = {
+                        root_folder: this.#root_folder,
                         context:this.#search_context
                      }
 
