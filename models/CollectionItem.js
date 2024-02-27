@@ -33,7 +33,7 @@ class CollectionItem {
       {key:'content_desc',data_type:'TEXT',editable:true,injectable:true,in_card:true,export:true,test:{type:'string',min:0,max:500}},
       {key:'file_type',data_type:'TEXT DEFAULT "File" NOT NULL',editable:true,injectable:true,in_card:true,hidden:true,export:true,test:{type:'string',min:3,max:20}},
       {key:'file_name',data_type:'TEXT NOT NULL',editable:true,injectable:true,readonly:true,in_card:true,export:true,test:{type:'string',min:5,max:100}},
-      {key:'folder_path',data_type:'TEXT NOT NULL',editable:true,injectable:true,readonly:true,in_card:false,export:true,test:{type:'string',min:1,max:200}},
+      {key:'folder_path',data_type:'TEXT NOT NULL',editable:true,injectable:true,readonly:true,in_card:true,export:true,test:{type:'string',min:1,max:200}},
       {key:'img_desc',data_type:'TEXT DEFAULT "image"',editable:true,in_card:false,export:true,test:{type:'string',min:1,max:80}},
       {key:'item_ref',data_type:'INTEGER',editable:true,injectable:true,in_card:false,export:true,test:{type:'string',min:1,max:100}},
       {key:'item_date',data_type:'TEXT',editable:true,injectable:true,in_card:true,export:true,test:{type:'date',min:0,max:10},placeholder:'YYYY-MM-DD'},
