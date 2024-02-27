@@ -73,7 +73,10 @@ export const trim_char = (str,delim) => {
 // trim_end_char
 //
 export const trim_end_char = (str,delim) => {
-   return str.endsWith(delim) ? str.slice(0,-1) : str
+   if(str !== undefined) {
+      return str.endsWith(delim) ? str.slice(0,-1) : str
+   }
+   return str
 }
 
 //
