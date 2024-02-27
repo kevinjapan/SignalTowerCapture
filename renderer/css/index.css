@@ -660,6 +660,10 @@ label/[value|input] layout for Record and Form views
 .record_image {
    width:100%;
 }
+.record_card_image {
+   border:solid 10px black;
+   width:200px !important;
+}
 
 
 
