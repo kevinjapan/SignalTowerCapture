@@ -2,6 +2,8 @@ import App from '../App/App.js'
 import TagsLiteList from '../TagsLiteList/TagsLiteList.js'
 import { get_ui_ready_date } from '../../utilities/ui_datetime.js'
 import { create_section,create_div,create_h } from '../../utilities/ui_elements.js'
+import { trim_char,trim_end_char } from '../../utilities/ui_strings.js'
+import { is_image_file, build_img_elem } from '../../utilities/ui_utilities.js'
 
 
 
@@ -82,20 +84,25 @@ class CollectionItemCard {
 
          }
          
-         // else if(field.key === 'folder_path') {
+         else if(field.key === 'folder_path') {
 
-            // if(file_name) {               
-            //    if(await is_image_file(field_value,file_name)) { 
-            //       let img = await build_img_elem('record_img',field_value,file_name)
-            //       if(img) {
-            //          card.append(img)
-            //       }
-            //    }
-            //    else {
-            //       card.append(create_div(),document.createTextNode('No image file was found.'))
-            //    }
-            // }
-         // }
+            // build the file_path
+            let root_part = trim_end_char(this.#props.root_folder,'\\')
+            let relative_folder_part = trim_char(item.folder_path,'\\')
+            let file_part = item.file_name
+            let file_path = `${root_part}\\${relative_folder_part}\\${file_part}`
+
+            if(await is_image_file(file_path)) { 
+               let img = await build_img_elem(item.id,file_path,item.img_desc,[],['record_card_image'])
+               if(img) {
+                  card.append(img)
+               }
+            }
+            else {
+               card.append(create_div(),document.createTextNode('No image file was found.'))
+            }
+            
+         }
 
          else if(field.key === 'tags') {
 
@@ -139,8 +146,6 @@ class CollectionItemCard {
    // enable buttons/links displayed in the render
    activate = async() => {
 
-      console.log('Card activate')
-
       // Card Title link to record
          
       const card_title_links = document.querySelectorAll('.card_title_link')
@@ -150,8 +155,7 @@ class CollectionItemCard {
          card_title_links.forEach((card_title_link) => {
 
             card_title_link.addEventListener('click', async(event) => {
-               
-               console.log('title link clicked')
+
                if(typeof card_title_link.attributes['data-id'] !== 'undefined') {
 
                   try {

@@ -7,6 +7,7 @@ export const is_image_file = async (file_path) => {
 
    const file_exist_result = await window.files_api.fileExists(file_path)
 
+
    if (typeof file_exist_result != "undefined") {
       if(file_exist_result.outcome === 'success') {
          if(is_img_ext(file_path)) {
@@ -33,7 +34,7 @@ const is_img_ext = (file_name) => {
 }
 
 
-export const build_img_elem = async(id,file_path,alt_text = 'image',attributes = []) => {
+export const build_img_elem = async(id,file_path,alt_text = 'image',attributes = [],classlist = []) => {
    
    let attrs = [
       {key:'id',value:id},
@@ -41,10 +42,13 @@ export const build_img_elem = async(id,file_path,alt_text = 'image',attributes =
       {key:'alt',value:alt_text},
       ...attributes
    ]
+   let classes = [
+      ...classlist
+   ]
 
    let img = create_img({
       attributes:attrs,
-      classlist:['record_image']
+      classlist:classes
    })
    return img
 }

@@ -77,7 +77,7 @@ class ImageViewer {
             {key:'draggable',value:false}
          ]
          
-         let img = await build_img_elem('record_img',file_path,attributes)
+         let img = await build_img_elem('record_img',file_path,'',attributes,['record_image'])
          if(img) {
             wrapper.append(img_btn_group,img)
          }

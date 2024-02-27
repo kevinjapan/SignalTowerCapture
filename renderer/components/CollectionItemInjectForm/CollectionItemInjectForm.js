@@ -120,7 +120,7 @@ class CollectionItemInjectForm {
 
       let res = await is_image_file(file_path)  
       if(res) {
-         let img = await build_img_elem('record_img',file_path,alt_text)
+         let img = await build_img_elem('record_img',file_path,alt_text,[],['record_image'])
          if(img) {
             parent_elem.replaceChildren(create_div(),img)
          }
