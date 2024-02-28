@@ -2,7 +2,7 @@ import App from '../App/App.js'
 import RecordBtns from '../RecordBtns/RecordBtns.js'
 import RecordAdmin from '../RecordAdmin/RecordAdmin.js'
 import { ui_friendly_text,trim_char,trim_end_char } from '../../utilities/ui_strings.js'
-import { is_image_file, build_img_elem,add_to_queue } from '../../utilities/ui_utilities.js'
+import { is_image_file, build_img_elem,add_to_int_queue,ints_array } from '../../utilities/ui_utilities.js'
 import { create_section,create_div,create_p,create_button } from '../../utilities/ui_elements.js'
 
 
@@ -30,11 +30,14 @@ class CollectionItemRecord {
 
       // update Recent records
       const app_config = app_config_obj.app_config
-      let recent_records = app_config.recent_records      
+
+      let recent_records = app_config.recent_records
+      let ints_queue = ints_array(recent_records.split(','))
       let app_config_recent = {
          id:app_config.id,
-         recent_records: add_to_queue(recent_records.split(','),10,this.#props.item.id).join()
+         recent_records: add_to_int_queue(ints_queue,20,this.#props.item.id).join()
       }
+
       const result = await window.config_api.updateAppConfig(app_config_recent)
 
       // component container
@@ -47,7 +50,7 @@ class CollectionItemRecord {
          classlist:['text_col','pl_1']
       })
       let img_col = create_div({
-         classlist:['img_col']
+         classlist:['img_col'],
       })
 
 
