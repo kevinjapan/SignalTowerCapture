@@ -1,10 +1,26 @@
-import { create_section,create_h, create_p } from '../../utilities/ui_elements.js'
+import App from '../App/App.js'
+import CollectionItemCard from '../CollectionItemCard/CollectionItemCard.js'
+import { create_section,create_h,create_p,create_div } from '../../utilities/ui_elements.js'
 
 
 
 class RecentRecords {
 
    #props
+
+   #queue
+
+   // we retain browse state (page,scroll_y,etc) by passing a 'context token'
+   #context = {
+      key:'RecentRecords',
+      field_filters:[],
+      page:1,
+      scroll_y:0
+   }
+
+
+   #results_container
+
 
    constructor(props) {
       this.#props = props
@@ -15,7 +31,11 @@ class RecentRecords {
       let record_result_obj = await this.get_app_config_record()
       let app_config_record = record_result_obj.app_config
       
-      console.log('app_config_record',app_config_record)
+      this.get_matching_records()
+      
+      console.log('app_config_record',app_config_record) // to do : remove
+
+      this.#queue = app_config_record.recent_records
 
       let about_section = create_section()
 
@@ -25,18 +45,28 @@ class RecentRecords {
       })
 
       const temp_text = create_p({
-         text:`To do : list recent records here (from app_config.recent_records)`
+         text:`To do : list recent records here (from app_config.recent_records)
+               To do : update app_config.recent_records on every new record viewed. (10)`
       })
+
+      // to do : ui layout for queue - 
+      //         retrieve from CollectionItem model - where id in (1,14,343,...)
+      //          - see DeletedRecords for filtering mechanism
+      //         and display CollectionItemCards here
       const temp_text2 = create_p({
-         text:`To do : update app_config.recent_records on every new record viewed. (10)`
+         text:this.#queue
       })
 
-      
+      this.#results_container = create_div({
+         attributes:[
+            {key:'id',value:'results_container'}
+         ]
+      })
 
-      
+      this.get_items()
 
       // assemble
-      about_section.append(heading,temp_text,temp_text2)
+      about_section.append(heading,temp_text,temp_text2,this.#results_container)
       return about_section
    }
 
@@ -49,6 +79,94 @@ class RecentRecords {
    async get_app_config_record() {
       return await window.config_api.getAppConfig()
    }
+
+   get_matching_records = async() => {
+      console.log('matching_records : context',this.#context)
+      const result = await window.collection_items_api.getItems(this.#context)
+      console.log('result',result)
+      // this.#matching_records = result.collection_items
+   }
+
+   //
+   // retrieve the items results (w/ no pagination)
+   // 
+   get_items = async () => {
+
+      if(this.#context) {
+
+         try {
+
+            this.#context.field_filters.push({field:'id',test:'IN',value:this.#queue})
+
+            const collection_items_obj = await window.collection_items_api.getItems(this.#context)
+         
+            if (typeof collection_items_obj != "undefined") {
+         
+               if(collection_items_obj.outcome === 'success') {
+                  
+                  this.#results_container.replaceChildren()
+
+                  // to do : order this by the this.#queue id list
+                  console.log('queue',this.#queue)
+                  let ordered_items = []
+                  this.#queue.split(',').forEach(id => {
+                     let temp = collection_items_obj.collection_items.find(item => {
+                        return parseInt(item.id) === parseInt(id)
+                     })
+                     ordered_items.push(temp)
+                  })
+
+
+                  // to do : tidy this file
+                  console.log('collection_items_obj',collection_items_obj)
+                  console.log('ordered_items',ordered_items)
+
+                  // to do : on opening a CollectionItemRecord - enable 'back' to Recent Records via context.
+         
+                  if(ordered_items.length > 0) {
+                  
+                     let number_records = document.getElementById('number_records')
+                     if(number_records) {             
+                        number_records.innerText = `There are ${ui_display_number_as_str(collection_items_obj.count)} deleted records.`
+                     }
+            
+                     let props = {context: this.#context}
+                     const collection_item_card = new CollectionItemCard(props) 
+                     ordered_items.forEach((item) => {        
+                        this.#results_container.appendChild(collection_item_card.render(collection_items_obj.collection_item_fields,item))
+                     })
+         
+                     // retain some spacing on short lists
+                     this.#results_container.style.minHeight = '70vh'
+         
+                     setTimeout(() => collection_item_card.activate(),200)
+                  }
+                  else {
+                     this.#results_container.innerText = 'No records were found. '
+                  }
+
+                  
+                  // re-instate scroll position if user had scrolled list before opening a record
+                  window.scroll(0,this.#context.scroll_y)
+               }
+               else {
+                  throw 'No records were returned. ' + collection_items_obj.message
+               }
+            }
+            else {
+               throw 'No records were returned. 2'
+            }
+         }
+         catch(error) {
+            let props = {
+               msg:'Sorry, we were unable to access the Records.',
+               error:error
+            }
+            App.switch_to_component('Error',props)
+         }
+      }
+   }
+
 
 }
 
