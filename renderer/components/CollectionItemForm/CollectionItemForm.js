@@ -66,7 +66,7 @@ class CollectionItemForm {
 
       // 2-col layout
       let text_col = create_div({
-         classlist:['text_col']
+         classlist:['text_col','pl_1']
       })
       let img_col = create_div({
          attributes:[
@@ -289,7 +289,7 @@ class CollectionItemForm {
 
       // assemble
       form.append(create_div(),btn_group_2,submit_outcome)
-      this.#record.append(text_col,img_col)
+      this.#record.append(img_col,text_col)
 
       window.scroll(0,0)
 

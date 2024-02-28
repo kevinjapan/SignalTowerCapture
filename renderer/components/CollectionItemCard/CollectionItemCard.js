@@ -17,11 +17,20 @@ class CollectionItemCard {
    }
 
    render = (fields,item) => {
+
+      console.log('fields',fields)
       
       // 'fields' is an array including keys of properties in the 'item' and preserves the display order
       // card is row flex to align minor fields at foot while primary fields occupy flex_100 (width 100%)
       let card = create_section({
          classlist:['CollectionItemCard','flex','gap_0.5']
+      })
+
+      let text_col = create_div({
+         
+      })
+      let img_col = create_div({
+         classlist:['pl_1']
       })
       
       let field_element
@@ -48,7 +57,7 @@ class CollectionItemCard {
                classlist:['text_blue','card_title_link','flex_100','m_0','font_w_400','cursor_pointer','hover_line','break_words'],
                text:field_value
             })
-            card.append(field_element)
+            text_col.append(field_element)
 
          }
          else if(field.key === 'file_type') {
@@ -57,7 +66,7 @@ class CollectionItemCard {
                classlist:['flex_100'],
                text:field_value
             })
-            card.append(field_element)
+            text_col.append(field_element)
 
          }
          else if(field.key === 'file_name') {
@@ -80,7 +89,7 @@ class CollectionItemCard {
             icon_path.setAttribute('d','M4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zm0 1h8a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1')
             icon.appendChild(icon_path)
             file_name_block.append(icon,field_element)
-            card.append(file_name_block)
+            text_col.append(file_name_block)
 
          }
          
@@ -93,13 +102,13 @@ class CollectionItemCard {
             let file_path = `${root_part}\\${relative_folder_part}\\${file_part}`
 
             if(await is_image_file(file_path)) { 
-               let img = await build_img_elem(item.id,file_path,item.img_desc,[],['record_card_image'])
+               let img = await build_img_elem(item.id,file_path,item.img_desc,[{key:'data-id',value:item.id}],['record_card_image','card_title_link','cursor_pointer'])
                if(img) {
-                  card.append(img)
+                  img_col.append(img)
                }
             }
             else {
-               card.append(create_div(),document.createTextNode('No image file was found.'))
+               img_col.append(create_div(),document.createTextNode('No image file was found.'))
             }
             
          }
@@ -119,7 +128,7 @@ class CollectionItemCard {
                   setTimeout(() => tags_list.activate(),100)
                }
             }
-            card.append(tags_list_elem)
+            text_col.append(tags_list_elem)
 
          }
 
@@ -135,11 +144,11 @@ class CollectionItemCard {
                   classlist:['break_words','mt_0.5','mr_2'],
                   text:field_value
                })
-               card.append(field_element)
+               text_col.append(field_element)
             }
          }
       })
-
+      card.append(img_col,text_col)
       return card
    }
 
@@ -197,8 +206,7 @@ class CollectionItemCard {
                }
                else {
                   let props = {
-                     msg:'Sorry, no valid id was provided for the Collection Item.',
-                     error:error
+                     msg:'Sorry, no valid id was provided for the Collection Item.'
                   }
                   App.switch_to_component('Error',props)
                }

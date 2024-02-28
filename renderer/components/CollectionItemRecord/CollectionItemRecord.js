@@ -2,7 +2,7 @@ import App from '../App/App.js'
 import RecordBtns from '../RecordBtns/RecordBtns.js'
 import RecordAdmin from '../RecordAdmin/RecordAdmin.js'
 import { ui_friendly_text,trim_char,trim_end_char } from '../../utilities/ui_strings.js'
-import { is_image_file, build_img_elem } from '../../utilities/ui_utilities.js'
+import { is_image_file, build_img_elem,add_to_queue } from '../../utilities/ui_utilities.js'
 import { create_section,create_div,create_p,create_button } from '../../utilities/ui_elements.js'
 
 
@@ -17,16 +17,25 @@ class CollectionItemRecord {
    #record
 
    constructor(props) {
-      this.#props = props   
+      this.#props = props
    }
 
    render = async() => {
-      
+
       // get root_folder
       const app_config_obj = await window.config_api.getAppConfig()
       if(app_config_obj.outcome === 'success') {
          this.#props.root_folder = app_config_obj.app_config.root_folder
       }
+
+      // update Recent records
+      const app_config = app_config_obj.app_config
+      let recent_records = app_config.recent_records      
+      let app_config_recent = {
+         id:app_config.id,
+         recent_records: add_to_queue(recent_records.split(','),10,this.#props.item.id).join()
+      }
+      const result = await window.config_api.updateAppConfig(app_config_recent)
 
       // component container
       this.#record = create_section({
@@ -35,7 +44,7 @@ class CollectionItemRecord {
 
       // 2-col layout
       let text_col = create_div({
-         classlist:['text_col']
+         classlist:['text_col','pl_1']
       })
       let img_col = create_div({
          classlist:['img_col']
@@ -115,7 +124,7 @@ class CollectionItemRecord {
             let file_path = `${root_part}\\${relative_folder_part}\\${file_part}`
 
             if(await is_image_file(file_path)) {          
-               let img = await build_img_elem('record_img',file_path,this.#props.item['img_desc'])
+               let img = await build_img_elem('record_img',file_path,this.#props.item['img_desc'],[],['record_image'])
                if(img) {
                   img_col.append(img)
                }
@@ -136,7 +145,7 @@ class CollectionItemRecord {
       // assemble
 
       img_col.append(img_view)
-      this.#record.append(text_col,img_col,img_view,record_admin.render())
+      this.#record.append(img_col,text_col,img_view,record_admin.render())
 
       if(this.#props.item['deleted_at']) {
          const notify_deleted = create_p({
