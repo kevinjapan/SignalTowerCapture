@@ -15,7 +15,8 @@ class Config {
       
       const heading = create_h({
          level:'h1',
-         text:'Config'
+         text:'Configure the system',
+         classlist:['m_0']
       })
 
       let config_form_wrap = create_section({

@@ -53,7 +53,8 @@ class Files {
       // heading
       const heading = create_h({
          level:'h1',
-         text:'Files'
+         text:'Add a folder to the collection',
+         classlist:['m_0']
       })
       // outcome notification
       const files_outcome = create_div({

@@ -20,7 +20,7 @@ class Home {
       const tagline = create_h({
          classlist:['ml_2'],
          level:'h3',
-         text:'Desktop Collections Management'
+         text:'Desktop Digital Collections Management'
       })
       banner.append(heading,tagline)
 

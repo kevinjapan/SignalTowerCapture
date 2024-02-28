@@ -1,7 +1,7 @@
 import App from '../App/App.js'
 import CollectionItemCard from '../CollectionItemCard/CollectionItemCard.js'
-import { create_section,create_h,create_p,create_div } from '../../utilities/ui_elements.js'
-
+import { create_section,create_h,create_div } from '../../utilities/ui_elements.js'
+import { ui_display_number_as_str,trim_end_char } from '../../utilities/ui_strings.js'
 
 
 class RecentRecords {
@@ -18,22 +18,27 @@ class RecentRecords {
       scroll_y:0
    }
 
-
    #results_container
 
+   #root_folder
 
+   
    constructor(props) {
       this.#props = props
    }
 
    render = async() => {
 
+      // get root_folder
+      const app_config_obj = await window.config_api.getAppConfig()
+      if(app_config_obj.outcome === 'success') {
+         this.#root_folder = trim_end_char(app_config_obj.app_config.root_folder,'\\')                 
+      }
+
       let record_result_obj = await this.get_app_config_record()
       let app_config_record = record_result_obj.app_config
       
       this.get_matching_records()
-      
-      console.log('app_config_record',app_config_record) // to do : remove
 
       this.#queue = app_config_record.recent_records
 
@@ -41,20 +46,8 @@ class RecentRecords {
 
       const heading = create_h({
          level:'h1',
-         text:'Recent Records'
-      })
-
-      const temp_text = create_p({
-         text:`To do : list recent records here (from app_config.recent_records)
-               To do : update app_config.recent_records on every new record viewed. (10)`
-      })
-
-      // to do : ui layout for queue - 
-      //         retrieve from CollectionItem model - where id in (1,14,343,...)
-      //          - see DeletedRecords for filtering mechanism
-      //         and display CollectionItemCards here
-      const temp_text2 = create_p({
-         text:this.#queue
+         text:'Recent records',
+         classlist:['m_0']
       })
 
       this.#results_container = create_div({
@@ -66,7 +59,7 @@ class RecentRecords {
       this.get_items()
 
       // assemble
-      about_section.append(heading,temp_text,temp_text2,this.#results_container)
+      about_section.append(heading,this.#results_container)
       return about_section
    }
 
@@ -81,9 +74,7 @@ class RecentRecords {
    }
 
    get_matching_records = async() => {
-      console.log('matching_records : context',this.#context)
       const result = await window.collection_items_api.getItems(this.#context)
-      console.log('result',result)
       // this.#matching_records = result.collection_items
    }
 
@@ -106,8 +97,6 @@ class RecentRecords {
                   
                   this.#results_container.replaceChildren()
 
-                  // to do : order this by the this.#queue id list
-                  console.log('queue',this.#queue)
                   let ordered_items = []
                   this.#queue.split(',').forEach(id => {
                      let temp = collection_items_obj.collection_items.find(item => {
@@ -116,13 +105,7 @@ class RecentRecords {
                      ordered_items.push(temp)
                   })
 
-
-                  // to do : tidy this file
-                  console.log('collection_items_obj',collection_items_obj)
-                  console.log('ordered_items',ordered_items)
-
                   // to do : on opening a CollectionItemRecord - enable 'back' to Recent Records via context.
-         
                   if(ordered_items.length > 0) {
                   
                      let number_records = document.getElementById('number_records')
@@ -130,7 +113,10 @@ class RecentRecords {
                         number_records.innerText = `There are ${ui_display_number_as_str(collection_items_obj.count)} deleted records.`
                      }
             
-                     let props = {context: this.#context}
+                     let props = {
+                        root_folder: this.#root_folder,
+                        context: this.#context
+                     }
                      const collection_item_card = new CollectionItemCard(props) 
                      ordered_items.forEach((item) => {        
                         this.#results_container.appendChild(collection_item_card.render(collection_items_obj.collection_item_fields,item))

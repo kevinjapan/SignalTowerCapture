@@ -50,7 +50,7 @@ class Search {
     
       const heading = create_h({
          level:'h1',
-         text:'Search',
+         text:'Search for records',
          classlist:['m_0']
       })
       browse_section.append(heading)

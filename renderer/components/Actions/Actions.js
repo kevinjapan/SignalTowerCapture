@@ -19,7 +19,8 @@ class Actions {
 
       const actions_heading = create_h({
          level:'h1',
-         text:'Actions'
+         text:'Perform actions',
+         classlist:['m_0']
       })
 
 

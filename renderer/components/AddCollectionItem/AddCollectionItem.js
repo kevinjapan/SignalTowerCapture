@@ -18,7 +18,8 @@ class AddCollectionItem {
 
       const add_item_heading = create_h({
          level:'h1',
-         text:'Add A Record'
+         text:'Add a file to the collection',
+         classlist:['m_0']
       })
 
       const item_form_wrap = create_section({
@@ -74,7 +75,7 @@ class AddCollectionItem {
          }
          App.switch_to_component('Error',props)
       }
-    }
+   }
 
    // enable buttons/links displayed in the render
    activate = () => {
