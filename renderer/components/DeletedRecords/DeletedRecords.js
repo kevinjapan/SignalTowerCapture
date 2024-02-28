@@ -1,7 +1,7 @@
 import App from '../App/App.js'
 import CollectionItemCard from '../CollectionItemCard/CollectionItemCard.js'
 import PaginationNav from '../PaginationNav/PaginationNav.js'
-import { ui_display_number_as_str } from '../../utilities/ui_strings.js'
+import { ui_display_number_as_str,trim_end_char } from '../../utilities/ui_strings.js'
 import { DESC } from '../../utilities/ui_descriptions.js'
 import { 
    create_section,
@@ -32,6 +32,9 @@ class DeletedRecordsTeaser {
    // props 
    #props = null
 
+   
+   #root_folder
+
    constructor(props) {
       // returning 'back to list' from Records will return the passed 'context token'
       if(props) {
@@ -41,8 +44,13 @@ class DeletedRecordsTeaser {
    }
 
    
-   render = () => {
+   render = async() => {
 
+      // get root_folder
+      const app_config_obj = await window.config_api.getAppConfig()
+      if(app_config_obj.outcome === 'success') {
+         this.#root_folder = trim_end_char(app_config_obj.app_config.root_folder,'\\')                 
+      }
 
       const deleted_Records_component = create_section({
          attributes:[
@@ -123,7 +131,10 @@ class DeletedRecordsTeaser {
                         number_records.innerText = `There are ${ui_display_number_as_str(collection_items_obj.count)} deleted records.`
                      }
             
-                     let props = {context: this.#context}
+                     let props = {
+                        root_folder: this.#root_folder,
+                        context: this.#context
+                     }
                      const collection_item_card = new CollectionItemCard(props) 
                      collection_items_obj.collection_items.forEach((item) => {        
                         this.#results_container.appendChild(collection_item_card.render(collection_items_obj.collection_item_fields,item))
