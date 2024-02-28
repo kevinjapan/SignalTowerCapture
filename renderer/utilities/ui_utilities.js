@@ -56,24 +56,31 @@ export const build_img_elem = async(id,file_path,alt_text = 'image',attributes =
 
 
 //
-// add item to a queue
-// where queue is an array of objects (items)
+// add int to a queue of ints
 // returns new array
 //
+export const add_to_int_queue = (queue,max_len,int) => {
 
-// to do : register in app_config.recent_records
-// - get app_config.recent_records
-// - modify recent_record (manage size of list)
-// - update recent_records with
-// - avoid duplicates (use Set?)
-
-export const add_to_queue = (queue,max_len,item) => {
-
-   // remove oldest items
+   // remove oldest ints
    while(queue.length >= max_len) {
       queue.pop()
    }
-   // push new item
-   return [item,...queue]
    
+   // push new int
+   let new_queue = [int,...queue]
+
+   // remove duplicates
+   return Array.from(new Set(new_queue))
+}
+
+
+//
+// convert array of strings to array of ints
+//
+export const ints_array = (strings_array) => {
+   return strings_array.map(str => {
+      if(!isNaN(parseInt(str))) {
+         return parseInt(str)
+      }
+   })
 }
