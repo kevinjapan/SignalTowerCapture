@@ -2,7 +2,7 @@
 
 ## Local Collections Management
 
-Signal Tower Capture is a desktop collections solution for managing 
+Signal Tower Capture is a desktop digital collections solution for managing 
 files and folders on your local machine and referencing these to your
 local on-site collection. It is ideally suited for smaller museums or
 archives where you need a simple solution with zero-overheads and simplicity
@@ -19,9 +19,15 @@ Originally built in 1813 as a base of operations for the famous Bell Rock Lighth
 Signal Tower Capture is built on the open-source Electron application framework 
 and public domain SQLite database.
 
+
 ### Deployment
 Download the project and run the following npm command to create a distributable:
 
 `npm run make`
 
 https://www.electronjs.org/docs/latest/tutorial/tutorial-packaging
+
+
+### Development
+'npx electronmon .'
+
