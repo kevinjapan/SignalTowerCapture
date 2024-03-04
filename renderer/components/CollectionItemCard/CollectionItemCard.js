@@ -31,115 +31,117 @@ class CollectionItemCard {
       
       let field_element
       let tags_list_elem
-      let file_name
- 
-      fields.forEach(async(field) => {
 
-         // field value
-         let field_value = item[field.key]
-         if(field.test.type === 'date') {
-            field_value = get_ui_ready_date(field_value)
-         }
+      if(typeof item !== 'undefined') {
 
-         if(field.key === 'title') {         
-            // title as link
-            if(field_value === '') field_value = 'no title'
-            field_element = create_h({
-               level:'h3',
-               attributes: [
-                  {key:'data-id',value:item.id}
-               ],
-               classlist:['text_blue','card_title_link','flex_100','m_0','font_w_400','cursor_pointer','hover_line','break_words'],
-               text:field_value
-            })
-            text_col.append(field_element)
-         }
-         else if(field.key === 'file_type') {
-            field_element = create_div({
-               classlist:['flex_100'],
-               text:field_value
-            })
-            text_col.append(field_element)
-         }
-         else if(field.key === 'file_name') {
+         fields.forEach(async(field) => {
 
-            file_name = field_value
-         
-            // display file icon
-            let file_name_block = create_div({
-               classlist:['flex','gap_.5','mt_0.25','flex_100','break_words']
-            })
-            field_element = create_div({
-               classlist:['pt_0.3'],
-               text:field_value
-            })
-            let icon = document.createElementNS('http://www.w3.org/2000/svg','svg')            
-            icon.classList.add('pt_.5')
-            const icon_path = document.createElementNS('http://www.w3.org/2000/svg','path')
-            icon.setAttribute('width','16')
-            icon.setAttribute('height','16')               
-            icon_path.setAttribute('d','M4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zm0 1h8a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1')
-            icon.appendChild(icon_path)
-            file_name_block.append(icon,field_element)
-            text_col.append(file_name_block)
-   
-         }         
-         else if(field.key === 'folder_path') {
-
-            // card image
-            
-            // build the file_path
-            const root_part = trim_end_char(this.#props.root_folder,'\\')
-            const relative_folder_part = trim_char(item.folder_path,'\\')
-            const file_part = item.file_name
-            const file_path = `${root_part}\\${relative_folder_part}\\${file_part}`
-
-            // we inject placeholder and load img jit w/ intersection observer
-            const placeholder_file_path = `imgs\\card_img_placeholder.jpg`
-
-            if(await is_image_file(file_path)) { 
-               let img = await build_img_elem(item.id,placeholder_file_path,item.img_desc,
-                  [{key:'data-id',value:item.id},{key:'data-src',value:file_path}],
-                  ['record_card_image','card_title_link','cursor_pointer']
-               )               
-               if(img) {
-                  img_col.append(img)
-               }
+            // field value
+            let field_value = item[field.key]
+            if(field.test.type === 'date') {
+               field_value = get_ui_ready_date(field_value)
             }
-            else {
-               console.log('image file_path',file_path)
-               img_col.append(create_div(),document.createTextNode('No image file was found.'))
-            }            
-         }
-         else if(field.key === 'tags') {
-            tags_list_elem = create_div({
-               attributes:[
-                  {key:'id',value:'tags_list_elem'}
-               ],
-               classlist:['m_0','w_full']
-            }) 
-            if(item.tags) {
-               const tags_list = new TagsLiteList('tags_list')
-               if(tags_list) {
-                  tags_list_elem.append(await tags_list.render(item.tags.split(','),this.actions))
-                  setTimeout(() => tags_list.activate(),100)
-               }
-            }
-            text_col.append(tags_list_elem)
-         }
-         else {
-            // default field display
-            // content_desc occuppies row itself since it is btwn title and file_name (both 'flex_100' above)
-            if(field_value) {
-               if(field_value.length > 500) field_value = field_value.substring(0,500) + '..'
-               field_element = create_div({
-                  classlist:['break_words','mt_0.5','mr_2'],
+
+            if(field.key === 'title') {         
+               // title as link
+               if(field_value === '') field_value = 'no title'
+               field_element = create_h({
+                  level:'h3',
+                  attributes: [
+                     {key:'data-id',value:item.id}
+                  ],
+                  classlist:['text_blue','card_title_link','flex_100','m_0','font_w_400','cursor_pointer','hover_line','break_words'],
                   text:field_value
                })
                text_col.append(field_element)
             }
-         }
-      })
+            else if(field.key === 'file_type') {
+               field_element = create_div({
+                  classlist:['flex_100'],
+                  text:field_value
+               })
+               text_col.append(field_element)
+            }
+            else if(field.key === 'file_name') {
+
+               let file_name = field_value
+            
+               // display file icon
+               let file_name_block = create_div({
+                  classlist:['flex','gap_.5','mt_0.25','flex_100','break_words']
+               })
+               field_element = create_div({
+                  classlist:['pt_0.3'],
+                  text:field_value
+               })
+               let icon = document.createElementNS('http://www.w3.org/2000/svg','svg')            
+               icon.classList.add('pt_.5')
+               const icon_path = document.createElementNS('http://www.w3.org/2000/svg','path')
+               icon.setAttribute('width','16')
+               icon.setAttribute('height','16')               
+               icon_path.setAttribute('d','M4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zm0 1h8a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1')
+               icon.appendChild(icon_path)
+               file_name_block.append(icon,field_element)
+               text_col.append(file_name_block)
+      
+            }         
+            else if(field.key === 'folder_path') {
+
+               // card image
+               
+               // build the file_path
+               const root_part = trim_end_char(this.#props.root_folder,'\\')
+               const relative_folder_part = trim_char(item.folder_path,'\\')
+               const file_part = item.file_name
+               const file_path = `${root_part}\\${relative_folder_part}\\${file_part}`
+
+               // we inject placeholder and load img jit w/ intersection observer
+               const placeholder_file_path = `imgs\\card_img_placeholder.jpg`
+
+               if(await is_image_file(file_path)) { 
+                  let img = await build_img_elem(item.id,placeholder_file_path,item.img_desc,
+                     [{key:'data-id',value:item.id},{key:'data-src',value:file_path}],
+                     ['record_card_image','card_title_link','cursor_pointer']
+                  )               
+                  if(img) {
+                     img_col.append(img)
+                  }
+               }
+               else {
+                  img_col.append(create_div(),document.createTextNode('No image file was found.'))
+               }            
+            }
+            else if(field.key === 'tags') {
+               tags_list_elem = create_div({
+                  attributes:[
+                     {key:'id',value:'tags_list_elem'}
+                  ],
+                  classlist:['m_0','w_full']
+               }) 
+               if(item.tags) {
+                  const tags_list = new TagsLiteList('tags_list')
+                  if(tags_list) {
+                     tags_list_elem.append(await tags_list.render(item.tags.split(','),this.actions))
+                     setTimeout(() => tags_list.activate(),100)
+                  }
+               }
+               text_col.append(tags_list_elem)
+            }
+            else {
+               // default field display
+               // content_desc occuppies row itself since it is btwn title and file_name (both 'flex_100' above)
+               if(field_value) {
+                  if(field_value.length > 500) field_value = field_value.substring(0,500) + '..'
+                  field_element = create_div({
+                     classlist:['break_words','mt_0.5','mr_2'],
+                     text:field_value
+                  })
+                  text_col.append(field_element)
+               }
+            }
+         })
+      }
+      
       card.append(img_col,text_col)
       return card
    }
