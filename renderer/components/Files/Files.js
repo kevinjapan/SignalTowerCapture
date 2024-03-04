@@ -38,7 +38,6 @@ class Files {
 
    constructor(props) {
       if(props) this.#props = props
-      console.log('Files',props)
    }
 
 
@@ -248,12 +247,9 @@ class Files {
          file_links.forEach((file_link) => {
 
             file_link.addEventListener('click',async(event) => {
+
                const file_view = document.getElementById('file_view')
-
-               let folder_path_filter = this.#context.field_filters.find(filter => filter.field = 'folder_path' )
-
-               // to do : consider - esp. folder_path - is it bookended by '\\' or not? 
-               //         we need a robust approach to handling this.. always trim before use?
+               const folder_path_filter = this.#context.field_filters.find(filter => filter.field = 'folder_path' )
 
                if(file_view) {
                   let props = {
@@ -281,13 +277,17 @@ class Files {
 
    // return first existing record for this folder flagged as a 'folder' item type
    find_matching_folder_record = (filename) => {
+      console.log('this.#matching_records',this.#matching_records)
       return this.#matching_records.find(item => item.file_type.toUpperCase() === 'FOLDER')
    }
 
-   // get list of 'folder_path' matching records (single db call)
+   //
+   // get list of records matching 'folder_path' 
+   // we perform single db call and reference off of this rather than querying each time
+   //
    get_matching_records = async() => {
+      // to do : try catch here?
       const result = await window.collection_items_api.getItems(this.#context)
-      console.log('matching_records : context',this.#context)
       this.#matching_records = result.collection_items
       this.#record_fields = result.collection_item_fields
    }
