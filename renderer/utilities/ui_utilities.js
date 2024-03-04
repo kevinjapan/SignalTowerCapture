@@ -54,6 +54,42 @@ export const build_img_elem = async(id,file_path,alt_text = 'image',attributes =
 }
 
 
+// 
+// Load Card images as they enter viewport.
+// We don't have scope to generate sm image sizes, but we do want images in Card views.
+// Compromise is we load images as they enter the viewport - allowing Card lists to space
+// layout instaneously and display text while loading images just-in-time.
+// Only noticable on quick scrolling - provides immediate access to text.
+//
+export const init_card_img_loads = () => {
+   const cards = document.querySelectorAll('.record_card_image')
+   const appearOptions = {
+      threshold: 0,
+      rootMargin: "0px 0px 300px 0px"
+   }
+   return create_card_img_observers(cards,'',appearOptions)
+}
+
+const create_card_img_observers = (elements,active_class,options) => {
+   let observers_created = false
+   const appearOnScroll = new IntersectionObserver(
+      function(entries,appearOnScroll){
+         entries.forEach(entry => {
+            if(!entry.isIntersecting) return
+            // entry.target.classList.add(active_class)
+            entry.target.src = entry.target.getAttribute('data-src')
+            appearOnScroll.unobserve(entry.target)
+         })
+   },options)
+   if(elements) {
+      elements.forEach(element => {
+         appearOnScroll.observe(element)
+      })
+      observers_created = true
+   }
+   return observers_created
+}
+
 
 //
 // add int to a queue of ints

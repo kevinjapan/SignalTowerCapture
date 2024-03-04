@@ -2,8 +2,9 @@ import App from '../App/App.js'
 import CollectionItemCard from '../CollectionItemCard/CollectionItemCard.js'
 import PaginationNav from '../PaginationNav/PaginationNav.js'
 import AlphabetCtrl from '../AlphabetCtrl/AlphabetCtrl.js'
-import { ui_display_number_as_str } from '../../utilities/ui_strings.js'
+import { ui_display_number_as_str,trim_end_char } from '../../utilities/ui_strings.js'
 import { create_section,create_div,create_h } from '../../utilities/ui_elements.js'
+import { init_card_img_loads } from '../../utilities/ui_utilities.js'
 
 
 
@@ -24,6 +25,8 @@ class Browse {
    // props 
    #props = null
 
+   #root_folder
+
    constructor(props) {
 
       // 'back' to list from Records will return the passed 'context token'
@@ -43,6 +46,14 @@ class Browse {
 
 
    render = async () => {
+
+      
+      // get root_folder
+      const app_config_obj = await window.config_api.getAppConfig()
+      if(app_config_obj.outcome === 'success') {
+         this.#root_folder = trim_end_char(app_config_obj.app_config.root_folder,'\\')                 
+      }
+
       
       let browse_section = create_section({
          attributes:[
@@ -53,7 +64,7 @@ class Browse {
             
       const browse_heading = create_h({
          level:'h1',
-         text:'Browse Records',
+         text:'Browse records',
          classlist:['m_0']
       })
       browse_section.append(browse_heading)
@@ -90,6 +101,13 @@ class Browse {
       browse_section.append(number_records,this.#browse_results_container)
       return browse_section
    }
+
+
+   // enable buttons/links displayed in the render
+   activate = () => {
+      init_card_img_loads()
+   }
+
 
    //
    // retrieve the paginated items results 
@@ -130,7 +148,10 @@ class Browse {
                            There are ${ui_display_number_as_str(collection_items_obj.count)} records ${this.#filter_char ? 'with titles starting with \'' + this.#filter_char + '\'': ''}`
                      }
             
-                     let props = {context: this.#browse_context}
+                     let props = {
+                        root_folder: this.#root_folder,
+                        context: this.#browse_context
+                     }
 
                      const collection_item_card = new CollectionItemCard(props) 
                      collection_items_obj.collection_items.forEach((item) => {        
@@ -151,7 +172,7 @@ class Browse {
                   bottom_pagination_nav.activate()
                   
                   // re-instate scroll position if user had scrolled list before opening a record
-                  window.scroll(0,this.#browse_context.scroll_y)
+                  setTimeout(() => window.scroll(0,this.#browse_context.scroll_y),50)
                }
                else {
                   throw 'No records were returned.' + collection_items_obj.message
@@ -171,16 +192,13 @@ class Browse {
       }
    }
 
+
    // callback for PageNavigation
    go_to_page = (page) => {
       this.#browse_context.page = page
       this.#browse_context.scroll_y = 0
       this.get_items()
-   }
-
-   // enable buttons/links displayed in the render
-   activate = () => {
-
+      setTimeout(() => this.activate(),50)
    }
 
 
@@ -190,13 +208,17 @@ class Browse {
       this.#filter_char = char
       this.#browse_context.scroll_y = 0
       this.get_items()
+      setTimeout(() => this.activate(),500)
    }
    reset_alpha_filter = () => {
       this.#browse_context.page = 1
       this.#filter_char = null
       this.#browse_context.scroll_y = 0
       this.get_items()
+      setTimeout(() => this.activate(),50)
    }
+
+
 
 }
 

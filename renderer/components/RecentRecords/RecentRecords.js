@@ -2,6 +2,7 @@ import App from '../App/App.js'
 import CollectionItemCard from '../CollectionItemCard/CollectionItemCard.js'
 import { create_section,create_h,create_div } from '../../utilities/ui_elements.js'
 import { ui_display_number_as_str,trim_end_char } from '../../utilities/ui_strings.js'
+import { init_card_img_loads } from '../../utilities/ui_utilities.js'
 
 
 class RecentRecords {
@@ -25,6 +26,7 @@ class RecentRecords {
    
    constructor(props) {
       this.#props = props
+      if(props) this.#context = props.context
    }
 
    render = async() => {
@@ -66,7 +68,7 @@ class RecentRecords {
 
    // enable buttons/links displayed in the render
    activate = () => {
-
+      init_card_img_loads()
    }
 
    async get_app_config_record() {
@@ -106,6 +108,8 @@ class RecentRecords {
                   })
 
                   // to do : on opening a CollectionItemRecord - enable 'back' to Recent Records via context.
+                  // on 'back' we still want to return to scroll_y - despite opened record moving to top of list -
+                  // to facilitate user working through the list
                   if(ordered_items.length > 0) {
                   
                      let number_records = document.getElementById('number_records')
@@ -133,7 +137,7 @@ class RecentRecords {
 
                   
                   // re-instate scroll position if user had scrolled list before opening a record
-                  window.scroll(0,this.#context.scroll_y)
+                  setTimeout(() => window.scroll(0,this.#context.scroll_y),100)
                }
                else {
                   throw 'No records were returned. ' + collection_items_obj.message

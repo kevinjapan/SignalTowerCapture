@@ -4,6 +4,7 @@ import CollectionItemCard from '../CollectionItemCard/CollectionItemCard.js'
 import PaginationNav from '../PaginationNav/PaginationNav.js'
 import { ui_display_number_as_str,trim_end_char } from '../../utilities/ui_strings.js'
 import { create_section,create_h,create_div } from '../../utilities/ui_elements.js'
+import { init_card_img_loads } from '../../utilities/ui_utilities.js'
 
 
 
@@ -14,7 +15,12 @@ class Search {
    #browse_results_container
 
    // we retain search state (search_term,page,etc) by passing a 'search_context'
-   #search_context
+   #search_context = {
+      key:'Search',
+      page:1,
+      scroll_y:0
+   }
+
 
 
    // props
@@ -106,6 +112,13 @@ class Search {
    }
 
 
+
+   // enable buttons/links displayed in the render
+   activate = () => {
+      init_card_img_loads()
+   }
+
+   
    //
    // retrieve the paginated search results 
    //
@@ -164,7 +177,7 @@ class Search {
                   }
 
                   // re-instate scroll position if user had scrolled list before opening a record
-                  window.scroll(0,this.#search_context.scroll_y)
+                  setTimeout(() => window.scroll(0,this.#search_context.scroll_y),100)
                }
                else {
                   let search_status = document.getElementById('search_status')
@@ -196,6 +209,7 @@ class Search {
       this.#search_context = search_context
       this.#search_context.scroll_y = 0
       this.get_items()
+      setTimeout(() => this.activate(),200)
    }
 
    //
@@ -214,12 +228,7 @@ class Search {
       this.#search_context.page = page
       this.#search_context.scroll_y = 0
       this.get_items()
-   }
-
-
-   // enable buttons/links displayed in the render
-   activate = () => {
-
+      setTimeout(() => this.activate(),200)
    }
 
 
