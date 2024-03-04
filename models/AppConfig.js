@@ -124,7 +124,7 @@ class AppConfig {
 
          case 'root_folder':
             // root_folder is the Collection Root Folder - so likely outside of our app folders
-            return `${app_folder}${path.sep}collection_dataset`
+            return `${app_folder}${path.sep}collection-dataset`
 
          case 'export_folder':
             return `${app_folder}${path.sep}exports`
