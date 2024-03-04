@@ -59,7 +59,36 @@ const is_valid_tag = (tag) => {
 }
 
 
+//
+// trim_char
+//
+const trim_char = (str,delim) => {
+   let temp = trim_end_char(str,delim)
+   return temp.startsWith(delim) ? temp.slice(1) : temp
+}
+
+//
+// trim_end_char
+//
+const trim_end_char = (str,delim) => {
+   if(str !== undefined) {
+      return str.endsWith(delim) ? str.slice(0,-1) : str
+   }
+   return str
+}
+
+//
+// trim_start_char
+//
+const trim_start_char = (str,delim) => {
+   return str.startsWith(str,delim) ? str.slice(1) : str
+}
+
+
 module.exports = {
    get_random_test_string,
-   is_valid_tag
+   is_valid_tag,
+   trim_char,
+   trim_end_char,
+   trim_start_char
 }
