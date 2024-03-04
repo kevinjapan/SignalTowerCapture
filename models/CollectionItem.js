@@ -90,11 +90,10 @@ class CollectionItem {
       let field_filters_sql = ''
       if(context.field_filters) {         
          context.field_filters.forEach(filter => {
-            if(filter.test === 'IN') { // to do : make case-insensitive
+            if(filter.test && filter.test.toUpperCase() === 'IN') {
                field_filters_sql += ` AND ${filter.field} IN (${filter.value})`
             }
             else {
-               // to do : whitelist fitler.field and '?' placeholder for filter.value
                field_filters_sql += ` AND ${filter.field} = "${filter.value}"`
             }
          })
@@ -110,7 +109,7 @@ class CollectionItem {
             sql = `SELECT COUNT(id) as count FROM collection_items WHERE ${status} ${filter_by_char}`
             this.#database.get(sql, (error, rows) => {
                if(error) reject(error)
-               total_count = rows.count           
+               if(rows) total_count = rows.count           
             })
 
             const fields = CollectionItem.#full_fields_list.map((field) => {
@@ -184,7 +183,7 @@ class CollectionItem {
             sql = `SELECT COUNT(id) as count FROM collection_items WHERE ${status}`
             this.#database.get(sql, (error, rows) => {
                if(error) reject(error)
-               total_count = rows.count           
+               if(rows) total_count = rows.count           
             })
 
             const fields = CollectionItem.#full_fields_list.map((field) => {
@@ -198,7 +197,7 @@ class CollectionItem {
                      LIMIT ${this.#limit_read_all_records}`
             this.#database.all(sql, (error, rows) => {
                if(error) reject(error)
-               resolve(rows)            
+               if(rows) resolve(rows)            
             })
          })
       }).catch((error) => this.set_last_error(error))
@@ -259,7 +258,7 @@ class CollectionItem {
                if(error) {
                   reject(error)
                }
-               resolve(rows)            
+               if(rows) resolve(rows)            
             }
          )
       }).catch((error) => this.set_last_error(error))
@@ -689,7 +688,7 @@ class CollectionItem {
          stmt.each(filtered_search_term_tokens, function(err, row) {
             if(err) reject(err)
             stmt.finalize()
-            resolve(row.count)
+            if(row) resolve(row.count)
          })
       }).catch((error) => {
          this.set_last_error(error)
@@ -726,7 +725,7 @@ class CollectionItem {
                      this.set_last_error(error)
                      reject(error)
                   }
-                  resolve(rows)            
+                  if(rows) resolve(rows)            
                })
 
          }).catch((error) => {
@@ -801,8 +800,15 @@ class CollectionItem {
             message:'Please enter a valid search term.'
          }
       }
-      let full_search_term = context.search_term.trim()
-      if(full_search_term.length < MIN_SEARCH_TERM_LEN) {  
+
+      // 
+      // Receive user's input search term
+      // We remove '-'s since they represent 'NOT' in fts and setting tokenizer on create 
+      // table was giving unexpected results (as was attempting to enclose in double quotes).
+      // This workaround is good enough in the vast majority of use-cases.
+      //
+      let rcvd_search_term = context.search_term.trim().replace('-',' ')
+      if(rcvd_search_term.length < MIN_SEARCH_TERM_LEN) {  
          return {
             query:'search_collection_items',
             outcome:'fail',
@@ -810,11 +816,12 @@ class CollectionItem {
          }
       }
 
-      // package search_term into valid search token(s) array
-      let search_term_tokens = tokenize_search_term(full_search_term)
-      full_search_term = search_term_tokens.join('* OR ')
+      // Package into Tokens for FTS
+      // we package search_term into valid search token(s) string - eg 'gnu* OR eland*'
+      let search_term_tokens = tokenize_search_term(rcvd_search_term)
+      let tokenized_search_term = search_term_tokens.join('* OR ') + '*'
 
-      // get total count
+      // Get results count
       const total_count = await new Promise((resolve,reject) => {
 
          const count_query = `SELECT 
@@ -830,10 +837,10 @@ class CollectionItem {
             if(err) reject(err)
          })
 
-         stmt.each(`${full_search_term}*`, (err, row) => {
+         stmt.each(`${tokenized_search_term}`, (err, row) => {
             if(err) reject(err)
             stmt.finalize()
-            resolve(row.count)
+            if(row) resolve(row.count)
          })
       }).catch((error) => {
          this.set_last_error(error)
@@ -841,12 +848,10 @@ class CollectionItem {
       })
 
 
-      // execute the search
+      // Execute the search
       let search_result = null
          
-      // only retrieve records if they exist
       if(total_count) {
-
          search_result = await new Promise((resolve,reject) => {
             
             const fields = CollectionItem.#full_fields_list.map((field) => {
@@ -873,12 +878,12 @@ class CollectionItem {
                   LIMIT ${this.#items_per_page}
                   OFFSET ${offset}`
 
-            this.#database.all(search_query,`${full_search_term}*`, (error, rows) => {
+            this.#database.all(search_query,`${tokenized_search_term}`, (error, rows) => {
                if(error) {
                   this.set_last_error(error)
                   reject(error)
                }
-               resolve(rows)            
+               if(rows) resolve(rows)            
             })
          }).catch((error) => {
             this.set_last_error(error)
@@ -886,14 +891,16 @@ class CollectionItem {
          })
       }
 
-      // calc execution time
+      // Calc execution time
       const end = Date.now()
       execution_time = `${(end - start) / 1000} seconds`
 
-      // reduce fields to those required in CollectionItemCard (inc 'type' for displaying dates)
+      // Reduce fields to those required in CollectionItemCard (inc 'type' for displaying dates)
       const in_card_fields = this.get_in_card_fields(CollectionItem.#full_fields_list)
 
-      // response
+
+      // Respond
+      
       if(search_result || search_result === null) {
          return {
             query:'search_collection_items',
