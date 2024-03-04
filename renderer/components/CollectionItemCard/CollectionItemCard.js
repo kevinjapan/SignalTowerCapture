@@ -11,24 +11,20 @@ class CollectionItemCard {
 
    #props
 
-
    constructor(props) {
       this.#props = props
    }
 
    render = (fields,item) => {
-
-      console.log('fields',fields)
       
       // 'fields' is an array including keys of properties in the 'item' and preserves the display order
       // card is row flex to align minor fields at foot while primary fields occupy flex_100 (width 100%)
       let card = create_section({
-         classlist:['CollectionItemCard','flex','gap_0.5']
+         classlist:['collection_item_card','flex','gap_0.5']
       })
 
-      let text_col = create_div({
-         
-      })
+      let text_col = create_div()
+
       let img_col = create_div({
          classlist:['pl_1']
       })
@@ -45,8 +41,7 @@ class CollectionItemCard {
             field_value = get_ui_ready_date(field_value)
          }
 
-         if(field.key === 'title') {
-         
+         if(field.key === 'title') {         
             // title as link
             if(field_value === '') field_value = 'no title'
             field_element = create_h({
@@ -58,16 +53,13 @@ class CollectionItemCard {
                text:field_value
             })
             text_col.append(field_element)
-
          }
          else if(field.key === 'file_type') {
-
             field_element = create_div({
                classlist:['flex_100'],
                text:field_value
             })
             text_col.append(field_element)
-
          }
          else if(field.key === 'file_name') {
 
@@ -90,31 +82,36 @@ class CollectionItemCard {
             icon.appendChild(icon_path)
             file_name_block.append(icon,field_element)
             text_col.append(file_name_block)
-
-         }
-         
+   
+         }         
          else if(field.key === 'folder_path') {
 
+            // card image
+            
             // build the file_path
-            let root_part = trim_end_char(this.#props.root_folder,'\\')
-            let relative_folder_part = trim_char(item.folder_path,'\\')
-            let file_part = item.file_name
-            let file_path = `${root_part}\\${relative_folder_part}\\${file_part}`
+            const root_part = trim_end_char(this.#props.root_folder,'\\')
+            const relative_folder_part = trim_char(item.folder_path,'\\')
+            const file_part = item.file_name
+            const file_path = `${root_part}\\${relative_folder_part}\\${file_part}`
+
+            // we inject placeholder and load img jit w/ intersection observer
+            const placeholder_file_path = `imgs\\card_img_placeholder.jpg`
 
             if(await is_image_file(file_path)) { 
-               let img = await build_img_elem(item.id,file_path,item.img_desc,[{key:'data-id',value:item.id}],['record_card_image','card_title_link','cursor_pointer'])
+               let img = await build_img_elem(item.id,placeholder_file_path,item.img_desc,
+                  [{key:'data-id',value:item.id},{key:'data-src',value:file_path}],
+                  ['record_card_image','card_title_link','cursor_pointer']
+               )               
                if(img) {
                   img_col.append(img)
                }
             }
             else {
+               console.log('image file_path',file_path)
                img_col.append(create_div(),document.createTextNode('No image file was found.'))
-            }
-            
+            }            
          }
-
          else if(field.key === 'tags') {
-
             tags_list_elem = create_div({
                attributes:[
                   {key:'id',value:'tags_list_elem'}
@@ -129,17 +126,12 @@ class CollectionItemCard {
                }
             }
             text_col.append(tags_list_elem)
-
          }
-
          else {
-
             // default field display
             // content_desc occuppies row itself since it is btwn title and file_name (both 'flex_100' above)
-
             if(field_value) {
                if(field_value.length > 500) field_value = field_value.substring(0,500) + '..'
-
                field_element = create_div({
                   classlist:['break_words','mt_0.5','mr_2'],
                   text:field_value
@@ -152,16 +144,16 @@ class CollectionItemCard {
       return card
    }
 
+   
    // enable buttons/links displayed in the render
    activate = async() => {
 
-      // Card Title link to record
-         
+      // Card Title link to record         
       const card_title_links = document.querySelectorAll('.card_title_link')
    
       if(card_title_links) {
    
-         card_title_links.forEach((card_title_link) => {
+         card_title_links.forEach(card_title_link => {
 
             card_title_link.addEventListener('click', async(event) => {
 
@@ -179,12 +171,9 @@ class CollectionItemCard {
                               let props = {
                                  fields:collection_item_obj.collection_item_fields,
                                  item:collection_item_obj.collection_item,
-                                 context:{
-                                    selected_folder:this.#props.folder_path ? this.#props.folder_path : null,
-                                    scroll_y:window.scrollY,
-                                    ...this.#props.context
-                                 }
+                                 ...this.#props
                               }
+                              props.context.scroll_y = window.scrollY
                               App.switch_to_component('Record',props)
                            }
                         }
