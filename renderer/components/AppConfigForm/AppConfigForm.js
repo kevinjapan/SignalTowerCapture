@@ -1,4 +1,3 @@
-import App from '../App/App.js'
 import SelectFolderComponent from '../SelectFolderComponent/SelectFolderComponent.js'
 import FormBtns from '../FormBtns/FormBtns.js'
 import Notification from '../../components/Notification/Notification.js'
