@@ -93,6 +93,10 @@ class Database {
 
          // CollectionItems_fts table
          // we don't include 'data_type' for full text search virtual table
+         // we tried enabling '-' chars in search (they are 'NOT' equivalent in sqlite and hence break search terms containg '-' by default)
+         // tried adding :  tokenize="unicode61 tokenchars '-'"  - as second arg to 'USING fts5()' below, but mixed results
+         // failed to match eg '14-year' w/ expected record.
+         // for now, we will go ahead w/ workaround in CollectionItem.search_fts()
          //
          let collection_items_fts_fields = get_table_insert_fields('collection_items_fts')
          this.#db.run(`CREATE VIRTUAL TABLE IF NOT EXISTS 
