@@ -286,10 +286,14 @@ class Files {
    // we perform single db call and reference off of this rather than querying each time
    //
    get_matching_records = async() => {
-      // to do : try catch here?
-      const result = await window.collection_items_api.getItems(this.#context)
-      this.#matching_records = result.collection_items
-      this.#record_fields = result.collection_item_fields
+      try {
+         const result = await window.collection_items_api.getItems(this.#context)
+         this.#matching_records = result.collection_items
+         this.#record_fields = result.collection_item_fields
+      }
+      catch(error) {
+         console.log('failed to retrieve list of matching records.')
+      }
    }
 
    get_record_fields = () => {
