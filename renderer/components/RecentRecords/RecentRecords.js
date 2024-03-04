@@ -89,7 +89,11 @@ class RecentRecords {
 
          try {
 
-            this.#context.field_filters.push({field:'id',test:'IN',value:this.#queue})
+            this.#context.field_filters.push({
+                  field:'id',
+                  test:'IN',
+                  value:this.#queue
+            })
 
             const collection_items_obj = await window.collection_items_api.getItems(this.#context)
          
