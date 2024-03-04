@@ -7,11 +7,11 @@ class Nav {
       {component:'Home',label:'Home'},
       {component:'Browse',label:'Browse'},
       {component:'Search',label:'Search'},
+      {component:'RecentRecords',label:'Recent'},
       {component:'AddCollectionItem',label:'New'},
       {component:'Files',label:'Files'},
       {component:'Actions',label:'Actions'},
       {component:'Config',label:'Config'},
-      {component:'Recent',label:'Recent'},
    ]
 
    init(){
