@@ -1,6 +1,7 @@
 const CollectionItemFTS = require('./CollectionItemFTS')
 const { get_sqlready_datetime,get_sqlready_date_from_js_date } = require('../app/utilities/datetime')
 const { is_valid_date } = require('../app/utilities/validation')
+const { trim_char } = require('../app/utilities/strings')
 const { 
    SEARCH_FIELDS,
    MIN_SEARCH_TERM_LEN,
@@ -90,16 +91,15 @@ class CollectionItem {
       let field_filters_sql = ''
       if(context.field_filters) {         
          context.field_filters.forEach(filter => {
+            let value = trim_char(filter.value,',')
             if(filter.test && filter.test.toUpperCase() === 'IN') {
-               field_filters_sql += ` AND ${filter.field} IN (${filter.value})`
+               field_filters_sql += ` AND ${filter.field} IN (${value})`
             }
             else {
-               field_filters_sql += ` AND ${filter.field} = "${filter.value}"`
+               field_filters_sql += ` AND ${filter.field} = "${value}"`
             }
          })
       }
-
-      console.log('field_filters_sql [',field_filters_sql,']')
 
       // wrap in a promise to await result
       const result = await new Promise((resolve,reject) => {
@@ -122,6 +122,8 @@ class CollectionItem {
                      ORDER BY ${order_by}                      
                      LIMIT ${this.#items_per_page} 
                      OFFSET ${offset}`
+
+                     console.log('sql',sql)
 
             this.#database.all(sql, (error, rows) => {
                if(error) reject(error)
