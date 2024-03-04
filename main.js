@@ -1,6 +1,6 @@
 // 
 // Signal Tower Capture
-// Desktop Collection Archive Solution
+// Desktop Digital Collection Archive Solution
 // 
 // development:
 // npx electronmon .  
