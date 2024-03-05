@@ -134,11 +134,11 @@ class TagsConfig {
                      add_tag_input.value = ''
                   }
                   else {
-                     Notification.notify('outcome_div',`This tag already exists, please enter a unique tag.`)
+                     Notification.notify('#outcome_div',`This tag already exists, please enter a unique tag.`)
                   }
                }
                else {
-                  Notification.notify('outcome_div',`Please enter a valid tag.`)
+                  Notification.notify('#outcome_div',`Please enter a valid tag.`)
                }
             }
          })
@@ -162,11 +162,11 @@ class TagsConfig {
                      add_tag_input.value = ''
                   }
                   else {
-                     Notification.notify('outcome_div',`This tag already exists, please enter a unique tag.`)
+                     Notification.notify('#outcome_div',`This tag already exists, please enter a unique tag.`)
                   }
                }
                else {
-                  Notification.notify('outcome_div',`Please enter a valid tag.`)
+                  Notification.notify('#outcome_div',`Please enter a valid tag.`)
                }      
             }
          })
@@ -199,7 +199,7 @@ class TagsConfig {
 
             if(add_tag_results.outcome === 'success') {
 
-               Notification.notify('outcome_div',`The tag was successfully added.`)
+               Notification.notify('#outcome_div',`The tag was successfully added.`)
 
                // update list of tags on this page..
                this.#tags = await this.get_tags()
@@ -212,12 +212,12 @@ class TagsConfig {
                
             }
             else {
-               Notification.notify('outcome_div',add_tag_results.message)
+               Notification.notify('#outcome_div',add_tag_results.message)
             }
          }
       }
       else {
-         Notification.notify('outcome_div','Please enter a valid tag.')
+         Notification.notify('#outcome_div','Please enter a valid tag.')
       }
    }
 
@@ -232,7 +232,7 @@ class TagsConfig {
 
                if(del_tag_results.outcome === 'success') {
       
-                  Notification.notify('outcome_div','The tag was successfully deleted')
+                  Notification.notify('#outcome_div','The tag was successfully deleted')
       
                   // update list of tags on this page..
                   this.#tags = await this.get_tags()
@@ -245,12 +245,12 @@ class TagsConfig {
                   
                }
                else {
-                  Notification.notify('outcome_div',del_tag_results.message)
+                  Notification.notify('#outcome_div',del_tag_results.message)
                }
             }
             break
          default:
-            Notification.notify('outcome_div','The action was not recognized.')
+            Notification.notify('#outcome_div','The action was not recognized.')
       }
       
    }

@@ -88,22 +88,22 @@ class ExportJSONComponent {
                            text:'Open Export Folder'
                         }) 
                         if(export_json_outcome) {
-                           Notification.notify('export_json_outcome',`The export was successful.`)
+                           Notification.notify('#export_json_outcome',`The export was successful.`)
                            export_json_outcome.append(export_json_folder_btn)
                         }
                         setTimeout(() => this.activate_folder_btn(),200)
                      }
                      else {
-                        Notification.notify('export_json_outcome',export_results_obj.message)
+                        Notification.notify('#export_json_outcome',export_results_obj.message)
                      }
                   }
                }
                catch(error) {
-                  Notification.notify('export_json_outcome','There was an error attempting to export the records.' + error)
+                  Notification.notify('#export_json_outcome','There was an error attempting to export the records.' + error)
                }
             }
             else {
-               Notification.notify('export_json_outcome',result.message)
+               Notification.notify('#export_json_outcome',result.message)
             }
          })
       }

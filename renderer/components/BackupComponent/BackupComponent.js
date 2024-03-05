@@ -81,18 +81,18 @@ class BackupComponent {
                   }) 
 
                   if(backup_outcome) {
-                     Notification.notify('backup_outcome','The backup was successful.')
+                     Notification.notify('#backup_outcome','The backup was successful.')
                      backup_outcome.append(backup_folder_btn)
                   }
                  
                   this.activate_folder_btn()
                }
                else {
-                  Notification.notify('backup_outcome',backup_results_obj.message)
+                  Notification.notify('#backup_outcome',backup_results_obj.message)
                }
             }
             else {
-               Notification.notify('backup_outcome',result.message)
+               Notification.notify('#backup_outcome',result.message)
             }
          })
       }

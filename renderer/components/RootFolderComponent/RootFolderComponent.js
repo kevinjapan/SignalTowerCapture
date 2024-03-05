@@ -95,7 +95,7 @@ class RootFolderComponent {
             const result = await window.config_api.setRootFolderPath(app_config)
 
             if(result.outcome === 'success') {
-               Notification.notify('root_folder_outcome','The root folder path was successfully updated.')
+               Notification.notify('#root_folder_outcome','The root folder path was successfully updated.')
                const root_folder = document.getElementById('root_folder') 
                if(root_folder) {
                   root_folder.innerText = selected_folder.innerText
@@ -104,7 +104,7 @@ class RootFolderComponent {
                update_root_folder_btn.classList.add('hidden')
             }
             else {
-               Notification.notify('root_folder_outcome',result.message)
+               Notification.notify('#root_folder_outcome',result.message)
             }
          })
 
@@ -129,7 +129,7 @@ class RootFolderComponent {
                root_folder_element.innerText = result.app_config.root_folder
             }
             else {
-               Notification.notify('root_folder_outcome',result.message)
+               Notification.notify('#root_folder_outcome',result.message)
             }
          }  
       }

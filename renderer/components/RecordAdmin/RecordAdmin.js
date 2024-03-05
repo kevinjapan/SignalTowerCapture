@@ -81,7 +81,7 @@ class RecordAdmin {
                   const outcome = document.getElementById('outcome')
                   if(result.outcome === 'success'){
                      this.show_restore_btn()
-                     Notification.notify('outcome',result.message)
+                     Notification.notify('#outcome',result.message)
                   }
                   else {
 
@@ -115,11 +115,11 @@ class RecordAdmin {
                const result = await window.collection_items_api.restoreCollectionItem(record_id)
 
                if(result.outcome === 'success'){
-                  Notification.notify('outcome',result.message)
+                  Notification.notify('#outcome',result.message)
                   restore_btn.classList.add('hidden')
                }
                else {
-                  Notification.notify('outcome',result.message)
+                  Notification.notify('#outcome',result.message)
                }
             }
             catch(error) {

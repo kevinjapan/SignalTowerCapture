@@ -68,7 +68,7 @@ class ImportJSONComponent {
 
                event.preventDefault()
 
-               Notification.notify('import_json_outcome','')
+               Notification.notify('#import_json_outcome','')
 
                const options = {
                   filters:[{name:'JSON',extensions:['json']},]
@@ -80,8 +80,6 @@ class ImportJSONComponent {
                if(result.outcome === 'success') {
 
                   let file_path = result.files[0]
-
-                  Notification.notify('Working - please wait...\n\n')
 
                   // open 'please wait..' msg dlg
                   const wait_dlg_component = new WaitDialog()
@@ -96,16 +94,16 @@ class ImportJSONComponent {
 
                      if(import_results_obj.outcome === 'success') {
                         this.close_wait_dlg(actions_section)
-                        Notification.notify('import_json_outcome',`The import on ${get_ui_ready_date(Date(),true)} at ${get_ui_ready_time(Date())} was successful.`)
+                        Notification.notify('#import_json_outcome',`The import on ${get_ui_ready_date(Date(),true)} at ${get_ui_ready_time(Date())} was successful.`)
                      }
                      else {
                         this.close_wait_dlg(actions_section)
-                        Notification.notify('import_json_outcome',import_results_obj.message)
+                        Notification.notify('#import_json_outcome',import_results_obj.message)
                      }
                   }
                }
                else {
-                  Notification.notify('import_json_outcome',result.message)
+                  Notification.notify('#import_json_outcome',result.message)
                }
             })
          }

@@ -95,7 +95,7 @@ class ExportCSVComponent {
                            text:'Open Export Folder'
                         }) 
                         if(export_csv_outcome) {
-                           Notification.notify('export_csv_outcome','The export was successful.')
+                           Notification.notify('#export_csv_outcome','The export was successful.')
                            export_csv_outcome.append(export_csv_folder_btn)
                         }
 
@@ -121,16 +121,16 @@ class ExportCSVComponent {
                         }
                      }
                      else {
-                        Notification.notify('export_csv_outcome',export_results_obj.message)
+                        Notification.notify('#export_csv_outcome',export_results_obj.message)
                      }
                   }
                }
                catch(error) {
-                  Notification.notify('export_csv_outcome','There was an error attempting to export the records.' + error)
+                  Notification.notify('#export_csv_outcome','There was an error attempting to export the records.' + error)
                }
             }
             else {
-               Notification.notify('export_csv_outcome',result.message)
+               Notification.notify('#export_csv_outcome',result.message)
             }
          })
       }

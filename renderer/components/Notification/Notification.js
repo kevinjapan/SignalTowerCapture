@@ -4,28 +4,33 @@ import { create_div } from '../../utilities/ui_elements.js'
 
 class Notification {
 
-   static notify = (element_id,message,fade_out = true) => {
+   static notify = (elem_selector,message,classes = [],fade_out = true) => {
 
-      if(message === '') return
+      if(message === '' ) return
 
-      let target = document.getElementById(element_id)
-
-      if(target) { 
-
-         const notification_card = create_div({
-            classlist:['notification_card'],
-            text:message
+      // default is warning
+      if(!Array.isArray(classes) || classes.length === 0) classes = ['bg_yellow_300']
+      
+      const elem_selectors = document.querySelectorAll(elem_selector)
+      if(elem_selectors) {
+         elem_selectors.forEach(elem => {
+            const notification_card = create_div({
+               classlist:[...classes,'p_1'],
+               text:message
+            })
+            elem.replaceChildren(notification_card) 
+            if(fade_out) setTimeout(() => this.remove_notification(elem_selector),4000)
          })
-         target.append(notification_card) 
-         if(fade_out) setTimeout(() => this.remove_notification(element_id),4000)
       }
    }
 
-   static remove_notification = (element_id) => {
+   static remove_notification = (elem_selector) => {
 
-      let target = document.getElementById(element_id)
-      if(target) {
-         target.replaceChildren()
+      const elem_selectors = document.querySelectorAll(elem_selector)
+      if(elem_selectors) {
+         elem_selectors.forEach(elem => {
+            elem.replaceChildren()
+         })
       }
    }
 

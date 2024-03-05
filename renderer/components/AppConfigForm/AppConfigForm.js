@@ -174,7 +174,7 @@ class AppConfigForm {
                event.preventDefault()
                this.clear_errors()
 
-               Notification.notify('submit_outcome',``)
+               Notification.notify('#submit_outcome',``)
 
                const item_form = document.getElementById('item_form')
 
@@ -196,13 +196,13 @@ class AppConfigForm {
                   let response = await window.config_api.updateAppConfig(update_app_config)
                   
                   if(response.outcome === 'success') {
-                     Notification.notify('submit_outcome',`${action} successfully applied.`)
+                     Notification.notify('#submit_outcome',`${action} successfully applied.`)
                   }
                   else {
                      if(Array.isArray(response.errors)) {
                         this.highlight_errors(response.errors)
                      }
-                     Notification.notify('submit_outcome',`${action} attempt failed. ${response.message}`)
+                     Notification.notify('#submit_outcome',`${action} attempt failed. ${response.message}`)
                   }               
                }
             })
@@ -241,7 +241,7 @@ class AppConfigForm {
                } 
             }
             else {
-               Notification.notify('submit_outcome',result.message)
+               Notification.notify('#submit_outcome',result.message)
             }
          })
       }

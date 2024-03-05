@@ -164,11 +164,11 @@ class Files {
             }
          }
          else {
-            setTimeout(() => Notification.notify('files_outcome','Sorry, we couldn\'t locate the Collection Root Folder'),200)
+            setTimeout(() => Notification.notify('#files_outcome','Sorry, we couldn\'t locate the Collection Root Folder'),200)
          }
       }
       else {
-         setTimeout(() => Notification.notify('files_outcome','Sorry, we couldn\'t locate the Collection Root Folder'),200)
+         setTimeout(() => Notification.notify('#files_outcome','Sorry, we couldn\'t locate the Collection Root Folder'),200)
       }
       return files_section
    }
