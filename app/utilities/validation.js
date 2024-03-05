@@ -166,9 +166,12 @@ const is_valid_search_term = (search_term) => {
 //
 const is_valid_file_name = (file_name) => {
    let parts = file_name.split('.')
+
+   console.log('parts',parts)
    if(parts.length !== 2) return false
+   
    if(parts[1].length < 3 || parts[1].length > 4) return false
-   return !/[^a-z0-9_.@()-]/i.test(file_name)
+   return !/[^a-z0-9_ .@()-]/i.test(file_name)
 }
 
 
