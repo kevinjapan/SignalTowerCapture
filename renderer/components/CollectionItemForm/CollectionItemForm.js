@@ -44,6 +44,8 @@ class CollectionItemForm {
    // Collection root folder
    #root_folder = ''
 
+   #submit_enabled = true
+
 
    constructor(props) {
       this.#props = props
@@ -84,8 +86,17 @@ class CollectionItemForm {
          classlist:['form_layout']
       })
       
+      
+      let submit_outcome = create_section({
+         attributes:[
+            {key:'id',value:'submit_outcome'}
+         ],
+         classlist:['bg_lightgrey','mt_1','pl_1','pr_1'],
+      })
+
+      // to do : review - is a single 'submit_outcome' sufficient?
       let btn_group_1 = FormBtns.render(this.#props.item)
-      form.append(create_div(),btn_group_1)
+      form.append(create_div(),btn_group_1,create_div(),submit_outcome)
       text_col.append(form)
       
 
@@ -222,7 +233,7 @@ class CollectionItemForm {
                }
             }
             catch(error) {
-               setTimeout(() => Notification.notify('tags_placeholder','Sorry, we were unable to access the Tags.',false),1500)
+               setTimeout(() => Notification.notify('#tags_placeholder','Sorry, we were unable to access the Tags.',false),1500)
             }
          }
 
@@ -257,14 +268,21 @@ class CollectionItemForm {
 
             form.append(field_label,file_type_radio,create_div(),file_type_info)
 
+            let find_file_outcome = create_div({
+               attributes:[
+                  {key:'id',value:'find_file_outcome'}
+               ]
+            })
+
             // btn to select file for 'file_name' field
             let find_file_btn = create_button({
-                  attributes:[
-                     {key:'id',value:'find_file_btn'}
-                  ],
-                  text:'Find File'
-               }) 
-            form.append(create_div(),find_file_btn)
+               attributes:[
+                  {key:'id',value:'find_file_btn'}
+               ],
+               text:'Find File'
+            }) 
+            // assemble find_file
+            form.append(create_div(),find_file_btn,create_div(),find_file_outcome)
          }
 
          // display the file if it's a valid img and it exists
@@ -279,16 +297,11 @@ class CollectionItemForm {
          this.#record_id = this.#props.item.id
       }
 
-      let submit_outcome = create_section({
-         attributes:[
-            {key:'id',value:'submit_outcome'}
-         ]
-      })
 
       let btn_group_2 = FormBtns.render(this.#props.item)
 
       // assemble
-      form.append(create_div(),btn_group_2,submit_outcome)
+      form.append(create_div(),btn_group_2)
       this.#record.append(img_col,text_col)
 
       window.scroll(0,0)
@@ -343,9 +356,10 @@ class CollectionItemForm {
             apply_btn.addEventListener('click',async(event) => {
 
                event.preventDefault()
+               if(this.#submit_enabled === false) return
                this.clear_errors()
 
-               Notification.notify('submit_outcome',``)
+               Notification.notify('#submit_outcome',``)
 
                const item_form = document.getElementById('item_form')
                if(item_form) {
@@ -465,7 +479,7 @@ class CollectionItemForm {
       }
 
    
-      // on Find File select w/ dialog
+      // On Find File select w/ dialog
 
       const find_file_btn = document.getElementById('find_file_btn')
 
@@ -493,12 +507,14 @@ class CollectionItemForm {
                
                let folder_path = document.getElementById('folder_path')
                if(folder_path) {
-                     if(path.indexOf(this.#root_folder) === 0) {                        
-                        folder_path.value = path.replace(this.#root_folder,'') // relative path
-                     }
-                     else {
-                        Notification.notify('submit_outcome',`The folder you selected is not within the Collections Folders.`)
-                     }
+                  if(path.indexOf(this.#root_folder) === 0) {                        
+                     folder_path.value = path.replace(this.#root_folder,'') // relative path
+                  }
+                  else {
+                     this.disable_submit()
+                     Notification.notify('#find_file_outcome',`Invalid location - the folder you selected is not within the Collections Folders.`,'break',false)
+                     return
+                  }
                }
                
                // auto-gen candidate title from the file name if non-exists
@@ -515,16 +531,76 @@ class CollectionItemForm {
                // display if new file is an img file
                let file_path = `${path}\\${file}`
                await this.display_if_img_file(img_col,file_path,this.#props.item ? this.#props.item['img_desc'] : 'image')
-               
+
+               // Is there an existing record for the selected file?
+               let context = {
+                  page:1,
+                  field_filters:[
+                     {field:'file_name',value:file},
+                     {field:'folder_path',value:path.replace(this.#root_folder,'')}]
+               }
+
+               try {
+                  const collection_items_obj = await window.collection_items_api.getItems(context)                  
+
+                  if (typeof collection_items_obj != "undefined") {            
+                     if(collection_items_obj.outcome === 'success') {
+                        
+                        if(collection_items_obj.collection_items.length < 1) {
+                           // There is no record for this file
+                           this.enable_submit()
+                           Notification.notify('#find_file_outcome',`This file is valid.`,['bg_inform'],false)
+                        }
+                        else {
+                           // There is an existing record for this file
+                           if(action === 'update') {
+
+                              // Is existing record the same record we are currently editing
+                              const existing_record_id = collection_items_obj.collection_items[0].id
+                              const current_record_id = this.#props.item.id
+                              if(parseInt(existing_record_id) === parseInt(current_record_id)) {
+                                 // same record, we are changing file to a valid alternative (no existing record for new file)
+                                 this.enable_submit()
+                                 Notification.notify('#find_file_outcome',`This file is valid.`,['bg_inform'],false)
+                              }
+                              else {
+                                 // match is for a record other than the one we are editing
+                                 this.disable_submit()
+                                 Notification.notify('#find_file_outcome',`Invalid file - there is already a record for this file.`,'break',false)
+                              }
+                           }
+                           else {
+                              this.disable_submit()
+                              Notification.notify('#find_file_outcome',`Invalid file - there is already a record for this file.`,'break',false)
+                           }
+                        }
+                     }
+                     else {
+                        throw 'No records were returned.' + collection_items_obj.message
+                     }
+                  }
+                  else {
+                     throw 'No records were returned.'
+                  }
+               }
+               catch(error) {
+                  let props = {
+                     msg:'Sorry, we were unable to access the Records.',
+                     error:error
+                  }
+                  App.switch_to_component('Error',props)
+               }
             }
             else {
-               Notification.notify('submit_outcome',result.message)
+               Notification.notify('#submit_outcome',result.message)
             }
          })
       }
-      
-      // on file_name change, we try to display the new file if img and exists
 
+      
+      //
+      // On file_name change, we display the new file if img and exists
+      //
       const file_name = document.getElementById('file_name')
       const folder_path = document.getElementById('folder_path')
       const img_col = document.getElementById('img_col')
@@ -535,8 +611,10 @@ class CollectionItemForm {
          })
       }
 
-      // on change file_type radio btn
 
+      //
+      // On change file_type radio btn
+      //
       const file_type_radio_btns = document.querySelectorAll('input[name="file_type_radio_btns"]')
       if(file_type_radio_btns) {
          file_type_radio_btns.forEach((radio_btn) => {            
@@ -559,7 +637,7 @@ class CollectionItemForm {
 
    activate_tags = () => {
       
-      // on change tag checkbox
+      // On change tag checkbox
       const tags_checkboxes = document.querySelectorAll('.tags_checkbox')
 
       if(tags_checkboxes) {
@@ -588,6 +666,30 @@ class CollectionItemForm {
             })
          })
       }
+   }
+
+   
+
+   enable_submit = () => {
+      const apply_btns = document.querySelectorAll('.apply_btn')
+      if(apply_btns) {
+         apply_btns.forEach((apply_btn) => {
+            apply_btn.classList.remove('disabled')
+         })
+      }      
+      this.#submit_enabled = true
+   }
+
+   
+
+   disable_submit = () => {
+      const apply_btns = document.querySelectorAll('.apply_btn')
+      if(apply_btns) {
+         apply_btns.forEach((apply_btn) => {
+            apply_btn.classList.add('disabled')
+         })
+      }
+      this.#submit_enabled = false
    }
 
    // display if we have a valid img file
