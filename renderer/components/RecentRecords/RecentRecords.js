@@ -111,9 +111,6 @@ class RecentRecords {
                      ordered_items.push(temp)
                   })
 
-                  // to do : on opening a CollectionItemRecord - enable 'back' to Recent Records via context.
-                  // on 'back' we still want to return to scroll_y - despite opened record moving to top of list -
-                  // to facilitate user working through the list
                   if(ordered_items.length > 0) {
                   
                      let number_records = document.getElementById('number_records')
