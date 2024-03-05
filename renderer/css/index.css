@@ -12,7 +12,7 @@
    --bg_semantic_positive_text:black;
    --bg_semantic_negative:hsl(0, 100%, 75%);      /* red    - negative / error */
    --bg_semantic_negative_text:black;
-   --bg_semantic_warning: hsl(39, 100%, 75%);     /* orange - warning  */
+   --bg_semantic_warning: hsl(39, 100%, 75%);     /* orange - warning   to do : yellow ! ? */
    --bg_semantic_warning_text:black;
    --bg_semantic_neutral: hsl(240, 100%, 85%);    /* blue   - neutral  */
    --bg_semantic_neutral_text:white;
@@ -139,7 +139,15 @@ button:hover {
 button:focus {
    border:solid 1px hsl(40, 100%, 45%);
 }
-
+button.disabled {
+   color:lightgrey;
+   border:solid 1px hsl(0, 0%, 93%);
+   cursor:auto;
+}
+button.disabled:hover {
+   color:lightgrey;
+   background:none;
+}
 
 /* 
    flex 
@@ -444,21 +452,18 @@ button:focus {
    color:var(--bg_semantic_neutral_text);
    background:var(--bg_semantic_neutral);
 }
-.bg_yellow {
-   background:hsl(60, 100%, 50%);
+.bg_inform {
+   background:hsl(120, 73%, 80%);
 }
-.bg_yellow_200 {
-   background:hsl(60, 100%, 60%);
-}
-.bg_yellow_100 {
-   background:hsl(60, 100%, 70%);
-}
-.bg_lightgrey {
-   background:hsl(0, 0%, 93%);
-}
-.bg_lightblue {
-   background:hsl(240, 100%, 95%);
-}
+
+.bg_yellow_100 {background:hsl(60, 100%, 80%);}
+.bg_yellow_200 {background:hsl(60, 100%, 70%);}
+.bg_yellow_300 {background:hsl(60, 100%, 60%);}
+.bg_yellow     {background:hsl(60, 100%, 50%);}
+
+.bg_lightgrey {background:hsl(0, 0%, 93%);}
+
+.bg_lightblue {background:hsl(240, 100%, 95%);}
 
 .highlighted_btn {
    background:var(--bg_positive);
@@ -687,7 +692,6 @@ input[type='checkbox'] {
    appearance:none;
    display:grid;
    display:-ms-grid;
-   /* to do : webkit equiv for place-content */
    place-content: center;
 
    background:white;
@@ -878,5 +882,4 @@ input[type='radio'] {
 .overflow_hidden {
    overflow:hidden;
 }
-
 
