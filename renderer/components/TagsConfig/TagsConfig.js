@@ -65,7 +65,6 @@ class TagsConfig {
       })  
 
       const outcome_div = create_div({
-         classlist:['bg_lightgrey','mt_1','pl_1','pr_1'],
          attributes:[
             {key:'id',value:'outcome_div'}
          ]
@@ -199,7 +198,7 @@ class TagsConfig {
 
             if(add_tag_results.outcome === 'success') {
 
-               Notification.notify('#outcome_div',`The tag was successfully added.`)
+               Notification.notify('#outcome_div',`The tag was successfully added.`,['bg_inform'])
 
                // update list of tags on this page..
                this.#tags = await this.get_tags()
@@ -232,7 +231,7 @@ class TagsConfig {
 
                if(del_tag_results.outcome === 'success') {
       
-                  Notification.notify('#outcome_div','The tag was successfully deleted')
+                  Notification.notify('#outcome_div','The tag was successfully deleted',['bg_inform'])
       
                   // update list of tags on this page..
                   this.#tags = await this.get_tags()

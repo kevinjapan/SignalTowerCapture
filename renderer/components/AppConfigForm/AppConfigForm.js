@@ -143,8 +143,7 @@ class AppConfigForm {
       let submit_outcome = create_section({
          attributes:[
             {key:'id',value:'submit_outcome'}
-         ],
-         classlist:['bg_lightgrey','mt_1','pl_1','pr_1'],
+         ]
       })
       
       // assemble
@@ -196,7 +195,7 @@ class AppConfigForm {
                   let response = await window.config_api.updateAppConfig(update_app_config)
                   
                   if(response.outcome === 'success') {
-                     Notification.notify('#submit_outcome',`${action} successfully applied.`)
+                     Notification.notify('#submit_outcome',`${action} successfully applied.`,['bg_inform'])
                   }
                   else {
                      if(Array.isArray(response.errors)) {

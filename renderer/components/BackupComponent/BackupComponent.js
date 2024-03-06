@@ -29,8 +29,7 @@ class BackupComponent {
       const backup_outcome = create_div({
          attributes:[
             {key:'id',value:'backup_outcome'}
-         ],
-         classlist:['bg_lightgrey','mt_1','pl_1','pr_1']
+         ]
       })
 
       // assemble
@@ -81,7 +80,7 @@ class BackupComponent {
                   }) 
 
                   if(backup_outcome) {
-                     Notification.notify('#backup_outcome','The backup was successful.')
+                     Notification.notify('#backup_outcome','The backup was successful.',['bg_inform'])
                      backup_outcome.append(backup_folder_btn)
                   }
                  

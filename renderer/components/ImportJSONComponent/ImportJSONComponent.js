@@ -38,8 +38,7 @@ class ImportJSONComponent {
       const import_json_outcome = create_div({
          attributes:[
             {key:'id',value:'import_json_outcome'}
-         ],
-         classlist:['bg_lightgrey','mt_1','pl_1','pr_1']
+         ]
       })
 
       const import_json_fields = create_div({
@@ -94,7 +93,7 @@ class ImportJSONComponent {
 
                      if(import_results_obj.outcome === 'success') {
                         this.close_wait_dlg(actions_section)
-                        Notification.notify('#import_json_outcome',`The import on ${get_ui_ready_date(Date(),true)} at ${get_ui_ready_time(Date())} was successful.`)
+                        Notification.notify('#import_json_outcome',`The import on ${get_ui_ready_date(Date(),true)} at ${get_ui_ready_time(Date())} was successful.`,['bg_inform'])
                      }
                      else {
                         this.close_wait_dlg(actions_section)

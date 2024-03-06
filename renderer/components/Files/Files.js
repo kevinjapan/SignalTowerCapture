@@ -57,7 +57,6 @@ class Files {
       })
       // outcome notification
       const files_outcome = create_div({
-         classlist:['bg_lightgrey','mt_1','pl_1','pr_1'],
          attributes:[
             {key:'id',value:'files_outcome'}
          ]

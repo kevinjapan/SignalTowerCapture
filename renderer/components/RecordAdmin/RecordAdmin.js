@@ -55,8 +55,7 @@ class RecordAdmin {
       const outcome = create_p({
          attributes:[
             {key:'id',value:'outcome'}
-         ],
-         classlist:['bg_yellow_100']
+         ]
       })
 
       // assemble
@@ -115,7 +114,7 @@ class RecordAdmin {
                const result = await window.collection_items_api.restoreCollectionItem(record_id)
 
                if(result.outcome === 'success'){
-                  Notification.notify('#outcome',result.message)
+                  Notification.notify('#outcome',result.message,['bg_inform'])
                   restore_btn.classList.add('hidden')
                }
                else {

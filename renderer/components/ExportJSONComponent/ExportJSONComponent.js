@@ -30,7 +30,6 @@ class ExportJSONComponent {
       })  
 
       const export_json_outcome = create_div({
-         classlist:['bg_lightgrey','mt_1','pl_1','pr_1'],
          attributes:[
             {key:'id',value:'export_json_outcome'}
          ]
@@ -88,7 +87,7 @@ class ExportJSONComponent {
                            text:'Open Export Folder'
                         }) 
                         if(export_json_outcome) {
-                           Notification.notify('#export_json_outcome',`The export was successful.`)
+                           Notification.notify('#export_json_outcome',`The export was successful.`,['bg_inform'])
                            export_json_outcome.append(export_json_folder_btn)
                         }
                         setTimeout(() => this.activate_folder_btn(),200)

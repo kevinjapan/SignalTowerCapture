@@ -90,8 +90,7 @@ class CollectionItemForm {
       let submit_outcome = create_section({
          attributes:[
             {key:'id',value:'submit_outcome'}
-         ],
-         classlist:['bg_lightgrey','mt_1','pl_1','pr_1'],
+         ]
       })
 
       // to do : review - is a single 'submit_outcome' sufficient?
@@ -195,7 +194,7 @@ class CollectionItemForm {
             })
 
             // current tags : this.#props.item[field.key]
-            const current_tags = this.#props.item ? this.#props.item[field.key].split(',') : []
+            const current_tags = this.#props.item[field.key] ? this.#props.item[field.key].split(',') : []
 
             // placeholder - we inject once promise is resolved..
             form.append(field_label,create_div({attributes:[{key:'id',value:'tags_placeholder'}]}))
@@ -512,7 +511,7 @@ class CollectionItemForm {
                   }
                   else {
                      this.disable_submit()
-                     Notification.notify('#find_file_outcome',`Invalid location - the folder you selected is not within the Collections Folders.`,'break',false)
+                     Notification.notify('#find_file_outcome',`Invalid location - the folder you selected is not within the Collections Folders.`,[],false)
                      return
                   }
                }
@@ -566,12 +565,12 @@ class CollectionItemForm {
                               else {
                                  // match is for a record other than the one we are editing
                                  this.disable_submit()
-                                 Notification.notify('#find_file_outcome',`Invalid file - there is already a record for this file.`,'break',false)
+                                 Notification.notify('#find_file_outcome',`Invalid file - there is already a record for this file.`,[],false)
                               }
                            }
                            else {
                               this.disable_submit()
-                              Notification.notify('#find_file_outcome',`Invalid file - there is already a record for this file.`,'break',false)
+                              Notification.notify('#find_file_outcome',`Invalid file - there is already a record for this file.`,[],false)
                            }
                         }
                      }

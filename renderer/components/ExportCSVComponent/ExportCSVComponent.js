@@ -30,7 +30,6 @@ class ExportCSVComponent {
       })  
 
       const export_csv_outcome = create_div({
-         classlist:['bg_lightgrey','mt_1','pl_1','pr_1'],
          attributes:[
             {key:'id',value:'export_csv_outcome'}
          ]
@@ -95,7 +94,7 @@ class ExportCSVComponent {
                            text:'Open Export Folder'
                         }) 
                         if(export_csv_outcome) {
-                           Notification.notify('#export_csv_outcome','The export was successful.')
+                           Notification.notify('#export_csv_outcome','The export was successful.',['bg_inform'])
                            export_csv_outcome.append(export_csv_folder_btn)
                         }
 

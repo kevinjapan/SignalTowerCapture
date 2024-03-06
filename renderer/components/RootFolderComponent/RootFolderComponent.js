@@ -50,8 +50,7 @@ class RootFolderComponent {
       const root_folder_outcome = create_div({
          attributes:[
             {key:'id',value:'root_folder_outcome'}
-         ],
-         classlist:['bg_lightgrey','mt_1','pl_1','pr_1']
+         ]
       })    
 
       root_folder_component.append(heading,tagline,paragraph,root_folder,select_root_folder_btn,selected_root_folder,update_root_folder_btn,root_folder_outcome)
@@ -95,7 +94,7 @@ class RootFolderComponent {
             const result = await window.config_api.setRootFolderPath(app_config)
 
             if(result.outcome === 'success') {
-               Notification.notify('#root_folder_outcome','The root folder path was successfully updated.')
+               Notification.notify('#root_folder_outcome','The root folder path was successfully updated.',['bg_inform'])
                const root_folder = document.getElementById('root_folder') 
                if(root_folder) {
                   root_folder.innerText = selected_folder.innerText
