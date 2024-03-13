@@ -643,13 +643,16 @@ async function get_file_path (event,options) {
    }
 }
 
-async function open_folder (event,folder_path) {
+async function open_folder (event,full_folder_path) {
    const fs = require('fs')
-   if (fs.existsSync(folder_path)) {
-      shell.openPath(path.resolve(folder_path))
+   if (fs.existsSync(full_folder_path)) {
+      shell.openPath(path.resolve(full_folder_path))
    }
    else {
-      notify_client_alert('The folder could not be found. \nPlease check that the Parent Folder Path in the record is correct.')
+      notify_client_alert(
+         `The folder could not be found. 
+         \n${full_folder_path}
+         \nPlease check that the Folder Path in the record is correct.`)
    }
 }
 

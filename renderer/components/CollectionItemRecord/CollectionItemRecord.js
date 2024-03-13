@@ -157,12 +157,9 @@ class CollectionItemRecord {
          })
          this.#record.append(notify_deleted)
       }
-   
       window.scroll(0,0)
-
       return this.#record
    }
-
 
    // enable buttons/links displayed in the render
    activate = () => {
@@ -215,19 +212,15 @@ class CollectionItemRecord {
          })
       }
 
-
       // open file's folder
       let open_folder_btn = document.getElementById('open_folder_btn')
       if(open_folder_btn) {
          open_folder_btn.addEventListener('click',() => {
-            window.files_api.openFolder(this.#props.item.folder_path)
+            window.files_api.openFolder(this.#props.root_folder + this.#props.item.folder_path)
          })
       }
 
-
-
       // image viewer
-
       let record_img = document.getElementById('record_img')
       if(record_img) {
          record_img.addEventListener('click',() => {
@@ -236,9 +229,7 @@ class CollectionItemRecord {
          })
       }
 
-
       // 'back' btn
-
       let back_btns = document.querySelectorAll('.back_btn')
       if(back_btns){
          back_btns.forEach(back_btn => {
