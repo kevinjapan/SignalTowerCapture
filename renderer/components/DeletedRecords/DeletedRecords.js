@@ -3,6 +3,7 @@ import CollectionItemCard from '../CollectionItemCard/CollectionItemCard.js'
 import PaginationNav from '../PaginationNav/PaginationNav.js'
 import { ui_display_number_as_str,trim_end_char } from '../../utilities/ui_strings.js'
 import { DESC } from '../../utilities/ui_descriptions.js'
+import { init_card_img_loads } from '../../utilities/ui_utilities.js'
 import { 
    create_section,
    create_div,
@@ -183,7 +184,7 @@ class DeletedRecordsTeaser {
    
    // enable buttons/links displayed in the render
    activate = () => {
-
+      init_card_img_loads()
    }
 
 }
