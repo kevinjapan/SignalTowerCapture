@@ -29,7 +29,7 @@ class About {
       })
 
       const lead_text = create_p({
-         text:`Signal Tower Capture is a desktop collections solution for managing files and folders on your local machine and referencing these to your local on-site collection. It is ideally suited for smaller museums or archives where you need a simple solution with zero-overheads and simplicity of use.`
+         text:`Signal Tower Capture is a desktop digital collections solution for managing files and folders on your local machine and referencing these to your local on-site collection. It is ideally suited for smaller museums or archives where you need a simple solution with zero-overheads and simplicity of use.`
       })
 
       
