@@ -66,7 +66,7 @@ class Files {
             {key:'id',value:'folder_selected'},
          ],
          classlist:['p_1'],
-         text:this.#props ? this.#props.context.selected_folder : 'Please select a folder.'
+         text:this.#props ? this.#props.folder_path : 'Please select a folder.'
       })
 
       files_section.append(heading,files_outcome)
@@ -122,13 +122,11 @@ class Files {
                files_layout
             )
             
-
             // if we have a provided 'selected_folder', we are coming 'back' from a Record, open the folder..
             if(this.#props) {
-               if(this.#props.context) {
-                  if(this.#props.context.selected_folder) {                    
+                  if(this.#props.folder_path) {
 
-                     const files_list = await window.files_api.getFolderFilesList(`${this.#root_folder}${this.#props.context.selected_folder}`)
+                     const files_list = await window.files_api.getFolderFilesList(`${this.#root_folder}${this.#props.folder_path}`)
 
                      if(files_list) {
                         let list = create_ul({classlist:['flex','flex_col','gap_0.5','m_0','p_0']})
@@ -137,7 +135,6 @@ class Files {
 
                            // assign folder_path to context, removing the 'root_folder' part
                            this.#context.field_filters[0].value = file.path.replace(this.#root_folder,'')
-                           console.log('this.#context.field_filters[0].value',this.#context.field_filters[0].value)
       
                            if(file.type === 'file') {
                               list_item = create_li({
@@ -159,7 +156,7 @@ class Files {
                         await this.get_matching_records()
                      }
                   }
-               }
+               
             }
          }
          else {
@@ -184,56 +181,62 @@ class Files {
       if(open_folder_btn) {
 
          open_folder_btn.addEventListener('click',async(event) => {
-
             const files_list = await window.files_api.openFolderDlg(this.#root_folder)
-            const folder_selected = document.getElementById('folder_selected')
-            
-            if(files_list) {
-
-               const file_list = document.getElementById('file_list')
-               const file_view = document.getElementById('file_view')
-               let list = create_ul({classlist:['flex','flex_col','gap_0.5','m_0','p_0']})
-               let list_item
-
-               // verify we are in Collections folders
-               if(files_list[0].path.indexOf(this.#root_folder) === 0) { 
-
-                  // build list of filenames (incs folders)
-                  files_list.forEach(file => {
-
-                     // assign folder_path to context remove the 'root_folder' part from path
-                     this.#context.field_filters[0].value = file.path.replace(this.#root_folder,'')
-                     if(folder_selected) folder_selected.innerText = file.path.replace(this.#root_folder,'')
-
-                     if(file.type === 'file') {
-                        list_item = create_li({
-                           attributes:[
-                              {key:'data-file-path',value:file.path + '\\' + file.filename},
-                              {key:'data-file-name',value:file.filename}
-                           ],
-                           classlist:['folder_item','cursor_pointer','m_0','p_0'],
-                           text:file.filename
-                        })
-                        list.append(list_item)
-                     }
-                  })
-                  
-                  // assemble
-                  if(file_list) file_list.replaceChildren(list)
-                  if(file_view) file_view.replaceChildren()
-                  setTimeout(() => this.activate_file_links(),100)
-                  
-                  await this.get_matching_records()
-               }
-               else {
-                  Notification.notify(
-                     'files_outcome',
-                     `The folder you selected is not within the Collections Folders.`)
-               }
-            }
+            this.display_file_list(files_list)            
          })
       }
    }
+
+   
+   display_file_list = async(files_list) => {
+
+      const folder_selected = document.getElementById('folder_selected')
+               
+      if(files_list) {
+
+         const file_list = document.getElementById('file_list')
+         const file_view = document.getElementById('file_view')
+         let list = create_ul({classlist:['flex','flex_col','gap_0.5','m_0','p_0']})
+         let list_item
+
+         // verify we are in Collections folders
+         if(files_list[0].path.indexOf(this.#root_folder) === 0) { 
+
+            // build list of filenames (incs folders)
+            files_list.forEach(file => {
+
+               // assign folder_path to context remove the 'root_folder' part from path
+               this.#context.field_filters[0].value = file.path.replace(this.#root_folder,'')
+               if(folder_selected) folder_selected.innerText = file.path.replace(this.#root_folder,'')
+
+               if(file.type === 'file') {
+                  list_item = create_li({
+                     attributes:[
+                        {key:'data-file-path',value:file.path + '\\' + file.filename},
+                        {key:'data-file-name',value:file.filename}
+                     ],
+                     classlist:['folder_item','cursor_pointer','m_0','p_0'],
+                     text:file.filename
+                  })
+                  list.append(list_item)
+               }
+            })
+            
+            // assemble
+            if(file_list) file_list.replaceChildren(list)
+            if(file_view) file_view.replaceChildren()
+            setTimeout(() => this.activate_file_links(),100)
+            
+            await this.get_matching_records()
+         }
+         else {
+            Notification.notify(
+               'files_outcome',
+               `The folder you selected is not within the Collections Folders.`)
+         }
+      }
+   }
+
 
    //
    // enable buttons/links displayed in the render
@@ -276,7 +279,6 @@ class Files {
 
    // return first existing record for this folder flagged as a 'folder' item type
    find_matching_folder_record = (filename) => {
-      console.log('this.#matching_records',this.#matching_records)
       return this.#matching_records.find(item => item.file_type.toUpperCase() === 'FOLDER')
    }
 
@@ -291,7 +293,8 @@ class Files {
          this.#record_fields = result.collection_item_fields
       }
       catch(error) {
-         console.log('failed to retrieve list of matching records.')
+         // to do : handle error.
+         console.log('Failed to retrieve list of matching records.')
       }
    }
 

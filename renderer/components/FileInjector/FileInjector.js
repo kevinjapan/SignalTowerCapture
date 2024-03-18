@@ -79,7 +79,7 @@ class FileInjector {
          const check_outcome = create_div({
             classlist:outcome_classes,
             attributes:outcome_attrs,
-            text:'There is no record for this file, please add a new record.'
+            text:'There is no record for this file.'
          })
          const file = create_p({
             text:this.#props.file
