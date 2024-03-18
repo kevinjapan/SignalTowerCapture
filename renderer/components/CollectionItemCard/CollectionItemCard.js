@@ -87,8 +87,7 @@ class CollectionItemCard {
             }         
             else if(field.key === 'folder_path') {
 
-               // card image
-               
+               // Card image               
                // build the file_path
                const root_part = trim_end_char(this.#props.root_folder,'\\')
                const relative_folder_part = trim_char(item.folder_path,'\\')
@@ -102,10 +101,11 @@ class CollectionItemCard {
                   let img = await build_img_elem(item.id,placeholder_file_path,item.img_desc,
                      [{key:'data-id',value:item.id},{key:'data-src',value:file_path}],
                      ['record_card_image','card_title_link','cursor_pointer']
-                  )               
+                  )
                   if(img) {
-                     img_col.append(img)
+                     img_col.replaceChildren(img)
                   }
+                  
                }
                else {
                   img_col.append(create_div(),document.createTextNode('No image file was found.'))
@@ -141,7 +141,6 @@ class CollectionItemCard {
             }
          })
       }
-      
       card.append(img_col,text_col)
       return card
    }
