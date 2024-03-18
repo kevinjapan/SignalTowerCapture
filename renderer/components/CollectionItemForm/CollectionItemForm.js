@@ -77,7 +77,6 @@ class CollectionItemForm {
          classlist:['img_col']
       })
 
-
       // form & layout - inside text_col
       let form = create_form({
          attributes:[
@@ -86,15 +85,17 @@ class CollectionItemForm {
          classlist:['form_layout']
       })
       
-      
       let submit_outcome = create_section({
          attributes:[
             {key:'id',value:'submit_outcome'}
          ]
       })
 
+      // we don't inc cancel btn in 'new' record forms
+      const inc_cancel = this.#props.action === 'add' ? false : true
+
       // to do : review - is a single 'submit_outcome' sufficient?
-      let btn_group_1 = FormBtns.render(this.#props.item)
+      let btn_group_1 = FormBtns.render(this.#props.item,inc_cancel)
       form.append(create_div(),btn_group_1,create_div(),submit_outcome)
       text_col.append(form)
       
@@ -194,7 +195,9 @@ class CollectionItemForm {
             })
 
             // current tags : this.#props.item[field.key]
-            const current_tags = this.#props.item[field.key] ? this.#props.item[field.key].split(',') : []
+            const current_tags = this.#props.item ?
+                  this.#props.item[field.key] ? this.#props.item[field.key].split(',') : []
+                  : []
 
             // placeholder - we inject once promise is resolved..
             form.append(field_label,create_div({attributes:[{key:'id',value:'tags_placeholder'}]}))
@@ -297,7 +300,7 @@ class CollectionItemForm {
       }
 
 
-      let btn_group_2 = FormBtns.render(this.#props.item)
+      let btn_group_2 = FormBtns.render(this.#props.item,inc_cancel)
 
       // assemble
       form.append(create_div(),btn_group_2)
@@ -336,7 +339,7 @@ class CollectionItemForm {
    //
    // enable buttons/links displayed in the render
    //
-   activate = (action = 'update') => {
+   activate = () => {
 
       // On 'Apply' add or update CollectionItemForm
 
@@ -345,7 +348,7 @@ class CollectionItemForm {
       if(apply_btns) {
 
          apply_btns.forEach((apply_btn) => {
-            if(action === 'add') {               
+            if(this.#props.action === 'add') {               
                apply_btn.innerText = 'Submit'
             }
             else {               
@@ -375,7 +378,7 @@ class CollectionItemForm {
                   }
 
                   let response
-                  if(action === 'add') {
+                  if(this.#props.action === 'add') {
                      response = await window.collection_items_api.addCollectionItem(updated_collection_item)
                   }
                   else {

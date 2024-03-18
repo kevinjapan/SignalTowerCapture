@@ -181,7 +181,8 @@ class CollectionItemRecord {
                         this.#props = {
                            fields:collection_item_obj.collection_item_fields,
                            item:collection_item_obj.collection_item,
-                           context:this.#props.context ? this.#props.context : null
+                           context:this.#props.context ? this.#props.context : null,
+                           action:'update'
                         }
                         App.switch_to_component('Form',this.#props)
                      } 

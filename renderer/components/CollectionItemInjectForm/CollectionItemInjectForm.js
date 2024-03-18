@@ -35,8 +35,8 @@ class CollectionItemInjectForm {
       const inject_form_container = create_section()
 
       const heading = create_h({
-         level:'h1',
-         text:'Collection Item Inject Form'
+         level:'h3',
+         text:'Add Collection Item record'
       })
 
       const item_form_wrap = create_section({
@@ -75,13 +75,14 @@ class CollectionItemInjectForm {
                   context:{
                      selected_folder:this.#props.folder_path,
                      ...this.#props.context
-                  }
+                  },
+                  action:'add'
                }
                
                // display empty CollectionItemForm for data entry
                const collection_item_form = new CollectionItemForm(props)
                item_form_wrap.appendChild(await collection_item_form.render())
-               collection_item_form.activate('add')
+               collection_item_form.activate()
                collection_item_form.hydrate([
                   {field:'title',value:get_title_from_filename(this.#props.file_name)},
                   {field:'file_name',value:this.#props.file_name},

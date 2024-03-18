@@ -52,13 +52,14 @@ class AddCollectionItem {
             if(collection_item_obj.outcome === 'success') {
 
                let props = {
-                  fields:create_required_fields
+                  fields:create_required_fields,
+                  action:'add'
                }
                
                // display empty CollectionItemForm for data entry
                const collection_item_form = new CollectionItemForm(props)
                item_form_wrap.appendChild(await collection_item_form.render())
-               collection_item_form.activate('add')
+               collection_item_form.activate()
             }
             else {
                throw 'No records were returned.'
