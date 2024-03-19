@@ -2,8 +2,6 @@ import SelectFolderComponent from '../SelectFolderComponent/SelectFolderComponen
 import FormBtns from '../FormBtns/FormBtns.js'
 import Notification from '../../components/Notification/Notification.js'
 import { ui_friendly_text } from '../../utilities/ui_strings.js'
-import { is_image_file, build_img_elem } from '../../utilities/ui_utilities.js'
-
 import { 
    create_section,
    create_div,
@@ -252,23 +250,6 @@ class AppConfigForm {
    
    async get_app_config_record() {
       return await window.config_api.getAppConfig()
-   }
-
-
-   // display if we have a valid img file
-   // is_image_file queries main process if the file exists and also if the .ext is img .ext
-   display_if_img_file = async (parent_elem,folder_path,file_name) => {
-
-      let res = await is_image_file(folder_path,file_name)  
-      if(res) {
-         let img = build_img_elem('record_img',folder_path,file_name)
-         if(spacer && img) {
-            parent_elem.replaceChildren(create_div(),img)
-         }
-      }
-      else {
-         parent_elem.replaceChildren(create_div(),document.createTextNode('No image file was found.'))
-      }
    }
 
 

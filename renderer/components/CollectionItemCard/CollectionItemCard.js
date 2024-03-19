@@ -3,8 +3,7 @@ import TagsLiteList from '../TagsLiteList/TagsLiteList.js'
 import { get_ui_ready_date } from '../../utilities/ui_datetime.js'
 import { create_section,create_div,create_h } from '../../utilities/ui_elements.js'
 import { trim_char,trim_end_char } from '../../utilities/ui_strings.js'
-import { is_image_file, build_img_elem } from '../../utilities/ui_utilities.js'
-
+import { is_img_ext,get_file_type_img,get_file_type_icon,file_exists,build_img_elem } from '../../utilities/ui_utilities.js'
 
 
 class CollectionItemCard {
@@ -56,34 +55,40 @@ class CollectionItemCard {
                text_col.append(field_element)
             }
             else if(field.key === 'file_type') {
-               field_element = create_div({
-                  classlist:['flex_100'],
-                  text:field_value
-               })
-               text_col.append(field_element)
-            }
-            else if(field.key === 'file_name') {
 
-               let file_name = field_value
-            
-               // display file icon
-               let file_name_block = create_div({
-                  classlist:['flex','gap_.5','mt_0.25','flex_100','break_words']
+               // CollectionItem.file_type is 'file' | 'folder'
+
+               let file_type_block = create_div({
+                  classlist:['flex','align_items_center','h_2','gap_.5','mt_0.25','flex_100','break_words']
                })
                field_element = create_div({
                   classlist:['pt_0.3'],
                   text:field_value
                })
-               let icon = document.createElementNS('http://www.w3.org/2000/svg','svg')            
-               icon.classList.add('pt_.5')
-               const icon_path = document.createElementNS('http://www.w3.org/2000/svg','path')
-               icon.setAttribute('width','16')
-               icon.setAttribute('height','16')               
-               icon_path.setAttribute('d','M4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zm0 1h8a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1')
-               icon.appendChild(icon_path)
-               file_name_block.append(icon,field_element)
-               text_col.append(file_name_block)
-      
+
+               const icon = field_value.toUpperCase() === 'FILE' ? 'imgs\\filetypes\\file.svg' : 'imgs\\filetypes\\folder.svg'
+               const ext = field_value.slice(-3,field_value.length)               
+               const file_type = build_img_elem(`file_folder_${item.id}`,icon,`${ext} filetype`,[{key:'height',value:'24px'}],[]) 
+               file_type_block.append(file_type,field_element)
+               text_col.append(file_type_block)
+            }
+            else if(field.key === 'file_name') {
+            
+               // Bootstrap icons are 'filetype-xxx.svg' - so 'filetype' here refers to eg 'PDF' | 'TXT' | ...
+
+               let file_ext_type_block = create_div({
+                  classlist:['flex','align_items_center','h_2','gap_.5','mt_0.25','flex_100','break_words']
+               })
+               field_element = create_div({
+                  classlist:['pt_0.3'],
+                  text:field_value
+               })
+
+               const icon = get_file_type_icon(field_value)
+               const ext = field_value.slice(-3,field_value.length)
+               const filetype_icon = build_img_elem(`card_img_${item.id}`,icon,`${ext} filetype`,[{key:'height',value:'24px'}],[])
+               file_ext_type_block.append(filetype_icon,field_element)
+               text_col.append(file_ext_type_block)
             }         
             else if(field.key === 'folder_path') {
 
@@ -97,18 +102,30 @@ class CollectionItemCard {
                // we inject placeholder and load img jit w/ intersection observer
                const placeholder_file_path = `imgs\\card_img_placeholder.jpg`
 
-               if(await is_image_file(file_path)) { 
-                  let img = await build_img_elem(item.id,placeholder_file_path,item.img_desc,
-                     [{key:'data-id',value:item.id},{key:'data-src',value:file_path}],
-                     ['record_card_image','card_title_link','cursor_pointer']
-                  )
-                  if(img) {
-                     img_col.replaceChildren(img)
+               if(await file_exists(file_path)) {
+
+                  if(is_img_ext(file_part)) {
+                     // process img file
+                     let img = build_img_elem(item.id,placeholder_file_path,item.img_desc,
+                        [{key:'data-id',value:item.id},{key:'data-src',value:file_path}],
+                        ['record_card_image','card_title_link','cursor_pointer']
+                     )
+                     if(img) img_col.replaceChildren(img)
                   }
-                  
+                  else {
+                     // process non-img file
+                     const icon_img_file_path = get_file_type_img(file_part)
+                     const ext = file_path.slice(-3,file_path.length)
+                     let img = build_img_elem(item.id,icon_img_file_path,`${ext} file icon`,
+                        [{key:'data-id',value:item.id},{key:'data-src',value:icon_img_file_path}],
+                        ['record_card_image','card_title_link','cursor_pointer']
+                     )
+                     if(img) img_col.replaceChildren(img)
+                  }                  
                }
                else {
-                  img_col.append(create_div(),document.createTextNode('No image file was found.'))
+                  // to do : text or default no-img image? tidy UI
+                  img_col.append(create_div(),document.createTextNode('No file was found.'))
                }            
             }
             else if(field.key === 'tags') {
@@ -204,7 +221,6 @@ class CollectionItemCard {
          })
       }
    }
-
 
    actions = async(key,id) => {
       

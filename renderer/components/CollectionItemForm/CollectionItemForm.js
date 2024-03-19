@@ -3,19 +3,9 @@ import FormBtns from '../FormBtns/FormBtns.js'
 import Notification from '../../components/Notification/Notification.js'
 import { DESC } from '../../utilities/ui_descriptions.js'
 import { ui_friendly_text,trim_char,trim_end_char } from '../../utilities/ui_strings.js'
-import { is_image_file, build_img_elem } from '../../utilities/ui_utilities.js'
-
-import { 
-   create_section,
-   create_div,
-   create_form,
-   create_label,
-   create_button,
-   create_input,
-   create_textarea,
-   create_checkbox_fieldset,
-   create_radio_fieldset
-} from '../../utilities/ui_elements.js'
+import { is_img_ext,get_file_type_icon,file_exists,build_img_elem } from '../../utilities/ui_utilities.js'
+import { create_section,create_div,create_form,create_label,create_button,create_input,
+         create_textarea,create_checkbox_fieldset,create_radio_fieldset} from '../../utilities/ui_elements.js'
 
 
 // all our input validation is carried out in the main process in window.collection_items_api.updateCollectionItem()
@@ -241,7 +231,6 @@ class CollectionItemForm {
 
          
          // file_type checkboxes
-
          if(field.key === 'file_type') {
 
             let field_label = create_label({
@@ -290,7 +279,7 @@ class CollectionItemForm {
          // display the file if it's a valid img and it exists
          if(field.key === 'file_name' && this.#props.item) {
             let relative_folder_path = trim_char(this.#props.item['folder_path'],'\\')
-            let file_path = `${this.#root_folder}\\${relative_folder_path}\\${this.#props.item[field.key]}`
+            let file_path = `${this.#root_folder}${relative_folder_path}\\${this.#props.item[field.key]}`
             await this.display_if_img_file(img_col,file_path,this.#props.item['img_desc'])
          }
       })
@@ -298,7 +287,6 @@ class CollectionItemForm {
       if(typeof this.#props.item !== 'undefined') {
          this.#record_id = this.#props.item.id
       }
-
 
       let btn_group_2 = FormBtns.render(this.#props.item,inc_cancel)
 
@@ -312,7 +300,6 @@ class CollectionItemForm {
    }
 
 
-   //
    // hydrate w/ known field values
    //
    hydrate = (field_values) => {
@@ -335,8 +322,6 @@ class CollectionItemForm {
    }
 
 
-
-   //
    // enable buttons/links displayed in the render
    //
    activate = () => {
@@ -433,7 +418,6 @@ class CollectionItemForm {
 
    
       // On 'Cancel' return to the CollectionItemRecord for same record
-   
       const cancel_btns = document.querySelectorAll('.cancel_btn')
       
       if(cancel_btns) {
@@ -481,8 +465,7 @@ class CollectionItemForm {
       }
 
    
-      // On Find File select w/ dialog
-
+      // On 'Find File' select w/ dialog
       const find_file_btn = document.getElementById('find_file_btn')
 
       if(find_file_btn) {
@@ -555,7 +538,7 @@ class CollectionItemForm {
                         }
                         else {
                            // There is an existing record for this file
-                           if(action === 'update') {
+                           if(this.#props.action === 'update') {
 
                               // Is existing record the same record we are currently editing
                               const existing_record_id = collection_items_obj.collection_items[0].id
@@ -599,8 +582,7 @@ class CollectionItemForm {
          })
       }
 
-      
-      //
+
       // On file_name change, we display the new file if img and exists
       //
       const file_name = document.getElementById('file_name')
@@ -614,7 +596,6 @@ class CollectionItemForm {
       }
 
 
-      //
       // On change file_type radio btn
       //
       const file_type_radio_btns = document.querySelectorAll('input[name="file_type_radio_btns"]')
@@ -670,8 +651,6 @@ class CollectionItemForm {
       }
    }
 
-   
-
    enable_submit = () => {
       const apply_btns = document.querySelectorAll('.apply_btn')
       if(apply_btns) {
@@ -681,8 +660,6 @@ class CollectionItemForm {
       }      
       this.#submit_enabled = true
    }
-
-   
 
    disable_submit = () => {
       const apply_btns = document.querySelectorAll('.apply_btn')
@@ -694,25 +671,32 @@ class CollectionItemForm {
       this.#submit_enabled = false
    }
 
-   // display if we have a valid img file
-   // is_image_file queries main process if the file exists and also if the ext is img ext
+   // to do : rename from display_if_img_file()
    display_if_img_file = async (parent_elem,file_path,alt_text) => {
 
-      let res = await is_image_file(file_path)  
-      if(res) {
-         let img = await build_img_elem('record_img',file_path,alt_text,[],['record_image'])
-         if(img) {
-            parent_elem.replaceChildren(create_div(),img)
+      if(await file_exists(file_path)) {
+
+         if(is_img_ext(file_path)) {
+
+            // process img file            
+            let img = build_img_elem('record_img',file_path,alt_text,[],['record_image'])
+            if(img) parent_elem.replaceChildren(create_div(),img)
+         } 
+         else {
+
+            // process non-img file
+            const icon_img_file_path = get_file_type_icon(file_path)
+            const ext = file_path.slice(-3,file_path.length)
+            let img = build_img_elem('record_img',icon_img_file_path,`${ext} file icon`,[],['record_image'])
+            if(img) parent_elem.replaceChildren(create_div(),img)
          }
       }
       else {
          parent_elem.replaceChildren(create_div(),document.createTextNode('No image file was found.'))
-      }
+      } 
    }
 
-
    // Errors are highlight bars beneath each input field
-
    highlight_errors = (errors) => {
       errors.forEach((error) => {         
          let elem = document.getElementById(`${error.name}_error`)
@@ -722,7 +706,6 @@ class CollectionItemForm {
          }
       })
    }
-
    clear_errors = () => {
       let error_bars = document.querySelectorAll('.error_bar')
       if(error_bars) {

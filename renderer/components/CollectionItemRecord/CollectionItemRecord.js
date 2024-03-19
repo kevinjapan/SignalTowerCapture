@@ -2,8 +2,8 @@ import App from '../App/App.js'
 import RecordBtns from '../RecordBtns/RecordBtns.js'
 import RecordAdmin from '../RecordAdmin/RecordAdmin.js'
 import { ui_friendly_text,trim_char,trim_end_char } from '../../utilities/ui_strings.js'
-import { is_image_file, build_img_elem,add_to_int_queue,ints_array } from '../../utilities/ui_utilities.js'
-import { create_section,create_div,create_p,create_button } from '../../utilities/ui_elements.js'
+import { is_img_ext,get_file_type_icon,file_exists,build_img_elem,add_to_int_queue,ints_array } from '../../utilities/ui_utilities.js'
+import { create_section,create_div,create_p } from '../../utilities/ui_elements.js'
 
 
 
@@ -126,14 +126,27 @@ class CollectionItemRecord {
             let file_part = this.#props.item[field.key]
             let file_path = `${root_part}\\${relative_folder_part}\\${file_part}`
 
-            if(await is_image_file(file_path)) {          
-               let img = await build_img_elem('record_img',file_path,this.#props.item['img_desc'],[],['record_image'])
-               if(img) {
-                  img_col.append(img)
+            if(await file_exists(file_path)) {
+               
+               if(is_img_ext(file_path)) {                  
+                  // process img file
+                  let img = build_img_elem('record_img',file_path,this.#props.item['img_desc'],[],['record_image'])
+                  if(img) img_col.append(img)
+               }
+               else {
+                  // process non-img file
+                  const icon_img_file_path = get_file_type_icon(file_path)
+                  const ext = file_path.slice(-3,file_path.length)
+                  let img = build_img_elem('record_img',icon_img_file_path,`${ext} file icon`,
+                     [],
+                     ['record_card_image','card_title_link','cursor_pointer']
+                  )
+                  if(img) img_col.replaceChildren(create_div(),img)
+
                }
             }
             else {
-               img_col.append(create_div(),document.createTextNode(`No image file was found.\n${file_path}`))
+               img_col.replaceChildren(create_div(),document.createTextNode(`No image file was found.\n${file_path}`))
             }
          }
       })

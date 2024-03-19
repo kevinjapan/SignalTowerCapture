@@ -1,6 +1,6 @@
 import App from '../App/App.js'
-import { create_section,create_h,create_button,create_div } from '../../utilities/ui_elements.js'
-import { is_image_file, build_img_elem } from '../../utilities/ui_utilities.js'
+import { create_section,create_button,create_div } from '../../utilities/ui_elements.js'
+import { is_img_ext,get_file_type_icon,file_exists,build_img_elem } from '../../utilities/ui_utilities.js'
 
 
 
@@ -71,15 +71,23 @@ class ImageViewer {
 
       let file_path = `${root_folder}\\${relative_folder_path}\\${this.#props.item['file_name']}`
 
-      if(await is_image_file(file_path)) {   
+      if(await file_exists(file_path)) { 
 
-         let attributes = [
-            {key:'draggable',value:false}
-         ]
-         
-         let img = await build_img_elem('record_img',file_path,'',attributes,['record_image'])
-         if(img) {
-            wrapper.append(img_btn_group,img)
+         let attributes = [{key:'draggable',value:false}]
+
+         if(is_img_ext(file_path)) {
+
+            // process img file                  
+            let img = build_img_elem('record_img',file_path,'',attributes,['record_image'])
+            if(img) wrapper.replaceChildren(img_btn_group,img)
+         }
+         else {
+
+            // process non-img file
+            const icon_img_file_path = get_file_type_icon(file_path)
+            const ext = file_path.slice(-3,file_path.length)
+            let img = build_img_elem('record_img',icon_img_file_path,`${ext} file icon`,attributes,['record_image'])
+            if(img) wrapper.replaceChildren(img_btn_group,img)
          }
       }
       else {
