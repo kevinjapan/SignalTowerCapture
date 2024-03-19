@@ -2,12 +2,15 @@ import { create_img } from '../utilities/ui_elements.js'
 
 
 
+export const file_exists = async (file_path) => {
+   const file_exist_result = await window.files_api.fileExists(file_path)
+   if(typeof file_exist_result != "undefined" && file_exist_result.outcome === 'success') return true
+   return false
+}
+
 export const is_image_file = async (file_path) => {
    
-
    const file_exist_result = await window.files_api.fileExists(file_path)
-
-
    if (typeof file_exist_result != "undefined") {
       if(file_exist_result.outcome === 'success') {
          if(is_img_ext(file_path)) {
@@ -23,7 +26,7 @@ export const is_image_file = async (file_path) => {
    }
 }
 
-const is_img_ext = (file_name) => {
+export const is_img_ext = (file_name) => {
    const supported = [
       'jpg','jpeg','gif','png','svg','webp','avif','apng'
    ]
@@ -33,8 +36,43 @@ const is_img_ext = (file_name) => {
    })
 }
 
+export const get_file_type_img = (file_name) => {
+   // to do : replace these w/ actual icon imgs for file types: - use same as icon or custom img?
+   const file_icons = {
+      'PDF':'imgs\\non_img_icon.jpg',
+      'TXT':'imgs\\non_img_icon.jpg',
+      'DOC':'imgs\\non_img_icon.jpg'
+   }
+   let ext = file_name.slice(-3,file_name.length).toUpperCase()
+   return file_icons[ext] ? file_icons[ext] : 'imgs\\card_img_placeholder.jpg'  // to do : replace w/ actual not found img or text  - be clear what happened! 
+}
+export const get_file_type_icon = (file_name) => {
+   // whitelist known filetypes
+   const filetype_icons = {
+      'BMP':'imgs\\filetypes\\filetype-bmp.svg',
+      'CSV':'imgs\\filetypes\\filetype-csv.svg',
+      'DOC':'imgs\\filetypes\\filetype-doc.svg',
+      'DOCX':'imgs\\filetypes\\filetype-docx.svg',
+      'GIF':'imgs\\filetypes\\filetype-gif.svg',
+      'HTML':'imgs\\filetypes\\filetype-html.svg',
+      'JPG':'imgs\\filetypes\\filetype-jpg.svg',
+      'JSON':'imgs\\filetypes\\filetype-json.svg',
+      'M4P':'imgs\\filetypes\\filetype-m4p.svg',
+      'MOV':'imgs\\filetypes\\filetype-mov.svg',
+      'MP3':'imgs\\filetypes\\filetype-mp3.svg',
+      'MP4':'imgs\\filetypes\\filetype-mp4.svg',
+      'PDF':'imgs\\filetypes\\filetype-pdf.svg',
+      'PNG':'imgs\\filetypes\\filetype-png.svg',
+      'PPT':'imgs\\filetypes\\filetype-ppt.svg',
+      'SVG':'imgs\\filetypes\\filetype-svg.svg',
+      'TXT':'imgs\\filetypes\\filetype-txt.svg'
+   }
+   let ext = file_name.slice(-3,file_name.length).toUpperCase()
+   return filetype_icons[ext] ? filetype_icons[ext] : 'imgs\\filetypes\\file.svg' 
+}
 
-export const build_img_elem = async(id,file_path,alt_text = 'image',attributes = [],classlist = []) => {
+
+export const build_img_elem = (id,file_path,alt_text = 'image',attributes = [],classlist = []) => {
    
    let attrs = [
       {key:'id',value:id},
