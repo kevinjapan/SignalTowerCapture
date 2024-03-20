@@ -274,12 +274,14 @@ class Files {
 
    // return first existing record for the filename
    find_matching_file_record = (filename) => {
-      return this.#matching_records.find(item => item.file_name === filename)
+      if(this.#matching_records) return this.#matching_records.find(item => item.file_name === filename)
+      return null
    }
 
    // return first existing record for this folder flagged as a 'folder' item type
-   find_matching_folder_record = (filename) => {
-      return this.#matching_records.find(item => item.file_type.toUpperCase() === 'FOLDER')
+   find_matching_folder_record = () => {
+      if(this.#matching_records) return this.#matching_records.find(item => item.file_type.toUpperCase() === 'FOLDER')
+      return null
    }
 
    //
@@ -293,8 +295,7 @@ class Files {
          this.#record_fields = result.collection_item_fields
       }
       catch(error) {
-         // to do : handle error.
-         console.log('Failed to retrieve list of matching records.')
+         setTimeout(() => Notification.notify('#files_outcome','Sorry, we failed to retrieve the list of matching records, so matches may be missed. You might want to try again later.',[],false),200)
       }
    }
 
