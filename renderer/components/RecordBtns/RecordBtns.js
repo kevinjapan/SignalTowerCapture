@@ -4,8 +4,9 @@ import { create_div,create_button } from '../../utilities/ui_elements.js'
 
 class RecordBtns {
 
+
    static render = (item_id,has_context = true) => {
-     
+
       const btn_group = create_div({
          classlist:['btn_grp']
       })
@@ -30,9 +31,7 @@ class RecordBtns {
       }
 
       const open_folder_btn = create_button({
-         attributes:[
-            {key:'id',value:'open_folder_btn'}
-         ],
+         classlist:['open_folder_btn'],
          text:'Open Folder'
       })
 
@@ -40,9 +39,6 @@ class RecordBtns {
       if(has_context) btn_group.append(back_btn)
       return btn_group
    }
-
 }
-
-
 
 export default RecordBtns

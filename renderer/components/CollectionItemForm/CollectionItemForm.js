@@ -84,7 +84,6 @@ class CollectionItemForm {
       // we don't inc cancel btn in 'new' record forms
       const inc_cancel = this.#props.action === 'add' ? false : true
 
-      // to do : review - is a single 'submit_outcome' sufficient?
       let btn_group_1 = FormBtns.render(this.#props.item,inc_cancel)
       form.append(create_div(),btn_group_1,create_div(),submit_outcome)
       text_col.append(form)
@@ -278,9 +277,9 @@ class CollectionItemForm {
 
          // display the file if it's a valid img and it exists
          if(field.key === 'file_name' && this.#props.item) {
-            let relative_folder_path = trim_char(this.#props.item['folder_path'],'\\')
+            let relative_folder_path = this.#props.item['folder_path']
             let file_path = `${this.#root_folder}${relative_folder_path}\\${this.#props.item[field.key]}`
-            await this.display_if_img_file(img_col,file_path,this.#props.item['img_desc'])
+            await this.display_image_or_filetype(img_col,file_path,this.#props.item['img_desc'])
          }
       })
 
@@ -311,7 +310,7 @@ class CollectionItemForm {
          if(field_value.field === 'img') {
             let img_col = document.getElementById('img_col')
             if(img_col) {
-               this.display_if_img_file(img_col,field_value.value,field_value.alt)
+               this.display_image_or_filetype(img_col,field_value.value,field_value.alt)
             }
          }
          elem = document.getElementById(field_value.field)
@@ -515,7 +514,7 @@ class CollectionItemForm {
 
                // display if new file is an img file
                let file_path = `${path}\\${file}`
-               await this.display_if_img_file(img_col,file_path,this.#props.item ? this.#props.item['img_desc'] : 'image')
+               await this.display_image_or_filetype(img_col,file_path,this.#props.item ? this.#props.item['img_desc'] : 'image')
 
                // Is there an existing record for the selected file?
                let context = {
@@ -577,7 +576,7 @@ class CollectionItemForm {
                }
             }
             else {
-               Notification.notify('#submit_outcome',result.message)
+               Notification.notify('#find_file_outcome',result.message)
             }
          })
       }
@@ -591,7 +590,7 @@ class CollectionItemForm {
       if(file_name && folder_path && img_col) {            
          file_name.addEventListener('change',async(event) => {
             let file_path = `${folder_path.value}\\${file_name.value}`
-            await this.display_if_img_file(img_col,file_path,this.#props.item ? this.#props.item['img_desc'] : 'image')
+            await this.display_image_or_filetype(img_col,file_path,this.#props.item ? this.#props.item['img_desc'] : 'image')
          })
       }
 
@@ -671,8 +670,8 @@ class CollectionItemForm {
       this.#submit_enabled = false
    }
 
-   // to do : rename from display_if_img_file()
-   display_if_img_file = async (parent_elem,file_path,alt_text) => {
+   
+   display_image_or_filetype = async (parent_elem,file_path,alt_text) => {
 
       if(await file_exists(file_path)) {
 
