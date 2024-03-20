@@ -2,7 +2,7 @@ import App from '../App/App.js'
 import TagsLiteList from '../TagsLiteList/TagsLiteList.js'
 import { get_ui_ready_date } from '../../utilities/ui_datetime.js'
 import { create_section,create_div,create_h } from '../../utilities/ui_elements.js'
-import { trim_char,trim_end_char } from '../../utilities/ui_strings.js'
+import { trim_char,trim_end_char,truncate } from '../../utilities/ui_strings.js'
 import { is_img_ext,get_file_type_img,get_file_type_icon,file_exists,build_img_elem } from '../../utilities/ui_utilities.js'
 
 
@@ -27,6 +27,10 @@ class CollectionItemCard {
       let img_col = create_div({
          classlist:['pl_1']
       })
+
+      let icons_block = create_div({
+         classlist:['flex','mb_1']
+      })
       
       let field_element
       let tags_list_elem
@@ -41,8 +45,10 @@ class CollectionItemCard {
                field_value = get_ui_ready_date(field_value)
             }
 
-            if(field.key === 'title') {         
+            if(field.key === 'title') {
+
                // title as link
+               //
                if(field_value === '') field_value = 'no title'
                field_element = create_h({
                   level:'h3',
@@ -57,27 +63,30 @@ class CollectionItemCard {
             else if(field.key === 'file_type') {
 
                // CollectionItem.file_type is 'file' | 'folder'
+               //
 
                let file_type_block = create_div({
-                  classlist:['flex','align_items_center','h_2','gap_.5','mt_0.25','flex_100','break_words']
+                  classlist:['flex','align_items_center','h_2','gap_.5','mt_0.25','fit_content','pr_3','break_words']
                })
                field_element = create_div({
                   classlist:['pt_0.3'],
                   text:field_value
                })
-
                const icon = field_value.toUpperCase() === 'FILE' ? 'imgs\\filetypes\\file.svg' : 'imgs\\filetypes\\folder.svg'
                const ext = field_value.slice(-3,field_value.length)               
                const file_type = build_img_elem(`file_folder_${item.id}`,icon,`${ext} filetype`,[{key:'height',value:'24px'}],[]) 
                file_type_block.append(file_type,field_element)
-               text_col.append(file_type_block)
+
+               // append
+               icons_block.append(file_type_block)
             }
             else if(field.key === 'file_name') {
             
                // Bootstrap icons are 'filetype-xxx.svg' - so 'filetype' here refers to eg 'PDF' | 'TXT' | ...
+               //
 
                let file_ext_type_block = create_div({
-                  classlist:['flex','align_items_center','h_2','gap_.5','mt_0.25','flex_100','break_words']
+                  classlist:['flex','align_items_center','h_2','gap_.5','mt_0.25','fit_content','pr_3','break_words']
                })
                field_element = create_div({
                   classlist:['pt_0.3'],
@@ -88,12 +97,14 @@ class CollectionItemCard {
                const ext = field_value.slice(-3,field_value.length)
                const filetype_icon = build_img_elem(`card_img_${item.id}`,icon,`${ext} filetype`,[{key:'height',value:'24px'}],[])
                file_ext_type_block.append(filetype_icon,field_element)
-               text_col.append(file_ext_type_block)
+
+               // append
+               icons_block.append(file_ext_type_block)
             }         
             else if(field.key === 'folder_path') {
 
                // Card image               
-               // build the file_path
+               // 
                const root_part = trim_end_char(this.#props.root_folder,'\\')
                const relative_folder_part = trim_char(item.folder_path,'\\')
                const file_part = item.file_name
@@ -117,18 +128,21 @@ class CollectionItemCard {
                      const icon_img_file_path = get_file_type_img(file_part)
                      const ext = file_path.slice(-3,file_path.length)
                      let img = build_img_elem(item.id,icon_img_file_path,`${ext} file icon`,
-                        [{key:'data-id',value:item.id},{key:'data-src',value:icon_img_file_path}],
-                        ['record_card_image','card_title_link','cursor_pointer']
+                        [{key:'data-id',value:item.id},{key:'data-src',value:icon_img_file_path},{key:'height',value:'40px'}],
+                        ['record_card_image','card_title_link','cursor_pointer','pt_1']
                      )
                      if(img) img_col.replaceChildren(img)
                   }                  
                }
                else {
-                  // to do : text or default no-img image? tidy UI
                   img_col.append(create_div(),document.createTextNode('No file was found.'))
                }            
             }
             else if(field.key === 'tags') {
+
+               // Tags
+               //
+
                tags_list_elem = create_div({
                   attributes:[
                      {key:'id',value:'tags_list_elem'}
@@ -144,20 +158,46 @@ class CollectionItemCard {
                }
                text_col.append(tags_list_elem)
             }
-            else {
-               // default field display
-               // content_desc occuppies row itself since it is btwn title and file_name (both 'flex_100' above)
+            else if(field.key === 'item_date') {
+               
+               // item date
+               //
+
                if(field_value) {
-                  if(field_value.length > 500) field_value = field_value.substring(0,500) + '..'
+                  let item_date_block = create_div({
+                     classlist:['flex','align_items_center','h_2','gap_.5','mt_0.25','fit_content','pr_3','break_words']
+                  })
                   field_element = create_div({
-                     classlist:['break_words','mt_0.5','mr_2'],
+                     classlist:['pt_0.3','break_words'],
                      text:field_value
+                  })
+                  const filetype_icon = build_img_elem(`card_img_${item.id}`,'imgs\\icons\\calendar.svg',`item date`,[{key:'height',value:'24px'}],[])
+                  item_date_block.append(filetype_icon,field_element)
+
+                  // append
+                  icons_block.append(item_date_block)
+               }
+
+
+            }
+            else {
+
+               // Default field display
+               //
+
+               if(field_value) {
+                  field_element = create_div({
+                     classlist:['break_words','mt_0.5','mr_2','pb_1'],
+                     text:truncate(field_value,300)
                   })
                   text_col.append(field_element)
                }
             }
          })
       }
+      
+      // assemble
+      text_col.insertBefore(icons_block, text_col.children[2])
       card.append(img_col,text_col)
       return card
    }
