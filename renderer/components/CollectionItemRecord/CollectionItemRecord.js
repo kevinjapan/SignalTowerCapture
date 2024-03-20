@@ -226,13 +226,16 @@ class CollectionItemRecord {
          })
       }
 
-      // open file's folder
-      let open_folder_btn = document.getElementById('open_folder_btn')
-      if(open_folder_btn) {
-         open_folder_btn.addEventListener('click',() => {
-            window.files_api.openFolder(this.#props.root_folder + this.#props.item.folder_path)
+      // 'open folder' btn
+      let open_folder_btns = document.querySelectorAll('.open_folder_btn')
+      if(open_folder_btns){
+         open_folder_btns.forEach(open_folder_btn => {
+            open_folder_btn.addEventListener('click',() => {
+               window.files_api.openFolder(this.#props.root_folder + this.#props.item.folder_path)
+            })
          })
       }
+
 
       // image viewer
       let record_img = document.getElementById('record_img')
