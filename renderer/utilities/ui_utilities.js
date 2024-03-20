@@ -36,41 +36,38 @@ export const is_img_ext = (file_name) => {
    })
 }
 
+// whitelist known filetypes
+// future : review - encapsulate this?
+const filetype_icons = {
+   'BMP':'imgs\\filetypes\\filetype-bmp.svg',
+   'CSV':'imgs\\filetypes\\filetype-csv.svg',
+   'DOC':'imgs\\filetypes\\filetype-doc.svg',
+   'DOCX':'imgs\\filetypes\\filetype-docx.svg',
+   'GIF':'imgs\\filetypes\\filetype-gif.svg',
+   'HTML':'imgs\\filetypes\\filetype-html.svg',
+   'JPG':'imgs\\filetypes\\filetype-jpg.svg',
+   'JSON':'imgs\\filetypes\\filetype-json.svg',
+   'M4P':'imgs\\filetypes\\filetype-m4p.svg',
+   'MOV':'imgs\\filetypes\\filetype-mov.svg',
+   'MP3':'imgs\\filetypes\\filetype-mp3.svg',
+   'MP4':'imgs\\filetypes\\filetype-mp4.svg',
+   'PDF':'imgs\\filetypes\\filetype-pdf.svg',
+   'PNG':'imgs\\filetypes\\filetype-png.svg',
+   'PPT':'imgs\\filetypes\\filetype-ppt.svg',
+   'SVG':'imgs\\filetypes\\filetype-svg.svg',
+   'TXT':'imgs\\filetypes\\filetype-txt.svg'
+}
+
+// Display filetype img and icon
+// currently same, but we may distinguish btwn in future
 export const get_file_type_img = (file_name) => {
-   // to do : replace these w/ actual icon imgs for file types: - use same as icon or custom img?
-   const file_icons = {
-      'PDF':'imgs\\non_img_icon.jpg',
-      'TXT':'imgs\\non_img_icon.jpg',
-      'DOC':'imgs\\non_img_icon.jpg'
-   }
    let ext = file_name.slice(-3,file_name.length).toUpperCase()
-   return file_icons[ext] ? file_icons[ext] : 'imgs\\card_img_placeholder.jpg'  // to do : replace w/ actual not found img or text  - be clear what happened! 
+   return filetype_icons[ext] ? filetype_icons[ext] : 'imgs\\filetypes\\file.svg'
 }
 export const get_file_type_icon = (file_name) => {
-   // whitelist known filetypes
-   const filetype_icons = {
-      'BMP':'imgs\\filetypes\\filetype-bmp.svg',
-      'CSV':'imgs\\filetypes\\filetype-csv.svg',
-      'DOC':'imgs\\filetypes\\filetype-doc.svg',
-      'DOCX':'imgs\\filetypes\\filetype-docx.svg',
-      'GIF':'imgs\\filetypes\\filetype-gif.svg',
-      'HTML':'imgs\\filetypes\\filetype-html.svg',
-      'JPG':'imgs\\filetypes\\filetype-jpg.svg',
-      'JSON':'imgs\\filetypes\\filetype-json.svg',
-      'M4P':'imgs\\filetypes\\filetype-m4p.svg',
-      'MOV':'imgs\\filetypes\\filetype-mov.svg',
-      'MP3':'imgs\\filetypes\\filetype-mp3.svg',
-      'MP4':'imgs\\filetypes\\filetype-mp4.svg',
-      'PDF':'imgs\\filetypes\\filetype-pdf.svg',
-      'PNG':'imgs\\filetypes\\filetype-png.svg',
-      'PPT':'imgs\\filetypes\\filetype-ppt.svg',
-      'SVG':'imgs\\filetypes\\filetype-svg.svg',
-      'TXT':'imgs\\filetypes\\filetype-txt.svg'
-   }
    let ext = file_name.slice(-3,file_name.length).toUpperCase()
    return filetype_icons[ext] ? filetype_icons[ext] : 'imgs\\filetypes\\file.svg' 
 }
-
 
 export const build_img_elem = (id,file_path,alt_text = 'image',attributes = [],classlist = []) => {
    
