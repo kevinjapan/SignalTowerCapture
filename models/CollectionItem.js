@@ -38,7 +38,7 @@ class CollectionItem {
       {key:'img_desc',data_type:'TEXT DEFAULT "image"',editable:true,in_card:false,export:true,test:{type:'string',min:1,max:80}},
       {key:'item_ref',data_type:'INTEGER',editable:true,injectable:true,in_card:false,export:true,test:{type:'string',min:1,max:100}},
       {key:'item_date',data_type:'TEXT',editable:true,injectable:true,in_card:true,export:true,test:{type:'date',min:0,max:10},placeholder:'YYYY-MM-DD'},
-      {key:'item_type',data_type:'TEXT NOT NULL',editable:true,injectable:true,in_card:false,export:true,test:{type:'string',min:3,max:50}},
+      {key:'item_type',data_type:'TEXT',editable:true,injectable:true,in_card:false,export:true,test:{type:'string',min:3,max:50}},
       {key:'author_creator',data_type:'TEXT',editable:true,in_card:false,export:true,test:{type:'string',min:0,max:60}},
       {key:'people',data_type:'TEXT',editable:true,in_card:false,export:true,test:{type:'string',min:0,max:100}},
       {key:'source',data_type:'TEXT',editable:true,in_card:false,export:true,test:{type:'string',min:0,max:100}},
@@ -122,8 +122,6 @@ class CollectionItem {
                      ORDER BY ${order_by}                      
                      LIMIT ${this.#items_per_page} 
                      OFFSET ${offset}`
-
-                     console.log('sql',sql)
 
             this.#database.all(sql, (error, rows) => {
                if(error) reject(error)
@@ -329,11 +327,16 @@ class CollectionItem {
       const field_values = fields.map((field) => {
          return collection_item[field.key]
       })
-
+    
+      // Populate required dates if they are undefined
       let created_at = get_sqlready_datetime()
+      const created_at_pos = field_keys.findIndex((key) => key === 'created_at')
+      const updated_at_pos = field_keys.findIndex((key) => key === 'updated_at')
+      if(field_values[created_at_pos] === undefined) field_values[created_at_pos] = created_at
+      if(field_values[updated_at_pos] === undefined) field_values[updated_at_pos] = created_at
 
-      const sql = `INSERT INTO collection_items(${field_keys.toString()},created_at,updated_at) 
-                   VALUES(${inserts.toString()},'${created_at}','${created_at}')`
+      const sql = `INSERT INTO collection_items(${field_keys.toString()}) 
+                   VALUES(${inserts.toString()})`
 
       const result = await new Promise((resolve,reject) => {
          this.#database.run(
