@@ -38,16 +38,8 @@ class ImportJSONFile {
 
       try {
          if(fs.existsSync(file_path)) {
-
             const collection_items = await this.get_json_file_contents(file_path)
-
-            await this.process_records(collection_items)
-
-            return {
-               query:'import_json_file',
-               outcome:'success',
-               message:'The records were successfully imported into the database.'
-            }
+            return await this.process_records(collection_items)
          }
          else {
             throw 'The import file was not found.'
@@ -67,25 +59,44 @@ class ImportJSONFile {
    process_records = async(collection_items) => {
 
       const collection_item = new CollectionItem(this.#database)
-      const total = collection_items.length
-      let result = null
+      let promise_result = null
 
       // using for(..of..) instead of forEach() allows us to await successfully
       for(const item of collection_items) {
 
+         // new item, we remove id
          delete item.id
 
-         result = await new Promise(async(resolve,reject) => {
-            let result = await collection_item.create(item,false)
-            if(result.outcome !== 'success') {
-               reject(result.message)
-            }
-            else {
+         promise_result = await new Promise(async(resolve,reject) => {
+
+            let result = await collection_item.create(item,false)            
+            if(result.outcome === 'success') {              
                resolve(result.collection_item.id)
             }
-         }).catch((error) => this.set_last_error(error))
+            else {
+               reject(result.message)
+            }
+         }).catch((error) => {
+            this.set_last_error(error)
+         })
          
-         // successful result will contain id of newly created record
+         if(promise_result) {
+            // nothing
+         }
+         else {
+            let fail_response = {
+               query:'create_collection_item',
+               outcome:'fail',
+               message:'There was an error attempting to create the record. [ImportJSONFile.process_records]  ' + this.#last_error
+            }
+            this.clear_last_error()
+            return fail_response
+         }
+      }
+      
+      return {
+         query:'create_collection_item',
+         outcome:'success'
       }
    }
 
