@@ -6,10 +6,8 @@ import { create_h,create_p,create_div,create_section,create_button } from '../..
 
 
 
-
 class ImportJSONComponent {
 
-   
    render = () => {
 
       const import_json_component = create_section({
@@ -48,10 +46,9 @@ class ImportJSONComponent {
          ]
       })
 
-      
       // assemble
       import_json_component.append(heading,paragraph,import_json_btn,import_json_outcome,import_json_fields)
-      
+   
       return import_json_component
    }
 
@@ -66,7 +63,6 @@ class ImportJSONComponent {
             import_json_btn.addEventListener('click', async(event) => {
 
                event.preventDefault()
-
                Notification.notify('#import_json_outcome','')
 
                const options = {
@@ -97,7 +93,7 @@ class ImportJSONComponent {
                      }
                      else {
                         this.close_wait_dlg(actions_section)
-                        Notification.notify('#import_json_outcome',import_results_obj.message)
+                        Notification.notify('#import_json_outcome',import_results_obj.message,[],false)
                      }
                   }
                }
@@ -112,10 +108,6 @@ class ImportJSONComponent {
       let wait_dlg = document.getElementById('wait_dlg')
       if(wait_dlg) parent_section.removeChild(wait_dlg)
    }
-
-
 }
-
-
 
 export default ImportJSONComponent
