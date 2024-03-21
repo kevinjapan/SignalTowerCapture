@@ -44,6 +44,7 @@ const filetype_icons = {
    'DOC':'imgs\\filetypes\\filetype-doc.svg',
    'DOCX':'imgs\\filetypes\\filetype-docx.svg',
    'GIF':'imgs\\filetypes\\filetype-gif.svg',
+   'HTM':'imgs\\filetypes\\filetype-html.svg',
    'HTML':'imgs\\filetypes\\filetype-html.svg',
    'JPG':'imgs\\filetypes\\filetype-jpg.svg',
    'JSON':'imgs\\filetypes\\filetype-json.svg',
