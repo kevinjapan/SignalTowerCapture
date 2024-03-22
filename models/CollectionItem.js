@@ -307,10 +307,14 @@ class CollectionItem {
 
       let fields = CollectionItem.#full_fields_list
 
+      // editable_only is from CollectionItemForm - 
+      // we also permit inject from JSON files - in which case we retain all field_keys
       if(editable_only) {
          fields = fields.filter((field) => {
             if(field.editable === true) return field
          })
+         // we still require CrUd dates
+         fields = [...fields,{key:'created_at'},{key:'updated_at'}]
       }
 
       const field_keys = fields.map((field) => {
@@ -327,6 +331,19 @@ class CollectionItem {
       const field_values = fields.map((field) => {
          return collection_item[field.key]
       })
+
+      // Populate title (if missing) from file_name
+      const title_pos = field_keys.findIndex((key) => key === 'title')
+      const file_name_pos = field_keys.findIndex((key) => key === 'file_name')
+      if(field_values[title_pos] === undefined) {
+         let title_from_file_name = field_values[file_name_pos]
+         field_values[title_pos] = title_from_file_name.replaceAll('_',' ')
+      }
+
+      // Populate file_type (if missing)
+      const file_type_pos = field_keys.findIndex((key) => key === 'file_type')
+      if(field_values[file_type_pos] === undefined) field_values[file_type_pos] = 'File'
+
     
       // Populate required dates if they are undefined
       let created_at = get_sqlready_datetime()
@@ -334,6 +351,9 @@ class CollectionItem {
       const updated_at_pos = field_keys.findIndex((key) => key === 'updated_at')
       if(field_values[created_at_pos] === undefined) field_values[created_at_pos] = created_at
       if(field_values[updated_at_pos] === undefined) field_values[updated_at_pos] = created_at
+
+      console.log('field_keys',field_keys)
+      console.log('field_values',field_values)
 
       const sql = `INSERT INTO collection_items(${field_keys.toString()}) 
                    VALUES(${inserts.toString()})`
