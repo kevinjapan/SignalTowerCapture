@@ -102,8 +102,6 @@ class ExportCSVComponent {
 
                         // display fields in csv
                         const fields_obj = await window.collection_items_api.getCollectionItemFields()
-
-                        console.log(typeof fields,fields_obj.fields)
                         
                         if (typeof fields_obj != "undefined") {
                            
