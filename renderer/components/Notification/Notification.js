@@ -15,7 +15,7 @@ class Notification {
       if(elem_selectors) {
          elem_selectors.forEach(elem => {
             const notification_card = create_div({
-               classlist:[...classes,'p_1'],
+               classlist:['notification',...classes,'p_1'],
                text:message
             })
             elem.replaceChildren(notification_card) 
