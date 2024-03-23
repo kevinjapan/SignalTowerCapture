@@ -5,6 +5,7 @@ import AlphabetCtrl from '../AlphabetCtrl/AlphabetCtrl.js'
 import { ui_display_number_as_str,trim_end_char } from '../../utilities/ui_strings.js'
 import { create_section,create_div,create_h } from '../../utilities/ui_elements.js'
 import { init_card_img_loads } from '../../utilities/ui_utilities.js'
+import Notification from '../../components/Notification/Notification.js'
 
 
 
@@ -72,8 +73,7 @@ class Browse {
       let number_records = create_div({
          attributes:[
             {key:'id',value:'number_records'}
-         ],
-         classlist:['p_2']
+         ]
       })
       
       this.#browse_results_container = create_div({
@@ -133,20 +133,16 @@ class Browse {
                if(collection_items_obj.outcome === 'success') {
                   
                   this.#browse_results_container.replaceChildren()
-
                   let page_count = Math.ceil(collection_items_obj.count / collection_items_obj.per_page)
 
-                  const top_pagination_nav = new PaginationNav('top',this.go_to_page,page_count,this.#browse_context.page)
-                  this.#browse_results_container.append(top_pagination_nav.render())
-                  top_pagination_nav.activate()
-         
                   if(collection_items_obj.collection_items.length > 0) {
                   
+                     const top_pagination_nav = new PaginationNav('top',this.go_to_page,page_count,this.#browse_context.page)
+                     this.#browse_results_container.append(top_pagination_nav.render())
+                     top_pagination_nav.activate()
+
                      let number_records = document.getElementById('number_records')
-                     if(number_records) {             
-                        number_records.innerText = `
-                           There are ${ui_display_number_as_str(collection_items_obj.count)} records ${this.#filter_char ? 'with titles starting with \'' + this.#filter_char + '\'': ''}`
-                     }
+                     if(number_records) this.display_number_records(collection_items_obj.count)
             
                      let props = {
                         root_folder: this.#root_folder,
@@ -162,14 +158,15 @@ class Browse {
                      this.#browse_results_container.style.minHeight = '70vh' 
          
                      setTimeout(() => collection_item_card.activate(),200)
+
+                     const bottom_pagination_nav = new PaginationNav('bottom',this.go_to_page,page_count,this.#browse_context.page)
+                     this.#browse_results_container.append(bottom_pagination_nav.render())
+                     bottom_pagination_nav.activate()
                   }
                   else {
-                     this.#browse_results_container.innerText = 'No records were found. '
+                     this.display_number_records(0)
                   }
 
-                  const bottom_pagination_nav = new PaginationNav('bottom',this.go_to_page,page_count,this.#browse_context.page)
-                  this.#browse_results_container.append(bottom_pagination_nav.render())
-                  bottom_pagination_nav.activate()
                   
                   // re-instate scroll position if user had scrolled list before opening a record
                   setTimeout(() => window.scroll(0,this.#browse_context.scroll_y),50)
@@ -218,7 +215,13 @@ class Browse {
       setTimeout(() => this.activate(),50)
    }
 
-
+   display_number_records = (count) => {   
+      const intro = count === 1 ? 'is ' : 'are '
+      const singular = count === 1 ? '' : 's'
+      let text = 
+         `There ${intro}${ui_display_number_as_str(count)} record${singular} ${this.#filter_char ? `with title${singular} starting with '` + this.#filter_char + `'`: ''}`
+      Notification.notify('#number_records',text,['bg_inform'],false)
+   }
 
 }
 
