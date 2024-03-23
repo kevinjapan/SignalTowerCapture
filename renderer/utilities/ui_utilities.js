@@ -55,8 +55,14 @@ const filetype_icons = {
    'PDF':'imgs\\filetypes\\filetype-pdf.svg',
    'PNG':'imgs\\filetypes\\filetype-png.svg',
    'PPT':'imgs\\filetypes\\filetype-ppt.svg',
+   'PPTX':'imgs\\filetypes\\filetype-pptx.svg',
    'SVG':'imgs\\filetypes\\filetype-svg.svg',
-   'TXT':'imgs\\filetypes\\filetype-txt.svg'
+   'TIF':'imgs\\filetypes\\filetype-tiff.svg',
+   'TIFF':'imgs\\filetypes\\filetype-tiff.svg',
+   'TXT':'imgs\\filetypes\\filetype-txt.svg',
+   'WAV':'imgs\\filetypes\\filetype-wav.svg',
+   'XLS':'imgs\\filetypes\\filetype-xls.svg',
+   'XLSX':'imgs\\filetypes\\filetype-xlsx.svg'
 }
 
 // Display filetype img and icon
