@@ -108,7 +108,7 @@ class RecentRecords {
                      let temp = collection_items_obj.collection_items.find(item => {
                         return parseInt(item.id) === parseInt(id)
                      })
-                     ordered_items.push(temp)
+                     if(temp) ordered_items.push(temp)
                   })
 
                   if(ordered_items.length > 0) {
@@ -123,7 +123,7 @@ class RecentRecords {
                         context: this.#context
                      }
                      const collection_item_card = new CollectionItemCard(props) 
-                     ordered_items.forEach((item) => {        
+                     ordered_items.forEach((item) => {  
                         this.#results_container.appendChild(collection_item_card.render(collection_items_obj.collection_item_fields,item))
                      })
          
