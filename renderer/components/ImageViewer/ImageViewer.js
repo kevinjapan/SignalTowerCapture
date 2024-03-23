@@ -30,7 +30,7 @@ class ImageViewer {
          attributes:[
             {key:'id',value:'viewer'}
          ],
-         classlist:['']
+         classlist:['text_center']
       })
 
       // ctrls
@@ -91,7 +91,14 @@ class ImageViewer {
          }
       }
       else {
-         viewer.append(create_div(),document.createTextNode('No image file was found.'))
+         const no_file_icon_img = build_img_elem(`record_img`,'imgs\\icons\\exclamation-square.svg',`item date`,[{key:'height',value:'24px'}],['bg_yellow_100','mt_1'])
+         viewer.append(create_div(),no_file_icon_img)
+         let msg = create_div({
+            classlist:['text_sm'],
+            text:'The file was not found.'
+         })
+         viewer.append(create_div(),msg)
+         viewer.append(create_div(),x_btn)
       }
 
       // assemble
@@ -108,7 +115,6 @@ class ImageViewer {
       const viewer = document.getElementById('viewer')
 
       // Close image view
-
       const x_btn = document.getElementById('x_btn')
       if(x_btn) {
          x_btn.addEventListener('click',async(event) => {
@@ -119,7 +125,6 @@ class ImageViewer {
 
    
       // Zoom
-
       const zoom_in_btn = document.getElementById('zoom_in_btn')
       if(zoom_in_btn) {
          zoom_in_btn.addEventListener('click',async(event) => {

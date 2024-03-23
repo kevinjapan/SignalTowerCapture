@@ -25,7 +25,7 @@ class CollectionItemCard {
       let text_col = create_div()
 
       let img_col = create_div({
-         classlist:['pl_1']
+         classlist:['pl_1','text_center']
       })
 
       let icons_block = create_div({
@@ -135,7 +135,13 @@ class CollectionItemCard {
                   }                  
                }
                else {
-                  img_col.append(create_div(),document.createTextNode('No file was found.'))
+                  const no_file_icon_img = build_img_elem(`card_img_${item.id}`,'imgs\\icons\\exclamation-square.svg',`item date`,[{key:'height',value:'24px'}],['bg_yellow_100','mt_1'])
+                  img_col.append(create_div(),no_file_icon_img)
+                  let msg = create_div({
+                     classlist:['text_sm'],
+                     text:'The file was not found.'
+                  })
+                  img_col.append(create_div(),msg)
                }            
             }
             else if(field.key === 'tags') {

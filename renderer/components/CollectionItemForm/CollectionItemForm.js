@@ -269,6 +269,7 @@ class CollectionItemForm {
                attributes:[
                   {key:'id',value:'find_file_btn'}
                ],
+               classlist:['form_btn'],
                text:'Find File'
             }) 
             // assemble find_file
@@ -691,7 +692,13 @@ class CollectionItemForm {
          }
       }
       else {
-         parent_elem.replaceChildren(create_div(),document.createTextNode('No image file was found.'))
+         const no_file_icon_img = build_img_elem(`record_img`,'imgs\\icons\\exclamation-square.svg',`item date`,[{key:'height',value:'24px'}],['bg_yellow_100','mt_1'])
+         img_col.append(create_div(),no_file_icon_img)
+         let msg = create_div({
+            classlist:['text_sm'],
+            text:'The file was not found.'
+         })
+         parent_elem.append(create_div(),msg)
       } 
    }
 

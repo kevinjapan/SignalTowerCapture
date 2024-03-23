@@ -50,7 +50,7 @@ class CollectionItemRecord {
          classlist:['text_col','pl_1']
       })
       let img_col = create_div({
-         classlist:['img_col'],
+         classlist:['img_col','text_center'],
       })
 
 
@@ -146,7 +146,13 @@ class CollectionItemRecord {
                }
             }
             else {
-               img_col.replaceChildren(create_div(),document.createTextNode(`No image file was found.\n${file_path}`))
+               const no_file_icon_img = build_img_elem(`record_img_not_found`,'imgs\\icons\\exclamation-square.svg',`item date`,[{key:'height',value:'24px'}],['bg_yellow_100','mt_1'])
+               img_col.append(create_div(),no_file_icon_img)
+               let msg = create_div({
+                  classlist:['text_sm'],
+                  text:'The file was not found.'
+               })
+               img_col.append(create_div(),msg)
             }
          }
       })
@@ -235,8 +241,7 @@ class CollectionItemRecord {
             })
          })
       }
-
-
+      
       // image viewer
       let record_img = document.getElementById('record_img')
       if(record_img) {
