@@ -136,7 +136,13 @@ button:hover {
    color:black;
    background:hsl(0, 0%, 93%);
 }
-button:focus {
+/* we clearly highlight btns on forms on tab focus change */
+button.form_btn:focus {
+   border:solid 1px hsl(40, 100%, 45%);
+   background:hsl(40, 100%, 80%);
+}
+/* btns in eg menu, we outline */
+button:not(.form_btn):focus {
    border:solid 1px hsl(40, 100%, 45%);
 }
 button.disabled {
@@ -898,4 +904,20 @@ input[type='radio'] {
    position:fixed;
    top:0;
    left:0;
+}
+
+.notification {
+   width:fit-content;
+   margin-top:2rem;
+   margin-left:auto;
+   margin-right:auto;
+   padding:.75rem;
+   padding-top:.25rem;
+   padding-bottom:.25rem;
+   border-radius:.5rem;
+}
+
+.yellow_icon {
+   color:yellow;
+   background:yellow;
 }
