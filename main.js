@@ -690,7 +690,12 @@ async function open_folder_dlg (event) {
          file_objects_list[count] = file_object
          count++
       })
-      return file_objects_list
+
+      // we return folder_obj (files_list may be empty)
+      return {
+         folder_name:filePaths,
+         files_list:file_objects_list
+      }
    }
 }
 

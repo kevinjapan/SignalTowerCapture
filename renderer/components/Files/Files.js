@@ -12,6 +12,8 @@ import {
 
 
 
+// to do : review UI on sm screen widths
+
 class Files {
    
    // the Collection Root Folder
@@ -76,7 +78,9 @@ class Files {
       if(typeof result != "undefined") {      
          if(result.outcome === 'success') {
 
-            this.#root_folder = result.app_config.root_folder
+            // retrieve and escape spaces in 'root_folder'
+            let temp = result.app_config.root_folder
+            this.#root_folder = temp.split(/\ /).join('\ ');
 
             // root folder
             const root_sub_heading = create_h({
@@ -188,22 +192,26 @@ class Files {
    }
 
    
-   display_file_list = async(files_list) => {
+   display_file_list = async(folder_obj) => {
 
       const folder_selected = document.getElementById('folder_selected')
                
-      if(files_list) {
+      const file_list = document.getElementById('file_list')
+      const file_view = document.getElementById('file_view')
 
-         const file_list = document.getElementById('file_list')
-         const file_view = document.getElementById('file_view')
+      if(folder_obj.files_list && folder_obj.files_list.length > 0) {
+
          let list = create_ul({classlist:['flex','flex_col','gap_0.5','m_0','p_0']})
          let list_item
 
+         // escape spaces in target 'folder_path'
+         const escaped_folder_path = folder_obj.files_list[0].path.split(/\ /).join('\ ');
+
          // verify we are in Collections folders
-         if(files_list[0].path.indexOf(this.#root_folder) === 0) { 
+         if(escaped_folder_path.indexOf(this.#root_folder) === 0) { 
 
             // build list of filenames (incs folders)
-            files_list.forEach(file => {
+            folder_obj.files_list.forEach(file => {
 
                // assign folder_path to context remove the 'root_folder' part from path
                this.#context.field_filters[0].value = file.path.replace(this.#root_folder,'')
@@ -221,9 +229,16 @@ class Files {
                   list.append(list_item)
                }
             })
-            
+
             // assemble
-            if(file_list) file_list.replaceChildren(list)
+            if(list.hasChildNodes()) {
+               if(file_list) file_list.replaceChildren(list)
+            }
+            else {
+               let msg = create_div({text:'Empty folder.'})
+               if(file_list) file_list.replaceChildren(msg)
+            }
+            
             if(file_view) file_view.replaceChildren()
             setTimeout(() => this.activate_file_links(),100)
             
@@ -234,6 +249,13 @@ class Files {
                'files_outcome',
                `The folder you selected is not within the Collections Folders.`)
          }
+      }
+      else {
+         let msg = create_div({text:'Empty folder.'})
+         if(file_list) file_list.replaceChildren(msg)
+         if(file_view) file_view.replaceChildren()
+         let folder_name = folder_obj.folder_name.toString()
+         if(folder_selected) folder_selected.innerText = folder_name.replace(this.#root_folder,'')
       }
    }
 
