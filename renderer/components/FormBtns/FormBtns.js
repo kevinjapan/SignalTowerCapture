@@ -18,7 +18,7 @@ class FormBtns {
          attributes:[
             {key:'data-id',value:item && typeof item !== 'undefined' ? item.id : null}
          ],
-         classlist:['apply_btn'],
+         classlist:['apply_btn','form_btn'],
          text:'Apply'
       })
       btn_group.append(apply_btn)
@@ -28,7 +28,7 @@ class FormBtns {
             attributes:[
                {key:'data-id',value:item && typeof item !== 'undefined' ? item.id : null}
             ],
-            classlist:['cancel_btn'],
+            classlist:['cancel_btn','form_btn'],
             text:'Cancel'
          })
          btn_group.append(cancel_btn)

@@ -23,7 +23,7 @@ class AlphabetCtrl {
          attributes:[
             {key:'id',value:'reset_btn'}
          ],
-         classlist:['alpha_ctrl_btn','border','h_2','m_0','p_0.25','pt_0','pb_0','cursor_pointer'],
+         classlist:['alpha_ctrl_btn','form_btn','border','h_2','m_0','p_0.25','pt_0','pb_0','cursor_pointer'],
          text:'All'
       })
 
@@ -33,7 +33,7 @@ class AlphabetCtrl {
                attributes:[
                   {key:'char',value:char}
                ],
-               classlist:['alpha_ctrl_btn','border','h_2','m_0','p_0.25','pl_0.5','pr_0.5','pt_0','pb_0','cursor_pointer'],
+               classlist:['alpha_ctrl_btn','form_btn','border','h_2','m_0','p_0.25','pl_0.5','pr_0.5','pt_0','pb_0','cursor_pointer'],
                text:char
             })
          )

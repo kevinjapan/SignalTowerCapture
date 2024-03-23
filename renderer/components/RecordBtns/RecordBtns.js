@@ -15,7 +15,7 @@ class RecordBtns {
          attributes:[
             {key:'data-id',value:typeof item_id !== 'undefined' ? item_id : null},
          ],
-         classlist:['edit_button'],
+         classlist:['edit_button','form_btn'],
          text:'Edit'
       })
 
@@ -25,13 +25,13 @@ class RecordBtns {
             attributes:[
                {key:'data-id',value:typeof item_id !== 'undefined' ? item_id : null},
             ],
-            classlist:['back_btn'],
+            classlist:['back_btn','form_btn'],
             text:'Back'
          })
       }
 
       const open_folder_btn = create_button({
-         classlist:['open_folder_btn'],
+         classlist:['open_folder_btn','form_btn'],
          text:'Open Folder'
       })
 
