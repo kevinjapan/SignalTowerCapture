@@ -31,18 +31,21 @@ class CollectionItemInjectForm {
       }
             
       // component container
-      const inject_form_container = create_section()
+      const inject_form_container = create_section({
+         classlist:['inject_form_container']
+      })
 
       const heading = create_h({
          level:'h3',
-         text:'Add Collection Item record'
+         text:'Add Collection Item record',
+         classlist:['border']
       })
 
       const item_form_wrap = create_section({
          attributes:[
             {key:'id',value:'item_form_wrap'}
          ],
-         classlist:['border']
+         classlist:['border','inject_form']
       })
       
       // assemble

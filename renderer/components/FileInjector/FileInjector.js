@@ -41,7 +41,7 @@ class FileInjector {
          const check_outcome = create_div({
             classlist:outcome_classes,
             attributes:outcome_attrs,
-            text:`There is a record for this folder. 
+            text:`There is already a record for this folder. 
                   For a Folder type record, you only need to nominate a single record.
                   If you wish to have a separate record for any specific file, please
                   move that file out of this folder.`
@@ -61,7 +61,7 @@ class FileInjector {
          const check_outcome = create_div({
             classlist:outcome_classes,
             attributes:outcome_attrs,
-            text:`There is a record for this file.`
+            text:`There is already a record for this file.`
          })
          
          // assemble
@@ -75,18 +75,9 @@ class FileInjector {
       }
       else {         
 
-         // no matching record was found for this file         
-         const check_outcome = create_div({
-            classlist:outcome_classes,
-            attributes:outcome_attrs,
-            text:'There is no record for this file.'
-         })
-         const file = create_p({
-            text:this.#props.file
-         })
+         // no matching record was found for this file
    
          // assemble
-         file_injector.append(check_outcome,file)
          const inject_form = new CollectionItemInjectForm(this.#props)
          file_injector.appendChild(await inject_form.render())
 

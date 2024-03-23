@@ -679,6 +679,16 @@ label/[value|input] layout for Record and Form views
    color:grey;
    padding-top:8rem;
 }
+@media screen and (max-width: 768px) {
+   /* workaround for sm in Files injector form view */
+   .img_col {
+      padding-top:1rem;
+   }
+   section.inject_form_container img {
+      max-height:120px;
+      margin-bottom:100px;
+   }
+}
 .record_image {
    width:100%;
    border-radius:0.5rem;
