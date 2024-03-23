@@ -42,7 +42,6 @@ class CollectionItem {
       {key:'author_creator',data_type:'TEXT',editable:true,in_card:false,export:true,test:{type:'string',min:0,max:60}},
       {key:'people',data_type:'TEXT',editable:true,in_card:false,export:true,test:{type:'string',min:0,max:100}},
       {key:'source',data_type:'TEXT',editable:true,in_card:false,export:true,test:{type:'string',min:0,max:100}},
-      {key:'content_pages_count',data_type:'INTEGER DEFAULT 1',editable:true,in_card:false,export:true,test:{type:'int',min:0,max:50}},
       {key:'tags',data_type:'TEXT',editable:true,in_card:true,hidden:true,export:true,test:{type:'string',min:0,max:200}},
       {key:'id',data_type:'INTEGER PRIMARY KEY',editable:false,in_card:false,export:true,test:{type:'int',min:1,max:9999999999}},
       {key:'created_at',data_type:'TEXT NOT NULL',editable:false,in_card:false,export:true,test:{type:'date',min:10,max:24}},
@@ -344,16 +343,12 @@ class CollectionItem {
       const file_type_pos = field_keys.findIndex((key) => key === 'file_type')
       if(field_values[file_type_pos] === undefined) field_values[file_type_pos] = 'File'
 
-    
       // Populate required dates if they are undefined
       let created_at = get_sqlready_datetime()
       const created_at_pos = field_keys.findIndex((key) => key === 'created_at')
       const updated_at_pos = field_keys.findIndex((key) => key === 'updated_at')
       if(field_values[created_at_pos] === undefined) field_values[created_at_pos] = created_at
       if(field_values[updated_at_pos] === undefined) field_values[updated_at_pos] = created_at
-
-      console.log('field_keys',field_keys)
-      console.log('field_values',field_values)
 
       const sql = `INSERT INTO collection_items(${field_keys.toString()}) 
                    VALUES(${inserts.toString()})`
