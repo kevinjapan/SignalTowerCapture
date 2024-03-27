@@ -47,6 +47,9 @@ export const create_ul = (props) => {
 export const create_li = (props) => {
    return create_element('li',props)
 }
+export const create_a = (props) => {
+   return create_element('a',props)
+}
 
 // Heading
 // additional prop - level:'h1'
