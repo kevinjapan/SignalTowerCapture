@@ -1,4 +1,6 @@
 import { create_img } from '../utilities/ui_elements.js'
+import { trim_start_char } from '../utilities/ui_strings.js'
+import { create_div,create_a } from '../utilities/ui_elements.js'
 
 
 
@@ -95,6 +97,10 @@ export const build_img_elem = (id,file_path,alt_text = 'image',attributes = [],c
    return img
 }
 
+export const filetype_icon = (id,filetype,ext = 'unknown') => {
+   const icon = filetype.toUpperCase() === 'FILE' ? 'imgs\\filetypes\\file.svg' : 'imgs\\filetypes\\folder.svg'              
+   return build_img_elem(`icon_${id}`,icon,`${filetype.toUpperCase() === 'DIR' ? 'Folder' : ext} filetype`,[{key:'height',value:'12px'}],['pr_0.25','pt_0.25']) 
+}
 
 // 
 // Load Card images as they enter viewport.
@@ -162,3 +168,44 @@ export const ints_array = (strings_array) => {
       }
    })
 }
+
+
+// 
+// Create links to folders in a string path
+// we don't inc root_folder in the displayed path string but use it to locate files
+//
+export const linked_path = (root_folder,path) => {
+
+   if(path === undefined) return ''
+   path = path.replace(root_folder,'')
+
+   // labels
+   const labels = trim_start_char(path,'\\').split('\\')
+
+   // we build backwards - removing sub-folders as we go..
+   let links = [path]
+   while(path.lastIndexOf('\\') > 0) {
+      path = path.slice(0,path.lastIndexOf('\\'))
+      if(path) links.push(path)
+   }
+
+   const display_path_elem = create_div({
+      classlist:['flex']
+   })   
+   // build path string elems
+   let labels_index = 0
+   for(let i = links.length - 1; i >= 0; i--) {
+      let link = create_div({
+         attributes:[
+            {key:'data-folder-link',value:links[i]}
+         ],
+         classlist:['folder_path_link','cursor_pointer','pl_0.25','text_blue'],
+         text:'\\ ' + labels[labels_index]
+      })
+      display_path_elem.append(link)
+      labels_index++
+   }
+   return display_path_elem
+}
+
+
