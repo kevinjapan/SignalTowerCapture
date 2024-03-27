@@ -279,7 +279,7 @@ class CollectionItemForm {
          // display the file if it's a valid img and it exists
          if(field.key === 'file_name' && this.#props.item) {
             let relative_folder_path = this.#props.item['folder_path']
-            let file_path = `${this.#root_folder}${relative_folder_path}\\${this.#props.item[field.key]}`
+            let file_path = `${this.#root_folder}\\${relative_folder_path}\\${this.#props.item[field.key]}`
             await this.display_image_or_filetype(img_col,file_path,this.#props.item['img_desc'])
          }
       })
