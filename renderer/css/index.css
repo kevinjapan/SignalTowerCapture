@@ -189,6 +189,10 @@ button.disabled:hover {
    -ms-flex-preferred-size: 100%;
    flex-basis: 100%;
 }
+.no_wrap {
+   -ms-flex-wrap:nowrap;
+   flex-wrap:nowrap;
+}
 .justify_center {
    -webkit-box-pack:center;
    -ms-flex-pack:center;
@@ -316,6 +320,7 @@ button.disabled:hover {
 .p_2 {padding:2rem;}
 .p_3 {padding:3rem;}
 .p_4 {padding:4rem;}
+.pt_\.25,.pt_0\.25 {padding-top:.25rem;}
 .pt_\.3,.pt_0\.3 {padding-top:.3rem;}
 .pt_\.5,.pt_0\.5 {padding-top:.5rem;}
 .pt_\.75,.pt_0\.75 {padding-top:.75rem;}
@@ -531,11 +536,15 @@ textarea {
    visibility:visible;
 }
 
+/* clearly distinguish non-editable form fields */
 input[disabled],
-textarea[disabled] {
+input[readonly],
+textarea[disabled],
+textarea[readonly] {
    outline:none;
    background:hsl(0, 0%, 96%);
 }
+
 label,.label {
    color:hsl(0, 0%, 30%);
    font-weight:400;
@@ -737,7 +746,6 @@ input[type='checkbox']::before {
 input[type='checkbox']:checked::before {
    transform: scale(.8);
 }
-
 
 /* 
    CollectionItemRecord styles 
