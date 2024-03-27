@@ -192,6 +192,15 @@ export const linked_path = (root_folder,path) => {
    const display_path_elem = create_div({
       classlist:['flex']
    })   
+
+   const root_folder_link = create_div({
+      attributes:[
+         {key:'data-folder-link',value:root_folder}
+      ],
+      classlist:['folder_path_link','cursor_pointer','pl_0.25','text_blue'],
+      text:root_folder.substring(root_folder.lastIndexOf('\\') + 1)
+   })
+   display_path_elem.append(root_folder_link)
    // build path string elems
    let labels_index = 0
    for(let i = links.length - 1; i >= 0; i--) {
