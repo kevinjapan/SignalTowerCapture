@@ -67,12 +67,6 @@ class Files {
             let temp = result.app_config.root_folder
             this.#root_folder = temp.split(/\ /).join('\ ');
 
-            // root folder
-            const root_sub_heading = create_h({
-               level:'h5',
-               text:'Root folder: ' + this.#root_folder
-            })
-
             // open folder btn
             const open_folder_btn = create_button({
                attributes:[
@@ -104,7 +98,7 @@ class Files {
             files_layout.append(file_list,file_view)
 
             // assemble
-            files_section.append(root_sub_heading,open_folder_btn)
+            files_section.append(open_folder_btn)
                   
             this.#breadcrumb_nav = new BreadCrumbNav(this.open_folder)
             if(this.#breadcrumb_nav) {
@@ -116,12 +110,19 @@ class Files {
             if(this.#props && this.#props.folder_path) {
                this.#breadcrumb_nav.hydrate(this.#root_folder,this.#props.folder_path)
             }
+            else {
+               // to do : show root_folder as base of breadcrumb - console.log('likely won\'t work')
+               //this.#breadcrumb_nav.hydrate(this.#root_folder,this.#root_folder)
+            }
 
             // if we are coming 'back' from a Record, open the appropriate folder
             if(this.#props) {
                if(this.#props.folder_path) {
                   setTimeout(() => this.open_folder(this.#props.folder_path),100)  
                }
+            }
+            else {
+               setTimeout(() => this.open_folder(),100) 
             }
 
             files_section.append(files_layout)
@@ -151,7 +152,6 @@ class Files {
          })
       }
    }
-
 
    // enable buttons/links displayed in the render
    //
@@ -208,8 +208,6 @@ class Files {
 
    // return first existing record for the filename
    find_matching_file_record = (filename) => {
-      console.log('checking file',filename)
-      console.log('register',this.#matching_records)
       if(this.#matching_records) return this.#matching_records.find(item => item.file_name === filename)
       return null
    }
@@ -240,6 +238,7 @@ class Files {
    }
 
    open_folder = async(folder_path) => {
+      if(folder_path === undefined) folder_path = ''
       const files_list_obj = await window.files_api.getFolderFilesList(`${this.#root_folder}${folder_path}`)
       this.hydrate(files_list_obj)
    }
