@@ -1,18 +1,10 @@
 import FileInjector from '../FileInjector/FileInjector.js'
+import BreadCrumbNav from '../BreadCrumbNav/BreadCrumbNav.js'
 import Notification from '../Notification/Notification.js'
-import { trim_end_char } from '../../utilities/ui_strings.js'
-import {
-   create_section,
-   create_h,
-   create_div,
-   create_button,
-   create_ul,
-   create_li
-} from '../../utilities/ui_elements.js'
+import {trim_end_char} from '../../utilities/ui_strings.js'
+import {filetype_icon} from '../../utilities/ui_utilities.js'
+import {create_section,create_h,create_div,create_button,create_ul,create_li} from '../../utilities/ui_elements.js'
 
-
-
-// to do : review UI on sm screen widths
 
 class Files {
    
@@ -38,10 +30,12 @@ class Files {
       scroll_y:0
    }
 
+   #breadcrumb_nav
+
+
    constructor(props) {
       if(props) this.#props = props
    }
-
 
    render = async() => {
 
@@ -51,28 +45,19 @@ class Files {
             {key:'id',value:'files_section'}
          ]
       })      
-      // heading
       const heading = create_h({
          level:'h1',
          text:'Add a folder to the collection',
          classlist:['m_0']
       })
-      // outcome notification
       const files_outcome = create_div({
          attributes:[
             {key:'id',value:'files_outcome'}
          ]
       })
-      const folder_selected = create_div({
-         attributes:[
-            {key:'id',value:'folder_selected'},
-         ],
-         classlist:['p_1'],
-         text:this.#props ? this.#props.folder_path : 'Please select a folder.'
-      })
-
       files_section.append(heading,files_outcome)
 
+      // get root folder
       let result = await window.config_api.getAppConfig()
       
       if(typeof result != "undefined") {      
@@ -88,7 +73,7 @@ class Files {
                text:'Root folder: ' + this.#root_folder
             })
 
-            // open folder
+            // open folder btn
             const open_folder_btn = create_button({
                attributes:[
                   {key:'id',value:'open_folder_btn'}
@@ -101,6 +86,7 @@ class Files {
                classlist:['files_layout','m_0','p_0']
             })
 
+            // folder/file panels
             const file_list = create_div({
                attributes:[
                   {key:'id',value:'file_list'}
@@ -117,51 +103,28 @@ class Files {
 
             files_layout.append(file_list,file_view)
 
-
             // assemble
-            files_section.append(
-               root_sub_heading,
-               open_folder_btn,
-               folder_selected,
-               files_layout
-            )
-            
-            // if we have a provided 'selected_folder', we are coming 'back' from a Record, open the folder..
-            if(this.#props) {
-                  if(this.#props.folder_path) {
-
-                     const files_list = await window.files_api.getFolderFilesList(`${this.#root_folder}${this.#props.folder_path}`)
-
-                     if(files_list) {
-                        let list = create_ul({classlist:['flex','flex_col','gap_0.5','m_0','p_0']})
-                        let list_item
-                        files_list.forEach(file => {
-
-                           // assign folder_path to context, removing the 'root_folder' part
-                           this.#context.field_filters[0].value = file.path.replace(this.#root_folder,'')
-      
-                           if(file.type === 'file') {
-                              list_item = create_li({
-                                 attributes:[
-                                    {key:'data-file-path',value:file.path + '\\' + file.filename},
-                                    {key:'data-file-name',value:file.filename}
-                                 ],
-                                 classlist:['folder_item','cursor_pointer','m_0','p_0'],
-                                 text:file.filename
-                              })
-                              list.append(list_item)
-                           }
-                        })
-                        // assemble
-                        file_list.replaceChildren(list)
-                        setTimeout(() => this.activate_file_links(),100)
-
-                        // get our reference matching records
-                        await this.get_matching_records()
-                     }
-                  }
-               
+            files_section.append(root_sub_heading,open_folder_btn)
+                  
+            this.#breadcrumb_nav = new BreadCrumbNav(this.open_folder)
+            if(this.#breadcrumb_nav) {
+               files_section.append(this.#breadcrumb_nav.render())
+               setTimeout(() => this.#breadcrumb_nav.activate(),100)
             }
+
+            // if we are coming 'back' from a Record,, hydrate breadcrumb_nav
+            if(this.#props && this.#props.folder_path) {
+               this.#breadcrumb_nav.hydrate(this.#root_folder,this.#props.folder_path)
+            }
+
+            // if we are coming 'back' from a Record, open the appropriate folder
+            if(this.#props) {
+               if(this.#props.folder_path) {
+                  setTimeout(() => this.open_folder(this.#props.folder_path),100)  
+               }
+            }
+
+            files_section.append(files_layout)
          }
          else {
             setTimeout(() => Notification.notify('#files_outcome','Sorry, we couldn\'t locate the Collection Root Folder'),200)
@@ -174,8 +137,6 @@ class Files {
    }
 
  
-
-   //
    // enable buttons/links displayed in the render
    //
    activate = () => {
@@ -186,95 +147,30 @@ class Files {
 
          open_folder_btn.addEventListener('click',async(event) => {
             const files_list = await window.files_api.openFolderDlg(this.#root_folder)
-            this.display_file_list(files_list)            
+            if(files_list) this.hydrate(files_list)            
          })
       }
    }
 
-   
-   display_file_list = async(folder_obj) => {
 
-      const folder_selected = document.getElementById('folder_selected')
-               
-      const file_list = document.getElementById('file_list')
-      const file_view = document.getElementById('file_view')
-
-      if(folder_obj.files_list && folder_obj.files_list.length > 0) {
-
-         let list = create_ul({classlist:['flex','flex_col','gap_0.5','m_0','p_0']})
-         let list_item
-
-         // escape spaces in target 'folder_path'
-         const escaped_folder_path = folder_obj.files_list[0].path.split(/\ /).join('\ ');
-
-         // verify we are in Collections folders
-         if(escaped_folder_path.indexOf(this.#root_folder) === 0) { 
-
-            // build list of filenames (incs folders)
-            folder_obj.files_list.forEach(file => {
-
-               // assign folder_path to context remove the 'root_folder' part from path
-               this.#context.field_filters[0].value = file.path.replace(this.#root_folder,'')
-               if(folder_selected) folder_selected.innerText = file.path.replace(this.#root_folder,'')
-
-               if(file.type === 'file') {
-                  list_item = create_li({
-                     attributes:[
-                        {key:'data-file-path',value:file.path + '\\' + file.filename},
-                        {key:'data-file-name',value:file.filename}
-                     ],
-                     classlist:['folder_item','cursor_pointer','m_0','p_0'],
-                     text:file.filename
-                  })
-                  list.append(list_item)
-               }
-            })
-
-            // assemble
-            if(list.hasChildNodes()) {
-               if(file_list) file_list.replaceChildren(list)
-            }
-            else {
-               let msg = create_div({text:'Empty folder.'})
-               if(file_list) file_list.replaceChildren(msg)
-            }
-            
-            if(file_view) file_view.replaceChildren()
-            setTimeout(() => this.activate_file_links(),100)
-            
-            await this.get_matching_records()
-         }
-         else {
-            Notification.notify(
-               'files_outcome',
-               `The folder you selected is not within the Collections Folders.`)
-         }
-      }
-      else {
-         let msg = create_div({text:'Empty folder.'})
-         if(file_list) file_list.replaceChildren(msg)
-         if(file_view) file_view.replaceChildren()
-         let folder_name = folder_obj.folder_name.toString()
-         if(folder_selected) folder_selected.innerText = folder_name.replace(this.#root_folder,'')
-      }
-   }
-
-
-   //
    // enable buttons/links displayed in the render
    //
    activate_file_links = () => {
-      // select file item
-      const file_links = document.querySelectorAll('.folder_item')
+
+      // User clicks on a file in file_list element
+      // we display FileInjector for that file (either existing record or create new)
+      //
+      const file_links = document.querySelectorAll('.file_item')
       if(file_links) {
 
          file_links.forEach((file_link) => {
 
             file_link.addEventListener('click',async(event) => {
-
                const file_view = document.getElementById('file_view')
                const folder_path_filter = this.#context.field_filters.find(filter => filter.field = 'folder_path' )
 
+               // const path = event.target.getAttribute('data-file-path').replace(this.#root_folder,'')            
+               // this.open_folder(path)
                if(file_view) {
                   let props = {
                      context:this.#context,
@@ -292,10 +188,28 @@ class Files {
             })
          })
       }
+
+      // Use clicks on a folder in file_list element
+      // we load that folder and display it's contents (sub-folders and files)
+      //
+      const folder_items = document.querySelectorAll('.folder_item')
+      if(folder_items) {
+         folder_items.forEach((folder_item) => {
+            folder_item.addEventListener('click',async(event) => {
+               const path = event.target.getAttribute('data-file-path').replace(this.#root_folder,'')            
+               this.open_folder(path)
+            })
+         })
+      }
+
+
+
    }
 
    // return first existing record for the filename
    find_matching_file_record = (filename) => {
+      console.log('checking file',filename)
+      console.log('register',this.#matching_records)
       if(this.#matching_records) return this.#matching_records.find(item => item.file_name === filename)
       return null
    }
@@ -306,10 +220,10 @@ class Files {
       return null
    }
 
-   //
-   // get list of records matching 'folder_path' 
-   // we perform single db call and reference off of this rather than querying each time
-   //
+
+   // to identify if we have an existing record for the selected file
+   // we get a list of records matching 'folder_path' 
+   // we perform a single db call and reference off of this list rather than querying each time
    get_matching_records = async() => {
       try {
          const result = await window.collection_items_api.getItems(this.#context)
@@ -323,6 +237,119 @@ class Files {
 
    get_record_fields = () => {
       return this.#record_fields
+   }
+
+   open_folder = async(folder_path) => {
+      const files_list_obj = await window.files_api.getFolderFilesList(`${this.#root_folder}${folder_path}`)
+      this.hydrate(files_list_obj)
+   }
+
+   //
+   // Hydrate page components with new folder_obj : {folder_name,files_list}
+   //
+   hydrate = async(folder_obj) => {
+              
+      const file_list = document.getElementById('file_list')
+      const file_view = document.getElementById('file_view')
+
+      if(folder_obj.files_list && folder_obj.files_list.length > 0) {
+
+         let list = create_ul({classlist:['flex','no_wrap','flex_col','gap_0.5','m_0','p_0']})
+
+         // escape spaces in target 'folder_path'
+         const escaped_folder_path = folder_obj.files_list[0].path.split(/\ /).join('\ ');
+
+         // verify we are in Collections folders
+         if(escaped_folder_path.indexOf(this.#root_folder) === 0) { 
+
+            if(this.#breadcrumb_nav) {
+               this.#breadcrumb_nav.hydrate(this.#root_folder,folder_obj.folder_name)
+               setTimeout(() => this.#breadcrumb_nav.activate(),100)
+            }
+
+            // build list of filenames (incs folders)
+            folder_obj.files_list.forEach(file => {
+
+               let list_item
+
+               // assign folder_path to context remove the 'root_folder' part from path
+               this.#context.field_filters[0].value = file.path.replace(this.#root_folder,'')
+
+               if(file.type === 'file') {
+                  list_item = create_li({
+                     attributes:[
+                        {key:'data-file-path',value:file.path + '\\' + file.filename},
+                        {key:'data-file-name',value:file.filename}
+                     ],
+                     classlist:['flex','no_wrap','file_item','cursor_pointer','m_0','p_0'],
+                     text:file.filename
+                  })
+                  list_item.prepend(filetype_icon(file.filename,'file'))
+                  list.append(list_item)
+               }
+               else if(file.type === 'dir') {
+                  list_item = create_li({
+                     attributes:[
+                        {key:'data-file-path',value:file.path + '\\' + file.filename},
+                        {key:'data-file-name',value:file.filename}
+                     ],
+                     classlist:['flex','no_wrap','folder_item','cursor_pointer','m_0','p_0'],
+                     text:file.filename
+                  })
+                  list_item.prepend(filetype_icon(file.filename,'dir'))
+                  list.append(list_item)
+               }
+            })
+
+            // assemble
+            if(list.hasChildNodes()) {
+               if(file_list) file_list.replaceChildren(list)
+            }
+            else {
+               let msg = create_div({text:'There are no files in this folder.'})
+               if(file_list) file_list.replaceChildren(msg)
+            }
+            
+            if(file_view) file_view.replaceChildren()
+            setTimeout(() => this.activate_file_links(),100)
+            
+            await this.get_matching_records()
+            
+            // remove all event listeners
+            // to prevent proliferation of dynamically assigned path links, then re-activate base element btns etc
+            const files_section = document.getElementById('files_section')
+            if(files_section) {
+
+               // to do :     review this solution - workaround but may have issues - keep checking dev tools errors
+               //             was an initial non-breaking error - but appears to have disappeared
+               // replicate:  open 'jacobites' - open each pdf therein in descending order, then open 'Research_H_L'
+               // error:      Refused to apply inline style ...
+               // solution:   1 - use replaceChild() instead of innerHTML
+               //             2 - may have to manage removeEventListeners ourselves
+               files_section.innerHTML = files_section.innerHTML
+
+               this.activate()
+            }
+         }
+         else {
+            Notification.notify(
+               'files_outcome',
+               `The folder you selected is not within the Collections Folders.`)
+         }
+      }
+      else {
+         let msg = create_div({text:'There are no files in this folder.'})
+         if(file_list) file_list.replaceChildren(msg)
+         if(file_view) file_view.replaceChildren()
+
+         if(this.#breadcrumb_nav) {
+            this.#breadcrumb_nav.hydrate(this.#root_folder,folder_obj.folder_name)
+            setTimeout(() => this.#breadcrumb_nav.activate(),100)
+         }
+
+         // activate
+         this.activate_file_links()
+      }
    }
 
 }
