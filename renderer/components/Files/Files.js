@@ -81,9 +81,9 @@ class Files {
             })
 
             // folder/file panels
-            const file_list = create_div({
+            const file_list_elem = create_div({
                attributes:[
-                  {key:'id',value:'file_list'}
+                  {key:'id',value:'file_list_elem'}
                ],
                classlist:['border','m_0','p_0.5','overflow_auto','max_h_24','text_sm','text_grey']
             })
@@ -95,7 +95,7 @@ class Files {
                text:''
             })
 
-            files_layout.append(file_list,file_view)
+            files_layout.append(file_list_elem,file_view)
 
             // assemble
             files_section.append(open_folder_btn)
@@ -106,19 +106,17 @@ class Files {
                setTimeout(() => this.#breadcrumb_nav.activate(),100)
             }
 
+            const folder_path_filter = this.#props ? this.#props.context.field_filters.find(filter => filter.field = 'folder_path' ) : ''
+
             // if we are coming 'back' from a Record,, hydrate breadcrumb_nav
-            if(this.#props && this.#props.folder_path) {
-               this.#breadcrumb_nav.hydrate(this.#root_folder,this.#props.folder_path)
-            }
-            else {
-               // to do : show root_folder as base of breadcrumb - console.log('likely won\'t work')
-               //this.#breadcrumb_nav.hydrate(this.#root_folder,this.#root_folder)
+            if(this.#props && this.#props.context) {
+               this.#breadcrumb_nav.hydrate(this.#root_folder,folder_path_filter)
             }
 
             // if we are coming 'back' from a Record, open the appropriate folder
             if(this.#props) {
-               if(this.#props.folder_path) {
-                  setTimeout(() => this.open_folder(this.#props.folder_path),100)  
+               if(this.#props.context) {
+                  setTimeout(() => this.open_folder(folder_path_filter.value),100)  
                }
             }
             else {
@@ -153,11 +151,12 @@ class Files {
       }
    }
 
+
    // enable buttons/links displayed in the render
    //
    activate_file_links = () => {
 
-      // User clicks on a file in file_list element
+      // User clicks on a file in file_list_elem
       // we display FileInjector for that file (either existing record or create new)
       //
       const file_links = document.querySelectorAll('.file_item')
@@ -189,7 +188,7 @@ class Files {
          })
       }
 
-      // Use clicks on a folder in file_list element
+      // User clicks on a folder in file_list_elem
       // we load that folder and display it's contents (sub-folders and files)
       //
       const folder_items = document.querySelectorAll('.folder_item')
@@ -201,9 +200,6 @@ class Files {
             })
          })
       }
-
-
-
    }
 
    // return first existing record for the filename
@@ -218,9 +214,7 @@ class Files {
       return null
    }
 
-
-   // to identify if we have an existing record for the selected file
-   // we get a list of records matching 'folder_path' 
+   // Do we have an existing record for the selected file?
    // we perform a single db call and reference off of this list rather than querying each time
    get_matching_records = async() => {
       try {
@@ -243,12 +237,11 @@ class Files {
       this.hydrate(files_list_obj)
    }
 
-   //
    // Hydrate page components with new folder_obj : {folder_name,files_list}
    //
    hydrate = async(folder_obj) => {
               
-      const file_list = document.getElementById('file_list')
+      const file_list_elem = document.getElementById('file_list_elem')
       const file_view = document.getElementById('file_view')
 
       if(folder_obj.files_list && folder_obj.files_list.length > 0) {
@@ -302,12 +295,13 @@ class Files {
 
             // assemble
             if(list.hasChildNodes()) {
-               if(file_list) file_list.replaceChildren(list)
+               if(file_list_elem) file_list_elem.replaceChildren(list)
             }
             else {
                let msg = create_div({text:'There are no files in this folder.'})
-               if(file_list) file_list.replaceChildren(msg)
+               if(file_list_elem) file_list_elem.replaceChildren(msg)
             }
+            // file_list_elem.prepend(icon('up_arrow'))
             
             if(file_view) file_view.replaceChildren()
             setTimeout(() => this.activate_file_links(),100)
@@ -318,7 +312,6 @@ class Files {
             // to prevent proliferation of dynamically assigned path links, then re-activate base element btns etc
             const files_section = document.getElementById('files_section')
             if(files_section) {
-
                // to do :     review this solution - workaround but may have issues - keep checking dev tools errors
                //             was an initial non-breaking error - but appears to have disappeared
                // replicate:  open 'jacobites' - open each pdf therein in descending order, then open 'Research_H_L'
@@ -326,7 +319,6 @@ class Files {
                // solution:   1 - use replaceChild() instead of innerHTML
                //             2 - may have to manage removeEventListeners ourselves
                files_section.innerHTML = files_section.innerHTML
-
                this.activate()
             }
          }
@@ -338,7 +330,7 @@ class Files {
       }
       else {
          let msg = create_div({text:'There are no files in this folder.'})
-         if(file_list) file_list.replaceChildren(msg)
+         if(file_list_elem) file_list_elem.replaceChildren(msg)
          if(file_view) file_view.replaceChildren()
 
          if(this.#breadcrumb_nav) {
@@ -350,9 +342,7 @@ class Files {
          this.activate_file_links()
       }
    }
-
 }
-
 
 
 export default Files
