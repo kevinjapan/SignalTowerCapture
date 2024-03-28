@@ -339,6 +339,7 @@ button.disabled:hover {
 .pl_\.25,.pl_0\.25 {padding-left:.25rem;}
 .pl_\.5,.pl_0\.5 {padding-left:.5rem;}
 .pl_1 {padding-left:1rem;}
+.pl_2 {padding-left:2rem;}
 .pr_\.25,.pr_0\.25 {padding-right:.25rem;}
 .pr_\.5,.pr_0\.5 {padding-right:.5rem;}
 .pr_1 {padding-right:1rem;}
@@ -885,6 +886,7 @@ input[type='radio'] {
 #actions_section {
    position:relative;
 }
+/* app dimmer */
 .dlg_bg::before {
    content:'';
    position:fixed;
@@ -895,12 +897,11 @@ input[type='radio'] {
    background:black;
    opacity:.3;
 }
-
 .dlg {
    position:fixed;
    top:33%;
    left:33%;
-   width:33%;
+   width:50%;
    height:25%;
    background:white;
    opacity:1;
