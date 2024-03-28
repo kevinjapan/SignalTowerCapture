@@ -83,7 +83,10 @@ export const trim_end_char = (str,delim) => {
 // trim_start_char
 //
 export const trim_start_char = (str,delim) => {
-   return str.startsWith(str,delim) ? str.slice(1) : str
+   if(str !== undefined) {
+      return str.startsWith(str,delim) ? str.slice(1) : str
+   }
+   return str
 }
 
 //
