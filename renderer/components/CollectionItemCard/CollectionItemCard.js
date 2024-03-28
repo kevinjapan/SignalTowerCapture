@@ -72,7 +72,7 @@ class CollectionItemCard {
                   classlist:['pt_0.3'],
                   text:field_value
                })
-               const icon = field_value.toUpperCase() === 'FILE' ? 'imgs\\filetypes\\file.svg' : 'imgs\\filetypes\\folder.svg'
+               const icon = field_value.toUpperCase() === 'FILE' ? 'imgs\\filetypes\\file.svg' : 'imgs\\icons\\folder.svg'
                const ext = field_value.slice(-3,field_value.length)               
                const file_type = build_img_elem(`file_folder_${item.id}`,icon,`${ext} filetype`,[{key:'height',value:'24px'}],[]) 
                file_type_block.append(file_type,field_element)
