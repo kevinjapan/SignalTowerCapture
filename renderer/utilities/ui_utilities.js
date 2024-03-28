@@ -1,6 +1,6 @@
 import { create_img } from '../utilities/ui_elements.js'
 import { trim_start_char } from '../utilities/ui_strings.js'
-import { create_div,create_a } from '../utilities/ui_elements.js'
+import { create_div } from '../utilities/ui_elements.js'
 
 
 
@@ -98,8 +98,17 @@ export const build_img_elem = (id,file_path,alt_text = 'image',attributes = [],c
 }
 
 export const filetype_icon = (id,filetype,ext = 'unknown') => {
-   const icon = filetype.toUpperCase() === 'FILE' ? 'imgs\\filetypes\\file.svg' : 'imgs\\filetypes\\folder.svg'              
+   const icon = filetype.toUpperCase() === 'FILE' ? 'imgs\\filetypes\\file.svg' : 'imgs\\icons\\folder.svg'              
    return build_img_elem(`icon_${id}`,icon,`${filetype.toUpperCase() === 'DIR' ? 'Folder' : ext} filetype`,[{key:'height',value:'12px'}],['pr_0.25','pt_0.25']) 
+}
+
+export const icon = (icon_name) => {
+   const icons = {
+      'UP_ARROW':'imgs\\icons\\arrow-up-left-square.svg',
+      'FOLDER_OPEN':'imgs\\icons\\folder2-open.svg'
+   }
+   // to do : gen random id or get from client..
+   return build_img_elem(icon_name,icons[icon_name.toUpperCase()],[{key:'height',value:'12px'}],['pr_0.25','pt_0.25']) 
 }
 
 // 
@@ -182,17 +191,28 @@ export const linked_path = (root_folder,path) => {
    // labels
    const labels = trim_start_char(path,'\\').split('\\')
 
-   // we build backwards - removing sub-folders as we go..
-   let links = [path]
+   // process backwards - reducing as we go
+   let links = path ? [path] : []
    while(path.lastIndexOf('\\') > 0) {
       path = path.slice(0,path.lastIndexOf('\\'))
       if(path) links.push(path)
    }
 
+   // align w/ labels order
+   let reversed_links = links.reverse()
+
+   // truncate (replace mid-folders w/ '...') for x-long paths
+   let truncated = create_div({text:''})
+   if(reversed_links.length > 4) {
+      truncated = create_div({text:'...',classlist:['pl_1']})
+      reversed_links.splice(0,reversed_links.length - 5)
+      labels.splice(0,labels.length - 5)
+   }
+
+   // the path component
    const display_path_elem = create_div({
       classlist:['flex']
    })   
-
    const root_folder_link = create_div({
       attributes:[
          {key:'data-folder-link',value:root_folder}
@@ -200,19 +220,23 @@ export const linked_path = (root_folder,path) => {
       classlist:['folder_path_link','cursor_pointer','pl_0.25','text_blue'],
       text:root_folder.substring(root_folder.lastIndexOf('\\') + 1)
    })
-   display_path_elem.append(root_folder_link)
-   // build path string elems
-   let labels_index = 0
-   for(let i = links.length - 1; i >= 0; i--) {
+   
+   display_path_elem.prepend(filetype_icon(root_folder_link,'dir'))
+   display_path_elem.append(root_folder_link,truncated)
+
+   // build path string elems - we step through backwards
+   for(let i = 0; i < reversed_links.length; i++) {
       let link = create_div({
          attributes:[
-            {key:'data-folder-link',value:links[i]}
+            {key:'data-folder-link',value:reversed_links[i]}
          ],
-         classlist:['folder_path_link','cursor_pointer','pl_0.25','text_blue'],
-         text:'\\ ' + labels[labels_index]
+         classlist:['flex','folder_path_link','cursor_pointer','pl_1','text_blue'],
+         text:'' + labels[i]
       })
+      // mark final link as 'open'
+      i === reversed_links.length - 1 ? link.prepend(icon('folder_open'),create_div({classlist:['p_0.25']})) :  link.prepend(filetype_icon(labels[i],'dir'))
+      link.prepend(create_div({text:'\\',classlist:['pr_0.5']}))
       display_path_elem.append(link)
-      labels_index++
    }
    return display_path_elem
 }
