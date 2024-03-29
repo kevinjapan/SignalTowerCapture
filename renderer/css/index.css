@@ -414,6 +414,9 @@ button.disabled:hover {
 .text_sm {
    font-size:.95rem;
 }
+.text_lg {
+   font-size:1.1rem;
+}
 .inline_block {
    display:inline-block;
 }
