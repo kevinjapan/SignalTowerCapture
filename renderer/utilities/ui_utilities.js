@@ -1,5 +1,5 @@
 import { create_img } from '../utilities/ui_elements.js'
-import { trim_start_char } from '../utilities/ui_strings.js'
+import { trim_start_char,truncate } from '../utilities/ui_strings.js'
 import { create_div } from '../utilities/ui_elements.js'
 
 
@@ -32,7 +32,7 @@ export const is_img_ext = (file_name) => {
    const supported = [
       'jpg','jpeg','gif','png','svg','webp','avif','apng'
    ]
-   let ext = file_name.slice(-3,file_name.length)
+   let ext = get_ext(file_name)
    return supported.some((supported_ext) => {
       return supported_ext.toUpperCase() === ext.toUpperCase()
    })
@@ -67,25 +67,30 @@ const filetype_icons = {
    'XLSX':'imgs\\filetypes\\filetype-xlsx.svg'
 }
 
+export const get_ext = (file_name) => {
+   return file_name.substring(file_name.lastIndexOf('.') + 1)
+}
+
 // Display filetype img and icon
 // currently same, but we may distinguish btwn in future
 export const get_file_type_img = (file_name) => {
-   let ext = file_name.slice(-3,file_name.length).toUpperCase()
+   let ext = get_ext(file_name).toUpperCase()
    return filetype_icons[ext] ? filetype_icons[ext] : 'imgs\\filetypes\\file.svg'
 }
 export const get_file_type_icon = (file_name) => {
-   let ext = file_name.slice(-3,file_name.length).toUpperCase()
+   let ext = get_ext(file_name).toUpperCase()
    return filetype_icons[ext] ? filetype_icons[ext] : 'imgs\\filetypes\\file.svg' 
 }
 
-export const build_img_elem = (id,file_path,alt_text = 'image',attributes = [],classlist = []) => {
+
+export const build_img_elem = (file_path,alt_text = 'image',attributes = [],classlist = []) => {
    
    let attrs = [
-      {key:'id',value:id},
       {key:'src',value:file_path},
       {key:'alt',value:alt_text},
       ...attributes
    ]
+
    let classes = [
       ...classlist
    ]
@@ -99,7 +104,12 @@ export const build_img_elem = (id,file_path,alt_text = 'image',attributes = [],c
 
 export const filetype_icon = (id,filetype,ext = 'unknown') => {
    const icon = filetype.toUpperCase() === 'FILE' ? 'imgs\\filetypes\\file.svg' : 'imgs\\icons\\folder.svg'              
-   return build_img_elem(`icon_${id}`,icon,`${filetype.toUpperCase() === 'DIR' ? 'Folder' : ext} filetype`,[{key:'height',value:'12px'}],['pr_0.25','pt_0.25']) 
+   return build_img_elem(icon,`${filetype.toUpperCase() === 'DIR' ? 'Folder' : ext} filetype`,[{key:'height',value:'14px'}],['pr_0.25','pt_0.3']) 
+}
+
+const folder_icon = (folder_icon_type) => {
+   const icon = folder_icon_type.toUpperCase() === 'DIR' ? 'imgs\\icons\\folder.svg' : 'imgs\\icons\\folder2-open.svg'
+   return build_img_elem(icon,`${folder_icon_type.toUpperCase() === 'DIR' ? 'Folder' : 'Open Folder'}`,[{key:'height',value:'14px'}],['pr_0.25','pt_0.3']) 
 }
 
 export const icon = (icon_name) => {
@@ -107,8 +117,7 @@ export const icon = (icon_name) => {
       'UP_ARROW':'imgs\\icons\\arrow-up-left-square.svg',
       'FOLDER_OPEN':'imgs\\icons\\folder2-open.svg'
    }
-   // to do : gen random id or get from client..
-   return build_img_elem(icon_name,icons[icon_name.toUpperCase()],[{key:'height',value:'12px'}],['pr_0.25','pt_0.25']) 
+   return build_img_elem(icons[icon_name.toUpperCase()],[{key:'height',value:'14px'}],['pr_0.25','pt_0.25']) 
 }
 
 // 
@@ -179,6 +188,21 @@ export const ints_array = (strings_array) => {
 }
 
 
+const get_linked_path_tokens = (path) => {
+   // we process backwards - reducing path str as we go
+   let links = path ? [{'label':path.substring(path.lastIndexOf('\\') + 1),'path':path}] : []
+   while(path.lastIndexOf('\\') > 0) {
+      path = path.slice(0,path.lastIndexOf('\\'))
+      if(path) {
+         links.push({
+            'label':path.substring(path.lastIndexOf('\\') + 1),
+            'path':path
+         })
+      }
+   }
+   return links.reverse()
+}
+
 // 
 // Create links to folders in a string path
 // we don't inc root_folder in the displayed path string but use it to locate files
@@ -188,53 +212,41 @@ export const linked_path = (root_folder,path) => {
    if(path === undefined) return ''
    path = path.replace(root_folder,'')
 
-   // labels
-   const labels = trim_start_char(path,'\\').split('\\')
+   const tokens = get_linked_path_tokens(path)
 
-   // process backwards - reducing as we go
-   let links = path ? [path] : []
-   while(path.lastIndexOf('\\') > 0) {
-      path = path.slice(0,path.lastIndexOf('\\'))
-      if(path) links.push(path)
-   }
-
-   // align w/ labels order
-   let reversed_links = links.reverse()
-
-   // truncate (replace mid-folders w/ '...') for x-long paths
-   let truncated = create_div({text:''})
-   if(reversed_links.length > 4) {
-      truncated = create_div({text:'...',classlist:['pl_1']})
-      reversed_links.splice(0,reversed_links.length - 5)
-      labels.splice(0,labels.length - 5)
+   // truncate link tokens if long path str
+   let truncated_spacer = create_div({text:''})
+   if(tokens.length > 3) {
+      truncated_spacer = create_div({text:'\\   ....',classlist:['pl_1']})
+      tokens.splice(0,tokens.length - 3)
    }
 
    // the path component
    const display_path_elem = create_div({
       classlist:['flex']
-   })   
+   })
+
+   // root is a separate element
    const root_folder_link = create_div({
       attributes:[
          {key:'data-folder-link',value:root_folder}
       ],
       classlist:['folder_path_link','cursor_pointer','pl_0.25','text_blue'],
       text:root_folder.substring(root_folder.lastIndexOf('\\') + 1)
-   })
-   
+   })   
    display_path_elem.prepend(filetype_icon(root_folder_link,'dir'))
-   display_path_elem.append(root_folder_link,truncated)
+   display_path_elem.append(root_folder_link,truncated_spacer)
 
-   // build path string elems - we step through backwards
-   for(let i = 0; i < reversed_links.length; i++) {
+   // folder link elements
+   for(let i = 0; i < tokens.length; i++) {
       let link = create_div({
          attributes:[
-            {key:'data-folder-link',value:reversed_links[i]}
+            {key:'data-folder-link',value:tokens[i].path}
          ],
-         classlist:['flex','folder_path_link','cursor_pointer','pl_1','text_blue'],
-         text:'' + labels[i]
+         classlist:['flex','folder_path_link','cursor_pointer','pl_1',i < tokens.length - 1 ? 'text_blue' : ''],
+         text:truncate(tokens[i].label,15)
       })
-      // mark final link as 'open'
-      i === reversed_links.length - 1 ? link.prepend(icon('folder_open'),create_div({classlist:['p_0.25']})) :  link.prepend(filetype_icon(labels[i],'dir'))
+      link.prepend(folder_icon(i === tokens.length - 1 ? 'folder_open' : 'dir'))
       link.prepend(create_div({text:'\\',classlist:['pr_0.5']}))
       display_path_elem.append(link)
    }
