@@ -205,7 +205,7 @@ const get_linked_path_tokens = (path) => {
 
 // 
 // Create links to folders in a string path
-// we don't inc root_folder in the displayed path string but use it to locate files
+// root_folder is always present and handled separately
 //
 export const linked_path = (root_folder,path) => {
 
