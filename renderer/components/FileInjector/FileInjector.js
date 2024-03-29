@@ -41,7 +41,7 @@ class FileInjector {
          const check_outcome = create_div({
             classlist:outcome_classes,
             attributes:outcome_attrs,
-            text:`There is already a record for this folder. 
+            text:`There is an existing record for this folder. 
                   For a Folder type record, you only need to nominate a single record.
                   If you wish to have a separate record for any specific file, please
                   move that file out of this folder.`
@@ -58,18 +58,8 @@ class FileInjector {
       else if(matching_file_record) {
 
          // a matching record for this file was found
-         const check_outcome = create_div({
-            classlist:outcome_classes,
-            attributes:outcome_attrs,
-            text:`There is already a record for this file.`
-         })
-         
-         // assemble
-         file_injector.append(check_outcome)
-
          const collection_item_card = new CollectionItemCard(this.#props)
          file_injector.appendChild(collection_item_card.render(record_fields,matching_file_record))
-
          setTimeout(() => collection_item_card.activate(),200)
          
       }

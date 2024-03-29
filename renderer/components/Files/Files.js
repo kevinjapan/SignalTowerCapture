@@ -67,14 +67,6 @@ class Files {
             let temp = result.app_config.root_folder
             this.#root_folder = temp.split(/\ /).join('\ ');
 
-            // open folder btn
-            const open_folder_btn = create_button({
-               attributes:[
-                  {key:'id',value:'open_folder_btn'}
-               ],
-               text:'Open Folder'
-            })
-
             // 2-col layout
             const files_layout = create_div({
                classlist:['files_layout','m_0','p_0']
@@ -97,9 +89,7 @@ class Files {
 
             files_layout.append(file_list_elem,file_view)
 
-            // assemble
-            files_section.append(open_folder_btn)
-                  
+            // assemble                  
             this.#breadcrumb_nav = new BreadCrumbNav(this.open_folder)
             if(this.#breadcrumb_nav) {
                files_section.append(this.#breadcrumb_nav.render())
@@ -135,22 +125,11 @@ class Files {
       return files_section
    }
 
- 
    // enable buttons/links displayed in the render
    //
    activate = () => {
 
-      // open folder
-      const open_folder_btn = document.getElementById('open_folder_btn')
-      if(open_folder_btn) {
-
-         open_folder_btn.addEventListener('click',async(event) => {
-            const files_list = await window.files_api.openFolderDlg(this.#root_folder)
-            if(files_list) this.hydrate(files_list)            
-         })
-      }
    }
-
 
    // enable buttons/links displayed in the render
    //
@@ -246,7 +225,8 @@ class Files {
 
       if(folder_obj.files_list && folder_obj.files_list.length > 0) {
 
-         let list = create_ul({classlist:['flex','no_wrap','flex_col','gap_0.5','m_0','p_0']})
+         let list = create_ul({classlist:['flex','no_wrap','flex_col','gap_0.5','m_0','p_0','pb_0.5']})
+         let list2 = create_ul({classlist:['flex','no_wrap','flex_col','gap_0.5','m_0','p_0','pb_0.5']})
 
          // escape spaces in target 'folder_path'
          const escaped_folder_path = folder_obj.files_list[0].path.split(/\ /).join('\ ');
@@ -273,11 +253,11 @@ class Files {
                         {key:'data-file-path',value:file.path + '\\' + file.filename},
                         {key:'data-file-name',value:file.filename}
                      ],
-                     classlist:['flex','no_wrap','file_item','cursor_pointer','m_0','p_0'],
+                     classlist:['flex','no_wrap','file_item','cursor_pointer','m_0','p_0','text_lg','text_blue'],
                      text:file.filename
                   })
                   list_item.prepend(filetype_icon(file.filename,'file'))
-                  list.append(list_item)
+                  list2.append(list_item)
                }
                else if(file.type === 'dir') {
                   list_item = create_li({
@@ -285,19 +265,22 @@ class Files {
                         {key:'data-file-path',value:file.path + '\\' + file.filename},
                         {key:'data-file-name',value:file.filename}
                      ],
-                     classlist:['flex','no_wrap','folder_item','cursor_pointer','m_0','p_0'],
+                     classlist:['flex','no_wrap','folder_item','cursor_pointer','m_0','p_0','text_lg','text_blue'],
                      text:file.filename
                   })
                   list_item.prepend(filetype_icon(file.filename,'dir'))
                   list.append(list_item)
                }
             })
-
+            file_list_elem.replaceChildren()
             // assemble
             if(list.hasChildNodes()) {
-               if(file_list_elem) file_list_elem.replaceChildren(list)
+               if(file_list_elem) file_list_elem.append(list)
             }
-            else {
+            if(list2.hasChildNodes()) {
+               if(file_list_elem) file_list_elem.append(list2)
+            }
+            if(!list.hasChildNodes() && !list2.hasChildNodes()) {
                let msg = create_div({text:'There are no files in this folder.'})
                if(file_list_elem) file_list_elem.replaceChildren(msg)
             }
