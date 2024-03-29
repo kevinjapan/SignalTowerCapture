@@ -24,7 +24,7 @@ class BreadCrumbNav {
          attributes:[
             {key:'id',value:'breadcrumb_nav'},
          ],
-         classlist:['p_1'],
+         classlist:['p_1','text_lg'],
          text:'Please select a folder.'
       })
       return breadcrumb
