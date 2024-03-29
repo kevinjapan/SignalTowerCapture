@@ -1,6 +1,6 @@
 import App from '../App/App.js'
 import { create_section,create_button,create_div } from '../../utilities/ui_elements.js'
-import { is_img_ext,get_file_type_icon,file_exists,build_img_elem } from '../../utilities/ui_utilities.js'
+import { get_ext,is_img_ext,get_file_type_icon,file_exists,build_img_elem } from '../../utilities/ui_utilities.js'
 
 
 
@@ -78,20 +78,20 @@ class ImageViewer {
          if(is_img_ext(file_path)) {
 
             // process img file                  
-            let img = build_img_elem('record_img',file_path,'',attributes,['record_image'])
+            let img = build_img_elem(file_path,'',attributes,['record_image'])
             if(img) wrapper.replaceChildren(img_btn_group,img)
          }
          else {
 
             // process non-img file
             const icon_img_file_path = get_file_type_icon(file_path)
-            const ext = file_path.slice(-3,file_path.length)
-            let img = build_img_elem('record_img',icon_img_file_path,`${ext} file icon`,attributes,['record_image'])
+            const ext = get_ext(file_path)
+            let img = build_img_elem(icon_img_file_path,`${ext} file icon`,attributes,['record_image'])
             if(img) wrapper.replaceChildren(img_btn_group,img)
          }
       }
       else {
-         const no_file_icon_img = build_img_elem(`record_img`,'imgs\\icons\\exclamation-square.svg',`item date`,[{key:'height',value:'24px'}],['bg_yellow_100','mt_1'])
+         const no_file_icon_img = build_img_elem('imgs\\icons\\exclamation-square.svg',`item date`,[{key:'height',value:'24px'}],['bg_yellow_100','mt_1'])
          viewer.append(create_div(),no_file_icon_img)
          let msg = create_div({
             classlist:['text_sm'],

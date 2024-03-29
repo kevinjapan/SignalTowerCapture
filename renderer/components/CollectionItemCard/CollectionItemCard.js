@@ -3,7 +3,7 @@ import TagsLiteList from '../TagsLiteList/TagsLiteList.js'
 import { get_ui_ready_date } from '../../utilities/ui_datetime.js'
 import { create_section,create_div,create_h } from '../../utilities/ui_elements.js'
 import { trim_char,trim_end_char,truncate } from '../../utilities/ui_strings.js'
-import { is_img_ext,get_file_type_img,get_file_type_icon,file_exists,build_img_elem } from '../../utilities/ui_utilities.js'
+import { get_ext,is_img_ext,get_file_type_img,get_file_type_icon,file_exists,build_img_elem } from '../../utilities/ui_utilities.js'
 
 
 class CollectionItemCard {
@@ -73,8 +73,10 @@ class CollectionItemCard {
                   text:field_value
                })
                const icon = field_value.toUpperCase() === 'FILE' ? 'imgs\\filetypes\\file.svg' : 'imgs\\icons\\folder.svg'
-               const ext = field_value.slice(-3,field_value.length)               
-               const file_type = build_img_elem(`file_folder_${item.id}`,icon,`${ext} filetype`,[{key:'height',value:'24px'}],[]) 
+               
+               const ext = get_ext(field_value)
+
+               const file_type = build_img_elem(icon,`${ext} filetype`,[{key:'height',value:'24px'}],[]) 
                file_type_block.append(file_type,field_element)
 
                // append
@@ -94,8 +96,8 @@ class CollectionItemCard {
                })
 
                const icon = get_file_type_icon(field_value)
-               const ext = field_value.slice(-3,field_value.length)
-               const filetype_icon = build_img_elem(`card_img_${item.id}`,icon,`${ext} filetype`,[{key:'height',value:'24px'}],[])
+               const ext = get_ext(field_value)
+               const filetype_icon = build_img_elem(icon,`${ext} filetype`,[{key:'height',value:'24px'}],[])
                file_ext_type_block.append(filetype_icon,field_element)
 
                // append
@@ -117,7 +119,7 @@ class CollectionItemCard {
 
                   if(is_img_ext(file_part)) {
                      // process img file
-                     let img = build_img_elem(item.id,placeholder_file_path,item.img_desc,
+                     let img = build_img_elem(placeholder_file_path,item.img_desc,
                         [{key:'data-id',value:item.id},{key:'data-src',value:file_path}],
                         ['record_card_image','card_title_link','cursor_pointer']
                      )
@@ -126,8 +128,8 @@ class CollectionItemCard {
                   else {
                      // process non-img file
                      const icon_img_file_path = get_file_type_img(file_part)
-                     const ext = file_path.slice(-3,file_path.length)
-                     let img = build_img_elem(item.id,icon_img_file_path,`${ext} file icon`,
+                     const ext = get_ext(file_path)
+                     let img = build_img_elem(icon_img_file_path,`${ext} file icon`,
                         [{key:'data-id',value:item.id},{key:'data-src',value:icon_img_file_path},{key:'height',value:'40px'}],
                         ['record_card_image','card_title_link','cursor_pointer','pt_1']
                      )
@@ -135,7 +137,7 @@ class CollectionItemCard {
                   }                  
                }
                else {
-                  const no_file_icon_img = build_img_elem(`card_img_${item.id}`,'imgs\\icons\\exclamation-square.svg',`item date`,[{key:'height',value:'24px'}],['bg_yellow_100','mt_1'])
+                  const no_file_icon_img = build_img_elem('imgs\\icons\\exclamation-square.svg',`item date`,[{key:'height',value:'24px'}],['bg_yellow_100','mt_1'])
                   img_col.append(create_div(),no_file_icon_img)
                   let msg = create_div({
                      classlist:['text_sm'],
@@ -177,7 +179,7 @@ class CollectionItemCard {
                      classlist:['pt_0.3','break_words'],
                      text:field_value
                   })
-                  const filetype_icon = build_img_elem(`card_img_${item.id}`,'imgs\\icons\\calendar.svg',`item date`,[{key:'height',value:'24px'}],[])
+                  const filetype_icon = build_img_elem('imgs\\icons\\calendar.svg',`item date`,[{key:'height',value:'24px'}],[])
                   item_date_block.append(filetype_icon,field_element)
 
                   // append

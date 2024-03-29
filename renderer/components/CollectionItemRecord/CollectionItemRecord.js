@@ -2,7 +2,7 @@ import App from '../App/App.js'
 import RecordBtns from '../RecordBtns/RecordBtns.js'
 import RecordAdmin from '../RecordAdmin/RecordAdmin.js'
 import { ui_friendly_text,trim_char,trim_end_char } from '../../utilities/ui_strings.js'
-import { is_img_ext,get_file_type_icon,file_exists,build_img_elem,add_to_int_queue,ints_array } from '../../utilities/ui_utilities.js'
+import { get_ext,is_img_ext,get_file_type_icon,file_exists,build_img_elem,add_to_int_queue,ints_array } from '../../utilities/ui_utilities.js'
 import { create_section,create_div,create_p } from '../../utilities/ui_elements.js'
 
 
@@ -18,6 +18,7 @@ class CollectionItemRecord {
 
    constructor(props) {
       this.#props = props
+      console.log('Record props',props)
    }
 
    render = async() => {
@@ -130,14 +131,14 @@ class CollectionItemRecord {
                
                if(is_img_ext(file_path)) {                  
                   // process img file
-                  let img = build_img_elem('record_img',file_path,this.#props.item['img_desc'],[],['record_image'])
+                  let img = build_img_elem(file_path,this.#props.item['img_desc'],[],['record_image'])
                   if(img) img_col.append(img)
                }
                else {
                   // process non-img file
                   const icon_img_file_path = get_file_type_icon(file_path)
-                  const ext = file_path.slice(-3,file_path.length)
-                  let img = build_img_elem('record_img',icon_img_file_path,`${ext} file icon`,
+                  const ext = get_ext(file_path)
+                  let img = build_img_elem(icon_img_file_path,`${ext} file icon`,
                      [],
                      ['record_card_image','card_title_link','cursor_pointer']
                   )
@@ -146,7 +147,7 @@ class CollectionItemRecord {
                }
             }
             else {
-               const no_file_icon_img = build_img_elem(`record_img_not_found`,'imgs\\icons\\exclamation-square.svg',`item date`,[{key:'height',value:'24px'}],['bg_yellow_100','mt_1'])
+               const no_file_icon_img = build_img_elem('imgs\\icons\\exclamation-square.svg',`item date`,[{key:'height',value:'24px'}],['bg_yellow_100','mt_1'])
                img_col.append(create_div(),no_file_icon_img)
                let msg = create_div({
                   classlist:['text_sm'],
