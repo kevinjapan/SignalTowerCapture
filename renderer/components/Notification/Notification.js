@@ -19,7 +19,7 @@ class Notification {
                text:message
             })
             elem.replaceChildren(notification_card) 
-            if(fade_out) setTimeout(() => this.remove_notification(elem_selector),4000)
+            if(fade_out) setTimeout(() => this.remove_notification(elem_selector),7000)
          })
       }
    }
