@@ -57,7 +57,8 @@ contextBridge.exposeInMainWorld('actions_api', {
    backupDatabase: (file_name,file_path) => ipcRenderer.invoke('actions:backupDatabase',file_name,file_path),
    exportCSVFile: (file_name,folder_path) => ipcRenderer.invoke('actions:exportCSVFile',file_name,folder_path),
    exportJSONFile: (file_name,folder_path) => ipcRenderer.invoke('actions:exportJSONFile',file_name,folder_path),
-   importJSONFile: (file_path) => ipcRenderer.invoke('actions:importJSONFile',file_path)
+   importJSONFile: (file_path) => ipcRenderer.invoke('actions:importJSONFile',file_path),
+   importCSVFile: (file_path) => ipcRenderer.invoke('actions:importCSVFile',file_path)
 })
 
 contextBridge.exposeInMainWorld('files_api', {
@@ -68,7 +69,8 @@ contextBridge.exposeInMainWorld('files_api', {
    getFolderFilesList: (folder_path) => ipcRenderer.invoke('files:getFolderFilesList',folder_path),
    openFolder: (folder_path) => ipcRenderer.invoke('files:openFolder',folder_path),
    filePathSep: () => ipcRenderer.invoke('files:filePathSep'),
-   saveFile: (filters) => ipcRenderer.invoke('files:saveFile',filters)
+   saveFile: (filters) => ipcRenderer.invoke('files:saveFile',filters),
+   getFileSize: (file_path) => ipcRenderer.invoke('files:getFileSize',file_path)
 })
 
 contextBridge.exposeInMainWorld('dev_api_key', {

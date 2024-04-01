@@ -1,5 +1,6 @@
 import BackupComponent from '../BackupComponent/BackupComponent.js'
 import ExportCSVComponent from '../ExportCSVComponent/ExportCSVComponent.js'
+import ImportCSVComponent from '../ImportCSVComponent/ImportCSVComponent.js'
 import ExportJSONComponent from '../ExportJSONComponent/ExportJSONComponent.js'
 import ImportJSONComponent from '../ImportJSONComponent/ImportJSONComponent.js'
 import DeletedRecordsTeaser from '../DeletedRecordsTeaser/DeletedRecordsTeaser.js'
@@ -54,6 +55,7 @@ class Actions {
          setTimeout(() => export_component.activate(),200)
       }
 
+
       let export_json_section = create_section({
          attributes:[
             {key:'id',value:'export_json_section'}
@@ -76,8 +78,13 @@ class Actions {
       })   
       const import_heading = create_h({
          level:'h3',
-         text:'Import Files'
+         text:'Import Files'  // to do : this heading used?
       })
+      const import_csv_component = new ImportCSVComponent()
+      if(import_csv_component) {
+         import_section.append(import_csv_component.render())
+         setTimeout(() => import_csv_component.activate(),200)
+      }
       const import_json_component = new ImportJSONComponent()
       if(import_json_component) {
          import_section.append(import_json_component.render())
@@ -85,6 +92,7 @@ class Actions {
       }
 
 
+      
 
       // Soft Deleted Files Admin
 

@@ -20,6 +20,7 @@ const Tag = require('./models/Tag')
 const DatabaseBackup = require('./models/DatabaseBackup')
 const ExportCSVFile = require('./models/ExportCSVFile')
 const ExportJSONFile = require('./models/ExportJSONFile')
+const ImportCSVFile = require('./models/ImportCSVFile')
 const ImportJSONFile = require('./models/ImportJSONFile')
 const { is_valid_collection_item,is_valid_int,is_valid_search,is_valid_app_config_record } = require('./app/utilities/validation')
 const { NOTIFY } = require('./app/utilities/notifications')
@@ -128,6 +129,7 @@ app.whenReady().then(async() => {
    ipcMain.handle('actions:backupDatabase',backup_database)
    ipcMain.handle('actions:exportCSVFile',export_csv_file)
    ipcMain.handle('actions:exportJSONFile',export_json_file)
+   ipcMain.handle('actions:importCSVFile',import_csv_file)
    ipcMain.handle('actions:importJSONFile',import_json_file)
 
    // Files handlers
@@ -139,6 +141,7 @@ app.whenReady().then(async() => {
    ipcMain.handle('files:openFolder',open_folder)
    ipcMain.handle('files:filePathSep',file_path_sep)
    ipcMain.handle('files:saveFile',save_file)
+   ipcMain.handle('files:getFileSize',get_file_size)
 
    // Dev handlers
    if(is_dev) {
@@ -627,6 +630,24 @@ async function save_file (event,options) {
    }
 }
 
+async function get_file_size (event,file_path) {
+
+   const fs = require('fs')
+   try {
+      var stats = fs.statSync(file_path)
+      var file_bytes_size = stats.size      
+      return {
+         outcome:'success',
+         file_kb_size:Math.ceil(file_bytes_size / 1024)   // calc size in MB = file_bytes_size / (1024*1024)
+      }
+   }
+   catch(error) {
+      return {
+         outcome:'fail'
+      }
+   }
+}
+
 async function get_file_path (event,options) {
    
    const fs = require('fs')
@@ -707,19 +728,25 @@ async function get_folder_files_list (event,folder_path) {
 
    try {
       const files = fs.readdirSync(folder_path)
-
-      // 
       files.forEach(file => {
-         if (!fs.statSync(folder_path + '/' + file).isDirectory()) {
-            let file_object = {}
+         let file_object = {}
+         if (fs.statSync(folder_path + '/' + file).isDirectory()) {
+            file_object['type'] = 'dir'
+            file_object['filename'] = file
+            file_object['path'] = folder_path
+         }
+         else {
             file_object['type'] = 'file'
             file_object['filename'] = file
             file_object['path'] = folder_path
-            file_objects_list[count] = file_object
-            count++
          }
+         file_objects_list[count] = file_object
+         count++
       })
-      return file_objects_list
+      return {
+         folder_name:folder_path,
+         files_list:file_objects_list
+      }
    }
    catch(error) {
       // future : alerts are ugly - custom version?
@@ -740,6 +767,27 @@ async function export_csv_file(event,file_name,file_path) {
 
    let export_csv_file = new ExportCSVFile(database)
    const results = await export_csv_file.create(file_name,file_path)
+   return results
+}
+
+async function import_csv_file(event,file_path) {
+
+   // to do : complete adapion from import_json_file
+
+   if(!database) return NOTIFY.DATABASE_UNAVAILABLE
+
+   let import_csv_file = new ImportCSVFile(database)
+
+   let results = null
+   try {
+      results = await import_csv_file.import(file_path)
+   }
+   catch(error) {
+      return {
+         outcome:'fail',
+         message:'Sorry, there was a problem trying to import the CSV file.' + error
+      }
+   }
    return results
 }
 
