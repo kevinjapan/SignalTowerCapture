@@ -264,6 +264,10 @@ button.disabled:hover {
 .min_w_10 {min-width: 10rem;}
 .min_w_12 {min-width: 12rem;}
 
+.w_2_percent {width:2%;}
+.w_5_percent {width:5%;}
+.w_10_percent {width:10%;}
+
 .h_1 {height:1rem;}
 .h_2 {height:2rem;}
 .h_3 {height:3rem;}
@@ -905,7 +909,7 @@ input[type='radio'] {
    top:33%;
    left:33%;
    width:50%;
-   height:25%;
+   height:fit-content;
    background:white;
    opacity:1;
    border:solid 1px lightgrey;
