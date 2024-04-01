@@ -269,7 +269,7 @@ class CollectionItemRecord {
    display_tags = (tags_csv) => {
 
       if(tags_csv) {
-         const tags = tags_csv.split(',')
+         const tags = tags_csv.split('*')
          const tags_elem = create_div({
             classlist:['flex','gap_0.5']
          })

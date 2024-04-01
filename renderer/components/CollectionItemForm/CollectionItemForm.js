@@ -2,7 +2,7 @@ import App from '../App/App.js'
 import FormBtns from '../FormBtns/FormBtns.js'
 import Notification from '../../components/Notification/Notification.js'
 import { DESC } from '../../utilities/ui_descriptions.js'
-import { ui_friendly_text,trim_char,trim_end_char } from '../../utilities/ui_strings.js'
+import { ui_friendly_text,trim_end_char } from '../../utilities/ui_strings.js'
 import { get_ext,is_img_ext,get_file_type_icon,file_exists,build_img_elem } from '../../utilities/ui_utilities.js'
 import { create_section,create_div,create_form,create_label,create_button,create_input,
          create_textarea,create_checkbox_fieldset,create_radio_fieldset} from '../../utilities/ui_elements.js'
@@ -184,8 +184,10 @@ class CollectionItemForm {
 
             // current tags : this.#props.item[field.key]
             const current_tags = this.#props.item ?
-                  this.#props.item[field.key] ? this.#props.item[field.key].split(',') : []
+                  this.#props.item[field.key] ? this.#props.item[field.key].split('*') : []
                   : []
+
+            console.log(current_tags)
 
             // placeholder - we inject once promise is resolved..
             form.append(field_label,create_div({attributes:[{key:'id',value:'tags_placeholder'}]}))
@@ -193,7 +195,7 @@ class CollectionItemForm {
             try {
                this.#tags_obj = await window.tags_api.getTags(this.#props.context ? this.#props.context : {})
 
-               if (typeof this.#tags_obj != "undefined") {
+               if (typeof this.#tags_obj !== "undefined") {
             
                   if(this.#tags_obj.outcome === 'success') {
 
@@ -358,8 +360,11 @@ class CollectionItemForm {
                   let updated_collection_item = {}
                   for(const pair of form_data.entries()) {
                      // we don't escape_html since we never user innerHTML
+                     console.log(pair[1]) // to do : remove
                      updated_collection_item[pair[0]] = pair[1].trim()
                   }
+
+                  console.log('updated_collection_item',updated_collection_item)    // to do : remove
 
                   let response
                   if(this.#props.action === 'add') {
@@ -632,7 +637,7 @@ class CollectionItemForm {
                if(tags_input) {
 
                   // get existing tags list (remove any non-registered tag tokens)
-                  const curr_tags = tags_input.value.split(',').filter(e => e)
+                  const curr_tags = tags_input.value.split('*').filter(e => e)
                   const verified_curr_tags = curr_tags.filter(curr_tag => {
                      return this.#tags_obj.tags.some(tag => tag.tag === curr_tag)
                   })
@@ -643,7 +648,9 @@ class CollectionItemForm {
                   else {
                      existing_tags.add(event.target.value)
                   }
-                  tags_input.value = [...existing_tags].sort()
+                  
+                  // build str w/ '*' delimiter
+                  tags_input.value = [...existing_tags].sort().join('*')
                }
             })
          })

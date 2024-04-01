@@ -14,11 +14,18 @@ class TagsLiteList {
    // parent's callback 
    #actions_callback
 
+   // tags' delimiter
+   #delim = '*'
+
    constructor(key) {
       this.#key = key
    }
 
    render = async(tags,actions_callback) => {
+
+      if(tags === undefined || tags.length === 0) return
+
+      const tags_array = tags.split(this.#delim)
 
       this.#actions_callback = actions_callback
 
@@ -44,8 +51,8 @@ class TagsLiteList {
       let tag_elem
       let tag_text
 
-      if(tags) {
-         tags.forEach(tag => {
+      if(tags_array) {
+         tags_array.forEach(tag => {
             
             tag_elem = create_div({
                attributes:[

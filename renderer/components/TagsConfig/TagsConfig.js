@@ -72,7 +72,6 @@ class TagsConfig {
       
       // assemble
       tags_config_component.append(this.#tags_list_elem,add_tag_input,add_tag_btn,outcome_div)
-      
 
       return tags_config_component
    }
