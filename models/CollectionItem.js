@@ -2,6 +2,7 @@ const CollectionItemFTS = require('./CollectionItemFTS')
 const { get_sqlready_datetime,get_sqlready_date_from_js_date } = require('../app/utilities/datetime')
 const { is_valid_date } = require('../app/utilities/validation')
 const { trim_char } = require('../app/utilities/strings')
+const { assoc_arr_obj } = require('../app/utilities/utilities')
 const { 
    SEARCH_FIELDS,
    MIN_SEARCH_TERM_LEN,
@@ -23,7 +24,6 @@ class CollectionItem {
    // every read-all needs an absolute upper limit!
    #limit_read_all_records = 20000
 
-
    //
    // full_fields_list
    // Our methods return appropriate filtered arrays of eg 'field_names', and we build rows/forms/etc  
@@ -32,7 +32,7 @@ class CollectionItem {
    static #full_fields_list = [
       {key:'title',data_type:'TEXT NOT NULL',editable:true,injectable:true,in_card:true,export:true,test:{type:'string',min:3,max:100}},
       {key:'content_desc',data_type:'TEXT',editable:true,injectable:true,in_card:true,export:true,test:{type:'string',min:0,max:500}},
-      {key:'file_type',data_type:'TEXT DEFAULT "File" NOT NULL',editable:true,injectable:true,in_card:true,hidden:true,export:true,test:{type:'string',min:3,max:20}},
+      {key:'file_type',data_type:'TEXT NOT NULL',editable:true,injectable:true,in_card:true,hidden:true,export:true,test:{type:'string',min:3,max:20}},
       {key:'file_name',data_type:'TEXT NOT NULL',editable:true,injectable:true,readonly:true,in_card:true,export:true,test:{type:'string',min:5,max:100}},
       {key:'folder_path',data_type:'TEXT NOT NULL',editable:true,injectable:true,readonly:true,in_card:true,export:true,test:{type:'string',min:1,max:200}},
       {key:'img_desc',data_type:'TEXT DEFAULT "image"',editable:true,in_card:false,export:true,test:{type:'string',min:1,max:80}},
@@ -377,6 +377,61 @@ class CollectionItem {
       else {
          let fail_response = {
             query:'create_collection_item',
+            outcome:'fail',
+            message:'There was an error attempting to create the record. [CollectionItem.create]  ' + this.#last_error.message
+         }
+         this.clear_last_error()
+         return fail_response
+      }
+   }
+
+
+   // to do : 'tags' field can't be csv list
+   // in signal-tower-capture-export-2024-03-30-10 records.txt - we have already removed this limitation,
+   // but we need to re-instate list of tags w/ a different separator (not ',')
+
+   
+   async create_from_csv(csv) {
+
+      // get 1-d arr of raw data for keys and values
+      const field_keys = CollectionItem.#full_fields_list.map(field => field.key)
+      const values = csv.split(',')
+      
+      // we use intermediate mapping in an assoc array to cleanly remove key-value pairs (eg 'id')
+      const mapped_values = assoc_arr_obj(field_keys,values)
+
+      // remove 'id'
+      delete mapped_values['id']
+
+      // get 1-d arr of keys
+      const filtered_field_keys = Object.keys(mapped_values)
+
+      // get 1-d arr of values (and translate any null fields rcvd as 'null')
+      const filtered_values = Object.values(mapped_values).map(value => value === 'null' ? null : value)
+
+      // create param placeholder str
+      const param_placeholders = filtered_values.map(() => '?').toString()
+
+      const sql = `INSERT INTO collection_items(${filtered_field_keys.toString()}) VALUES(${param_placeholders})`
+
+      const result = await new Promise((resolve,reject) => {
+         this.#database.run(
+            sql,filtered_values, function(error) {
+               if(error) reject(error)
+               resolve(this.lastID)
+            }
+         )
+      }).catch((error) => this.set_last_error(error))
+
+      if(result) {
+         return {
+            query:'create_collection_item_from_csv',
+            outcome:'success'
+         }
+      }
+      else {
+         let fail_response = {
+            query:'create_collection_item_from_csv',
             outcome:'fail',
             message:'There was an error attempting to create the record. [CollectionItem.create]  ' + this.#last_error.message
          }
