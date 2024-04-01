@@ -39,7 +39,6 @@ class CollectionItemForm {
 
    constructor(props) {
       this.#props = props
-      console.log('Form props',props)
    }
 
 

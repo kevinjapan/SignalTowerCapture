@@ -21,8 +21,6 @@ class Database {
 
    #last_error
 
-
-   //
    // Open database file if exists or create, while notify errors to client if any arise
    //
    open_safely = async () => {
@@ -73,8 +71,6 @@ class Database {
       }
    }
 
-
-   //
    // create the database tables
    // sqlite PRIMARY KEY auto-increments by default (we do not explicitly use AUTOINCREMENT)
    //
@@ -126,16 +122,12 @@ class Database {
       })
    }
 
-   //
    // Add Column for any new fields currently not in the 'table_name' database table
    // Adds any columns added to 'table_name' since current database initialization.
    // We can simply specify in our model and they will be created here.
    // Permits column additions to integrate w/ existing records
    //
    add_new_columns = async(table_name) => {
-
-      // to do : whitelist 'table_name'
-      // to do : ensure we only run if table was *not* created this time.
 
       const table_full_fields = get_full_fields(table_name)
 
@@ -171,7 +163,6 @@ class Database {
    }
 
 
-   //
    // Triggers for FTS
    // synch 'collection_items_fts' w/ 'collection_items'
    //
@@ -221,8 +212,6 @@ class Database {
          )
    }
 
-
-
    close() {
       this.#db.close()
    }
@@ -232,7 +221,6 @@ class Database {
       return this
    }
 
-   //
    // error handlers for our promise wrappers around database calls
    // any client method calling set_last_error should clear after use to prevent leaking 
    //

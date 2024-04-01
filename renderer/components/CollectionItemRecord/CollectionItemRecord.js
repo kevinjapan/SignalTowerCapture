@@ -18,7 +18,6 @@ class CollectionItemRecord {
 
    constructor(props) {
       this.#props = props
-      console.log('Record props',props)
    }
 
    render = async() => {
