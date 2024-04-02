@@ -4,8 +4,6 @@ import { get_ui_ready_date,get_ui_ready_time } from '../../utilities/ui_datetime
 import { create_h,create_p,create_div,create_section,create_button } from '../../utilities/ui_elements.js'
 
 
-// to do : complete adaption from ImportJSONComponent
-
 
 class ImportCSVComponent {
 
@@ -93,9 +91,6 @@ class ImportCSVComponent {
                   const import_results_obj = await window.actions_api.importCSVFile(file_path)  
 
                   if (typeof import_results_obj != "undefined") { 
-
-                     console.log(import_results_obj)
-
                      if(import_results_obj.outcome === 'success') {
                         // this.close_wait_dlg(actions_section)
                         wait_dlg_component.close()
@@ -103,14 +98,13 @@ class ImportCSVComponent {
                      }
                      else {
                         // this.close_wait_dlg(actions_section)
-                        console.log
                         wait_dlg_component.close()
-                        Notification.notify('#import_csv_outcome',import_results_obj.message,[],false)
+                        Notification.notify('#import_csv_outcome',import_results_obj.message_arr,[],false)
                      }
                   }
                }
                else {
-                  Notification.notify('#import_csv_outcome',result.message)
+                  Notification.notify('#import_csv_outcome',result.message_arr)
                }
             })
          }
