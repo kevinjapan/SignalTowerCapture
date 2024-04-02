@@ -160,7 +160,7 @@ class CollectionItemCard {
                if(item.tags) {
                   const tags_list = new TagsLiteList('tags_list')
                   if(tags_list) {
-                     tags_list_elem.append(await tags_list.render(item.tags.split(','),this.actions))
+                     tags_list_elem.append(await tags_list.render(item.tags,this.actions))
                      setTimeout(() => tags_list.activate(),100)
                   }
                }
