@@ -1,3 +1,5 @@
+const { assoc_arr_obj } = require('../utilities/utilities')
+
 
 const LENS = {
    MAX_SEARCH:25
@@ -37,21 +39,44 @@ const is_valid_int = (value, min = 0, max = 10000) => {
 //
 const is_valid_date = (value) => {
 
-   // expected format : sql-format : 2023-11-22 (no time part for user date inputs)
+   // expected format : sql-format : 2023-11-22 12:42:38 (time part is optional)
 
+   if(value == null) return false // tests for both undefined and null
    let result = true
    let curr_year =  new Date().getFullYear()
+   let parts = value.split(' ')
 
-   let parts = value.split('-')
+   // validate date part
+   //
+   let date_parts = parts[0].split('-')
+   if(date_parts.length === 3) {
+      // check all are numbers - parseInt reduces to any digit in the string, so we use reg exp for accuracy
+      if( (!/^\d+$/.test(date_parts[0]) ) || !(/^\d+$/.test(date_parts[1])) || !(/^\d+$/.test(date_parts[2]))) result = false
+      if((parseInt(date_parts[0]) < 1700) || (parseInt(date_parts[0]) > curr_year)) result = false   
+      if((parseInt(date_parts[1]) < 1) || (parseInt(date_parts[1]) > 12)) result = false  
+      if((parseInt(date_parts[2]) < 1) || (parseInt(date_parts[2]) > 31)) result = false
+   }
+   else {
+      result = false
+   }
 
-   // check all are numbers - parseInt reduces to any digit in the string, so we use reg exp for accuracy
-   if( (!/^\d+$/.test(parts[0]) ) || !(/^\d+$/.test(parts[1])) || !(/^\d+$/.test(parts[2]))) result = false
+   // validate time part
+   //
+   if(parts.length === 2) {
+      let time_parts = parts[1].split(':')
+      if(time_parts.length === 3) {
+         // check all are numbers
+         if( (!/^\d+$/.test(time_parts[0]) ) || !(/^\d+$/.test(time_parts[1])) || !(/^\d+$/.test(time_parts[2]))) result = false
+         if((parseInt(time_parts[0]) < 0) || (parseInt(time_parts[0]) > 12)) result = false   
+         if((parseInt(time_parts[1]) < 0) || (parseInt(time_parts[1]) > 60)) result = false  
+         if((parseInt(time_parts[2]) < 0) || (parseInt(time_parts[2]) > 60)) result = false
+      }
+      else {
+         result = false
+      }
+   }
 
-   if((parseInt(parts[0]) < 1700) || (parseInt(parts[0]) > curr_year)) result = false   
-   if((parseInt(parts[1]) < 1) || (parseInt(parts[1]) > 12)) result = false  
-   if((parseInt(parts[2]) < 1) || (parseInt(parts[2]) > 31)) result = false
-
-   if(result) {   
+   if(result) { 
       return true
    }
    else {
@@ -64,6 +89,37 @@ const is_valid_date = (value) => {
 //
 // Collection Item
 //
+const is_valid_collection_item_csv = (fields_list,csv) => {
+
+   // get 1-d arr of raw data for keys and values
+   const field_keys = fields_list.map(field => field.key)
+   const values = csv.split(',')
+   
+   if(field_keys.length !== values.length) {
+      // to do : bail and notify user not matching..
+   }
+
+   // get collection_item as an assoc array
+   const collection_item = assoc_arr_obj(field_keys,values)
+
+   const is_valid_record_obj =  is_valid_collection_item(fields_list,collection_item)
+
+   // for csv notifications, we want to show the value of any field failing
+   // is_valid_collection_item() does not provide this - it's primarily for form validation
+   // and hence not required as the value is retained in the UI input field
+
+   if(is_valid_record_obj.outcome === 'fail') {
+      // we simply pass is_valid_record_obj but inject additional error info. - failing value - if 'fail'
+      let temp_errors = is_valid_record_obj.errors.map((err) => {
+         err.value = collection_item[err.name]
+         return err
+      })
+      is_valid_record_obj.errors = temp_errors
+   }
+
+   return is_valid_record_obj
+}
+
 const is_valid_collection_item = (fields_list,collection_item) => {
 
    let errors = []
@@ -88,7 +144,7 @@ const is_valid_collection_item = (fields_list,collection_item) => {
 
       if(typeof blueprint[0] !== 'undefined') 
       {
-         test = blueprint[0].test
+        let test = blueprint[0].test
 
          switch(test.type) {
             case 'string':
@@ -111,7 +167,18 @@ const is_valid_collection_item = (fields_list,collection_item) => {
                break
             case 'date':
                try {
-                  is_valid_date(collection_item[key])
+                  // some date fields are functionally null (deleted_at)
+                  if(collection_item[key] === 'null') {
+                     if(blueprint[0].data_type.indexOf('NOT NULL') >= 0) {
+                        throw 'This value is not a valid date.' 
+                     }
+                     else {
+                        // do nothing
+                     }
+                  }
+                  else {
+                     is_valid_date(collection_item[key])
+                  }
                }
                catch(e) {
                   errors.push({name:key,message:e})
@@ -166,8 +233,6 @@ const is_valid_search_term = (search_term) => {
 //
 const is_valid_file_name = (file_name) => {
    let parts = file_name.split('.')
-
-   console.log('parts',parts)
    if(parts.length !== 2) return false
    
    if(parts[1].length < 3 || parts[1].length > 4) return false
@@ -248,6 +313,7 @@ const is_valid_app_config_record = (fields_list,app_config_record) => {
 
 module.exports = {
    LENS,
+   is_valid_collection_item_csv,
    is_valid_collection_item,
    is_valid_int,
    is_valid_string,
