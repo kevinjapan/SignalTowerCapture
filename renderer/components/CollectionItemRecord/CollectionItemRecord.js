@@ -130,7 +130,7 @@ class CollectionItemRecord {
                
                if(is_img_ext(file_path)) {                  
                   // process img file
-                  let img = build_img_elem(file_path,this.#props.item['img_desc'],[],['record_image'])
+                  let img = build_img_elem(file_path,this.#props.item['img_desc'],[{key:'id',value:'record_img'}],['record_image'])
                   if(img) img_col.append(img)
                }
                else {

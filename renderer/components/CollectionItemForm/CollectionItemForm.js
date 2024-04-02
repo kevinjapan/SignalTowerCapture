@@ -199,6 +199,8 @@ class CollectionItemForm {
             
                   if(this.#tags_obj.outcome === 'success') {
 
+                     console.log(this.#tags_obj)
+
                      // get existing tags list (remove any non-registered tag tokens)
                      const verified_curr_tags = current_tags.filter(curr_tag => {
                         return this.#tags_obj.tags.some(tag => tag.tag === curr_tag)
@@ -360,11 +362,8 @@ class CollectionItemForm {
                   let updated_collection_item = {}
                   for(const pair of form_data.entries()) {
                      // we don't escape_html since we never user innerHTML
-                     console.log(pair[1]) // to do : remove
                      updated_collection_item[pair[0]] = pair[1].trim()
                   }
-
-                  console.log('updated_collection_item',updated_collection_item)    // to do : remove
 
                   let response
                   if(this.#props.action === 'add') {
@@ -685,7 +684,7 @@ class CollectionItemForm {
          if(is_img_ext(file_path)) {
 
             // process img file            
-            let img = build_img_elem(file_path,alt_text,[],['record_image'])
+            let img = build_img_elem(file_path,alt_text,[{key:'id',value:'record_img'}],['record_image'])
             if(img) parent_elem.replaceChildren(create_div(),img)
          } 
          else {
@@ -693,7 +692,7 @@ class CollectionItemForm {
             // process non-img file
             const icon_img_file_path = get_file_type_icon(file_path)
             const ext = get_ext(file_path)
-            let img = build_img_elem(icon_img_file_path,`${ext} file icon`,[],['record_image'])
+            let img = build_img_elem(icon_img_file_path,`${ext} file icon`,[{key:'id',value:'record_img'}],['record_image'])
             if(img) parent_elem.replaceChildren(create_div(),img)
          }
       }

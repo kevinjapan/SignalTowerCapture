@@ -73,7 +73,7 @@ class ImageViewer {
 
       if(await file_exists(file_path)) { 
 
-         let attributes = [{key:'draggable',value:false}]
+         let attributes = [{key:'id',value:'record_img'},{key:'draggable',value:false}]
 
          if(is_img_ext(file_path)) {
 
