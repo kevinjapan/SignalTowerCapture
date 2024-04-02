@@ -1,10 +1,11 @@
 const CollectionItem = require('./CollectionItem')
+const { is_valid_collection_item_csv } = require('../app/utilities/validation')
 
 
 // Import a CSV file of CollectionItem records.
 // Currently we insert single CollectionItem records at a time,
-// to do : batch insert?
 
+// to do : document this off-source code
 // risks
 // - large import files (>300 records) will noticeably lock the app
 //
@@ -27,10 +28,10 @@ class ImportCSVFile {
    // sqlite - the maximum number of rows in one VALUES clause is 1000
    #batch_size = 100
 
-
    constructor(database) {
       this.#database = database
    }
+
 
    async import(file_path) {
       
@@ -46,24 +47,43 @@ class ImportCSVFile {
             
             const collection_item = new CollectionItem(this.#database)
 
+            let count = 0
+
+            // we check first line and only proceed if it matches expected fields and data validation
+            let first_line = true
+
             for await (const line of rl) {
 
-               // to do : first - we'll just save one at a time - get that working, and time cf w/ import json 
-               //         then we'll try sql batches.
-               // - get working and test w/ broken csv first w/ one create at a time and then check performance
-               //   how do we handle if breaks on one record (one line) - prob ok to bail - likely all broken?
-               //   difficult to report errors if we are handling batches? relevant? just fail whole file?
+               // we test first line for correct no. fields and that fields are valid (assuming all lines same format!)
+               if(first_line) {
 
-               // to do : fails if tags is populate w/ it's own csv..   can't simply quote.  - re-do tags w/ their own separator
+                  const valid_first_line = is_valid_collection_item_csv(CollectionItem.get_full_fields_list(),line)
+
+                  // bail and notify if import file does not match expected fields
+                  if(valid_first_line.outcome === 'fail') {
+                     const error_strs = valid_first_line.errors.map(error => {
+                        return `${error.name} : ${error.message} : ${error.value}`
+                     })
+                     return  {
+                        query:'import_csv_file',
+                        outcome:'fail',
+                        message_arr:[
+                           'The file does not contain valid records.',
+                           '0 records were created.',
+                           ...error_strs
+                        ]
+                     }
+                  }
+
+               }
+               // prevent further validation
+               first_line = false
 
                let promise_result = await new Promise(async(resolve,reject) => {
       
                   let result = await collection_item.create_from_csv(line,false)
-
-                  // to do : test w/ deliberately missing or misplace fields - eg null for dates etc (NOT NULL columns)
-                  //          currently doesn't handle this well - notify and non-breaking required
-  
-                  if(result.outcome === 'success') {              
+                  if(result.outcome === 'success') {   
+                     count++           
                      resolve(result)
                   }
                   else {
@@ -73,15 +93,18 @@ class ImportCSVFile {
                   this.set_last_error(error)
                })
 
-
                if(promise_result) {
-                  // nothing
+                  // do nothing
                }
                else {
                   let fail_response = {
-                     query:'create_collection_item',  // to do : update adaption from ImportJSONFile
+                     query:'import_csv_file',
                      outcome:'fail',
-                     message:'35 There was an error attempting to create the record. [ImportJSONFile.process_records]  ' + this.#last_error
+                     message_arr:[
+                        count + ' records were created. ' ,
+                        this.#last_error ,
+                        'No more records were processed after line ' + count + '.'
+                     ]
                   }
                   this.clear_last_error()
                   return fail_response
