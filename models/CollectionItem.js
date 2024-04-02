@@ -385,12 +385,10 @@ class CollectionItem {
       }
    }
 
-
-   // to do : 'tags' field can't be csv list
-   // in signal-tower-capture-export-2024-03-30-10 records.txt - we have already removed this limitation,
-   // but we need to re-instate list of tags w/ a different separator (not ',')
-
-   
+   //
+   // Create From CSV
+   //
+   //
    async create_from_csv(csv) {
 
       // get 1-d arr of raw data for keys and values
@@ -433,7 +431,7 @@ class CollectionItem {
          let fail_response = {
             query:'create_collection_item_from_csv',
             outcome:'fail',
-            message:'There was an error attempting to create the record. [CollectionItem.create]  ' + this.#last_error.message
+            message:'There was an error attempting to create the record with title "' + mapped_values['title'] + '" - ' + this.#last_error.message
          }
          this.clear_last_error()
          return fail_response
