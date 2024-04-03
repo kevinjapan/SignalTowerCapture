@@ -34,7 +34,7 @@ class TagsList {
          classlist:['flex','space_between','align_items_center','w_full']
       })
       const heading = create_h({
-         level:'h3',
+         level:'h4',
          text:'Tags',
          classlist:['inline_block','m_0']
       })
