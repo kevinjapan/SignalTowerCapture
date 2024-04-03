@@ -262,7 +262,7 @@ const is_valid_app_config_record = (fields_list,app_config_record) => {
       
       if(typeof blueprint[0] !== 'undefined') 
       {
-         test = blueprint[0].test
+         let test = blueprint[0].test
 
          switch(test.type) {
             case 'string':
