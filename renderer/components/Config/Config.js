@@ -1,7 +1,7 @@
 import AppConfigForm from '../AppConfigForm/AppConfigForm.js'
 import TagsConfig from '../TagsConfig/TagsConfig.js'
-import { create_section,create_h,create_div } from '../../utilities/ui_elements.js'
-
+import { create_section,create_div,create_h,create_p } from '../../utilities/ui_elements.js'
+import { icon } from '../../utilities/ui_utilities.js'
 
 
 class Config {
@@ -9,8 +9,10 @@ class Config {
 
    render = async() => {
 
-      let config_component = create_div({
-         classlist:['ui_component','no_border']
+      let config_component = create_section({
+         attributes:[
+            {key:'id',value:'config_component'}
+         ]
       })
       
       const heading = create_h({
@@ -25,23 +27,74 @@ class Config {
          ]
       })
 
+      //
       // Tags
+      //
       let tags_section = create_section({
          attributes:[
             {key:'id',value:'tags_section'}
-         ]
-      })   
+         ],
+         classlist:['m_2','mt_4','mb_2']
+      })
+      const tags_header = create_div({
+         classlist:['flex','align_items_center']
+      })
+      const tags_section_h = create_h({
+         level:'h2',
+         classlist:['mt_2','mb_0','pt_0','pb_0'],
+         text:'Tags'
+      })
+      tags_header.append(icon('tag'),tags_section_h)
+      // to do : 'pertain' - correct word below?
+      const tags_section_desc = create_p({
+         classlist:['mt_0','mb_0','pt_0','pb_0'],
+         text:`You can 'tag' records with keywords or categories, and then upon searching for a 
+         given tag, all the matching 'tagged' records will be found.
+         This can be useful for grouping records which are physically
+         separate in your Collections folder. For example, the tag
+         'education' might pertain to individual files across multiple folders.`
+
+      })
+      tags_section.append(tags_header,tags_section_desc)
       const tags_config_component = new TagsConfig()
       if(tags_section) {
          tags_section.append(await tags_config_component.render())
          setTimeout(() => tags_config_component.activate(),200)
       }
 
+      //
+      // Config Form
+      // This form contains all settings which are held in app_config database table
+      //
+      let app_settings_section = create_section({
+         attributes:[
+            {key:'id',value:'app_settings_section'}
+         ],
+         classlist:['m_2','mt_4','mb_2']
+      })
+      const app_settings_header = create_div({
+         classlist:['flex','align_items_center']
+      })
+      const app_settings_section_h = create_h({
+         level:'h2',
+         classlist:['mt_2','mb_0','pt_0','pb_0'],
+         text:'App Settings'
+      })
+      app_settings_header.append(icon('settings'),app_settings_section_h)
+      const app_settings_section_desc = create_p({
+         classlist:['mt_0','mb_0','pt_0','pb_0'],
+         text:`Update your application settings here.`
+
+      })
+      app_settings_section.append(app_settings_header,app_settings_section_desc)
       this.build_form(config_form_wrap)
+      app_settings_section.append(config_form_wrap)
+
 
       // assemble
-      config_component.append(heading,tags_section,config_form_wrap)
+      config_component.append(heading,tags_section,app_settings_section)
       return config_component
+
    }
 
    build_form = async(config_form_wrap) => {

@@ -5,6 +5,7 @@ import { ui_friendly_text } from '../../utilities/ui_strings.js'
 import { 
    create_section,
    create_div,
+   create_p,
    create_form,
    create_label,
    create_input,
@@ -35,7 +36,7 @@ class AppConfigForm {
          attributes:[
             {key:'id',value:'item_form'}
          ],
-         classlist:['config_form','border','mt_3','mb_2']
+         classlist:['config_form','border','mt_0','mb_2']
       })
       
       let btn_group_1 = FormBtns.render(null,false)
@@ -61,6 +62,7 @@ class AppConfigForm {
             attributes:[
                {key:'for',value:field.key}
             ],
+            classlist:['text_h4'],
             text:ui_friendly_text(field.key)
          })
 
@@ -95,6 +97,19 @@ class AppConfigForm {
             if(field.placeholder) field_input.setAttribute('placeholder',field.placeholder)
          }
 
+         let warning = null
+         if(field.key === 'root_folder') {
+            // lock input - we require user to use O/S file select
+            field_input.disabled = 'disabled'
+            // stress impact of changing this to user
+            warning = create_p({
+               classlist:['ml_1','bg_yellow','w_full','border_radius_1'],
+               text:`IMPORTANT: changing this setting will point the system at the new root folder 
+               - and it will no longer find files in the previous location. Only change this if you
+               have reason to move your files to a new root folder location.`
+            })
+         }
+
          // spacing on parent grid
          let field_spacer_desc = create_div() 
          let field_spacer_error = create_div()  
@@ -102,6 +117,7 @@ class AppConfigForm {
          let field_desc = null
          if(typeof field.desc !== 'undefined') {
             field_desc = create_div({
+               classlist:['mt_0','mb_0','p_1','pt_0','pb_0'],
                text:field.desc
             })
          } 
@@ -116,6 +132,7 @@ class AppConfigForm {
 
          text_col.append(field_label,field_input)
          if(field_desc)text_col.append(field_spacer_desc,field_desc)
+         if(warning)text_col.append(warning)
          text_col.append(field_spacer_error,field_error)
 
          // user can select folder via native file selector / explorer 
