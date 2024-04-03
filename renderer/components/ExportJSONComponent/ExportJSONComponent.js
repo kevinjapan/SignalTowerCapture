@@ -18,7 +18,7 @@ class ExportJSONComponent {
       })
    
       const heading = create_h({
-         level:'h3',
+         level:'h4',
          text:'Export JSON File'
       })
 
