@@ -21,7 +21,7 @@ class Notification {
                classlist:['notification',...classes,'p_1']
             })
             message_arr.forEach(msg => {
-               notification_card.append(create_p({text:msg}))
+               notification_card.append(create_p({classlist:['p_0.5','m_0'],text:msg}))
             })
 
             elem.append(notification_card) 
