@@ -4,7 +4,8 @@ import ImportCSVComponent from '../ImportCSVComponent/ImportCSVComponent.js'
 import ExportJSONComponent from '../ExportJSONComponent/ExportJSONComponent.js'
 import ImportJSONComponent from '../ImportJSONComponent/ImportJSONComponent.js'
 import DeletedRecordsTeaser from '../DeletedRecordsTeaser/DeletedRecordsTeaser.js'
-import { create_section,create_h } from '../../utilities/ui_elements.js'
+import { create_section,create_div,create_h,create_p } from '../../utilities/ui_elements.js'
+import { icon } from '../../utilities/ui_utilities.js'
 
 
 
@@ -21,95 +22,141 @@ class Actions {
       const actions_heading = create_h({
          level:'h1',
          text:'Perform actions',
-         classlist:['m_0']
+         classlist:['m_0','mb_2']
       })
 
 
-      // Backups
-
+      // Backup Section
+      //
       let backup_section = create_section({
          attributes:[
             {key:'id',value:'backup_section'}
-         ]
+         ],
+         classlist:['m_2','mt_4','mb_2']
       })
+      const backup_header = create_div({
+         classlist:['flex','align_items_center']
+      })
+      const backup_section_h = create_h({
+         level:'h2',
+         classlist:['mt_2','mb_0','pt_0','pb_0'],
+         text:'Backups'
+      })
+      backup_header.append(icon('database',[]),backup_section_h)
+      const backup_section_desc = create_p({
+         classlist:['mt_0','mb_0','pt_0','pb_0'],
+         text:'Create backup files for your Collection.'
+      })
+      backup_section.append(backup_header,backup_section_desc)
       const backup_component = new BackupComponent()
       if(backup_section) {
          backup_section.append(backup_component.render())
          setTimeout(() => backup_component.activate(),200)
       }
 
-      // Exports
-      let export_csv_section = create_section({
+
+      // CSV Section
+      //
+      let csv_section = create_section({
          attributes:[
-            {key:'id',value:'export_csv_section'}
-         ]
+            {key:'id',value:'csv_section'}
+         ],
+         classlist:['m_2','mt_4','mb_2']
       })   
-      const heading = create_h({
-         level:'h3',
-         text:'Export Files'
+      const csv_header = create_div({
+         classlist:['flex','align_items_center']
       })
-      
+      const csv_section_h = create_h({
+         level:'h2',
+         classlist:['mt_2','mb_0','pt_0','pb_0'],
+         text:'CSV Files'
+      })
+      csv_header.append(icon('csv'),csv_section_h)
+      const csv_section_desc = create_p({
+         classlist:['mt_0','mb_0','pt_0','pb_0'],
+         text:'Comma-Separated-Value (CSV) files are a common file format for tranfering data between applications.'
+      })
+      csv_section.append(csv_header,csv_section_desc)
       const export_component = new ExportCSVComponent()
-      if(export_csv_section) {
-         export_csv_section.append(export_component.render())
+      if(csv_section) {
+         csv_section.append(export_component.render())
          setTimeout(() => export_component.activate(),200)
       }
-
-
-      let export_json_section = create_section({
-         attributes:[
-            {key:'id',value:'export_json_section'}
-         ]
-      }) 
-      const export_json_component = new ExportJSONComponent()
-      if(export_json_component) {
-         export_json_section.append(export_json_component.render())
-         setTimeout(() => export_json_component.activate(),200)
-      }
-      
-
-
-      // Imports
-
-      let import_section = create_section({
-         attributes:[
-            {key:'id',value:'import_section'}
-         ]
-      })   
-      const import_heading = create_h({
-         level:'h3',
-         text:'Import Files'  // to do : this heading used?
-      })
       const import_csv_component = new ImportCSVComponent()
-      if(import_csv_component) {
-         import_section.append(import_csv_component.render())
+      if(csv_section) {
+         csv_section.append(import_csv_component.render())
          setTimeout(() => import_csv_component.activate(),200)
       }
+
+
+      // JSON Section
+      //
+      let json_section = create_section({
+         attributes:[
+            {key:'id',value:'import_section'}
+         ],
+         classlist:['m_2','mt_4','mb_2']
+      })
+      const json_header = create_div({
+         classlist:['flex','align_items_center']
+      })
+      const json_section_h = create_h({
+         level:'h2',
+         classlist:['mt_2','mb_0','pt_0','pb_0'],
+         text:'JSON Files'
+      })
+      json_header.append(icon('json'),json_section_h)
+      // to do : explain JSON here as we did w/ CSV above!
+      const json_section_desc = create_p({
+         classlist:['mt_0','mb_0','pt_0','pb_0'],
+         text:`JavaScript Object Notation (JSON) files are a human-readable file format for tranfering data between applications.
+         They are better suited for moving small sets of data where some manual manipulation is needed.`
+      })
+      json_section.append(json_header,json_section_desc)
+      const export_json_component = new ExportJSONComponent()
+      if(json_section) {
+         json_section.append(export_json_component.render())
+         setTimeout(() => export_json_component.activate(),200)
+      }
       const import_json_component = new ImportJSONComponent()
-      if(import_json_component) {
-         import_section.append(import_json_component.render())
+      if(json_section) {
+         json_section.append(import_json_component.render())
          setTimeout(() => import_json_component.activate(),200)
       }
 
 
       
-
+      // Records Section
+      //
       // Soft Deleted Files Admin
-
-      let deleted_files_section = create_section({
+      let records_section = create_section({
          attributes:[
-            {key:'id',value:'deleted_files_section'}
-         ]
+            {key:'id',value:'records_section'}
+         ],
+         classlist:['m_2','mt_4','mb_2']
+      })    
+      const records_header = create_div({
+         classlist:['flex','align_items_center']
       })
+      const records_section_h = create_h({
+         level:'h2',
+         classlist:['mt_2','mb_0','pt_0','pb_0'],
+         text:'Records'
+      })
+      records_header.append(icon('file_text'),records_section_h)
+      const records_section_desc = create_p({
+         classlist:['mt_0','mb_0','pt_0','pb_0'],
+         text:'Manage records here.'
+      })
+      records_section.append(records_header,records_section_desc)
       const managed_deleted_component = new DeletedRecordsTeaser()
-      if(deleted_files_section) {
-         deleted_files_section.append(managed_deleted_component.render())
+      if(records_section) {
+         records_section.append(managed_deleted_component.render())
          setTimeout(() => managed_deleted_component.activate(),200)
       }
 
-
       // assemble
-      actions_section.append(actions_heading,backup_section,export_csv_section,export_json_section,import_section,deleted_files_section)
+      actions_section.append(actions_heading,backup_section,csv_section,json_section,records_section)
       return actions_section
    }
 

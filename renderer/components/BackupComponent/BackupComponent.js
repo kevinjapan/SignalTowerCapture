@@ -3,6 +3,11 @@ import { get_sqlready_datetime } from '../../utilities/ui_datetime.js'
 import { extract_file_name } from '../../utilities/ui_strings.js'
 import Notification from '../../components/Notification/Notification.js'
 
+
+
+// Database Backup Component
+
+
 class BackupComponent {
 
    render = () => {
@@ -15,8 +20,8 @@ class BackupComponent {
       })
 
       const heading = create_h({
-         level:'h3',
-         text:'Backups'
+         level:'h4',
+         text:'Database Backups'
       })
       
       let backup_database_btn = create_button({
