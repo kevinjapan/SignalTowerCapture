@@ -119,12 +119,14 @@ class CollectionItem {
                      FROM collection_items 
                      WHERE ${status} ${filter_by_char} ${field_filters_sql} 
                      ORDER BY ${order_by}                      
-                     LIMIT ${this.#items_per_page} 
+                     LIMIT ${this.#items_per_page}
                      OFFSET ${offset}`
 
             this.#database.all(sql, (error, rows) => {
                if(error) reject(error)
-               resolve(rows)            
+               if(rows) {
+                  resolve(rows)
+               } 
             })
          })
       }).catch((error) => {
@@ -167,7 +169,7 @@ class CollectionItem {
    //
    async read_all() {
       
-      let total_count = 0 //this.count().count   
+      let total_count = 0  
       let sql
 
       // filters
@@ -196,7 +198,9 @@ class CollectionItem {
                      LIMIT ${this.#limit_read_all_records}`
             this.#database.all(sql, (error, rows) => {
                if(error) reject(error)
-               if(rows) resolve(rows)            
+               if(rows) {
+                  resolve(rows)
+               }            
             })
          })
       }).catch((error) => this.set_last_error(error))
@@ -225,7 +229,7 @@ class CollectionItem {
          let fail_response = {
             query:'read_collection_items',
             outcome:'fail',
-            message:'There was an error attempting to read the records. [CollectionItem.read]  ' + this.#last_error.message
+            message:'There was an error attempting to read the records. [CollectionItem.read_all]  ' + this.#last_error.message
          }
          this.clear_last_error()
          return fail_response
@@ -252,12 +256,14 @@ class CollectionItem {
       // wrap in a promise to await result
       const result = await new Promise((resolve,reject) => {
          this.#database.all(
-            `SELECT ${field_keys} FROM collection_items WHERE id = ${id} LIMIT 100`,
+            `SELECT ${field_keys} FROM collection_items WHERE id = ${id}`,
             (error, rows) => {
                if(error) {
                   reject(error)
                }
-               if(rows) resolve(rows)            
+               if(rows) {
+                  resolve(rows) 
+               }           
             }
          )
       }).catch((error) => this.set_last_error(error))
@@ -304,84 +310,135 @@ class CollectionItem {
    // - batch inserts is a seldom used feature
    async create(collection_item,editable_only = true) {
 
-      let fields = CollectionItem.#full_fields_list
-
-      // editable_only is from CollectionItemForm - 
-      // we also permit inject from JSON files - in which case we retain all field_keys
-      if(editable_only) {
-         fields = fields.filter((field) => {
-            if(field.editable === true) return field
-         })
-         // we still require CrUd dates
-         fields = [...fields,{key:'created_at'},{key:'updated_at'}]
-      }
-
-      const field_keys = fields.map((field) => {
-         return field.key
-      })
-
-      // build '?' string
-      // const inserts = Array(fields.length).fill(0)
-      const inserts = field_keys.map((field) => {
-         return '?'
-      })
-
-      // build values list - eg ["bar",2] - & add id at end
-      const field_values = fields.map((field) => {
-         return collection_item[field.key]
-      })
-
-      // Populate title (if missing) from file_name
-      const title_pos = field_keys.findIndex((key) => key === 'title')
-      const file_name_pos = field_keys.findIndex((key) => key === 'file_name')
-      if(field_values[title_pos] === undefined) {
-         let title_from_file_name = field_values[file_name_pos]
-         field_values[title_pos] = title_from_file_name.replaceAll('_',' ')
-      }
-
-      // Populate file_type (if missing)
-      const file_type_pos = field_keys.findIndex((key) => key === 'file_type')
-      if(field_values[file_type_pos] === undefined) field_values[file_type_pos] = 'File'
-
-      // Populate required dates if they are undefined
-      let created_at = get_sqlready_datetime()
-      const created_at_pos = field_keys.findIndex((key) => key === 'created_at')
-      const updated_at_pos = field_keys.findIndex((key) => key === 'updated_at')
-      if(field_values[created_at_pos] === undefined) field_values[created_at_pos] = created_at
-      if(field_values[updated_at_pos] === undefined) field_values[updated_at_pos] = created_at
-
-      const sql = `INSERT INTO collection_items(${field_keys.toString()}) 
-                   VALUES(${inserts.toString()})`
-
-      const result = await new Promise((resolve,reject) => {
-         this.#database.run(
-            sql,field_values, function(error) {
-               if(error) {
-                  reject(error)
-               }
-               else {
-                  resolve(this.lastID)
-               }
-            }
-         )
-      }).catch((error) => this.set_last_error(error))
-      
-      if(result) {
-         collection_item.id = result
+      // min requirements
+      if(collection_item.folder_path ===  undefined || collection_item.file_name === undefined) {
+         console.log(JSON.stringify(collection_item), ' failed to be read.')
          return {
             query:'create_collection_item',
-            outcome:'success',
-            collection_item:collection_item
+            outcome:'fail',
+            message:`There was an error attempting to create the record. [CollectionItem.create]  
+                  ${JSON.stringify(collection_item)} `
+         }
+      }
+
+      // prevent duplicate
+      // we use read() since we need to use field_filters
+      // small additional cost (count) but low impact as volume imports are v. infrequent 
+      let attempt_read_existing = await this.read(
+         {
+            page:1,
+            field_filters:[
+               {field:'folder_path',value:collection_item.folder_path},
+               {field:'file_name',value:collection_item.file_name}
+            ]
+         }
+      )
+
+      if(attempt_read_existing.outcome === 'success') {
+         if(attempt_read_existing.collection_items.length === 0) {
+
+            let fields = CollectionItem.#full_fields_list
+
+            // editable_only is from CollectionItemForm - 
+            // we also permit inject from JSON files - in which case we retain all field_keys
+            if(editable_only) {
+               fields = fields.filter((field) => {
+                  if(field.editable === true) return field
+               })
+               // we still require CrUd dates
+               fields = [...fields,{key:'created_at'},{key:'updated_at'}]
+            }
+
+            const field_keys = fields.map((field) => {
+               return field.key
+            })
+
+            // build '?' string
+            // const inserts = Array(fields.length).fill(0)
+            const inserts = field_keys.map((field) => {
+               return '?'
+            })
+
+            // build values list - eg ["bar",2] - & add id at end
+            const field_values = fields.map((field) => {
+               return collection_item[field.key]
+            })
+
+            // Auto-gen candidate title from the file name if non-exists
+            const title_pos = field_keys.findIndex((key) => key === 'title')
+            const file_name_pos = field_keys.findIndex((key) => key === 'file_name')
+            if(field_values[title_pos] === undefined) {
+               let title_from_file_name = field_values[file_name_pos]
+               if(title_from_file_name) {
+                  // separate on '-' and '_'
+                  let candidate = title_from_file_name.replaceAll('-',' ')
+                  // separate on uppercase chars
+                  let candidate_arr = candidate.match(/[A-Z]+[^A-Z]*|[^A-Z]+/g)
+                  field_values[title_pos] = candidate_arr.join(' ')
+               }
+            }
+
+            // Populate file_type (if missing)
+            const file_type_pos = field_keys.findIndex((key) => key === 'file_type')
+            if(field_values[file_type_pos] === undefined) field_values[file_type_pos] = 'File'
+
+            // Populate required dates if they are undefined
+            let created_at = get_sqlready_datetime()
+            const created_at_pos = field_keys.findIndex((key) => key === 'created_at')
+            const updated_at_pos = field_keys.findIndex((key) => key === 'updated_at')
+            if(field_values[created_at_pos] === undefined) field_values[created_at_pos] = created_at
+            if(field_values[updated_at_pos] === undefined) field_values[updated_at_pos] = created_at
+
+            const sql = `INSERT INTO collection_items(${field_keys.toString()}) 
+                        VALUES(${inserts.toString()})`
+
+            const result = await new Promise((resolve,reject) => {
+               this.#database.run(
+                  sql,field_values, function(error) {
+                     if(error) {
+                        reject(error)
+                     }
+                     else {
+                        resolve(this.lastID)
+                     }
+                  }
+               )
+            }).catch((error) => this.set_last_error(error))
+         
+            if(result) {
+               collection_item.id = result
+               return {
+                  query:'create_collection_item',
+                  outcome:'success',
+                  collection_item:collection_item
+               }
+            }
+            else {
+               let fail_response = {
+                  query:'create_collection_item',
+                  outcome:'fail',
+                  message:`There was an error attempting to create the record. [CollectionItem.create]  
+                        ${JSON.stringify(collection_item)} ` + this.#last_error.message 
+               }
+               this.clear_last_error()
+               return fail_response
+            }
+         }
+         else {
+            return {
+               query:'create_collection_item',
+               outcome:'success',
+               collection_item:{id:-1,...collection_item},  // -1 signifies although no errors, we didn't create since a record already existed
+               message:`A record already exists for this file : ${collection_item.folder_name}\\${collection_item.file_name}`
+            }
          }
       }
       else {
-         let fail_response = {
+         return {
             query:'create_collection_item',
             outcome:'fail',
-            message:'There was an error attempting to create the record. [CollectionItem.create]  ' + this.#last_error.message
+            message:'error attempting to attempt_read_existing'   // to do : tidy msg
          }
-         this.clear_last_error()
-         return fail_response
       }
    }
 
@@ -390,6 +447,10 @@ class CollectionItem {
    //
    //
    async create_from_csv(csv) {
+
+      // to do : prevent duplicates of path (folder_path and file_name)
+      //         see this.create()
+      //         a bit more work here - to locate folder_path and file_name first
 
       // get 1-d arr of raw data for keys and values
       const field_keys = CollectionItem.#full_fields_list.map(field => field.key)
@@ -400,6 +461,8 @@ class CollectionItem {
 
       // remove 'id'
       delete mapped_values['id']
+
+      console.log('mapped_values',mapped_values)
 
       // get 1-d arr of keys
       const filtered_field_keys = Object.keys(mapped_values)
@@ -761,7 +824,9 @@ class CollectionItem {
          stmt.each(filtered_search_term_tokens, function(err, row) {
             if(err) reject(err)
             stmt.finalize()
-            if(row) resolve(row.count)
+            if(row) {
+               resolve(row.count)
+            }
          })
       }).catch((error) => {
          this.set_last_error(error)
@@ -895,7 +960,7 @@ class CollectionItem {
       let tokenized_search_term = search_term_tokens.join('* OR ') + '*'
 
       // Get results count
-      const total_count = await new Promise((resolve,reject) => {
+      let total_count = await new Promise((resolve,reject) => {
 
          const count_query = `SELECT 
                                  COUNT(collection_items.id) as count 
@@ -913,7 +978,9 @@ class CollectionItem {
          stmt.each(`${tokenized_search_term}`, (err, row) => {
             if(err) reject(err)
             stmt.finalize()
-            if(row) resolve(row.count)
+            if(row) {
+               resolve(row.count)
+            }
          })
       }).catch((error) => {
          this.set_last_error(error)
@@ -956,7 +1023,11 @@ class CollectionItem {
                   this.set_last_error(error)
                   reject(error)
                }
-               if(rows) resolve(rows)            
+               if(rows) {
+                  console.log('rows',rows)
+                  total_count = rows.length
+                  resolve(rows)   
+               }         
             })
          }).catch((error) => {
             this.set_last_error(error)
