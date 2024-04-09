@@ -367,6 +367,7 @@ class CollectionItemForm {
 
                   let response
                   if(this.#props.action === 'add') {
+                     console.log('add',updated_collection_item)
                      response = await window.collection_items_api.addCollectionItem(updated_collection_item)
                   }
                   else {
@@ -505,15 +506,19 @@ class CollectionItemForm {
                   }
                }
                
-               // auto-gen candidate title from the file name if non-exists
+               // Auto-gen candidate title from the file name if non-exists
+               // we always overwrite based on file_name since priority is convenience of auto-gen
+               // over sometimes incorrectly overwriting previously user-entered title (on submit
+               // user will see title clearly on record and should pick up any issue.)
+               // future : position file above title?
                let title = document.getElementById('title')
                if(title) {
-                  if(title.value === '') {
-                     let temp = file_name_input.value
-                     let candidate = temp.substring(0,temp.length - 4).replaceAll('-',' ')
-                     candidate = candidate.charAt(0).toUpperCase() + candidate.slice(1)             
-                     title.value = candidate
-                  }
+                  let temp = file_name_input.value
+                  // separate on '-'  
+                  let candidate = temp.substring(0,temp.length - 4).replaceAll('-',' ')
+                  // separate on uppercase chars
+                  let candidate_arr = candidate.match(/[A-Z]+[^A-Z]*|[^A-Z]+/g)
+                  title.value = candidate_arr.join(' ')
                }
 
                // display if new file is an img file
