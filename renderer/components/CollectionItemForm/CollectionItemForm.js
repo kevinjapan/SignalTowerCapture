@@ -3,7 +3,7 @@ import FormBtns from '../FormBtns/FormBtns.js'
 import Notification from '../../components/Notification/Notification.js'
 import { DESC } from '../../utilities/ui_descriptions.js'
 import { ui_friendly_text,trim_end_char } from '../../utilities/ui_strings.js'
-import { get_ext,is_img_ext,get_file_type_icon,file_exists,build_img_elem } from '../../utilities/ui_utilities.js'
+import { get_ext,is_img_ext,get_file_type_icon,file_exists,build_img_elem,title_from_file_name } from '../../utilities/ui_utilities.js'
 import { create_section,create_div,create_form,create_label,create_button,create_input,
          create_textarea,create_checkbox_fieldset,create_radio_fieldset} from '../../utilities/ui_elements.js'
 
@@ -513,12 +513,7 @@ class CollectionItemForm {
                // future : position file above title?
                let title = document.getElementById('title')
                if(title) {
-                  let temp = file_name_input.value
-                  // separate on '-'  
-                  let candidate = temp.substring(0,temp.length - 4).replaceAll('-',' ')
-                  // separate on uppercase chars
-                  let candidate_arr = candidate.match(/[A-Z]+[^A-Z]*|[^A-Z]+/g)
-                  title.value = candidate_arr.join(' ')
+                  title.value = title_from_file_name(file_name_input.value)
                }
 
                // display if new file is an img file

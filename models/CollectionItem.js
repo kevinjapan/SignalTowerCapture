@@ -2,14 +2,14 @@ const CollectionItemFTS = require('./CollectionItemFTS')
 const { get_sqlready_datetime,get_sqlready_date_from_js_date } = require('../app/utilities/datetime')
 const { is_valid_date } = require('../app/utilities/validation')
 const { trim_char } = require('../app/utilities/strings')
-const { assoc_arr_obj } = require('../app/utilities/utilities')
+const { assoc_arr_obj,title_from_file_name } = require('../app/utilities/utilities')
 const { 
    SEARCH_FIELDS,
    MIN_SEARCH_TERM_LEN,
    get_status_condition_sql,
    get_order_by_condition_sql,
    tokenize_search_term,
-   remove_stopwords 
+   remove_stopwords
 } = require('../app/utilities/search_utilities')
 
 
@@ -366,15 +366,11 @@ class CollectionItem {
 
             // Auto-gen candidate title from the file name if non-exists
             const title_pos = field_keys.findIndex((key) => key === 'title')
-            const file_name_pos = field_keys.findIndex((key) => key === 'file_name')
             if(field_values[title_pos] === undefined) {
-               let title_from_file_name = field_values[file_name_pos]
-               if(title_from_file_name) {
-                  // separate on '-' and '_'
-                  let candidate = title_from_file_name.replaceAll('-',' ')
-                  // separate on uppercase chars
-                  let candidate_arr = candidate.match(/[A-Z]+[^A-Z]*|[^A-Z]+/g)
-                  field_values[title_pos] = candidate_arr.join(' ')
+               const file_name_pos = field_keys.findIndex((key) => key === 'file_name')
+               let file_name = field_values[file_name_pos]
+               if(file_name) {
+                  field_values[title_pos] =  title_from_file_name(file_name)
                }
             }
 

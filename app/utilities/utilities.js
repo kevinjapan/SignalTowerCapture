@@ -18,9 +18,29 @@ const assoc_arr_obj = (arr_1,arr_2) => {
 }
 
 
+const remove_ext = (file_name) => {
+   return file_name.replace(/\.[^/.]+$/, "")
+}
+
+//
+// we auto-gen titles from file_names
+//
+const title_from_file_name = (file_name) => {
+
+   let temp = remove_ext(file_name)
+   
+   // separate on '-' and '_'
+   let candidate = temp.replaceAll('-',' ').replaceAll('_',' ')
+
+   // separate on uppercase chars
+   let candidate_arr = candidate.match(/[A-Z]+[^A-Z]*|[^A-Z]+/g)
+
+   return candidate_arr.join(' ')
+}
 
 
 module.exports = {
    get_random_int,
-   assoc_arr_obj
+   assoc_arr_obj,
+   title_from_file_name
 }

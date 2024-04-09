@@ -71,6 +71,10 @@ export const get_ext = (file_name) => {
    return file_name.substring(file_name.lastIndexOf('.') + 1)
 }
 
+export const remove_ext = (file_name) => {
+   return file_name.replace(/\.[^/.]+$/, "")
+}
+
 // Display filetype img and icon
 // currently same, but we may distinguish btwn in future
 export const get_file_type_img = (file_name) => {
@@ -260,3 +264,15 @@ export const linked_path = (root_folder,path) => {
 }
 
 
+export const title_from_file_name = (file_name) => {
+   
+   let temp = remove_ext(file_name)
+
+   // separate on '-' and '_'
+   let candidate = temp.replaceAll('-',' ').replaceAll('_',' ')
+
+   // separate on uppercase chars
+   let candidate_arr = candidate.match(/[A-Z]+[^A-Z]*|[^A-Z]+/g)
+
+   return candidate_arr.join(' ')
+}
