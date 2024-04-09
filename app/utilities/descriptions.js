@@ -1,7 +1,8 @@
 const DESC = {
 
    ROOT_FOLDER: {
-      body:'This is the root folder for your Collection. We use this root folder to locate files within your Collection.'
+      body:`
+      This is the root folder for your Collection. We use this root folder to locate files within your Collection.`
    },
 
    EXPORT_FOLDER: {
