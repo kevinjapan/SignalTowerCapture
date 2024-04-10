@@ -108,6 +108,18 @@ class Database {
                if(error) console.log('There was an error initializing the database. ',error.message)
             }
          )
+         this.add_new_columns('tags')
+
+         
+         // ActionsLog table
+         //
+         let actions_log_fields = get_table_create_fields('actions_log')
+         this.#db.run(`CREATE TABLE IF NOT EXISTS actions_log (${actions_log_fields})`, function (error) { 
+               if(error) console.log('There was an error initializing the database. ',error.message)
+            }
+         )
+         this.add_new_columns('actions_log')
+         
   
          // AppConfig table
          //
