@@ -1,6 +1,6 @@
 import WaitDialog from '../WaitDialog/WaitDialog.js'
 import Notification from '../../components/Notification/Notification.js'
-import { get_ui_ready_date,get_ui_ready_time } from '../../utilities/ui_datetime.js'
+import { get_ui_ready_date,get_ui_ready_time,get_sqlready_datetime } from '../../utilities/ui_datetime.js'
 import { create_h,create_p,create_div,create_section,create_button } from '../../utilities/ui_elements.js'
 
 
@@ -56,60 +56,77 @@ class ImportJSONComponent {
    // enable buttons/links displayed in the render
    activate = async () => {
 
+      //
+      // Import a json file
+      //
       const import_json_btn = document.getElementById('import_json_btn')
-
       if(import_json_btn) {
 
-            import_json_btn.addEventListener('click', async(event) => {
+         import_json_btn.addEventListener('click', async(event) => {
 
-               event.preventDefault()
-               Notification.notify('#import_json_outcome','')
+            event.preventDefault()
+            Notification.notify('#import_json_outcome','')
 
-               const options = {
-                  filters:[{name:'JSON',extensions:['json']},]
+            const options = {
+               filters:[{name:'JSON',extensions:['json']},]
+            }
+      
+            // activate 'select file' dialog for user input
+            const result = await window.files_api.getFilePath(options)
+
+            if(result.outcome === 'success') {
+
+               // time execution
+               const start_timer_at = Math.ceil(performance.now())
+
+               // date/time strings for log
+               const import_start_at = get_sqlready_datetime()
+
+               let file_path = result.files[0]
+
+               const file_size = await window.files_api.getFileSize(file_path)
+               const file_kb_size = file_size.file_kb_size
+               const est_secs_duration = (file_kb_size / 100) * this.get_secs_per_kb(file_kb_size)
+
+               // open 'please wait..' dlg
+               const wait_dlg_component = new WaitDialog({file_name:file_path,est_secs_duration:est_secs_duration})
+               let actions_section = document.getElementById('actions_section')
+               if(actions_section) {
+                  actions_section.append(wait_dlg_component.render())
                }
-       
-               // user select file dialog
-               const result = await window.files_api.getFilePath(options)
 
-               if(result.outcome === 'success') {
+               // call import func in main process
+               const import_results_obj = await window.actions_api.importJSONFile(file_path)
 
-                  let file_path = result.files[0]
+               const end_timer_at = Math.ceil(performance.now())
+               const import_end_at = get_sqlready_datetime()
 
-                  const file_size = await window.files_api.getFileSize(file_path)
+               // to do : utilize these times!
+               console.log('time taken:',end_timer_at - start_timer_at,'milliseconds')
+               console.log('import times logged as:',import_start_at,import_end_at)
 
-                  const file_kb_size = file_size.file_kb_size
+               if (typeof import_results_obj != "undefined") { 
 
-                  const est_secs_duration = (file_kb_size / 100) * this.get_secs_per_kb(file_kb_size)
-
-                  // open 'please wait..' dlg
-                  const wait_dlg_component = new WaitDialog({file_name:file_path,est_secs_duration:est_secs_duration})
-                  let actions_section = document.getElementById('actions_section')
-                  if(actions_section) {
-                     actions_section.append(wait_dlg_component.render())
+                  if(import_results_obj.outcome === 'success') {
+                     wait_dlg_component.close()
+                     Notification.notify(
+                        '#import_json_outcome',
+                        `The import on ${get_ui_ready_date(Date(),true)} at ${get_ui_ready_time(Date())} was successful.`,
+                        ['bg_inform']
+                     )
                   }
-
-                  const import_results_obj = await window.actions_api.importJSONFile(file_path)  
-
-                  if (typeof import_results_obj != "undefined") { 
-
-                     if(import_results_obj.outcome === 'success') {
-                        // this.close_wait_dlg(actions_section)
-                        wait_dlg_component.close()
-                        Notification.notify('#import_json_outcome',`The import on ${get_ui_ready_date(Date(),true)} at ${get_ui_ready_time(Date())} was successful.`,['bg_inform'])
-                     }
-                     else {
-                        // this.close_wait_dlg(actions_section)
-                        wait_dlg_component.close()
-                        Notification.notify('#import_json_outcome',import_results_obj.message,[],false)
-                     }
+                  else {
+                     // this.close_wait_dlg(actions_section)
+                     wait_dlg_component.close()
+                     Notification.notify('#import_json_outcome',import_results_obj.message,[],false)
                   }
                }
-               else {
-                  Notification.notify('#import_json_outcome',result.message)
-               }
-            })
-         }
+            }
+            else {
+               Notification.notify('#import_json_outcome',result.message)
+            }
+         })
+      }
    }
 
    close_wait_dlg = (parent_section) => {
