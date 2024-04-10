@@ -26,6 +26,8 @@ import {trim_end_char} from '../../utilities/ui_strings.js'
 
 class App {
 
+   // App-wide settings loaded once and accessible to renderer
+
    static #root_folder = ''
 
    constructor() {
@@ -33,11 +35,15 @@ class App {
    }
 
    init = async() => {
-      // get root_folder
+
       const app_config_obj = await window.config_api.getAppConfig()
-      if(app_config_obj.outcome === 'success') {      
-         App.#root_folder = trim_end_char(app_config_obj.app_config.root_folder,'\\')            
+      if(app_config_obj.outcome === 'success') {
+
+         // load root_folder
+         App.#root_folder = trim_end_char(app_config_obj.app_config.root_folder,'\\')  
+          
       }
+
    }
 
    static get_root_folder = () => {

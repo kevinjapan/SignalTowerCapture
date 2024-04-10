@@ -101,6 +101,11 @@ if(back_btns){
    })
 }
 
+
+//
+// Init App
+// App provides app-wide settings eg root_folder
+//
 const app = new App()
 await app.init()
 
