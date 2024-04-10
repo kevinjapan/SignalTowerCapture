@@ -306,6 +306,7 @@ class CollectionItem {
    //
    // CREATE
    // we rely on single inserts even for batch inserts since -
+   // - allows us to cleanly prevent duplicates
    // - the code w/ prepared statements becomes unclear with multiple inserts
    // - batch inserts is a seldom used feature
    async create(collection_item,editable_only = true) {
@@ -370,7 +371,7 @@ class CollectionItem {
                const file_name_pos = field_keys.findIndex((key) => key === 'file_name')
                let file_name = field_values[file_name_pos]
                if(file_name) {
-                  field_values[title_pos] =  title_from_file_name(file_name)
+                  field_values[title_pos] = title_from_file_name(file_name)
                }
             }
 

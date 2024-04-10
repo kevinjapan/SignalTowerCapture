@@ -24,10 +24,11 @@ const remove_ext = (file_name) => {
 
 //
 // we auto-gen titles from file_names
+// mirrors complementary in ui_utilities.js
 //
 const title_from_file_name = (file_name) => {
 
-   let temp = remove_ext(file_name)
+   let temp = remove_ext(file_name).trim()
    
    // separate on '-' and '_'
    let candidate = temp.replaceAll('-',' ').replaceAll('_',' ')
