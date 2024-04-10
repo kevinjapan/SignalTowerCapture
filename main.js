@@ -677,7 +677,7 @@ async function open_folder (event,full_folder_path) {
       notify_client_alert(
          `The folder could not be found. 
          \n${full_folder_path}
-         \nPlease check that the Folder Path in the record is correct.`)
+         \nPlease check that the Folder Path in the record is correct and that the folder exists.`)
    }
 }
 
