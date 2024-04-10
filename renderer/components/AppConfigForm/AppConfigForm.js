@@ -27,7 +27,7 @@ class AppConfigForm {
       // 'fields' is primarily an array of key of properties in the 'app_config_record' and preserves the display order
       // all our input validation is carried out 'server-side'
       let fields = fields_result_obj.fields.filter((field) => {
-         return field.editable
+         return field.config_edit
       })
 
       let app_config_record = record_result_obj.app_config

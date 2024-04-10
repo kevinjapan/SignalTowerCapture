@@ -173,13 +173,15 @@ const create_card_img_observers = (elements,active_class,options) => {
 //
 export const add_to_int_queue = (queue,max_len,int) => {
 
+   const filtered_q = queue.filter(item => item !== undefined)
+
    // remove oldest ints
-   while(queue.length >= max_len) {
-      queue.pop()
+   while(filtered_q.length >= max_len) {
+      filtered_q.pop()
    }
    
    // push new int
-   let new_queue = [int,...queue]
+   let new_queue = [int,...filtered_q]
 
    // remove duplicates
    return Array.from(new Set(new_queue))

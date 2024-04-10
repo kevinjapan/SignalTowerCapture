@@ -1,9 +1,7 @@
-const { path,dirname } = require('node:path')
+const { dirname } = require('node:path')
 const { get_sqlready_datetime } = require('../app/utilities/datetime')
 const { get_random_int } = require('../app/utilities/utilities')
 const { DESC } = require('../app/utilities/descriptions')
-const TestRecord = require('./TestRecord')
-
 
 
 class AppConfig {
@@ -17,8 +15,8 @@ class AppConfig {
    //
    static #full_fields_list = [
       {key:'id',data_type:'INTEGER PRIMARY KEY',editable:false,in_card:true,test:{type:'int',min:1,max:9999999999}},
-      {key:'root_folder',data_type:'TEXT',editable:true,in_card:true,desc:DESC.ROOT_FOLDER.body,is_folder:true,test:{type:'string',min:1,max:255}},
-      {key:'recent_records',data_type:'TEXT',editable:false,in_card:false,test:{type:'string',min:1,max:500}},
+      {key:'root_folder',data_type:'TEXT',editable:true,config_edit:true,in_card:true,desc:DESC.ROOT_FOLDER.body,is_folder:true,test:{type:'string',min:1,max:255}},
+      {key:'recent_records',data_type:'TEXT',editable:true,in_card:false,test:{type:'string',min:1,max:500}},
       {key:'created_at',data_type:'TEXT NOT NULL',editable:false,in_card:false,test:{type:'date',min:10,max:24}},
       {key:'updated_at',data_type:'TEXT NOT NULL',editable:false,in_card:false,test:{type:'date',min:10,max:24}},
       {key:'deleted_at',data_type:'TEXT',editable:false,in_card:false,test:{type:'date',min:10,max:24}},
@@ -198,8 +196,8 @@ class AppConfig {
    //
    // update
    // rcvd app_config_record may contain variable fields -
-   // we have to update only designated fields (keys)
-   // eg { id: '1', root_folder: 'C:\\wamp64\\www' } 
+   // we only update designated fields (keys) provided
+   // eg { id: '1', root_folder: 'C:\\wamp64\\www' }  for updating only 'root_folder'
    //
    async update(app_config_record) {
 
@@ -210,16 +208,16 @@ class AppConfig {
          if(field.editable === true) return field
       })
 
-      // get array of keys to update from 'app_config_record'
+      // get array of keys to update (exclude id)
       let keys = Object.keys(app_config_record)
-      let no_id_keys = keys.filter((key) => {
+      let designated_keys = keys.filter((key) => {
          return key !== 'id'
       })
 
-      // only retain keys designated in 'app_config_record' and marked editable from 'field_blueprints'
-      if(no_id_keys) {
+      // retain designated keys marked as 'editable'
+      if(designated_keys) {
          designated_fields = field_blueprints.filter((field) => {
-            return no_id_keys.some((update_key) => {
+            return designated_keys.some((update_key) => {
                return update_key === field.key
             })
          })
