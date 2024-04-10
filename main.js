@@ -152,7 +152,6 @@ app.whenReady().then(async() => {
       app.setAppUserModelId(app.name);
    }
 
-   createWindow()
    
    // connect to database, verify the db file exists and we can open it
    let result = await new Database().open_safely()
@@ -178,7 +177,12 @@ app.whenReady().then(async() => {
             // we only notify if the database is valid to prevent multiple notifications if db also failed
             notify_client_alert('AppConfig Initialization failed.\n' + error)
          }
-      }},1200)
+      }},500)
+
+   // Only load Renderer process ONCE the database has been initialized
+   // since we will load App with eg root_folder from database -
+   // on initial database creation, we need to ensure some delay
+   setTimeout(() => createWindow(),800)
 })
 
 
@@ -771,8 +775,6 @@ async function export_csv_file(event,file_name,file_path) {
 }
 
 async function import_csv_file(event,file_path) {
-
-   // to do : complete adapion from import_json_file
 
    if(!database) return NOTIFY.DATABASE_UNAVAILABLE
 
