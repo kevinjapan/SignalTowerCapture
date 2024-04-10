@@ -55,7 +55,7 @@ class CollectionItemCard {
                   attributes: [
                      {key:'data-id',value:item.id}
                   ],
-                  classlist:['text_blue','card_title_link','flex_100','m_0','font_w_400','cursor_pointer','hover_line','break_words'],
+                  classlist:['text_blue','card_title_link','flex_100','m_0','mb_1','font_w_400','cursor_pointer','hover_line','break_words'],
                   text:field_value
                })
                text_col.append(field_element)
@@ -144,7 +144,16 @@ class CollectionItemCard {
                      text:'The file was not found.'
                   })
                   img_col.append(create_div(),msg)
-               }            
+               }    
+               
+               // to do : make folder_path a link to open the folder
+               if(field_value) {
+                  field_element = create_div({
+                     classlist:['break_words','mt_0.5','mr_2','pb_1','text_grey'],
+                     text:truncate(field_value,300)
+                  })
+                  text_col.append(field_element)
+               }
             }
             else if(field.key === 'tags') {
 
