@@ -265,10 +265,8 @@ export const linked_path = (root_folder,path) => {
 
 
 export const title_from_file_name = (file_name) => {
-   
-   // to do : trim whitespace around file_name for title.. (it does happen!)
 
-   let temp = remove_ext(file_name)
+   let temp = remove_ext(file_name).trim()
 
    // separate on '-' and '_'
    let candidate = temp.replaceAll('-',' ').replaceAll('_',' ')
