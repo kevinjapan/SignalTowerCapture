@@ -1,8 +1,8 @@
 import App from '../App/App.js'
 import CollectionItemCard from '../CollectionItemCard/CollectionItemCard.js'
 import { create_section,create_h,create_div } from '../../utilities/ui_elements.js'
-import { ui_display_number_as_str,trim_end_char } from '../../utilities/ui_strings.js'
-import { init_card_img_loads } from '../../utilities/ui_utilities.js'
+import { ui_display_number_as_str } from '../../utilities/ui_strings.js'
+import { init_card_img_loads,no_root_folder } from '../../utilities/ui_utilities.js'
 
 
 class RecentRecords {
@@ -31,11 +31,8 @@ class RecentRecords {
 
    render = async() => {
 
-      // get root_folder
-      const app_config_obj = await window.config_api.getAppConfig()
-      if(app_config_obj.outcome === 'success') {
-         this.#root_folder = trim_end_char(app_config_obj.app_config.root_folder,'\\')                 
-      }
+      this.#root_folder = App.get_root_folder()
+      if(this.#root_folder === '') return no_root_folder()
 
       let record_result_obj = await this.get_app_config_record()
       let app_config_record = record_result_obj.app_config

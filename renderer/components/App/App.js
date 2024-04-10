@@ -13,17 +13,36 @@ import RecentRecords from '../RecentRecords/RecentRecords.js'
 import About from '../About/About.js'
 import Error from '../Error/Error.js'
 import NotFound from '../NotFound/NotFound.js'
+import {trim_end_char} from '../../utilities/ui_strings.js'
 
 
 // The main nav corresponds to our primary components - Browse/Search etc.
 // Secondary components can be utilized by multiple primary components - eg CollectionItemRecord
 // Primary components provide our 'context' and pass this as a props 'context token' to their 'children' 
-// or client components, allowing those secondary components to return the token on users clicking 'back'
-// - allowsing primary components to re-initialize their original context from the token (eg search/page)
+// or client components, allowing those secondary components to return the token on users clicking 'back' 
+// - thus allowing primary components to re-initialize their context (eg search term / current page)
 
 
 
 class App {
+
+   static #root_folder = ''
+
+   constructor() {
+      
+   }
+
+   init = async() => {
+      // get root_folder
+      const app_config_obj = await window.config_api.getAppConfig()
+      if(app_config_obj.outcome === 'success') {      
+         App.#root_folder = trim_end_char(app_config_obj.app_config.root_folder,'\\')            
+      }
+   }
+
+   static get_root_folder = () => {
+      return this.#root_folder
+   }
 
    static switch_to_component = async(component_name,props) => {
 

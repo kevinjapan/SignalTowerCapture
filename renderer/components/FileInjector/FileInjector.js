@@ -1,8 +1,8 @@
+import App from '../App/App.js'
 import CollectionItemCard from '../CollectionItemCard/CollectionItemCard.js'
 import CollectionItemInjectForm from '../CollectionItemInjectForm/CollectionItemInjectForm.js'
-import { init_card_img_loads } from '../../utilities/ui_utilities.js'
-import { trim_end_char } from '../../utilities/ui_strings.js'
-import { create_section,create_p,create_div } from '../../utilities/ui_elements.js'
+import { init_card_img_loads,no_root_folder } from '../../utilities/ui_utilities.js'
+import { create_section,create_div } from '../../utilities/ui_elements.js'
 
 class FileInjector {
 
@@ -14,12 +14,9 @@ class FileInjector {
 
 
    render = async() => {
-      
-      // get root_folder
-      const app_config_obj = await window.config_api.getAppConfig()
-      if(app_config_obj.outcome === 'success') {      
-         this.#props.root_folder = trim_end_char(app_config_obj.app_config.root_folder,'\\')            
-      }
+
+      this.#props.root_folder = App.get_root_folder()
+      if(this.#props.root_folder === '') return no_root_folder()
 
       let file_injector = create_section()
 

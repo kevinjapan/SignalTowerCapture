@@ -2,9 +2,9 @@ import App from '../App/App.js'
 import CollectionItemCard from '../CollectionItemCard/CollectionItemCard.js'
 import PaginationNav from '../PaginationNav/PaginationNav.js'
 import AlphabetCtrl from '../AlphabetCtrl/AlphabetCtrl.js'
-import { ui_display_number_as_str,trim_end_char } from '../../utilities/ui_strings.js'
+import { ui_display_number_as_str } from '../../utilities/ui_strings.js'
 import { create_section,create_div,create_h } from '../../utilities/ui_elements.js'
-import { init_card_img_loads } from '../../utilities/ui_utilities.js'
+import { init_card_img_loads,no_root_folder } from '../../utilities/ui_utilities.js'
 import Notification from '../../components/Notification/Notification.js'
 
 
@@ -48,14 +48,9 @@ class Browse {
 
    render = async () => {
 
-      
-      // get root_folder
-      const app_config_obj = await window.config_api.getAppConfig()
-      if(app_config_obj.outcome === 'success') {
-         this.#root_folder = trim_end_char(app_config_obj.app_config.root_folder,'\\')                 
-      }
+      this.#root_folder = App.get_root_folder()
+      if(this.#root_folder === '') return no_root_folder()
 
-      
       let browse_section = create_section({
          attributes:[
             {key:'id',value:'browse_section'}

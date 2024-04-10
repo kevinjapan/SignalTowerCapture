@@ -1,7 +1,8 @@
 import App from '../App/App.js'
 import CollectionItemForm from '../CollectionItemForm/CollectionItemForm.js'
 import { create_section,create_div,create_h } from '../../utilities/ui_elements.js'
-import { trim_end_char,get_title_from_filename } from '../../utilities/ui_strings.js'
+import { get_title_from_filename } from '../../utilities/ui_strings.js'
+import { no_root_folder } from '../../utilities/ui_utilities.js'
 
 
 //
@@ -24,11 +25,8 @@ class CollectionItemInjectForm {
 
    render = async() => {
 
-      // get root_folder
-      const app_config_obj = await window.config_api.getAppConfig()
-      if(app_config_obj.outcome === 'success') {
-         this.#root_folder = trim_end_char(app_config_obj.app_config.root_folder,'\\')                 
-      }
+      this.#root_folder = App.get_root_folder()
+      if(this.#root_folder === '') return no_root_folder()
             
       // component container
       const inject_form_container = create_section({

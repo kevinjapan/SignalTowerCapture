@@ -1,6 +1,6 @@
 import App from './components/App/App.js'
 import Nav from './components/Nav/Nav.js'
-import { create_ul,create_li,create_h } from './utilities/ui_elements.js'
+import { create_ul,create_li } from './utilities/ui_elements.js'
 
 
 
@@ -100,6 +100,9 @@ if(back_btns){
       })
    })
 }
+
+const app = new App()
+await app.init()
 
 
 // load Home page on startup

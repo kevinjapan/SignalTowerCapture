@@ -2,7 +2,7 @@ import App from '../App/App.js'
 import RecordBtns from '../RecordBtns/RecordBtns.js'
 import RecordAdmin from '../RecordAdmin/RecordAdmin.js'
 import { ui_friendly_text,trim_char,trim_end_char } from '../../utilities/ui_strings.js'
-import { get_ext,is_img_ext,get_file_type_icon,file_exists,build_img_elem,add_to_int_queue,ints_array } from '../../utilities/ui_utilities.js'
+import { get_ext,is_img_ext,get_file_type_icon,file_exists,build_img_elem,add_to_int_queue,ints_array,no_root_folder } from '../../utilities/ui_utilities.js'
 import { create_section,create_div,create_p } from '../../utilities/ui_elements.js'
 
 
@@ -22,23 +22,24 @@ class CollectionItemRecord {
 
    render = async() => {
 
-      // get root_folder
-      const app_config_obj = await window.config_api.getAppConfig()
-      if(app_config_obj.outcome === 'success') {
-         this.#props.root_folder = app_config_obj.app_config.root_folder
-      }
+      this.#props.root_folder = App.get_root_folder()
+      if(this.#props.root_folder === '') return no_root_folder()
 
+      
       // update Recent records
-      const app_config = app_config_obj.app_config
+      const app_config_obj = await window.config_api.getAppConfig()
+      if(app_config_obj.outcome === 'success') {  
+         const app_config = app_config_obj.app_config
 
-      let recent_records = app_config.recent_records
-      let ints_queue = ints_array(recent_records.split(','))
-      let app_config_recent = {
-         id:app_config.id,
-         recent_records: add_to_int_queue(ints_queue,20,this.#props.item.id).join()
+         let recent_records = app_config.recent_records
+         let ints_queue = ints_array(recent_records.split(','))
+         let app_config_recent = {
+            id:app_config.id,
+            recent_records: add_to_int_queue(ints_queue,20,this.#props.item.id).join()
+         }
+         const result = await window.config_api.updateAppConfig(app_config_recent)
+         // to do : log any issues?
       }
-
-      const result = await window.config_api.updateAppConfig(app_config_recent)
 
       // component container
       this.#record = create_section({

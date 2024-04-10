@@ -1,9 +1,10 @@
+import App from '../App/App.js'
 import FileInjector from '../FileInjector/FileInjector.js'
 import BreadCrumbNav from '../BreadCrumbNav/BreadCrumbNav.js'
 import Notification from '../Notification/Notification.js'
 import {trim_end_char} from '../../utilities/ui_strings.js'
-import {filetype_icon} from '../../utilities/ui_utilities.js'
-import {create_section,create_h,create_div,create_button,create_ul,create_li} from '../../utilities/ui_elements.js'
+import {filetype_icon,no_root_folder} from '../../utilities/ui_utilities.js'
+import {create_section,create_h,create_div,create_ul,create_li} from '../../utilities/ui_elements.js'
 
 
 class Files {
@@ -57,71 +58,58 @@ class Files {
       })
       files_section.append(heading,files_outcome)
 
-      // get root folder
-      let result = await window.config_api.getAppConfig()
-      
-      if(typeof result != "undefined") {      
-         if(result.outcome === 'success') {
+      this.#root_folder = App.get_root_folder()
+      if(this.#root_folder === '') return no_root_folder()
+      //this.#root_folder = temp.split(/\ /).join('\ ');  // to do : required?
 
-            // retrieve and escape spaces in 'root_folder'
-            let temp = result.app_config.root_folder
-            this.#root_folder = temp.split(/\ /).join('\ ');
+      // 2-col layout
+      const files_layout = create_div({
+         classlist:['files_layout','m_0','p_0']
+      })
 
-            // 2-col layout
-            const files_layout = create_div({
-               classlist:['files_layout','m_0','p_0']
-            })
+      // folder/file panels
+      const file_list_elem = create_div({
+         attributes:[
+            {key:'id',value:'file_list_elem'}
+         ],
+         classlist:['border','m_0','p_0.5','overflow_auto','max_h_24','text_sm','text_grey']
+      })
+      const file_view = create_div({
+         attributes:[
+            {key:'id',value:'file_view'}
+         ],
+         classlist:['border'],
+         text:''
+      })
 
-            // folder/file panels
-            const file_list_elem = create_div({
-               attributes:[
-                  {key:'id',value:'file_list_elem'}
-               ],
-               classlist:['border','m_0','p_0.5','overflow_auto','max_h_24','text_sm','text_grey']
-            })
-            const file_view = create_div({
-               attributes:[
-                  {key:'id',value:'file_view'}
-               ],
-               classlist:['border'],
-               text:''
-            })
+      files_layout.append(file_list_elem,file_view)
 
-            files_layout.append(file_list_elem,file_view)
+      // assemble                  
+      this.#breadcrumb_nav = new BreadCrumbNav(this.open_folder)
+      if(this.#breadcrumb_nav) {
+         files_section.append(this.#breadcrumb_nav.render())
+         setTimeout(() => this.#breadcrumb_nav.activate(),100)
+      }
 
-            // assemble                  
-            this.#breadcrumb_nav = new BreadCrumbNav(this.open_folder)
-            if(this.#breadcrumb_nav) {
-               files_section.append(this.#breadcrumb_nav.render())
-               setTimeout(() => this.#breadcrumb_nav.activate(),100)
-            }
+      const folder_path_filter = this.#props ? this.#props.context.field_filters.find(filter => filter.field = 'folder_path' ) : ''
 
-            const folder_path_filter = this.#props ? this.#props.context.field_filters.find(filter => filter.field = 'folder_path' ) : ''
+      // if we are coming 'back' from a Record,, hydrate breadcrumb_nav
+      if(this.#props && this.#props.context) {
+         this.#breadcrumb_nav.hydrate(this.#root_folder,folder_path_filter)
+      }
 
-            // if we are coming 'back' from a Record,, hydrate breadcrumb_nav
-            if(this.#props && this.#props.context) {
-               this.#breadcrumb_nav.hydrate(this.#root_folder,folder_path_filter)
-            }
-
-            // if we are coming 'back' from a Record, open the appropriate folder
-            if(this.#props) {
-               if(this.#props.context) {
-                  setTimeout(() => this.open_folder(folder_path_filter.value),100)  
-               }
-            }
-            else {
-               setTimeout(() => this.open_folder(),100) 
-            }
-
-            files_section.append(files_layout)
-         }
-         else {
-            setTimeout(() => Notification.notify('#files_outcome','Sorry, we couldn\'t locate the Collection Root Folder'),200)
+      // if we are coming 'back' from a Record, open the appropriate folder
+      if(this.#props) {
+         if(this.#props.context) {
+            setTimeout(() => this.open_folder(folder_path_filter.value),100)  
          }
       }
       else {
-         setTimeout(() => Notification.notify('#files_outcome','Sorry, we couldn\'t locate the Collection Root Folder'),200)
+         setTimeout(() => this.open_folder(),100) 
       }
+
+      files_section.append(files_layout)
+
       return files_section
    }
 
@@ -196,6 +184,7 @@ class Files {
    // Do we have an existing record for the selected file?
    // we perform a single db call and reference off of this list rather than querying each time
    get_matching_records = async() => {
+      console.log('checking in Files',this.#context)
       try {
          const result = await window.collection_items_api.getItems(this.#context)
          this.#matching_records = result.collection_items

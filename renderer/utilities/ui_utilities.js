@@ -1,5 +1,5 @@
 import { create_img } from '../utilities/ui_elements.js'
-import { trim_start_char,truncate } from '../utilities/ui_strings.js'
+import { truncate } from '../utilities/ui_strings.js'
 import { create_div } from '../utilities/ui_elements.js'
 
 
@@ -266,6 +266,8 @@ export const linked_path = (root_folder,path) => {
 
 export const title_from_file_name = (file_name) => {
    
+   // to do : trim whitespace around file_name for title.. (it does happen!)
+
    let temp = remove_ext(file_name)
 
    // separate on '-' and '_'
@@ -275,4 +277,12 @@ export const title_from_file_name = (file_name) => {
    let candidate_arr = candidate.match(/[A-Z]+[^A-Z]*|[^A-Z]+/g)
 
    return candidate_arr.join(' ')
+}
+
+export const no_root_folder = () => {
+   const elem = create_div({
+      classlist:['bg_yellow','p_2','border_radius_0.5'],
+      text:`Sorry, we couldn't locate or determine the root folder path.`
+   })
+   return elem
 }

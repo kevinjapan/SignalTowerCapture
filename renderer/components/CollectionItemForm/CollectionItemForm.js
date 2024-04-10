@@ -2,8 +2,8 @@ import App from '../App/App.js'
 import FormBtns from '../FormBtns/FormBtns.js'
 import Notification from '../../components/Notification/Notification.js'
 import { DESC } from '../../utilities/ui_descriptions.js'
-import { ui_friendly_text,trim_end_char } from '../../utilities/ui_strings.js'
-import { get_ext,is_img_ext,get_file_type_icon,file_exists,build_img_elem,title_from_file_name } from '../../utilities/ui_utilities.js'
+import { ui_friendly_text } from '../../utilities/ui_strings.js'
+import { get_ext,is_img_ext,get_file_type_icon,file_exists,build_img_elem,title_from_file_name,no_root_folder } from '../../utilities/ui_utilities.js'
 import { create_section,create_div,create_form,create_label,create_button,create_input,
          create_textarea,create_checkbox_fieldset,create_radio_fieldset} from '../../utilities/ui_elements.js'
 
@@ -43,12 +43,9 @@ class CollectionItemForm {
 
 
    render = async() =>  {
-     
-      // get root_folder
-      const app_config_obj = await window.config_api.getAppConfig()
-      if(app_config_obj.outcome === 'success') {
-         this.#root_folder = trim_end_char(app_config_obj.app_config.root_folder,'\\')                 
-      }
+
+      this.#root_folder = App.get_root_folder()
+      if(this.#root_folder === '') return no_root_folder()
 
       // component container
       this.#record = create_section({

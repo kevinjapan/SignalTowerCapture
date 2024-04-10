@@ -134,6 +134,8 @@ class Search {
          
                if(collection_items_obj.outcome === 'success') {
 
+                  console.log('collection_items_obj',collection_items_obj)
+
                   this.#browse_results_container.replaceChildren()
 
                   let page_count = Math.ceil(collection_items_obj.count / collection_items_obj.per_page)
