@@ -4,7 +4,7 @@ const { get_random_int } = require('../app/utilities/utilities')
 const { DESC } = require('../app/utilities/descriptions')
 
 
-// to do : complete adaption from AppConfig Class
+
 
 // ActionsLog matches batches of records to actions performed at specific times
 //
@@ -15,6 +15,15 @@ const { DESC } = require('../app/utilities/descriptions')
 // import_json	   4:50		   4:55
 // delete		   7:12		   7:12			we can use to rollback (undelete) batch deleted records
 //
+
+// ---------------------------------- to do :
+// ActionsLog
+// - log import progress..?
+// - log import actions - in ActionsLog
+// - implement ActionsLog model (as a queue for each 'action')
+// - view ActionsLog
+// - enable 'rollback' on ActionsLog
+// ----------------------------------
 
 // to do :
 // - add import history (after log import actions above)
@@ -29,6 +38,12 @@ const { DESC } = require('../app/utilities/descriptions')
 class ActionsLog {
 
    #database
+
+   // log is a queue for each action type (FIFO)
+   #max_queue_count = 20
+
+   // every read-all needs an absolute upper limit!
+   #limit_read_all_records = this.#max_queue_count
 
    #last_error
 
@@ -62,16 +77,149 @@ class ActionsLog {
    //
    // READ ALL : 
    // Not paginated since we limit all logs to last 20 actions (queue)
-   // 
-   async read() {
+   // to do : filter_fields?
+   async read(context) {
 
-      // to do : 
+      let total_count = 0  
+      let sql
+
+      // filters
+      // filters target known specific conditional tests
+      let action = 'action = ""'              // our default 'WHERE' clause      // to do : client must specify action type
+       if(context.filters) {
+         if(context.filters.action) action = get_status_condition_sql('collection_items',context.filters.action)
+      }
+
+      // field_filters target conditional tests against fields/cols within the record
+      // let field_filters_sql = ''
+      // if(context.field_filters) {         
+      //    context.field_filters.forEach(filter => {
+      //       let value = trim_char(filter.value,',')
+      //       if(filter.test && filter.test.toUpperCase() === 'IN') {
+      //          field_filters_sql += ` AND ${filter.field} IN (${value})`
+      //       }
+      //       else {
+      //          field_filters_sql += ` AND ${filter.field} = "${value}"`
+      //       }
+      //    })
+      // }
+
+      // wrap in a promise to await result
+      const result = await new Promise((resolve,reject) => {
+
+         this.#database.serialize(() => {
+            
+            // to do : if not paginating, we can remove this
+            sql = `SELECT COUNT(id) as count FROM actions_log WHERE ${action}`
+            this.#database.get(sql, (error, rows) => {
+               if(error) {
+                  reject(error)
+               }
+               total_count = rows.count
+            })
+
+            const fields = ActionsLog.#full_fields_list.map((field) => {
+               return field.key
+            })
+
+            sql = `SELECT ${fields.toString()} 
+                     FROM actions_log 
+                     WHERE ${action}                     
+                     ORDER BY created_at
+                     LIMIT ${this.#max_queue_count}`
+            this.#database.all(sql, (error, rows) => {
+               if(error) reject(error)
+               resolve(rows)        
+            })
+         })
+      }).catch((error) => this.set_last_error(error))
+
+      if(result) {
+         let response_obj = {
+            query:'read_actions_log',
+            outcome:'success',
+            count:total_count,
+            actions:result
+         }
+         return response_obj
+      }
+      else {
+         let fail_response = {
+            query:'read_actions_log',
+            outcome:'fail',
+            message:'There was an error attempting to read the actions log. [ActionsLog.read]  ' + this.#last_error.message
+         }
+         this.clear_last_error()
+         return fail_response
+      }
    }
 
 
+   //
+   // Read All - Non-paginated
+   // we only read one action type at a time / we only ever permit max_queue_count records for any single action type
+   //
    async read_all() {
 
-      // to do : 
+      let total_count = 0 //this.count().count   
+      let sql
+
+      // filters
+      let action = 'action = ""'
+      let order_by = 'created_at'
+      if(context.filters) {
+         action = get_status_condition_sql('actions_log',context.filters.action)
+      }
+
+      // wrap in a promise to await result
+      const result = await new Promise((resolve,reject) => {
+
+         this.#database.serialize(() => {
+            
+            sql = `SELECT COUNT(id) as count FROM actions_log WHERE ${action}`
+            this.#database.get(sql, (error, rows) => {
+               if(error) reject(error)
+               total_count = rows.count           
+            })
+
+            const fields = ActionsLog.#full_fields_list.map((field) => {
+               return field.key
+            })
+
+            sql = `SELECT ${fields.toString()} 
+                     FROM actions_log 
+                     WHERE ${action}
+                     ORDER BY ${order_by}
+                     LIMIT ${this.#limit_read_all_records}`
+            this.#database.all(sql, (error, rows) => {
+               if(error) reject(error)
+               resolve(rows)            
+            })
+         })
+      }).catch((error) => this.set_last_error(error))
+
+      const exportable_fields = ActionsLog.#full_fields_list.filter((field) => {
+         if(field.export === true) return field
+      })
+
+      if(result) {
+         let response_obj = {
+            query:'read_actions_log',
+            outcome:'success',
+            count:total_count,
+            actions:result
+         }
+         return response_obj
+      }
+      else {
+         let fail_response = {
+            query:'read_actions_log',
+            outcome:'fail',
+            message:'There was an error attempting to read the actions log. [ActionsLog.read_all]  ' + this.#last_error.message
+         }
+         this.clear_last_error()
+         return fail_response
+      }
    }
 
 
@@ -81,14 +229,21 @@ class ActionsLog {
    //
    async read_single() {
 
-      const fields = ActionsLog.#full_fields_list.map((field) => {
+      if(!Number.isInteger(parseInt(id))) {
+         return {
+            outcome:'fail',
+            message:'There was an error attempting to read the actions log record. '
+         } 
+      }
+      
+      const field_keys = ActionsLog.#full_fields_list.map((field) => {
          return field.key
       })
 
       // wrap in a promise to await result
-      let result = await new Promise((resolve,reject) => {
+      const result = await new Promise((resolve,reject) => {
          this.#database.all(
-            `SELECT ${fields} FROM actions_log LIMIT 1`,
+            `SELECT ${field_keys} FROM actions_log WHERE id = ${id}`,
             (error, rows) => {
                if(error) {
                   reject(error)
@@ -98,52 +253,122 @@ class ActionsLog {
          )
       }).catch((error) => this.set_last_error(error))
 
-
-      const field_names = ActionsLog.#full_fields_list.map((field) => {
-         return field.key
+      const fields = ActionsLog.#full_fields_list.map((field) => {
+         return {
+            key:field.key,
+            editable:field.editable,
+            test:field.test
+         }
       })
-
-      // if no rows found, actions_log hasn't been initialized // to do : ...
-      if(result.length < 1) {
-         result = false
-      }
       
       if(result) {
          let response_obj = {
-            query:'read_single_actions_log',
+            query:'read_single_tag',
             outcome:'success',
-            actions_log_fields:field_names,
-            actions_log:result[0]
+            actions_log_fields:fields,
+            actions:result[0]
          }
          return response_obj
       }
       else {
          let fail_response = {
-            query:'read_single_actions_log',
+            query:'read_single_tag',
             outcome:'fail',
-            message:'There was an error attempting to read the Actions Log. [ActionsLog.read_single] '
+            message:'There was an error attempting to read the action log record. [ActionsLog.read_single] ' + this.#last_error.message
          }
+         this.clear_last_error()
          return fail_response
       }
    }
 
+
    //
    // CREATE
    //
-   async create(collection_item,editable_only = true) {
+   async create(action_object) {
 
-      // to do : 
+      let sql
+
+      // verify we are not exceeding specific action type queue len
+      const count = await new Promise((resolve,reject) => {
+         sql = `SELECT COUNT(id) as count FROM actions_log WHERE actions = ? `   // to do : enter from action_object
+         this.#database.get(sql, (error, rows) => {
+            if(error) {
+               reject(error)
+            }
+            resolve(rows.count)
+         })
+      }).catch((error) => {
+         this.set_last_error(error)
+      })
+
+      // if queue is already max, remove earliest first and then insert our new record  // to do : ..
+
+      if(count < this.#max_queue_count) {
+
+         let fields = ActionsLog.#full_fields_list
+
+         if(editable_only) {
+            fields = fields.filter((field) => {
+               if(field.editable === true) return field
+            })
+         }
+
+         const field_keys = fields.map((field) => {
+            return field.key
+         })
+
+         // build '?' string
+         // const inserts = Array(fields.length).fill(0)
+         const inserts = field_keys.map((field) => {
+            return '?'
+         })
+
+         // build values list - eg ["bar",2] - & add id at end
+         const field_values = fields.map((field) => {
+            return tag[field.key]
+         })
+
+         let created_at = get_sqlready_datetime()
+
+         sql = `INSERT INTO actions_log(${field_keys.toString()},created_at) 
+                     VALUES(${inserts.toString()},'${created_at}')`
+
+         const result = await new Promise((resolve,reject) => {
+            this.#database.run(
+               sql,field_values, function(error) {
+                  if(error) {
+                     reject(error)
+                  }
+                  else {
+                     resolve(this.lastID)
+                  }
+               }
+            )
+         }).catch((error) => this.set_last_error(error))
+      
+         if(result) {
+            tag.id = result
+            return {
+               query:'create_actions_log',
+               outcome:'success',
+               tag:tag
+            }
+         }
+         else {
+            let fail_response = {
+               query:'create_actions_log',
+               outcome:'fail',
+               message:'There was an error attempting to create the action log record. [ActionsLog.create]  ' + this.#last_error.message
+            }
+            this.clear_last_error()
+            return fail_response
+         }
+      }
+
    }
 
 
-   //
-   // UPDATE
-   //
-   async update(actions_log_record) {
-
-      // to do : 
-   }
-   
 
    //
    // DELETE
@@ -151,7 +376,41 @@ class ActionsLog {
    //
    async delete(id) {
 
-      // to do : 
+      if(!Number.isInteger(parseInt(id))) {
+         return {
+            query:'delete_actions_log_record',
+            outcome:'fail',
+            message:'There was an error attempting to permanently delete the actions log. The id was not matched.'
+         } 
+      }
+
+      const result = await new Promise((resolve,reject) => {
+         this.#database.run(
+            `DELETE FROM actions_log WHERE id = ?`,[id], function(error) {
+               if(error) {
+                  reject(error)
+               }
+               resolve(true)
+            }
+         )
+      }).catch((error) => this.set_last_error(error))
+
+      if(result) {
+         return {
+            query:'delete_actions_log_record',
+            outcome:'success',
+            message:'The actions log record was successfully and permanently deleted.'
+         }
+      }
+      else {
+         let fail_response = {
+            query:'delete_actions_log_record',
+            outcome:'fail',
+            message:'There was an error attempting to permanently delete the actions log record. [ActionsLog.delete]  ' + this.#last_error.message
+         }
+         this.clear_last_error()
+         return fail_response
+      }
    }
 
 
