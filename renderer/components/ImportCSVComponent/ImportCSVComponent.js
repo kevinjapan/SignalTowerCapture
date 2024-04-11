@@ -103,12 +103,13 @@ class ImportCSVComponent {
 
                   if (typeof import_results_obj != "undefined") { 
                      if(import_results_obj.outcome === 'success') {
-                        // this.close_wait_dlg(actions_section)
                         wait_dlg_component.close()
-                        Notification.notify('#import_csv_outcome',`The import on ${get_ui_ready_date(Date(),true)} at ${get_ui_ready_time(Date())} was successful.`,['bg_inform'])
+                        Notification.notify(
+                           '#import_csv_outcome',
+                           `The import on ${get_ui_ready_date(Date(),true)} at ${get_ui_ready_time(Date())} was successful.`,
+                           ['bg_inform'])
                      }
                      else {
-                        // this.close_wait_dlg(actions_section)
                         wait_dlg_component.close()
                         Notification.notify('#import_csv_outcome',import_results_obj.message_arr,[],false)
                      }
