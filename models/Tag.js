@@ -126,10 +126,6 @@ class Tag {
    //
    // READ ALL - non-paginated
    //
-   // for generating csv file we want to extract all records,
-   // we want to avoid performance issues with memory -
-   // using db.all will put all records into memory, so use db.each and offsets to chunk load and write to file?
-   //
    async read_all() {
       
       let total_count = 0 //this.count().count   
@@ -194,7 +190,7 @@ class Tag {
          let fail_response = {
             query:'read_tags',
             outcome:'fail',
-            message:'There was an error attempting to read the records. [Tag.read]  ' + this.#last_error.message
+            message:'There was an error attempting to read the records. [Tag.read_all]  ' + this.#last_error.message
          }
          this.clear_last_error()
          return fail_response
@@ -221,7 +217,7 @@ class Tag {
       // wrap in a promise to await result
       const result = await new Promise((resolve,reject) => {
          this.#database.all(
-            `SELECT ${field_keys} FROM tags WHERE id = ${id} LIMIT 100`,
+            `SELECT ${field_keys} FROM tags WHERE id = ${id}`,
             (error, rows) => {
                if(error) {
                   reject(error)
@@ -285,7 +281,6 @@ class Tag {
             resolve(rows.count)
          })
       }).catch((error) => {
-         console.log('error',error)
          this.set_last_error(error)
       })
 
