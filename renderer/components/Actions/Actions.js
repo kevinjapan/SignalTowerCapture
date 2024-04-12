@@ -3,6 +3,7 @@ import ExportCSVComponent from '../ExportCSVComponent/ExportCSVComponent.js'
 import ImportCSVComponent from '../ImportCSVComponent/ImportCSVComponent.js'
 import ExportJSONComponent from '../ExportJSONComponent/ExportJSONComponent.js'
 import ImportJSONComponent from '../ImportJSONComponent/ImportJSONComponent.js'
+import ActionsLogComponent from '../ActionsLogComponent/ActionsLogComponent.js'
 import DeletedRecordsTeaser from '../DeletedRecordsTeaser/DeletedRecordsTeaser.js'
 import { create_section,create_div,create_h,create_p } from '../../utilities/ui_elements.js'
 import { icon } from '../../utilities/ui_utilities.js'
@@ -10,6 +11,10 @@ import { icon } from '../../utilities/ui_utilities.js'
 
 
 class Actions {
+
+   #csv_actions_log_component
+
+   #json_actions_log_component
 
    render = () => {
 
@@ -77,16 +82,29 @@ class Actions {
          text:'Comma-Separated-Value (CSV) files are a common file format for tranfering data between applications.'
       })
       csv_section.append(csv_header,csv_section_desc)
-      const export_component = new ExportCSVComponent()
+
+      const export_csv_component = new ExportCSVComponent()
       if(csv_section) {
-         csv_section.append(export_component.render())
-         setTimeout(() => export_component.activate(),200)
+         csv_section.append(export_csv_component.render())
+         setTimeout(() => export_csv_component.activate(),200)
       }
-      const import_csv_component = new ImportCSVComponent()
+      const import_csv_component = new ImportCSVComponent(this.import_csv_completed)
       if(csv_section) {
          csv_section.append(import_csv_component.render())
          setTimeout(() => import_csv_component.activate(),200)
       }
+      
+      const csv_history_section = create_div({
+         attributes:[
+            {key:'id',value:'csv_history_section'}
+         ]
+      })
+      this.#csv_actions_log_component = new ActionsLogComponent('import_csv','Import CSV History')
+      if(this.#csv_actions_log_component) {
+         csv_history_section.append(this.#csv_actions_log_component.render('import_csv'))
+         setTimeout(() => this.#csv_actions_log_component.activate(),200)
+      }
+      csv_section.append(csv_history_section)
 
 
       // JSON Section
@@ -106,24 +124,35 @@ class Actions {
          text:'JSON Files'
       })
       json_header.append(icon('json'),json_section_h)
-      // to do : explain JSON here as we did w/ CSV above!
       const json_section_desc = create_p({
          classlist:['mt_0','mb_0','pt_0','pb_0'],
          text:`JavaScript Object Notation (JSON) files are a human-readable file format for tranfering data between applications.
          They are better suited for moving small sets of data where some manual manipulation is needed.`
       })
       json_section.append(json_header,json_section_desc)
+
       const export_json_component = new ExportJSONComponent()
       if(json_section) {
          json_section.append(export_json_component.render())
          setTimeout(() => export_json_component.activate(),200)
       }
-      const import_json_component = new ImportJSONComponent()
+      const import_json_component = new ImportJSONComponent(this.import_json_completed)
       if(json_section) {
          json_section.append(import_json_component.render())
          setTimeout(() => import_json_component.activate(),200)
       }
 
+      const json_history_section = create_div({
+         attributes:[
+            {key:'id',value:'json_history_section'}
+         ]
+      })
+      this.#json_actions_log_component = new ActionsLogComponent('import_json','Import JSON History')
+      if(this.#json_actions_log_component) {
+         json_history_section.append(this.#json_actions_log_component.render('import_json'))
+         setTimeout(() => this.#json_actions_log_component.activate(),200)
+      }
+      json_section.append(json_history_section)
 
       
       // Records Section
@@ -163,6 +192,27 @@ class Actions {
    // enable buttons/links displayed in the render
    activate = () => {
 
+   }
+
+   //
+   // import callbacks for updating ActionsLogs
+   // we refresh regardless of outcome
+   //
+   import_csv_completed = () => {
+      const csv_history_section = document.getElementById('csv_history_section')
+      if(csv_history_section && this.#csv_actions_log_component) {
+         console.log('in here')
+         csv_history_section.replaceChildren(this.#csv_actions_log_component.render('import_csv'))
+         setTimeout(() => this.#csv_actions_log_component.activate(),200)
+      }
+   }
+
+   import_json_completed = () => {
+      const json_history_section = document.getElementById('json_history_section')
+      if(json_history_section && this.#json_actions_log_component) {
+         json_history_section.replaceChildren(this.#json_actions_log_component.render('import_json'))
+         setTimeout(() => this.#json_actions_log_component.activate(),200)
+      }
    }
 
 }
