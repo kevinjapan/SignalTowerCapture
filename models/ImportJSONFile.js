@@ -65,12 +65,13 @@ class ImportJSONFile {
       for(const item of collection_items) {
 
          // new item, we remove id
-         delete item.id
+         delete item.id  // to do : cf w/ ImportCSVFile - delete id is in CollectionItem ?
 
          promise_result = await new Promise(async(resolve,reject) => {
 
             let result = await collection_item.create(item,false)            
-            if(result.outcome === 'success') {              
+            if(result.outcome === 'success') {  
+               console.log('trying',result)            
                resolve(result.collection_item.id)
             }
             else {
@@ -85,7 +86,7 @@ class ImportJSONFile {
          }
          else {
             let fail_response = {
-               query:'create_collection_item',
+               query:'import_json_file',
                outcome:'fail',
                message:'There was an error attempting to create the record. [ImportJSONFile.process_records]  ' + this.#last_error
             }
@@ -95,7 +96,7 @@ class ImportJSONFile {
       }
       
       return {
-         query:'create_collection_item',
+         query:'import_json_file',
          outcome:'success'
       }
    }
