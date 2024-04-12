@@ -58,7 +58,8 @@ contextBridge.exposeInMainWorld('actions_api', {
    exportCSVFile: (file_name,folder_path) => ipcRenderer.invoke('actions:exportCSVFile',file_name,folder_path),
    exportJSONFile: (file_name,folder_path) => ipcRenderer.invoke('actions:exportJSONFile',file_name,folder_path),
    importJSONFile: (file_path) => ipcRenderer.invoke('actions:importJSONFile',file_path),
-   importCSVFile: (file_path) => ipcRenderer.invoke('actions:importCSVFile',file_path)
+   importCSVFile: (file_path) => ipcRenderer.invoke('actions:importCSVFile',file_path),
+   getActionsLog: (action) => ipcRenderer.invoke('actions:getActionsLog',action)
 })
 
 contextBridge.exposeInMainWorld('files_api', {

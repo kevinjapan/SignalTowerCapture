@@ -133,6 +133,7 @@ app.whenReady().then(async() => {
    ipcMain.handle('actions:exportJSONFile',export_json_file)
    ipcMain.handle('actions:importCSVFile',import_csv_file)
    ipcMain.handle('actions:importJSONFile',import_json_file)
+   ipcMain.handle('actions:getActionsLog',get_actions_log)
 
    // Files handlers
    ipcMain.handle('files:openFolderDlg',open_folder_dlg)
@@ -855,6 +856,15 @@ async function import_json_file(event,file_path) {
    import_json_file_obj.duration = end_timer_at - start_timer_at
    
    return import_json_file_obj
+}
+
+async function get_actions_log(event,context) {
+
+   if(!database) return NOTIFY.DATABASE_UNAVAILABLE
+
+   let actions_log = new ActionsLog(database)
+   const results = await actions_log.read(context)
+   return results
 }
 
 
