@@ -22,6 +22,10 @@ const remove_ext = (file_name) => {
    return file_name.replace(/\.[^/.]+$/, "")
 }
 
+const file_name_from_path = (file_path) => {
+   return file_path.substring(file_path.lastIndexOf('\\') + 1)
+}
+
 //
 // we auto-gen titles from file_names
 // mirrors complementary in ui_utilities.js
@@ -43,5 +47,6 @@ const title_from_file_name = (file_name) => {
 module.exports = {
    get_random_int,
    assoc_arr_obj,
-   title_from_file_name
+   title_from_file_name,
+   file_name_from_path
 }

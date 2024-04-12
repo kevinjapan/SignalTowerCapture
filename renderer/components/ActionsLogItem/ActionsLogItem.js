@@ -21,12 +21,19 @@ class ActionsLogComponent {
       const action_elem = create_div({
          text:action.action
       })
-      const created_at_elem = create_div({
-         text:get_ui_ready_date(action.created_at,true) + ' @ ' + get_ui_ready_time(action.created_at)
+      const file_elem = create_div({
+         text:action.file
+      })
+      const created_date_elem = create_div({
+         text:get_ui_ready_date(action.created_at,true),
+         classlist:['text_bold']
+      })
+      const created_time_elem = create_div({
+         text:' @ ' + get_ui_ready_time(action.created_at)
       })
       
       // assemble
-      item_row.append(action_elem,created_at_elem)
+      item_row.append(action_elem,file_elem,created_date_elem,created_time_elem)
       actions_log_item.append(item_row)
 
       return actions_log_item

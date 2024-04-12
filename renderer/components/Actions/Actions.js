@@ -201,7 +201,6 @@ class Actions {
    import_csv_completed = () => {
       const csv_history_section = document.getElementById('csv_history_section')
       if(csv_history_section && this.#csv_actions_log_component) {
-         console.log('in here')
          csv_history_section.replaceChildren(this.#csv_actions_log_component.render('import_csv'))
          setTimeout(() => this.#csv_actions_log_component.activate(),200)
       }

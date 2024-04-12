@@ -60,6 +60,7 @@ class ActionsLog {
    static #full_fields_list = [
       {key:'id',data_type:'INTEGER PRIMARY KEY',in_card:true,test:{type:'int',min:1,max:9999999999}},
       {key:'action',data_type:'TEXT',test:{type:'string',min:1,max:60}},
+      {key:'file',data_type:'TEXT',test:{type:'string',min:0,max:120}},
       {key:'start_at',data_type:'TEXT NOT NULL',test:{type:'string',min:1,max:24}},
       {key:'end_at',data_type:'TEXT NOT NULL',test:{type:'string',min:1,max:24}},
       {key:'created_at',data_type:'TEXT NOT NULL',test:{type:'date',min:10,max:24}},
@@ -134,6 +135,7 @@ class ActionsLog {
                      WHERE ${action}                     
                      ORDER BY created_at DESC
                      LIMIT ${this.#max_queue_count}`
+
 
             this.#database.all(sql, (error, rows) => {
                if(error) reject(error)
