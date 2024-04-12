@@ -38,12 +38,15 @@ class ActionsLogComponent {
          attributes:[
             {key:'id',value:`actions_log_component_${this.#key}`}
          ],
-         classlist:['actions_log_component','ui_component','border','hide_below_title','fit_content_height','cursor_pointer']
+         classlist:['actions_log_component','ui_component','border','fit_content_height']
       })
    
       const heading = create_h({
+         attributes:[
+            {key:'id',value:`actions_log_heading_${this.#key}`}
+         ],
          level:'h5',
-         classlist:['text_grey','no_pointer_events'],
+         classlist:['text_grey','cursor_pointer'],
          text:this.#label
       })
 
@@ -60,7 +63,7 @@ class ActionsLogComponent {
          attributes:[
             {key:'id',value:`results_container_${this.#key}`}
          ],
-         classlist:['deleted_records','pt_1']      // to do : deleted records?
+         classlist:['display_none','pt_1']
       })
       
       this.#results_container.append(this.get_items())
@@ -126,12 +129,15 @@ class ActionsLogComponent {
       //
       // toggle view history list
       //
-      const log = document.querySelector(`#actions_log_component_${this.#key}`)
+      const log = document.querySelector(`#actions_log_heading_${this.#key}`)
       if(log) {
          log.addEventListener('click',(event) => {
 
-            console.log(`clicked log actions_log_component_${this.#key}`)
-            event.target.classList.toggle('hide_below_title')
+            console.log(`clicked log actions_log_heading_${this.#key}`)
+            const target = document.getElementById(`results_container_${this.#key}`)
+            if(target) {
+               target.classList.toggle('display_none')
+            }
 
          })
       }
