@@ -89,9 +89,6 @@ class ActionsLog {
 
       let total_count = 0  
       let sql
-
-
-      console.log('you may just be right',context)
       
       // filters
       // filters target known specific conditional tests
@@ -152,7 +149,6 @@ class ActionsLog {
             count:total_count,
             actions:result
          }
-      console.log('response_obj',response_obj)
          return response_obj
       }
       else {
