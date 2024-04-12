@@ -15,6 +15,7 @@ const { app, BrowserWindow, ipcMain, dialog, Menu, shell } = require('electron')
 const path = require('node:path')
 const Database = require('./app/database/database')
 const AppConfig = require('./models/AppConfig')
+const ActionsLog = require('./models/ActionsLog')
 const CollectionItem = require('./models/CollectionItem')
 const Tag = require('./models/Tag')
 const DatabaseBackup = require('./models/DatabaseBackup')
@@ -26,6 +27,7 @@ const { is_valid_collection_item,is_valid_int,is_valid_search,is_valid_app_confi
 const { NOTIFY } = require('./app/utilities/notifications')
 const { LENS } = require('./app/utilities/validation')
 const { is_valid_tag } = require('./app/utilities/strings')
+const { get_sqlready_datetime } = require('./app/utilities/datetime')
 
 const is_dev = process.env.NODE_ENV !== 'production'
 const is_mac = process.platform === 'darwin'
@@ -778,19 +780,35 @@ async function import_csv_file(event,file_path) {
 
    if(!database) return NOTIFY.DATABASE_UNAVAILABLE
 
-   let import_csv_file = new ImportCSVFile(database)
+   // prep time execution & date/time strs for actions_log
+   const start_timer_at = Math.ceil(performance.now())
+   const import_start_at = get_sqlready_datetime()
 
-   let results = null
+   // import
+   let import_csv_file = new ImportCSVFile(database)
+   let import_csv_file_obj = null
    try {
-      results = await import_csv_file.import(file_path)
+      import_csv_file_obj = await import_csv_file.import(file_path)
    }
    catch(error) {
-      return {
-         outcome:'fail',
-         message:'Sorry, there was a problem trying to import the CSV file.' + error
-      }
+      return {outcome:'fail',message:'Sorry, there was a problem trying to import the CSV file.' + error}
    }
-   return results
+
+   const end_timer_at = Math.ceil(performance.now())
+   const import_end_at = get_sqlready_datetime()
+   
+   // log action
+   let actions_log = new ActionsLog(database)
+   actions_log.create({
+      action:'import_csv',
+      start_at:import_start_at,
+      end_at:import_end_at
+   })
+   
+   // augment response w/ duration etc
+   import_csv_file_obj.duration = end_timer_at - start_timer_at
+
+   return import_csv_file_obj
 }
 
 async function export_json_file(event,file_name,file_path) {
@@ -808,19 +826,35 @@ async function import_json_file(event,file_path) {
 
    if(!database) return NOTIFY.DATABASE_UNAVAILABLE
 
-   let import_json_file = new ImportJSONFile(database)
+   // prep time execution & date/time strs for actions_log
+   const start_timer_at = Math.ceil(performance.now())
+   const import_start_at = get_sqlready_datetime()
 
-   let results = null
+   // import
+   let import_json_file = new ImportJSONFile(database)
+   let import_json_file_obj = null
    try {
-      results = await import_json_file.import(file_path)
+      import_json_file_obj = await import_json_file.import(file_path)
    }
    catch(error) {
-      return {
-         outcome:'fail',
-         message:'Sorry, there was a problem trying to import the JSON file.' + error
-      }
+      return {outcome:'fail',message:'Sorry, there was a problem trying to import the JSON file.' + error}
    }
-   return results
+
+   const end_timer_at = Math.ceil(performance.now())
+   const import_end_at = get_sqlready_datetime()
+
+   // log action
+   let actions_log = new ActionsLog(database)
+   actions_log.create({
+      action:'import_json',
+      start_at:import_start_at,
+      end_at:import_end_at
+   })
+   
+   // augment response w/ duration etc
+   import_json_file_obj.duration = end_timer_at - start_timer_at
+   
+   return import_json_file_obj
 }
 
 
