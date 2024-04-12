@@ -8,7 +8,14 @@ import { create_h,create_p,create_div,create_section,create_button } from '../..
 
 class ImportJSONComponent {
 
-   render = () => {
+   #completed_callback
+
+   
+   constructor(completed_callback) {
+      this.#completed_callback = completed_callback  
+   }
+
+   render = () => { 
 
       const import_json_component = create_section({
          attributes:[
@@ -96,6 +103,7 @@ class ImportJSONComponent {
 
                   if(import_results_obj.outcome === 'success') {
                      wait_dlg_component.close()
+                     this.#completed_callback()
                      Notification.notify(
                         '#import_json_outcome',
                         `The import on ${get_ui_ready_date(Date(),true)} at ${get_ui_ready_time(Date())} was successful.`,
@@ -105,11 +113,13 @@ class ImportJSONComponent {
                   else {
                      wait_dlg_component.close()
                      Notification.notify('#import_json_outcome',import_results_obj.message,[],false)
+                     this.#completed_callback()
                   }
                }
             }
             else {
                Notification.notify('#import_json_outcome',result.message)
+               this.#completed_callback()
             }
          })
       }
