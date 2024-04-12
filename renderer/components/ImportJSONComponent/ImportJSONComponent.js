@@ -76,12 +76,6 @@ class ImportJSONComponent {
 
             if(result.outcome === 'success') {
 
-               // time execution
-               const start_timer_at = Math.ceil(performance.now())
-
-               // date/time strings for log
-               const import_start_at = get_sqlready_datetime()
-
                let file_path = result.files[0]
 
                const file_size = await window.files_api.getFileSize(file_path)
@@ -98,13 +92,6 @@ class ImportJSONComponent {
                // call import func in main process
                const import_results_obj = await window.actions_api.importJSONFile(file_path)
 
-               const end_timer_at = Math.ceil(performance.now())
-               const import_end_at = get_sqlready_datetime()
-
-               // to do : utilize these times!
-               console.log('time taken:',end_timer_at - start_timer_at,'milliseconds')
-               console.log('import times logged as:',import_start_at,import_end_at)
-
                if (typeof import_results_obj != "undefined") { 
 
                   if(import_results_obj.outcome === 'success') {
@@ -116,7 +103,6 @@ class ImportJSONComponent {
                      )
                   }
                   else {
-                     // this.close_wait_dlg(actions_section)
                      wait_dlg_component.close()
                      Notification.notify('#import_json_outcome',import_results_obj.message,[],false)
                   }
