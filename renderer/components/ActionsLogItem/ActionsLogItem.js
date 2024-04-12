@@ -12,14 +12,11 @@ class ActionsLogComponent {
          attributes:[
             {key:'id',value:'actions_log_item'}
          ],
-         classlist:['actions_log_item','p_0.5']
+         classlist:['actions_log_item','p_0.5','border','border_radius_1','mt_1']
       })
    
       const item_row = create_div({
          classlist:['flex','gap_1']
-      })
-      const action_elem = create_div({
-         text:action.action
       })
       const file_elem = create_div({
          text:action.file
@@ -33,7 +30,7 @@ class ActionsLogComponent {
       })
       
       // assemble
-      item_row.append(action_elem,file_elem,created_date_elem,created_time_elem)
+      item_row.append(file_elem,created_date_elem,created_time_elem)
       actions_log_item.append(item_row)
 
       return actions_log_item
