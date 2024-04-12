@@ -35,6 +35,13 @@ const { DESC } = require('../app/utilities/descriptions')
 //   - we need to manage queue here - on adding a specific 'action' log record, if current queue > 10, delete oldest log record of that 'action'
 //   - log for 'type' of import [csv/json/..]
 
+// to do : verify all work:
+// create
+// delete
+// read
+// read_all
+// read_single
+
 class ActionsLog {
 
    #database
@@ -285,54 +292,52 @@ class ActionsLog {
    //
    // CREATE
    //
-   async create(action_object) {
+   async create(action_obj) {
+
+      // augment record
+      action_obj.created_at = get_sqlready_datetime()
 
       let sql
 
       // verify we are not exceeding specific action type queue len
       const count = await new Promise((resolve,reject) => {
-         sql = `SELECT COUNT(id) as count FROM actions_log WHERE actions = ? `   // to do : enter from action_object
+         sql = `SELECT COUNT(id) as count FROM actions_log WHERE action = "import_json" `   // to do : enter from action_object
          this.#database.get(sql, (error, rows) => {
+            // to do : replace 'import_json' above line w/ action_obj.action
             if(error) {
                reject(error)
             }
-            resolve(rows.count)
+            if(rows) resolve(rows.count)
          })
       }).catch((error) => {
          this.set_last_error(error)
       })
 
-      // if queue is already max, remove earliest first and then insert our new record  // to do : ..
+      // manage action type queue
+      if(count >= this.#max_queue_count) {
+      
+         // to do : queue management - only ever permit max of this.#max_queue_count of any single record type -
+         //                            if already max, remove the oldest record of that type (type eg 'import_json')
+         // delete oldest
 
+      }
+
+      // create new ActionsLog record
       if(count < this.#max_queue_count) {
 
          let fields = ActionsLog.#full_fields_list
 
-         if(editable_only) {
-            fields = fields.filter((field) => {
-               if(field.editable === true) return field
-            })
-         }
-
-         const field_keys = fields.map((field) => {
-            return field.key
-         })
+         const field_keys = fields.map(field => field.key).filter(field => field !== 'id')
 
          // build '?' string
-         // const inserts = Array(fields.length).fill(0)
-         const inserts = field_keys.map((field) => {
-            return '?'
+         const inserts = field_keys.map(field => '?')
+ 
+         // build values list - eg ["import_json","2024-03-05",..]
+         const field_values = field_keys.map((field_key) => {
+            if(action_obj[field_key] !== undefined) return action_obj[field_key]
          })
 
-         // build values list - eg ["bar",2] - & add id at end
-         const field_values = fields.map((field) => {
-            return tag[field.key]
-         })
-
-         let created_at = get_sqlready_datetime()
-
-         sql = `INSERT INTO actions_log(${field_keys.toString()},created_at) 
-                     VALUES(${inserts.toString()},'${created_at}')`
+         sql = `INSERT INTO actions_log(${field_keys.toString()}) VALUES(${inserts.toString()})`
 
          const result = await new Promise((resolve,reject) => {
             this.#database.run(
@@ -348,11 +353,11 @@ class ActionsLog {
          }).catch((error) => this.set_last_error(error))
       
          if(result) {
-            tag.id = result
+            action_obj.id = result
             return {
                query:'create_actions_log',
                outcome:'success',
-               tag:tag
+               action:action_obj
             }
          }
          else {
@@ -365,9 +370,7 @@ class ActionsLog {
             return fail_response
          }
       }
-
    }
-
 
 
    //
