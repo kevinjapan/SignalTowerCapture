@@ -27,6 +27,7 @@ const { is_valid_collection_item,is_valid_int,is_valid_search,is_valid_app_confi
 const { NOTIFY } = require('./app/utilities/notifications')
 const { LENS } = require('./app/utilities/validation')
 const { is_valid_tag } = require('./app/utilities/strings')
+const { file_name_from_path } = require('./app/utilities/utilities')
 const { get_sqlready_datetime } = require('./app/utilities/datetime')
 
 const is_dev = process.env.NODE_ENV !== 'production'
@@ -803,7 +804,8 @@ async function import_csv_file(event,file_path) {
    actions_log.create({
       action:'import_csv',
       start_at:import_start_at,
-      end_at:import_end_at
+      end_at:import_end_at,
+      file:file_name_from_path(file_path)
    })
    
    // augment response w/ duration etc
@@ -849,7 +851,8 @@ async function import_json_file(event,file_path) {
    actions_log.create({
       action:'import_json',
       start_at:import_start_at,
-      end_at:import_end_at
+      end_at:import_end_at,
+      file:file_name_from_path(file_path)
    })
    
    // augment response w/ duration etc
