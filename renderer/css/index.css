@@ -272,6 +272,7 @@ button.disabled:hover {
 .h_2 {height:2rem;}
 .h_3 {height:3rem;}
 .h_6 {height:6rem;}
+.h_20 {height:20%;}
 .h_100 {height:100%;}
 
 .max_h_3 {max-height:3rem;}
@@ -280,6 +281,9 @@ button.disabled:hover {
 
 .fit_content {
    width:fit-content;
+   height:fit-content;
+}
+.fit_content_height {
    height:fit-content;
 }
 
@@ -461,7 +465,7 @@ button.disabled:hover {
    colors 
 */
 .text_grey {
-   color:hsl(0, 0%, 40%);
+   color:hsl(0, 0%, 50%);
 }
 .text_lightgrey {
    color:lightgrey;
@@ -964,4 +968,14 @@ input[type='radio'] {
 .tag_sm {
    width:20px;
    height:20px;
+}
+
+/* hide  */
+.hide_below_title {
+   max-height:1.5rem;
+   overflow:hidden;
+}
+
+.no_pointer_events {
+   pointer-events: none;
 }

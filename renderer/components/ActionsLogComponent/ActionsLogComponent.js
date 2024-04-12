@@ -36,14 +36,14 @@ class ActionsLogComponent {
 
       const actions_log_component = create_section({
          attributes:[
-            {key:'id',value:'actions_log_component'}
+            {key:'id',value:`actions_log_component_${this.#key}`}
          ],
-         classlist:['actions_log_component','ui_component','h_100']
+         classlist:['actions_log_component','ui_component','border','hide_below_title','fit_content_height','cursor_pointer']
       })
    
       const heading = create_h({
          level:'h5',
-         classlist:['text_grey'],
+         classlist:['text_grey','no_pointer_events'],
          text:this.#label
       })
 
@@ -51,14 +51,14 @@ class ActionsLogComponent {
       //         some dynamic part to 'id' here? as we did w/ top and bottom key in PaginationNav.
       const actions_log_outcome = create_div({
          attributes:[
-            {key:'id',value:'actions_log_outcome'}
+            {key:'id',value:`actions_log_outcome_${this.#key}`}
          ]
       })
 
       
       this.#results_container = create_div({
          attributes:[
-            {key:'id',value:'results_container'}
+            {key:'id',value:`results_container_${this.#key}`}
          ],
          classlist:['deleted_records','pt_1']      // to do : deleted records?
       })
@@ -122,6 +122,20 @@ class ActionsLogComponent {
 
    // enable buttons/links displayed in the render
    activate = async () => {
+
+      //
+      // toggle view history list
+      //
+      const log = document.querySelector(`#actions_log_component_${this.#key}`)
+      if(log) {
+         log.addEventListener('click',(event) => {
+
+            console.log(`clicked log actions_log_component_${this.#key}`)
+            event.target.classList.toggle('hide_below_title')
+
+         })
+      }
+
 
    }
 
