@@ -29,10 +29,6 @@ class ImportJSONComponent {
          text:'Import JSON File'
       })
 
-      const paragraph = create_p({
-         text:'Select folder.'
-      }) 
-
       let import_json_btn = create_button({
          attributes:[
             {key:'id',value:'import_json_btn'}
@@ -54,7 +50,7 @@ class ImportJSONComponent {
       })
 
       // assemble
-      import_json_component.append(heading,paragraph,import_json_btn,import_json_outcome,import_json_fields)
+      import_json_component.append(heading,import_json_btn,import_json_outcome,import_json_fields)
    
       return import_json_component
    }

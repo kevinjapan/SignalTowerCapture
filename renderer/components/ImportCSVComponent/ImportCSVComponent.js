@@ -28,10 +28,6 @@ class ImportCSVComponent {
          text:'Import CSV File'
       })
 
-      const paragraph = create_p({
-         text:'Select folder.'
-      }) 
-
       let import_csv_btn = create_button({
          attributes:[
             {key:'id',value:'import_csv_btn'}
@@ -53,7 +49,7 @@ class ImportCSVComponent {
       })
 
       // assemble
-      import_csv_component.append(heading,paragraph,import_csv_btn,import_csv_outcome,import_csv_fields)
+      import_csv_component.append(heading,import_csv_btn,import_csv_outcome,import_csv_fields)
    
       return import_csv_component
    }
