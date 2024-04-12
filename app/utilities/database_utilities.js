@@ -102,6 +102,15 @@ const get_table_insert_fields = (table_name) => {
             })
          }
 
+      case 'tags':
+         
+         let tags = Tag.get_full_fields_list()
+         if(Array.isArray(tags)) {
+            return tags.map((field) => {
+               return field.key
+            })
+         }
+
       case 'app_config':
 
          let app_config_fields = AppConfig.get_full_fields_list()
