@@ -3,7 +3,7 @@ const { get_sqlready_datetime } = require('../app/utilities/datetime')
 const { get_random_int } = require('../app/utilities/utilities')
 const { DESC } = require('../app/utilities/descriptions')
 
-
+const { get_status_condition_sql } = require('../app/utilities/search_utilities')
 
 
 // ActionsLog matches batches of records to actions performed at specific times
@@ -47,7 +47,7 @@ class ActionsLog {
    #database
 
    // log is a queue for each action type (FIFO)
-   #max_queue_count = 20
+   #max_queue_count = 100         // to do : set to 10 or 20
 
    // every read-all needs an absolute upper limit!
    #limit_read_all_records = this.#max_queue_count
@@ -82,7 +82,7 @@ class ActionsLog {
 
 
    //
-   // READ ALL : 
+   // READ : 
    // Not paginated since we limit all logs to last 20 actions (queue)
    // to do : filter_fields?
    async read(context) {
@@ -90,11 +90,14 @@ class ActionsLog {
       let total_count = 0  
       let sql
 
+
+      console.log('you may just be right',context)
+      
       // filters
       // filters target known specific conditional tests
-      let action = 'action = ""'              // our default 'WHERE' clause      // to do : client must specify action type
+      let action = 'action = ""'              // our default 'WHERE' clause
        if(context.filters) {
-         if(context.filters.action) action = get_status_condition_sql('collection_items',context.filters.action)
+         if(context.filters.action) action = `action = "${context.filters.action}"`
       }
 
       // field_filters target conditional tests against fields/cols within the record
@@ -122,7 +125,7 @@ class ActionsLog {
                if(error) {
                   reject(error)
                }
-               total_count = rows.count
+               if(rows) total_count = rows.count
             })
 
             const fields = ActionsLog.#full_fields_list.map((field) => {
@@ -132,8 +135,9 @@ class ActionsLog {
             sql = `SELECT ${fields.toString()} 
                      FROM actions_log 
                      WHERE ${action}                     
-                     ORDER BY created_at
+                     ORDER BY created_at DESC
                      LIMIT ${this.#max_queue_count}`
+
             this.#database.all(sql, (error, rows) => {
                if(error) reject(error)
                resolve(rows)        
@@ -148,6 +152,7 @@ class ActionsLog {
             count:total_count,
             actions:result
          }
+      console.log('response_obj',response_obj)
          return response_obj
       }
       else {
