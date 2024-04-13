@@ -439,6 +439,9 @@ button.disabled:hover {
    font-size:1.25rem;font-weight:700;padding-left:1rem;
    margin:0;
 }
+.text_bold {
+   font-weight:bold;
+}
 .inline_block {
    display:inline-block;
 }
@@ -976,6 +979,14 @@ input[type='radio'] {
    overflow:hidden;
 }
 
+/* prevent child elems (esp headings) blocking events on containers */
 .no_pointer_events {
    pointer-events: none;
+}
+
+.display_block {
+   display:block;
+}
+.display_none {
+   display:none;
 }
