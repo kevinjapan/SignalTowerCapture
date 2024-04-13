@@ -12,20 +12,23 @@ class ActionsLogComponent {
          attributes:[
             {key:'id',value:'actions_log_item'}
          ],
-         classlist:['actions_log_item','p_0.5','border','border_radius_1','mt_1']
+         classlist:['actions_log_item','p_0.5','border','border_radius_0.5','mt_1']
       })
    
       const item_row = create_div({
          classlist:['flex','gap_1']
       })
       const file_elem = create_div({
+         classlist:['text_grey'],
          text:action.file
       })
       const created_date_elem = create_div({
+         classlist:['text_grey'],
          text:get_ui_ready_date(action.created_at,true),
          classlist:['text_bold']
       })
       const created_time_elem = create_div({
+         classlist:['text_grey'],
          text:' @ ' + get_ui_ready_time(action.created_at)
       })
       
