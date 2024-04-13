@@ -107,8 +107,6 @@ class DeletedRecordsTeaser {
          try {
 
             const collection_items_obj = await window.collection_items_api.getItems(this.#context)
-
-            console.log('collection_items_obj',collection_items_obj)
          
             if (typeof collection_items_obj != "undefined") {
          
