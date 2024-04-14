@@ -7,47 +7,22 @@ const { get_status_condition_sql } = require('../app/utilities/search_utilities'
 
 
 // ActionsLog matches batches of records to actions performed at specific times
-//
-// eg
-// action		   start_at	   end_at
-// ----------------------------------------------------------------------------------------------
-// import_csv	   11:14		   11:20			we can use to rollback (remove) imported records
-// import_json	   4:50		   4:55
-// delete		   7:12		   7:12			we can use to rollback (undelete) batch deleted records
-//
+// simply by recording the start and end of time of the action
+// We can then perform rollbacks on records created|deleted/.. in that window.
 
-// ---------------------------------- to do :
-// ActionsLog
-// - log import progress..?
-// - log import actions - in ActionsLog
-// - implement ActionsLog model (as a queue for each 'action')
-// - view ActionsLog
-// - enable 'rollback' on ActionsLog
-// ----------------------------------
 
 // to do :
-// - add import history (after log import actions above)
-//   - can rollback (use time start and end of process to delete records)
-//   - save to log database table (?)
-//     - action  (we can name eg imports by their timestamp)
-//     - start time   
-//     - end time
-//   - we need to manage queue here - on adding a specific 'action' log record, if current queue > 10, delete oldest log record of that 'action'
-//   - log for 'type' of import [csv/json/..]
+// ActionsLog
+// - implement ActionsLog model (as a queue for each 'action')
+// - enable 'rollback' on ActionsLog
 
-// to do : verify all work:
-// create
-// delete
-// read
-// read_all
-// read_single
 
 class ActionsLog {
 
    #database
 
    // log is a queue for each action type (FIFO)
-   #max_queue_count = 100         // to do : set to 10 or 20
+   #max_queue_count = 10
 
    // every read-all needs an absolute upper limit!
    #limit_read_all_records = this.#max_queue_count
@@ -85,39 +60,27 @@ class ActionsLog {
    //
    // READ : 
    // Not paginated since we limit all logs to last 20 actions (queue)
-   // to do : filter_fields?
+   // 
    async read(context) {
 
       let total_count = 0  
       let sql
-      
-      // filters
+
       // filters target known specific conditional tests
-      let action = 'action = ""'              // our default 'WHERE' clause
+      let action = 'action IS NULL'   // our default 'WHERE' clause
+      let limit = this.#max_queue_count
+      let offset = 0
        if(context.filters) {
          if(context.filters.action) action = `action = "${context.filters.action}"`
+         if(context.filters.limit) limit = context.filters.limit
+         if(context.filters.offset) offset = context.filters.offset
       }
-
-      // field_filters target conditional tests against fields/cols within the record
-      // let field_filters_sql = ''
-      // if(context.field_filters) {         
-      //    context.field_filters.forEach(filter => {
-      //       let value = trim_char(filter.value,',')
-      //       if(filter.test && filter.test.toUpperCase() === 'IN') {
-      //          field_filters_sql += ` AND ${filter.field} IN (${value})`
-      //       }
-      //       else {
-      //          field_filters_sql += ` AND ${filter.field} = "${value}"`
-      //       }
-      //    })
-      // }
 
       // wrap in a promise to await result
       const result = await new Promise((resolve,reject) => {
 
          this.#database.serialize(() => {
-            
-            // to do : if not paginating, we can remove this
+
             sql = `SELECT COUNT(id) as count FROM actions_log WHERE ${action}`
             this.#database.get(sql, (error, rows) => {
                if(error) {
@@ -130,12 +93,11 @@ class ActionsLog {
                return field.key
             })
 
-            sql = `SELECT ${fields.toString()} 
-                     FROM actions_log 
+            sql = `SELECT ${fields.toString()} FROM actions_log 
                      WHERE ${action}                     
                      ORDER BY created_at DESC
-                     LIMIT ${this.#max_queue_count}`
-
+                     LIMIT ${limit}
+                     OFFSET ${offset}`
 
             this.#database.all(sql, (error, rows) => {
                if(error) reject(error)
@@ -196,8 +158,7 @@ class ActionsLog {
                return field.key
             })
 
-            sql = `SELECT ${fields.toString()} 
-                     FROM actions_log 
+            sql = `SELECT ${fields.toString()} FROM actions_log 
                      WHERE ${action}
                      ORDER BY ${order_by}
                      LIMIT ${this.#limit_read_all_records}`
@@ -207,10 +168,6 @@ class ActionsLog {
             })
          })
       }).catch((error) => this.set_last_error(error))
-
-      const exportable_fields = ActionsLog.#full_fields_list.filter((field) => {
-         if(field.export === true) return field
-      })
 
       if(result) {
          let response_obj = {
@@ -237,7 +194,7 @@ class ActionsLog {
    //
    // READ SINGLE
    //
-   async read_single() {
+   async read_single(id) {
 
       if(!Number.isInteger(parseInt(id))) {
          return {
@@ -302,31 +259,58 @@ class ActionsLog {
 
       let sql
 
+      // we use count to manage queue
       // verify we are not exceeding specific action type queue len
+      // to do : move action in sql to placeholder parameter
       const count = await new Promise((resolve,reject) => {
-         sql = `SELECT COUNT(id) as count FROM actions_log WHERE action = "import_json" `   // to do : enter from action_object
+         sql = `SELECT COUNT(id) as count FROM actions_log WHERE action = "${action_obj.action}"`
          this.#database.get(sql, (error, rows) => {
-            // to do : replace 'import_json' above line w/ action_obj.action
             if(error) {
                reject(error)
             }
             if(rows) resolve(rows.count)
          })
       }).catch((error) => {
+         console.log('ERR',error)   // to do : handle and notify better
          this.set_last_error(error)
       })
 
       // manage action type queue
       if(count >= this.#max_queue_count) {
-      
-         // to do : queue management - only ever permit max of this.#max_queue_count of any single record type -
-         //                            if already max, remove the oldest record of that type (type eg 'import_json')
-         // delete oldest
+         
+         // manage fifo queue
+         // get 'id' of record at 'bottom' of queue (oldest record, so lowest 'id' value) 
+         // delete all records w/ lower 'id' (and matching 'action')
 
+         // get record at 'bottom'
+         let context = {
+            filters:{
+               action:action_obj.action,
+               offset:10,
+               limit:1
+            }
+         }
+         const record = await this.read(context)
+
+         // delete that record and all records older
+         if(record) {
+            const last_valid_record_id = record.actions[0].id
+            const del_context = {
+               key:'delete_actions_log_record',
+               filters:{
+                  action:action_obj.action,
+                  test:'<'
+               }
+            }
+            const delete_result = await this.delete(last_valid_record_id,del_context)
+            console.log('delete_result',delete_result)
+         }
       }
-
+      
       // create new ActionsLog record
-      if(count < this.#max_queue_count) {
+      // will not add if queue management above hasn't been successful
+      // to do : only proceed if delete_result is successful
+      //if(count < this.#max_queue_count) {
 
          let fields = ActionsLog.#full_fields_list
 
@@ -372,7 +356,7 @@ class ActionsLog {
             this.clear_last_error()
             return fail_response
          }
-      }
+      //}
    }
 
 
@@ -380,7 +364,7 @@ class ActionsLog {
    // DELETE
    // hard delete
    //
-   async delete(id) {
+   async delete(id,context = {}) {
 
       if(!Number.isInteger(parseInt(id))) {
          return {
@@ -390,9 +374,19 @@ class ActionsLog {
          } 
       }
 
+      let id_clause = 'id = ?'   // our default 'WHERE' clause
+      let action = ''
+       if(context.filters) {
+         if(context.filters.test) id_clause = `id ${context.filters.test} ?`
+         if(context.filters.action) action = `AND action = "${context.filters.action}"`
+      }
+
+      console.log('delete sql',`DELETE FROM actions_log WHERE ${id_clause} ${action}`)
+      console.log('id',id)
+
       const result = await new Promise((resolve,reject) => {
          this.#database.run(
-            `DELETE FROM actions_log WHERE id = ?`,[id], function(error) {
+            `DELETE FROM actions_log WHERE ${id_clause} ${action}`,[id], function(error) {
                if(error) {
                   reject(error)
                }
