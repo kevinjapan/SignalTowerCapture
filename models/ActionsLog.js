@@ -293,7 +293,7 @@ class ActionsLog {
          const record = await this.read(context)
 
          // delete that record and all records older
-         if(record) {
+         if(record && record.actions.length > 0) {
             const last_valid_record_id = record.actions[0].id
             const del_context = {
                key:'delete_actions_log_record',
@@ -303,7 +303,6 @@ class ActionsLog {
                }
             }
             const delete_result = await this.delete(last_valid_record_id,del_context)
-            console.log('delete_result',delete_result)
          }
       }
       
@@ -380,9 +379,6 @@ class ActionsLog {
          if(context.filters.test) id_clause = `id ${context.filters.test} ?`
          if(context.filters.action) action = `AND action = "${context.filters.action}"`
       }
-
-      console.log('delete sql',`DELETE FROM actions_log WHERE ${id_clause} ${action}`)
-      console.log('id',id)
 
       const result = await new Promise((resolve,reject) => {
          this.#database.run(
