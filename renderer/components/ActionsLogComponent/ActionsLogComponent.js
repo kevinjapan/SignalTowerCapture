@@ -59,6 +59,7 @@ class ActionsLogComponent {
       })
 
       if(this.#context) {
+         console.log('doing it')
          this.get_items()
       }
 
@@ -133,7 +134,13 @@ class ActionsLogComponent {
 
 
    }
-
+   
+   extend_list = () => {
+      const target = document.getElementById(`results_container_${this.#key}`)
+      if(target) {
+         target.classList.remove('display_none')
+      }
+   }
 
 
 
