@@ -1,14 +1,8 @@
 import App from '../App/App.js'
-import WaitDialog from '../WaitDialog/WaitDialog.js'
-import Notification from '../../components/Notification/Notification.js'
 import ActionsLogItem from '../../components/ActionsLogItem/ActionsLogItem.js'
-import { get_ui_ready_date,get_ui_ready_time,get_sqlready_datetime } from '../../utilities/ui_datetime.js'
-import { create_h,create_p,create_div,create_section,create_button } from '../../utilities/ui_elements.js'
+import { create_h,create_div,create_section } from '../../utilities/ui_elements.js'
 
 
-//
-// We use classes to activate elements since a page may contain multiple ActionsLogComponents
-//
 
 class ActionsLogComponent {
 
@@ -30,7 +24,7 @@ class ActionsLogComponent {
       this.#label = label
    }
 
-   render = (action) => {
+   render = async(action) => {
 
       this.#context.filters.action = action
 
@@ -50,24 +44,23 @@ class ActionsLogComponent {
          text:this.#label
       })
 
-      // to do : how do we differentiate outcomes btwn multiple ActionsLogComponents on same page?
-      //         some dynamic part to 'id' here? as we did w/ top and bottom key in PaginationNav.
       const actions_log_outcome = create_div({
          attributes:[
             {key:'id',value:`actions_log_outcome_${this.#key}`}
          ]
       })
 
-      
       this.#results_container = create_div({
          attributes:[
             {key:'id',value:`results_container_${this.#key}`}
          ],
-         classlist:['display_none','pt_1']
+         classlist:['display_none','pt_1'],
+         text:''
       })
-      
-      this.#results_container.append(this.get_items())
 
+      if(this.#context) {
+         this.get_items()
+      }
 
       // assemble
       actions_log_component.append(heading,actions_log_outcome,this.#results_container)
@@ -85,11 +78,9 @@ class ActionsLogComponent {
     
          const actions_log_obj = await window.actions_api.getActionsLog(this.#context)
       
-         if(typeof actions_log_obj != "undefined") {
+         if(typeof actions_log_obj !== 'undefined') {
       
             if(actions_log_obj.outcome === 'success') {
-               
-               this.#results_container.replaceChildren()
 
                if(actions_log_obj.actions.length > 0) {
          
@@ -132,8 +123,6 @@ class ActionsLogComponent {
       const log = document.querySelector(`#actions_log_heading_${this.#key}`)
       if(log) {
          log.addEventListener('click',(event) => {
-
-            console.log(`clicked log actions_log_heading_${this.#key}`)
             const target = document.getElementById(`results_container_${this.#key}`)
             if(target) {
                target.classList.toggle('display_none')
