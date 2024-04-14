@@ -89,7 +89,7 @@ class Browse {
       
       // required for re-instating search_context on 'back' to list actions
       if(this.#browse_context) {
-         this.#browse_results_container.append(this.get_items())
+         this.get_items()
       }
 
       // assemble
