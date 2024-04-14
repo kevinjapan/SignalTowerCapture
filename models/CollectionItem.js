@@ -75,8 +75,7 @@ class CollectionItem {
       let total_count = 0  
       let sql
 
-      // filters
-      // filters target known specific conditional tests
+      // filters target known specific conditional tests (not limited to WHERE clause)
       let status = 'collection_items.deleted_at IS NULL'    // our default 'WHERE' clause (always present or overwritten below)
       let order_by = 'title COLLATE NOCASE ASC'             // our default 'ORDER BY' clause
       let filter_by_char = ''                               // where 'title' starts with _char 
