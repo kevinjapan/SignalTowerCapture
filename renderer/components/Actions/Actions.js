@@ -16,7 +16,7 @@ class Actions {
 
    #json_actions_log_component
 
-   render = () => {
+   render = async() => {
 
       let actions_section = create_section({
          attributes:[
@@ -99,9 +99,9 @@ class Actions {
             {key:'id',value:'csv_history_section'}
          ]
       })
-      this.#csv_actions_log_component = new ActionsLogComponent('import_csv','Import CSV History')
+      this.#csv_actions_log_component = new ActionsLogComponent('import_csv','CSV Imports')
       if(this.#csv_actions_log_component) {
-         csv_history_section.append(this.#csv_actions_log_component.render('import_csv'))
+         csv_history_section.append(await this.#csv_actions_log_component.render('import_csv'))
          setTimeout(() => this.#csv_actions_log_component.activate(),200)
       }
       csv_section.append(csv_history_section)
@@ -111,7 +111,7 @@ class Actions {
       //
       let json_section = create_section({
          attributes:[
-            {key:'id',value:'import_section'}
+            {key:'id',value:'import_section'}      // to do : re-visit names
          ],
          classlist:['m_2','mt_4','mb_2']
       })
@@ -147,9 +147,9 @@ class Actions {
             {key:'id',value:'json_history_section'}
          ]
       })
-      this.#json_actions_log_component = new ActionsLogComponent('import_json','Import JSON History')
+      this.#json_actions_log_component = new ActionsLogComponent('import_json','JSON Imports')
       if(this.#json_actions_log_component) {
-         json_history_section.append(this.#json_actions_log_component.render('import_json'))
+         json_history_section.append(await this.#json_actions_log_component.render('import_json'))
          setTimeout(() => this.#json_actions_log_component.activate(),200)
       }
       json_section.append(json_history_section)
@@ -198,19 +198,27 @@ class Actions {
    // import callbacks for updating ActionsLogs
    // we refresh regardless of outcome
    //
-   import_csv_completed = () => {
+   import_csv_completed = async() => {
       const csv_history_section = document.getElementById('csv_history_section')
       if(csv_history_section && this.#csv_actions_log_component) {
-         csv_history_section.replaceChildren(this.#csv_actions_log_component.render('import_csv'))
-         setTimeout(() => this.#csv_actions_log_component.activate(),200)
+         // delay to prevent getting ahead of changes 
+         setTimeout(async() => {
+            csv_history_section.replaceChildren(await this.#csv_actions_log_component.render('import_csv'))
+            this.#csv_actions_log_component.extend_list()
+            setTimeout(() => this.#csv_actions_log_component.activate(),200)
+         },500)
       }
    }
 
-   import_json_completed = () => {
+   import_json_completed = async() => {
       const json_history_section = document.getElementById('json_history_section')
       if(json_history_section && this.#json_actions_log_component) {
-         json_history_section.replaceChildren(this.#json_actions_log_component.render('import_json'))
-         setTimeout(() => this.#json_actions_log_component.activate(),200)
+         // delay to prevent getting ahead of changes 
+         setTimeout(async() => {
+            json_history_section.replaceChildren(await this.#json_actions_log_component.render('import_json'))
+            this.#json_actions_log_component.extend_list()
+            setTimeout(() => this.#json_actions_log_component.activate(),200)
+         },500)
       }
    }
 
