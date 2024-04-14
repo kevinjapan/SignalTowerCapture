@@ -94,7 +94,7 @@ class ImportCSVComponent {
                   if (typeof import_results_obj != "undefined") { 
                      if(import_results_obj.outcome === 'success') {
                         wait_dlg_component.close()
-                        this.#completed_callback()
+                        await this.#completed_callback()
                         Notification.notify(
                            '#import_csv_outcome',
                            `The import on ${get_ui_ready_date(Date(),true)} at ${get_ui_ready_time(Date())} was successful.`,
@@ -105,13 +105,13 @@ class ImportCSVComponent {
                         Notification.notify('#import_csv_outcome',import_results_obj.message_arr,[],false)
                         console.log('one',import_results_obj)  // to do : bug - error caught but not notified
                                                                //         \collection-dataset\Research_H-L.txt
-                        this.#completed_callback()
+                        await this.#completed_callback()
                      }
                   }
                }
                else {
                   Notification.notify('#import_csv_outcome',result.message_arr)
-                  this.#completed_callback()
+                  await this.#completed_callback()
                }
             })
          }

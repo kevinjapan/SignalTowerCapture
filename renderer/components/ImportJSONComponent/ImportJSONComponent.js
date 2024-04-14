@@ -98,8 +98,10 @@ class ImportJSONComponent {
                if (typeof import_results_obj != "undefined") { 
 
                   if(import_results_obj.outcome === 'success') {
+
+                     console.log('about to call completed_callback')
                      wait_dlg_component.close()
-                     this.#completed_callback()
+                     await this.#completed_callback()
                      Notification.notify(
                         '#import_json_outcome',
                         `The import on ${get_ui_ready_date(Date(),true)} at ${get_ui_ready_time(Date())} was successful.`,
@@ -109,13 +111,13 @@ class ImportJSONComponent {
                   else {
                      wait_dlg_component.close()
                      Notification.notify('#import_json_outcome',import_results_obj.message,[],false)
-                     this.#completed_callback()
+                     await this.#completed_callback()
                   }
                }
             }
             else {
                Notification.notify('#import_json_outcome',result.message)
-               this.#completed_callback()
+               await this.#completed_callback()
             }
          })
       }
