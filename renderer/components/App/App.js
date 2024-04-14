@@ -88,7 +88,7 @@ class App {
                break
             case 'Actions':
                component = new Actions()
-               component_container.replaceChildren(component.render())
+               component_container.replaceChildren(await component.render())
                break
             case 'DeletedRecords':
                component = new DeletedRecords(props)
