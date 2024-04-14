@@ -58,8 +58,10 @@ class ImportCSVComponent {
    // enable buttons/links displayed in the render
    activate = async () => {
 
+      //
+      // Import a csv file
+      //
       const import_csv_btn = document.getElementById('import_csv_btn')
-
       if(import_csv_btn) {
 
             import_csv_btn.addEventListener('click', async(event) => {
@@ -71,13 +73,14 @@ class ImportCSVComponent {
                   filters:[{name:'TXT',extensions:['txt']},]
                }
        
-               // user select file dialog
+            // activate 'select file' dialog for user input
                const result = await window.files_api.getFilePath(options)
 
                if(result.outcome === 'success') {
 
                   let file_path = result.files[0]
 
+                  // to do : new progress loading icon
                   const file_size = await window.files_api.getFileSize(file_path)
                   const file_kb_size = file_size.file_kb_size
                   const est_secs_duration = (file_kb_size / 100) * this.get_secs_per_kb(file_kb_size)
@@ -89,9 +92,11 @@ class ImportCSVComponent {
                      actions_section.append(wait_dlg_component.render())
                   }
 
+                  // call import func in main process
                   const import_results_obj = await window.actions_api.importCSVFile(file_path)  
 
                   if (typeof import_results_obj != "undefined") { 
+
                      if(import_results_obj.outcome === 'success') {
                         wait_dlg_component.close()
                         await this.#completed_callback()
@@ -123,7 +128,7 @@ class ImportCSVComponent {
    }
 
    
-   //
+   // to do : ...
    // estimated processing times
    // very rough - we rely on 'finishing' text to smooth ending!
    // note that these estimates are for the typical import scenario
