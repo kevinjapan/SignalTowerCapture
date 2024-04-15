@@ -131,16 +131,12 @@ class Search {
             const collection_items_obj = await window.collection_items_api.searchCollectionItems(this.#search_context)
 
             if (typeof collection_items_obj != "undefined") {
-         
                if(collection_items_obj.outcome === 'success') {
-
-                  console.log('collection_items_obj',collection_items_obj)
 
                   this.#browse_results_container.replaceChildren()
 
                   let page_count = Math.ceil(collection_items_obj.count / collection_items_obj.per_page)
 
-         
                   if(collection_items_obj.collection_items && collection_items_obj.collection_items.length > 0) {
                      
                      const top_pagination_nav = new PaginationNav('top',this.go_to_page,page_count,this.#search_context.page)
