@@ -432,7 +432,7 @@ class CollectionItem {
          return {
             query:'create_collection_item',
             outcome:'fail',
-            message:'error attempting to attempt_read_existing'   // to do : tidy msg
+            message:'There was an error while checking for possible duplicates in CollectionItem.create'
          }
       }
    }
