@@ -80,13 +80,8 @@ class ImportCSVComponent {
 
                   let file_path = result.files[0]
 
-                  // to do : new progress loading icon
-                  const file_size = await window.files_api.getFileSize(file_path)
-                  const file_kb_size = file_size.file_kb_size
-                  const est_secs_duration = (file_kb_size / 100) * this.get_secs_per_kb(file_kb_size)
-
                   // open 'please wait..' dlg
-                  const wait_dlg_component = new WaitDialog({file_name:file_path,est_secs_duration:est_secs_duration})
+                  const wait_dlg_component = new WaitDialog({file_name:file_path})
                   let actions_section = document.getElementById('actions_section')
                   if(actions_section) {
                      actions_section.append(wait_dlg_component.render())
@@ -127,21 +122,6 @@ class ImportCSVComponent {
       if(wait_dlg) parent_section.removeChild(wait_dlg)
    }
 
-   
-   // to do : ...
-   // estimated processing times
-   // very rough - we rely on 'finishing' text to smooth ending!
-   // note that these estimates are for the typical import scenario
-   // of complete records w/ all fields present
-   // importing records w/ only eg 2 or 3 fields will under-estimate 
-   // and fill the progress bar early - but rare scenario and non-breaking
-   //
-   get_secs_per_kb = (file_kb_size) => {
-      if(file_kb_size > 800) return 80
-      if(file_kb_size > 600) return 60
-      if(file_kb_size > 300) return 50
-      return 35
-   }
 }
 
 export default ImportCSVComponent
