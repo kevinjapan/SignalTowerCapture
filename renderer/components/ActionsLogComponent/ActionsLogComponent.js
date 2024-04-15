@@ -59,7 +59,6 @@ class ActionsLogComponent {
       })
 
       if(this.#context) {
-         console.log('doing it')
          this.get_items()
       }
 
