@@ -2,21 +2,9 @@ const CollectionItem = require('./CollectionItem')
 const { is_valid_collection_item_csv } = require('../app/utilities/validation')
 
 
+
 // Import a CSV file of CollectionItem records.
-// Currently we insert single CollectionItem records at a time,
-
-// to do : document this off-source code
-// risks
-// - large import files (>300 records) will noticeably lock the app
-//
-// mitigations
-// - batch inserts (see below)
-// - limit size of export files we create (say 500 records) but create multiples if required.
-//
-// future:
-// - build batch insert statements - say 100 records each insert (max permitted is 1000 values)
-//
-
+// We insert single CollectionItem records at a time to allow preventing duplicates
 
 
 class ImportCSVFile {
@@ -74,9 +62,9 @@ class ImportCSVFile {
                         ]
                      }
                   }
-
                }
-               // prevent further validation
+
+               // prevent further line/record validation (we assume format followed throughout file)
                first_line = false
 
                let promise_result = await new Promise(async(resolve,reject) => {
