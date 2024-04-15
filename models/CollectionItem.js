@@ -312,7 +312,6 @@ class CollectionItem {
 
       // min requirements
       if(collection_item.folder_path ===  undefined || collection_item.file_name === undefined) {
-         console.log(JSON.stringify(collection_item), ' failed to be read.')
          return {
             query:'create_collection_item',
             outcome:'fail',
@@ -457,8 +456,6 @@ class CollectionItem {
 
       // remove 'id'
       delete mapped_values['id']
-
-      console.log('mapped_values',mapped_values)
 
       // get 1-d arr of keys
       const filtered_field_keys = Object.keys(mapped_values)
@@ -983,7 +980,6 @@ class CollectionItem {
          return false
       })
 
-
       // Execute the search
       let search_result = null
          
@@ -1020,8 +1016,6 @@ class CollectionItem {
                   reject(error)
                }
                if(rows) {
-                  console.log('rows',rows)
-                  total_count = rows.length
                   resolve(rows)   
                }         
             })
