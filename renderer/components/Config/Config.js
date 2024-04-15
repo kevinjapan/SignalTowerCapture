@@ -45,7 +45,6 @@ class Config {
          text:'Tags'
       })
       tags_header.append(icon('tag'),tags_section_h)
-      // to do : 'pertain' - correct word below?
       const tags_section_desc = create_p({
          classlist:['mt_0','mb_0','pt_0','pb_0'],
          text:`You can 'tag' records with keywords or categories, and then upon searching for a 
