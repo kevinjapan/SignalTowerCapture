@@ -165,8 +165,6 @@ class AppConfig {
       const field_names = AppConfig.#full_fields_list.map((field) => {
          return field.key
       })
-
-      // console.log('app_config',result)
       
       // if no rows found, app_config hasn't been initialized
       if(result.length < 1) {
@@ -239,8 +237,6 @@ class AppConfig {
          const sql = `UPDATE app_config 
                      SET ${sql_set_assign_placeholders.toString()} 
                      WHERE id = ? `
-
-                     console.log('AppConfig.update',sql)
 
          // build values list - eg ["bar",2]
          const field_values = designated_fields.map((field) => {

@@ -145,8 +145,7 @@ class CollectionItemCard {
                   })
                   img_col.append(create_div(),msg)
                }    
-               
-               // to do : make folder_path a link to open the folder
+
                if(field_value) {
                   field_element = create_div({
                      classlist:['break_words','mt_0.5','mr_2','pb_1','text_grey'],

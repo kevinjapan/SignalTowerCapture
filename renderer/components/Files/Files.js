@@ -60,7 +60,7 @@ class Files {
 
       this.#root_folder = App.get_root_folder()
       if(this.#root_folder === '') return no_root_folder()
-      //this.#root_folder = temp.split(/\ /).join('\ ');  // to do : required?
+      //this.#root_folder = temp.split(/\ /).join('\ ');
 
       // 2-col layout
       const files_layout = create_div({
@@ -184,7 +184,6 @@ class Files {
    // Do we have an existing record for the selected file?
    // we perform a single db call and reference off of this list rather than querying each time
    get_matching_records = async() => {
-      console.log('checking in Files',this.#context)
       try {
          const result = await window.collection_items_api.getItems(this.#context)
          this.#matching_records = result.collection_items

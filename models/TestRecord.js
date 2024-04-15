@@ -46,7 +46,7 @@ class TestRecord {
          let stmt = this.#database.prepare(`INSERT INTO collection_items (${ci_full_fields_list}) VALUES (${insert_placeholders.toString()})`)
 
          // we typically run in dev, so let's verify workings..
-         console.log(`INSERT INTO collection_items (${ci_full_fields_list}) VALUES (${insert_placeholders.toString()})`)
+         // console.log(`INSERT INTO collection_items (${ci_full_fields_list}) VALUES (${insert_placeholders.toString()})`)
 
          for (let i = 0; i < num_records; i++) {
             
@@ -71,9 +71,6 @@ class TestRecord {
 
                }
             })
-
-            // verify workings..
-            console.log(i,field_values[0])  // title
 
             stmt.run([...field_values],
                function (error) { 

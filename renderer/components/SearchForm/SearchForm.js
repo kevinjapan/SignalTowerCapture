@@ -115,7 +115,6 @@ class SearchForm {
          search_btn.addEventListener('click',(event) => {
 
             event.preventDefault()
-            console.log('in here')
             let search_context = {
                key: 'Search',
                search_term:search_term_input.value,

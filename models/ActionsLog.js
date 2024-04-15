@@ -296,7 +296,6 @@ class ActionsLog {
                }
             }
             delete_result = await this.delete(last_valid_record_id,del_context)
-            console.log('delete_result',delete_result)
          }
       }
       

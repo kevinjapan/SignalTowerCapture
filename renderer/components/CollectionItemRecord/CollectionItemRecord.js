@@ -38,7 +38,6 @@ class CollectionItemRecord {
             recent_records: add_to_int_queue(ints_queue,20,this.#props.item.id).join()
          }
          const result = await window.config_api.updateAppConfig(app_config_recent)
-         // to do : log any issues?
       }
 
       // component container

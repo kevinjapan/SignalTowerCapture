@@ -184,8 +184,6 @@ class CollectionItemForm {
                   this.#props.item[field.key] ? this.#props.item[field.key].split('*') : []
                   : []
 
-            console.log(current_tags)
-
             // placeholder - we inject once promise is resolved..
             form.append(field_label,create_div({attributes:[{key:'id',value:'tags_placeholder'}]}))
 
@@ -195,8 +193,6 @@ class CollectionItemForm {
                if (typeof this.#tags_obj !== "undefined") {
             
                   if(this.#tags_obj.outcome === 'success') {
-
-                     console.log(this.#tags_obj)
 
                      // get existing tags list (remove any non-registered tag tokens)
                      const verified_curr_tags = current_tags.filter(curr_tag => {
@@ -364,7 +360,6 @@ class CollectionItemForm {
 
                   let response
                   if(this.#props.action === 'add') {
-                     console.log('add',updated_collection_item)
                      response = await window.collection_items_api.addCollectionItem(updated_collection_item)
                   }
                   else {
