@@ -111,7 +111,7 @@ class Actions {
       //
       let json_section = create_section({
          attributes:[
-            {key:'id',value:'import_section'}      // to do : re-visit names
+            {key:'id',value:'json_section'}
          ],
          classlist:['m_2','mt_4','mb_2']
       })
