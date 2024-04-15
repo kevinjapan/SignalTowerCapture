@@ -440,16 +440,13 @@ class CollectionItem {
       }
    }
 
+
    //
    // Create From CSV
    // cf create() - here, we always receive a raw csv line, which likely contains a prev. 'id' field
    // so we have to process and remove ourselves
    //
    async create_from_csv(csv) {
-
-      // to do : prevent duplicates of path (folder_path and file_name)
-      //         see this.create()
-      //         a bit more work here - to locate folder_path and file_name first
 
       // get 1-d arr of raw data for keys and values
       const field_keys = CollectionItem.#full_fields_list.map(field => field.key)
@@ -461,40 +458,76 @@ class CollectionItem {
       // remove 'id'
       delete mapped_values['id']
 
-      // get 1-d arr of keys
-      const filtered_field_keys = Object.keys(mapped_values)
+      // prevent duplicate
+      // we use read() since we need to use field_filters
+      // small additional cost (count) but low impact as volume imports are v. infrequent 
+      let attempt_read_existing = await this.read(
+         {
+            page:1,
+            field_filters:[
+               {field:'folder_path',value:mapped_values['folder_path']},
+               {field:'file_name',value:mapped_values['file_name']}
+            ]
+         }
+      )
 
-      // get 1-d arr of values (and translate any null fields rcvd as 'null')
-      const filtered_values = Object.values(mapped_values).map(value => value === 'null' ? null : value)
+      // 'success' just means it worked, we still might not have a match
+      if(attempt_read_existing.outcome === 'success') {
 
-      // create param placeholder str
-      const param_placeholders = filtered_values.map(() => '?').toString()
+         // check for record
+         if(attempt_read_existing.collection_items.length === 0) {
 
-      const sql = `INSERT INTO collection_items(${filtered_field_keys.toString()}) VALUES(${param_placeholders})`
+            // get 1-d arr of keys
+            const filtered_field_keys = Object.keys(mapped_values)
 
-      const result = await new Promise((resolve,reject) => {
-         this.#database.run(
-            sql,filtered_values, function(error) {
-               if(error) reject(error)
-               resolve(this.lastID)
+            // get 1-d arr of values (and translate any null fields rcvd as 'null')
+            const filtered_values = Object.values(mapped_values).map(value => value === 'null' ? null : value)
+
+            // create param placeholder str
+            const param_placeholders = filtered_values.map(() => '?').toString()
+
+            const sql = `INSERT INTO collection_items(${filtered_field_keys.toString()}) VALUES(${param_placeholders})`
+
+            const result = await new Promise((resolve,reject) => {
+               this.#database.run(
+                  sql,filtered_values, function(error) {
+                     if(error) reject(error)
+                     resolve(this.lastID)
+                  }
+               )
+            }).catch((error) => this.set_last_error(error))
+
+            if(result) {
+               return {
+                  query:'create_collection_item_from_csv',
+                  outcome:'success'
+               }
             }
-         )
-      }).catch((error) => this.set_last_error(error))
-
-      if(result) {
-         return {
-            query:'create_collection_item_from_csv',
-            outcome:'success'
+            else {
+               let fail_response = {
+                  query:'create_collection_item_from_csv',
+                  outcome:'fail',
+                  message:'There was an error attempting to create the record with title "' + mapped_values['title'] + '" - ' + this.#last_error.message
+               }
+               this.clear_last_error()
+               return fail_response
+            }
+         }
+         else {
+            return {
+               query:'create_collection_item_from_csv',
+               outcome:'success',
+               collection_item:{id:-1,...mapped_values},  // -1 signifies although no errors, we didn't create since a record already existed
+               message:`A record already exists for this file [in create_from_csv]: ${mapped_values.folder_name}\\${mapped_values.file_name}`
+            }
          }
       }
       else {
-         let fail_response = {
-            query:'create_collection_item_from_csv',
+         return {
+            query:'create_collection_item',
             outcome:'fail',
-            message:'There was an error attempting to create the record with title "' + mapped_values['title'] + '" - ' + this.#last_error.message
+            message:'There was an error while checking for possible duplicates in CollectionItem.create_from_csv'
          }
-         this.clear_last_error()
-         return fail_response
       }
    }
 
