@@ -333,7 +333,10 @@ class CollectionItem {
          }
       )
 
+      // 'success' just means it worked, we still might not have a match
       if(attempt_read_existing.outcome === 'success') {
+
+         // check for record
          if(attempt_read_existing.collection_items.length === 0) {
 
             let fields = CollectionItem.#full_fields_list
@@ -439,7 +442,8 @@ class CollectionItem {
 
    //
    // Create From CSV
-   //
+   // cf create() - here, we always receive a raw csv line, which likely contains a prev. 'id' field
+   // so we have to process and remove ourselves
    //
    async create_from_csv(csv) {
 

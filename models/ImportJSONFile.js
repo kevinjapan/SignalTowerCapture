@@ -65,13 +65,14 @@ class ImportJSONFile {
       for(const item of collection_items) {
 
          // new item, we remove id
-         delete item.id  // to do : cf w/ ImportCSVFile - delete id is in CollectionItem ?
+         // cf ImportCSVFile - we have a predictable JSON object here, and create()
+         // will be used by CollectionItemForm UI, so we don't pass 'id' by default
+         delete item.id
 
          promise_result = await new Promise(async(resolve,reject) => {
 
             let result = await collection_item.create(item,false)            
-            if(result.outcome === 'success') {  
-               console.log('trying',result)            
+            if(result.outcome === 'success') {
                resolve(result.collection_item.id)
             }
             else {

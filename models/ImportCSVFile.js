@@ -2,7 +2,6 @@ const CollectionItem = require('./CollectionItem')
 const { is_valid_collection_item_csv } = require('../app/utilities/validation')
 
 
-
 // Import a CSV file of CollectionItem records.
 // We insert single CollectionItem records at a time to allow preventing duplicates
 
@@ -69,7 +68,7 @@ class ImportCSVFile {
 
                let promise_result = await new Promise(async(resolve,reject) => {
       
-                  let result = await collection_item.create_from_csv(line,false)
+                  let result = await collection_item.create_from_csv(line)
                   if(result.outcome === 'success') {   
                      count++           
                      resolve(result)
