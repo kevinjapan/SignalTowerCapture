@@ -1,20 +1,11 @@
-const { dirname } = require('node:path')
 const { get_sqlready_datetime } = require('../app/utilities/datetime')
-const { get_random_int } = require('../app/utilities/utilities')
-const { DESC } = require('../app/utilities/descriptions')
-
 const { get_status_condition_sql } = require('../app/utilities/search_utilities')
+
 
 
 // ActionsLog matches batches of records to actions performed at specific times
 // simply by recording the start and end of time of the action
 // We can then perform rollbacks on records created|deleted/.. in that window.
-
-
-// to do :
-// ActionsLog
-// - implement ActionsLog model (as a queue for each 'action')
-// - enable 'rollback' on ActionsLog
 
 
 class ActionsLog {
@@ -261,7 +252,6 @@ class ActionsLog {
 
       // we use count to manage queue
       // verify we are not exceeding specific action type queue len
-      // to do : move action in sql to placeholder parameter
       const count = await new Promise((resolve,reject) => {
          sql = `SELECT COUNT(id) as count FROM actions_log WHERE action = "${action_obj.action}"`
          this.#database.get(sql, (error, rows) => {
@@ -271,9 +261,12 @@ class ActionsLog {
             if(rows) resolve(rows.count)
          })
       }).catch((error) => {
-         console.log('ERR',error)   // to do : handle and notify better
          this.set_last_error(error)
       })
+
+      // we assume it's safe to add a record unless delete attempt fails 
+      // if queue has vacant slots, it won't attempt delete
+      let delete_result = {outcome:'success'}
 
       // manage action type queue
       if(count >= this.#max_queue_count) {
@@ -302,14 +295,14 @@ class ActionsLog {
                   test:'<'
                }
             }
-            const delete_result = await this.delete(last_valid_record_id,del_context)
+            delete_result = await this.delete(last_valid_record_id,del_context)
+            console.log('delete_result',delete_result)
          }
       }
       
       // create new ActionsLog record
-      // will not add if queue management above hasn't been successful
-      // to do : only proceed if delete_result is successful
-      //if(count < this.#max_queue_count) {
+      // only if we either didn't attempt to delete (not needed) or delete was successful
+      if(delete_result.outcome === 'success') {
 
          let fields = ActionsLog.#full_fields_list
 
@@ -355,7 +348,7 @@ class ActionsLog {
             this.clear_last_error()
             return fail_response
          }
-      //}
+      }
    }
 
 
