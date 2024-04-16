@@ -1,4 +1,4 @@
-import { create_section,create_h, create_p } from '../../utilities/ui_elements.js'
+import { create_section,create_h,create_p,create_div } from '../../utilities/ui_elements.js'
 
 
 
@@ -14,7 +14,7 @@ class WaitDialog {
 
       let dimmer = create_section({
          attributes:[
-            {key:'id',value:'wait_dlg'}
+            {key:'id',value:'dimmer'}
          ],
          classlist:['dlg_bg']
       })
@@ -23,18 +23,37 @@ class WaitDialog {
          attributes:[
             {key:'id',value:'dlg_box'}
          ],
-         classlist:['dlg']
+         classlist:['dlg','pb_2']
       })
-
       const dlg_h = create_h({
          level:'h3',
       })
       const dlg_text = create_p({
-         text:'Please wait while we process the import file.'
+         text:`Please wait while we process the import file:`
+      })
+      const dlg_file_name = create_p({
+         classlist:['bg_inform'],
+         text:`${this.#props.file_name.substring(this.#props.file_name.lastIndexOf('\\') + 1)}`
+      })
+
+      // progress spinner
+      const spinner_wrap = create_div({
+         classlist:['flex','justify-center','w_full','fit_content','mx_auto']
+      })
+      const spinner = create_div({
+         classlist:['lds-dual-ring']
+      })
+      spinner_wrap.append(spinner)
+
+
+      const finishing_msg = create_div({
+         attributes:[{key:'id',value:'finishing_msg'}],
+         classlist:['w_full','text_right','italic','text_grey'],
+         text:'please wait...'
       })
 
       // assemble
-      dlg.append(dlg_h,dlg_text)
+      dlg.append(dlg_h,dlg_text,dlg_file_name,spinner_wrap,finishing_msg)
       dimmer.append(dlg)
       
       // this.set_top()
@@ -49,10 +68,16 @@ class WaitDialog {
       }
    }
 
+   close = () => {
+      const finishing_msg = document.getElementById('finishing_msg')
+      if(finishing_msg) finishing_msg.innerText = 'finishing task'
+      setTimeout(() => this.remove(),2000)
+   }
+
    remove = () => {
-      const dlg_bg = document.getElementById('dlg_bg')
-      if(dlg_bg) {
-         dlg_bg.remove()
+      const dimmer = document.getElementById('dimmer')
+      if(dimmer) {
+         dimmer.remove()
       }
    }
 
