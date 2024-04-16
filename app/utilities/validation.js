@@ -91,12 +91,48 @@ const is_valid_date = (value) => {
 //
 const is_valid_collection_item_csv = (fields_list,csv) => {
 
+   if(!Array.isArray(fields_list)) {
+      return {
+         outcome:'fail',
+         errors:[
+            {name:'',message:'There was an error determing the required CSV fields.',value:''}
+         ]
+      }
+   }
+   if(typeof csv !== 'string' || csv.length === 0) {
+      return {
+         outcome:'fail',
+         errors:[
+            {name:'',message:'A line was read that contained an invalid string or was empty.',value:''}
+         ]
+      }
+   }
+
    // get 1-d arr of raw data for keys and values
    const field_keys = fields_list.map(field => field.key)
    const values = csv.split(',')
    
    if(field_keys.length !== values.length) {
-      // to do : bail and notify user not matching..
+      return {
+         outcome:'fail',
+         errors:[
+            {
+               name:'',
+               message:'The number of tokens on the CSV line does not match the expected number.',
+               value:''
+            },
+            {
+               name:'',
+               message:`We expected ${field_keys.length} tokens on each line, but the read line contains ${values.length}.`,
+               value:''
+            },
+            {
+               name:'',
+               message:`Note, a single invalid line (eg at start of file) may stop the processing.`,
+               value:''
+            }
+         ]
+      }
    }
 
    // get collection_item as an assoc array
