@@ -102,10 +102,8 @@ class ImportCSVComponent {
                      }
                      else {
                         wait_dlg_component.close()
-                        Notification.notify('#import_csv_outcome',import_results_obj.message_arr,[],false)
-                        console.log('one',import_results_obj)  // to do : bug - error caught but not notified
-                                                               //         \collection-dataset\Research_H-L.txt
                         await this.#completed_callback()
+                        Notification.notify('#import_csv_outcome',import_results_obj.message_arr,[],false)
                      }
                   }
                }

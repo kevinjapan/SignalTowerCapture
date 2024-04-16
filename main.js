@@ -793,7 +793,13 @@ async function import_csv_file(event,file_path) {
       import_csv_file_obj = await import_csv_file.import(file_path)
    }
    catch(error) {
-      return {outcome:'fail',message:'Sorry, there was a problem trying to import the CSV file.' + error}
+
+      return {
+         outcome:'fail',
+         message_arr:[
+            'Sorry, there was a problem trying to import the CSV file.' + error
+         ]
+      }
    }
 
    const end_timer_at = Math.ceil(performance.now())
