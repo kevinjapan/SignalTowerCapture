@@ -2,13 +2,20 @@ import { create_div,create_p } from '../../utilities/ui_elements.js'
 
 
 
+// parameters
+// elem_selector  - display element on current page
+// messages       - array of strings displayed in seperate <p> elements
+// classes        - modifed esp bg_color
+// fade_out       - defaults to fading out, set to false for errors
+
+
 class Notification {
 
-   static notify = (elem_selector,message_arr,classes = [],fade_out = true) => {
+   static notify = (elem_selector,messages,classes = [],fade_out = true) => {
 
-      if(message_arr === undefined || message_arr === '' ) return
-      if(typeof message_arr === 'string') message_arr = [message_arr]
-      if(!Array.isArray(message_arr)) return
+      if(messages === undefined || messages === '' ) return
+      if(typeof messages === 'string') messages = [messages]
+      if(!Array.isArray(messages)) return
 
       // default is warning
       if(!Array.isArray(classes) || classes.length === 0) classes = ['bg_yellow_300']
@@ -20,7 +27,7 @@ class Notification {
             const notification_card = create_div({
                classlist:['notification',...classes,'p_1']
             })
-            message_arr.forEach(msg => {
+            messages.forEach(msg => {
                notification_card.append(create_p({classlist:['p_0.5','m_0'],text:msg}))
             })
 
