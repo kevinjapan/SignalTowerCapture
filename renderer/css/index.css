@@ -937,8 +937,8 @@ input[type='radio'] {
 }
 .dlg {
    position:fixed;
-   top:33%;
-   left:33%;
+   top:25%;
+   left:25%;
    width:50%;
    height:fit-content;
    background:white;
