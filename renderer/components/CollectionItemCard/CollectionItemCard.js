@@ -108,9 +108,15 @@ class CollectionItemCard {
                // Card image               
                // 
                const root_part = trim_end_char(this.#props.root_folder,'\\')
-               const relative_folder_part = trim_char(item.folder_path,'\\')
+               let relative_folder_part = trim_char(item.folder_path,'\\')
+               
+               // allow for empty folder_path (files in root_folder)
+               if(relative_folder_part !== '') relative_folder_part += '\\'
+
                const file_part = item.file_name
-               const file_path = `${root_part}\\${relative_folder_part}\\${file_part}`
+               const file_path = `${root_part}\\${relative_folder_part}${file_part}`
+
+               console.log('file_path',file_path)
 
                // we inject placeholder and load img jit w/ intersection observer
                const placeholder_file_path = `imgs\\card_img_placeholder.jpg`

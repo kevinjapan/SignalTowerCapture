@@ -123,8 +123,12 @@ class CollectionItemRecord {
             // build the file_path
             let root_part = trim_end_char(this.#props.root_folder,'\\')
             let relative_folder_part = trim_char(this.#props.item['folder_path'],'\\')
+            
+            // allow for empty folder_path (files in root_folder)
+            if(relative_folder_part !== '') relative_folder_part += '\\'
+
             let file_part = this.#props.item[field.key]
-            let file_path = `${root_part}\\${relative_folder_part}\\${file_part}`
+            let file_path = `${root_part}\\${relative_folder_part}${file_part}`
 
             if(await file_exists(file_path)) {
                

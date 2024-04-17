@@ -77,6 +77,7 @@ class CollectionItemInjectForm {
                }
                
                // display empty CollectionItemForm for data entry
+               // allowing for empty folder_path (files in root_folder)
                const collection_item_form = new CollectionItemForm(props)
                item_form_wrap.appendChild(await collection_item_form.render())
                collection_item_form.activate()
@@ -84,8 +85,12 @@ class CollectionItemInjectForm {
                   {field:'title',value:get_title_from_filename(this.#props.file_name)},
                   {field:'file_name',value:this.#props.file_name},
                   {field:'folder_path',value:this.#props.folder_path},
-                  {field:'item_ref',value:'ASTM_ARCHIVE_'},     // future: have configurable for default ref naming prepend..
-                  {field:'img',value:`${this.#root_folder}${this.#props.folder_path}\\${this.#props.file_name}`,alt:get_title_from_filename(this.#props.file_name)}
+                  {field:'item_ref',value:'ASTM_ARCHIVE_'},
+                  {
+                     field:'img',
+                     value:`${this.#root_folder}${this.#props.folder_path === '' ? '' : this.#props.folder_path + '\\'}${this.#props.file_name}`,
+                     alt:get_title_from_filename(this.#props.file_name)
+                  }
                ])
             }
             else {
