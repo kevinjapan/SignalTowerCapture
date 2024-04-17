@@ -1,6 +1,11 @@
 
-
+// fields included in generic search queries
 const SEARCH_FIELDS = 'title || content_desc || tags'
+
+// fields included in Full Text Search are defined in 
+// CollectionItemFTS.#full_fields_list
+
+// min permitted length of user input search term
 const MIN_SEARCH_TERM_LEN = 3
 
 
@@ -13,11 +18,13 @@ const MIN_SEARCH_TERM_LEN = 3
 //
 
 const is_permitted_table = (table_name) => {
-   const tables_whitelist = ['collection_items','tags',]
+   const tables_whitelist = ['collection_items','tags']
    return tables_whitelist.some(table => table_name === table)
 }
 
-
+//
+// CollectionItem record 'status' is either active or soft-deleted and marked by 'deleted_at' field
+//
 const get_status_condition_sql = (table,record_status) => {
 
    if(is_permitted_table(table)) {
@@ -33,7 +40,9 @@ const get_status_condition_sql = (table,record_status) => {
    return ''
 }
 
-
+//
+//
+//
 const get_order_by_condition_sql = (table_name,order_by,direction) => {
 
    // if we want case-insensitive - eg 'title COLLATE NOCASE ASC'
@@ -53,7 +62,6 @@ const get_order_by_condition_sql = (table_name,order_by,direction) => {
 //
 // Search tokenization - for basic search
 //
-
 const tokenize_search_term = (full_search_term) => {
 
    let tokens = []
@@ -66,6 +74,9 @@ const tokenize_search_term = (full_search_term) => {
    return [...tokens.filter(token => token.length >= MIN_SEARCH_TERM_LEN) ]
 }
 
+//
+//
+//
 const remove_stopwords = (search_term_tokens) => {
    // exlude common words from our searches
    let tokens = null
@@ -80,13 +91,16 @@ const remove_stopwords = (search_term_tokens) => {
    return tokens
 }
 
+
 // stopword list
+//
 const search_excluded_words = [
    'also','and','are','been','but','for','from',
    'has','have','not','our',
    'than','that','the','their','them','then','there','these','this',
    'was','were','with',
 ]
+
 //
 // 2-char words we exclude from above since our search sets min 3-char search_terms
 // 'an','as','at','be','by','if','in','is','of','on','or','so','to','we',
