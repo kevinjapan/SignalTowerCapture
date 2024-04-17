@@ -745,7 +745,7 @@ class CollectionItem {
    async flush_deleted(cut_off_date) {
 
       let str_date = get_sqlready_date_from_js_date(cut_off_date)
-      console.log(' > Permanently deleting all records soft deleted before',str_date)
+      console.log(' > Permanently deleting all Collection Item records soft deleted before',str_date)
 
       // verify date
       try {
