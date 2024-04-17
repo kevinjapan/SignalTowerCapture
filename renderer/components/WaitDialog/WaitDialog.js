@@ -1,4 +1,6 @@
+import App from '../../components/App/App.js'
 import { create_section,create_h,create_p,create_div } from '../../utilities/ui_elements.js'
+
 
 
 
@@ -11,6 +13,9 @@ class WaitDialog {
    }
 
    render = () => {
+
+      // window.app_api.setNavDisabled(true) // to do : remove
+      App.enable_nav(false)
 
       let dimmer = create_section({
          attributes:[
@@ -45,15 +50,8 @@ class WaitDialog {
       })
       spinner_wrap.append(spinner)
 
-
-      const finishing_msg = create_div({
-         attributes:[{key:'id',value:'finishing_msg'}],
-         classlist:['w_full','text_right','italic','text_grey'],
-         text:'please wait...'
-      })
-
       // assemble
-      dlg.append(dlg_h,dlg_text,dlg_file_name,spinner_wrap,finishing_msg)
+      dlg.append(dlg_h,dlg_text,dlg_file_name,spinner_wrap)
       dimmer.append(dlg)
       
       // this.set_top()
@@ -69,12 +67,14 @@ class WaitDialog {
    }
 
    close = () => {
-      const finishing_msg = document.getElementById('finishing_msg')
-      if(finishing_msg) finishing_msg.innerText = 'finishing task'
       setTimeout(() => this.remove(),2000)
    }
 
    remove = () => {
+      
+      // window.app_api.setNavDisabled(false) // to do : remove
+      App.enable_nav(true)
+
       const dimmer = document.getElementById('dimmer')
       if(dimmer) {
          dimmer.remove()

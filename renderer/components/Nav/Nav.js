@@ -50,6 +50,7 @@ class Nav {
                select_page_buttons.forEach((btn) => btn.classList.remove('selected_page'))
                select_page_button.classList.add('selected_page')
 
+               // send selected menu key (label) to client
                callback(event.target.attributes['data-component'].value)
             })
          })

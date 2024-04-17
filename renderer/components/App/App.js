@@ -124,6 +124,13 @@ class App {
          setTimeout(() => component.activate(),200)
       }
    }
+
+   static enable_nav = (state) => {
+      const nav = document.getElementById('nav')
+      if(nav) {
+         state ? nav.classList.remove('nav_dimmer') : nav.classList.add('nav_dimmer')
+      }
+   }
 }
 
 

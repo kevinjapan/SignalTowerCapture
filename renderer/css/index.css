@@ -36,7 +36,6 @@ nav {
    display:-ms-flexbox;
    display:flex;
    gap:.5rem;
-
    position:fixed;
    z-index:9999;
    top:0;
@@ -48,6 +47,17 @@ nav {
    padding-bottom:1rem;
    border-bottom:solid 1px lightgrey;
    background:white;
+}
+.nav_dimmer::before {
+   content:'';
+   position:fixed;
+   top:0;
+   left:0;
+   width:100%;
+   /* some tweaking on height - see height on nav above */
+   height:3.55rem;
+   background:black;
+   opacity:.3;
 }
 
 @media screen and (min-width: 768px) {
@@ -936,6 +946,8 @@ input[type='radio'] {
    border:solid 1px lightgrey;
    border-radius:.5rem;
 }
+
+
 
 .overflow_auto {
    overflow:auto;
