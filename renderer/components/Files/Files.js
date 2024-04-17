@@ -283,12 +283,7 @@ class Files {
             // to prevent proliferation of dynamically assigned path links, then re-activate base element btns etc
             const files_section = document.getElementById('files_section')
             if(files_section) {
-               // to do :     review this solution - workaround but may have issues - keep checking dev tools errors
-               //             was an initial non-breaking error - but appears to have disappeared
-               // replicate:  open 'jacobites' - open each pdf therein in descending order, then open 'Research_H_L'
-               // error:      Refused to apply inline style ...
-               // solution:   1 - use replaceChild() instead of innerHTML
-               //             2 - may have to manage removeEventListeners ourselves
+               // flush all event listeners
                files_section.innerHTML = files_section.innerHTML
                this.activate()
             }
