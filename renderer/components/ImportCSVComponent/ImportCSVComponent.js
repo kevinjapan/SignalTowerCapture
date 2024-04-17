@@ -14,8 +14,39 @@ class ImportCSVComponent {
       this.#completed_callback = completed_callback  
    }
 
-   render = () => {
+   render = async() => {
+      
+      // required csv fields
+      //
+      let fields_list = []
+      const collection_item_obj = await window.collection_items_api.getCollectionItemFields()
+      console.log('collection_item_obj',collection_item_obj)
+      if(typeof collection_item_obj !== undefined) {
+         if(collection_item_obj.outcome === 'success')
+         fields_list = collection_item_obj.fields.map((field) => {
+            return field.key
+         })
+      }
+      const fields = create_div({
+         classlist:['flex']
+      })
+      const fields_intro = create_p({
+         classlist:['mt_0','mb_0'],
+         text:'Any import CSV file must match the following fields list for each record:'
+      })
+      const fields_list_elem = create_div({
+         classlist:['text_grey','border','rounded','p_1','m_0.5','mt_0'],
+         text:fields_list.join(', ')
+      })
+      const fields_desc = create_p({
+         classlist:['mt_0','mb_0'],
+         text:`Empty fields are permitted but must be included. For example 'fishing,,harbour' would be a valid 3-field csv list with an empty middle field.`
+      })
+      fields.append(fields_intro,fields_list_elem,fields_desc)
 
+
+      // layout
+      //
       const import_csv_component = create_section({
          attributes:[
             {key:'id',value:'import_csv_component'}
@@ -49,7 +80,7 @@ class ImportCSVComponent {
       })
 
       // assemble
-      import_csv_component.append(heading,import_csv_btn,import_csv_outcome,import_csv_fields)
+      import_csv_component.append(heading,fields,import_csv_btn,import_csv_outcome,import_csv_fields)
    
       return import_csv_component
    }
