@@ -90,7 +90,7 @@ class Actions {
       }
       const import_csv_component = new ImportCSVComponent(this.import_csv_completed)
       if(csv_section) {
-         csv_section.append(import_csv_component.render())
+         csv_section.append(await import_csv_component.render())
          setTimeout(() => import_csv_component.activate(),200)
       }
       
@@ -99,7 +99,7 @@ class Actions {
             {key:'id',value:'csv_history_section'}
          ]
       })
-      this.#csv_actions_log_component = new ActionsLogComponent('import_csv','CSV Imports')
+      this.#csv_actions_log_component = new ActionsLogComponent('import_csv','CSV Import History')
       if(this.#csv_actions_log_component) {
          csv_history_section.append(await this.#csv_actions_log_component.render('import_csv'))
          setTimeout(() => this.#csv_actions_log_component.activate(),200)
@@ -147,7 +147,7 @@ class Actions {
             {key:'id',value:'json_history_section'}
          ]
       })
-      this.#json_actions_log_component = new ActionsLogComponent('import_json','JSON Imports')
+      this.#json_actions_log_component = new ActionsLogComponent('import_json','JSON Import History')
       if(this.#json_actions_log_component) {
          json_history_section.append(await this.#json_actions_log_component.render('import_json'))
          setTimeout(() => this.#json_actions_log_component.activate(),200)
