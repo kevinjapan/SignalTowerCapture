@@ -19,7 +19,7 @@ class CollectionItem {
 
    #last_error
 
-   #items_per_page = 20
+   #items_per_page = 21
 
    // every read-all needs an absolute upper limit!
    #limit_read_all_records = 20000

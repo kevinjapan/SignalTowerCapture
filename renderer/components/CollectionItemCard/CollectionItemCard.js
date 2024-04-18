@@ -25,7 +25,7 @@ class CollectionItemCard {
       let text_col = create_div()
 
       let img_col = create_div({
-         classlist:['pl_1','text_center']
+         classlist:['text_center']
       })
 
       let icons_block = create_div({
@@ -116,10 +116,13 @@ class CollectionItemCard {
                const file_part = item.file_name
                const file_path = `${root_part}\\${relative_folder_part}${file_part}`
 
-               console.log('file_path',file_path)
-
                // we inject placeholder and load img jit w/ intersection observer
                const placeholder_file_path = `imgs\\card_img_placeholder.jpg`
+
+               // wrapper to permit full width while cropping tall images
+               const record_card_image_wrap = create_div({
+                  classlist:['record_card_image_wrap']
+               })
 
                if(await file_exists(file_path)) {
 
@@ -129,7 +132,10 @@ class CollectionItemCard {
                         [{key:'data-id',value:item.id},{key:'data-src',value:file_path}],
                         ['record_card_image','card_title_link','cursor_pointer']
                      )
-                     if(img) img_col.replaceChildren(img)
+                     if(img) {
+                        record_card_image_wrap.append(img)
+                        img_col.replaceChildren(record_card_image_wrap)
+                     }
                   }
                   else {
                      // process non-img file
@@ -139,7 +145,10 @@ class CollectionItemCard {
                         [{key:'data-id',value:item.id},{key:'data-src',value:icon_img_file_path},{key:'height',value:'40px'}],
                         ['record_card_image','card_title_link','cursor_pointer','pt_1']
                      )
-                     if(img) img_col.replaceChildren(img)
+                     if(img) {
+                        record_card_image_wrap.append(img)
+                        img_col.replaceChildren(record_card_image_wrap)
+                     }
                   }                  
                }
                else {

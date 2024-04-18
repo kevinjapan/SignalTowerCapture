@@ -11,6 +11,8 @@ import Notification from '../../components/Notification/Notification.js'
 
 class Browse {
 
+   #browse_section
+
    #browse_results_container
 
    // we retain browse state (page,scroll_y,etc) by passing a 'context token'
@@ -51,7 +53,7 @@ class Browse {
       this.#root_folder = App.get_root_folder()
       if(this.#root_folder === '') return no_root_folder()
 
-      let browse_section = create_section({
+      this.#browse_section = create_section({
          attributes:[
             {key:'id',value:'browse_section'}
          ],
@@ -63,7 +65,7 @@ class Browse {
          text:'Browse records',
          classlist:['m_0']
       })
-      browse_section.append(browse_heading)
+      this.#browse_section.append(browse_heading)
 
       let number_records = create_div({
          attributes:[
@@ -74,7 +76,8 @@ class Browse {
       this.#browse_results_container = create_div({
          attributes:[
             {key:'id',value:'browse_results_container'}
-         ]
+         ],
+         classlist:['grid','grid_cards_layout']
       })
 
       let alphabet_ctrl_props = {
@@ -83,7 +86,7 @@ class Browse {
       }
       
       const alphabet_ctrl = new AlphabetCtrl(alphabet_ctrl_props)
-      browse_section.append(alphabet_ctrl.render())
+      this.#browse_section.append(alphabet_ctrl.render())
       setTimeout(() => alphabet_ctrl.activate(),100)
       
       
@@ -93,8 +96,8 @@ class Browse {
       }
 
       // assemble
-      browse_section.append(number_records,this.#browse_results_container)
-      return browse_section
+      this.#browse_section.append(number_records)
+      return this.#browse_section
    }
 
 
@@ -122,18 +125,28 @@ class Browse {
 
             const collection_items_obj = await window.collection_items_api.getItems(this.#browse_context)
          
-
             if (typeof collection_items_obj != "undefined") {
          
                if(collection_items_obj.outcome === 'success') {
                   
+                  // re-assemble
+                  this.#browse_section.replaceChildren()
                   this.#browse_results_container.replaceChildren()
+
+                  
+                  const browse_heading = create_h({
+                     level:'h1',
+                     text:'Browse records',
+                     classlist:['m_0']
+                  })
+                  this.#browse_section.append(browse_heading)
+
                   let page_count = Math.ceil(collection_items_obj.count / collection_items_obj.per_page)
 
                   if(collection_items_obj.collection_items.length > 0) {
                   
                      const top_pagination_nav = new PaginationNav('top',this.go_to_page,page_count,this.#browse_context.page)
-                     this.#browse_results_container.append(top_pagination_nav.render())
+                     this.#browse_section.append(top_pagination_nav.render())
                      top_pagination_nav.activate()
 
                      let number_records = document.getElementById('number_records')
@@ -154,8 +167,10 @@ class Browse {
          
                      setTimeout(() => collection_item_card.activate(),200)
 
+                     this.#browse_section.append(this.#browse_results_container)
+
                      const bottom_pagination_nav = new PaginationNav('bottom',this.go_to_page,page_count,this.#browse_context.page)
-                     this.#browse_results_container.append(bottom_pagination_nav.render())
+                     this.#browse_section.append(bottom_pagination_nav.render())
                      bottom_pagination_nav.activate()
                   }
                   else {
