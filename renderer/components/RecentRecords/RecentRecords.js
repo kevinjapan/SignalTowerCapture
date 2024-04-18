@@ -41,7 +41,7 @@ class RecentRecords {
 
       this.#queue = app_config_record.recent_records
 
-      let about_section = create_section()
+      let recent_section = create_section()
 
       const heading = create_h({
          level:'h1',
@@ -52,14 +52,15 @@ class RecentRecords {
       this.#results_container = create_div({
          attributes:[
             {key:'id',value:'results_container'}
-         ]
+         ],
+         classlist:['grid','grid_cards_layout']
       })
 
       this.get_items()
 
       // assemble
-      about_section.append(heading,this.#results_container)
-      return about_section
+      recent_section.append(heading,this.#results_container)
+      return recent_section
    }
 
 
