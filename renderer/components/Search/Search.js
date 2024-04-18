@@ -42,11 +42,8 @@ class Search {
 
    render = async () => {
 
-      // get root_folder
-      const app_config_obj = await window.config_api.getAppConfig()
-      if(app_config_obj.outcome === 'success') {
-         this.#root_folder = trim_end_char(app_config_obj.app_config.root_folder,'\\')                 
-      }
+      this.#root_folder = App.get_root_folder()
+      if(this.#root_folder === '') return no_root_folder()
 
       this.#search_section = create_section({
          attributes:[
