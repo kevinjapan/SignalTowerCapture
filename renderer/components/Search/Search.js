@@ -11,8 +11,10 @@ import { init_card_img_loads } from '../../utilities/ui_utilities.js'
 
 class Search {
 
+   #search_section
+
    // layout container
-   #browse_results_container
+   #search_results_container
 
    // we retain search state (search_term,page,etc) by passing a 'search_context'
    #search_context = {
@@ -20,8 +22,6 @@ class Search {
       page:1,
       scroll_y:0
    }
-
-
 
    // props
    #props
@@ -48,18 +48,14 @@ class Search {
          this.#root_folder = trim_end_char(app_config_obj.app_config.root_folder,'\\')                 
       }
 
-      let browse_section = create_section({
+      this.#search_section = create_section({
          attributes:[
-            {key:'id',value:'browse_section'}
-         ]
+            {key:'id',value:'search_section'}
+         ],
+         classlist:['max_w_full']
       })
     
-      const heading = create_h({
-         level:'h1',
-         text:'Search for records',
-         classlist:['m_0']
-      })
-      browse_section.append(heading)
+      this.add_heading()
 
       let search_status = create_section({
          attributes:[
@@ -68,12 +64,12 @@ class Search {
          classlist:['p_0','bg_warning']
       })
 
-      this.#browse_results_container = create_div({
+      this.#search_results_container = create_div({
          attributes:[
-            {key:'id',value:'browse_results_container'}
-         ]
+            {key:'id',value:'search_results_container'}
+         ],
+         classlist:['grid','grid_cards_layout']
       })
-
 
       let search_term_max_len = 36
       try {
@@ -83,32 +79,18 @@ class Search {
          // use initially assigned
       }
       
-      let form_props = {
-         search_term:this.#props ? this.#props.context.search_term : '',
-         search_term_max_len:search_term_max_len,
-         submit_search_term:this.submit_search_term,
-         clear_search:this.clear_search
-      }
-         
-      const search_form = new SearchForm(form_props)
-      browse_section.append(search_form.render())
-      setTimeout(() => search_form.activate(),100)
+      this.add_search_form(search_term_max_len)
     
-      let number_records = create_div({
-         attributes:[
-            {key:'id',value:'number_records'}
-         ],
-         classlist:['p_2']
-      })
+      this.add_number_results()
 
       // required for re-instating search_context on 'back' to list actions
       if(this.#search_context) {
-         this.#browse_results_container.append(this.get_items())
+         this.#search_results_container.append(this.get_items())
       }
 
       // assemble
-      browse_section.append(search_status,number_records,this.#browse_results_container)
-      return browse_section
+      this.#search_section.append(search_status,this.#search_results_container)
+      return this.#search_section
    }
 
 
@@ -133,14 +115,20 @@ class Search {
             if (typeof collection_items_obj != "undefined") {
                if(collection_items_obj.outcome === 'success') {
 
-                  this.#browse_results_container.replaceChildren()
-
+                  // re-assemble
+                  this.#search_section.replaceChildren()
+                  this.#search_results_container.replaceChildren()
+                  
+                  this.add_heading()
+                  this.add_search_form()
+                  this.add_number_results()
+                  
                   let page_count = Math.ceil(collection_items_obj.count / collection_items_obj.per_page)
 
                   if(collection_items_obj.collection_items && collection_items_obj.collection_items.length > 0) {
                      
                      const top_pagination_nav = new PaginationNav('top',this.go_to_page,page_count,this.#search_context.page)
-                     this.#browse_results_container.append(top_pagination_nav.render())
+                     this.#search_section.append(top_pagination_nav.render())
                      top_pagination_nav.activate()
 
                      let number_records = document.getElementById('number_records')
@@ -155,17 +143,19 @@ class Search {
 
                      const collection_item_card = new CollectionItemCard(props)
                      collection_items_obj.collection_items.forEach((item) => {        
-                        this.#browse_results_container.appendChild(collection_item_card.render(collection_items_obj.collection_item_fields,item))
+                        this.#search_results_container.appendChild(collection_item_card.render(collection_items_obj.collection_item_fields,item))
                      })
          
                      // retain some spacing on short lists
-                     this.#browse_results_container.style.minHeight = '70vh' 
+                     this.#search_results_container.style.minHeight = '70vh' 
          
+                     this.#search_section.append(this.#search_results_container)
                      setTimeout(() => collection_item_card.activate(),200)
 
                      const bottom_pagination_nav = new PaginationNav('bottom',this.go_to_page,page_count,this.#search_context.page)  //this.go_to_page,page_count,this.#browse_context.page
-                     this.#browse_results_container.append(bottom_pagination_nav.render())
+                     this.#search_section.append(bottom_pagination_nav.render())
                      bottom_pagination_nav.activate()
+
                   }
                   else {
                      let number_records = document.getElementById('number_records')
@@ -201,6 +191,38 @@ class Search {
       }
    }
 
+   add_heading = () => {
+      
+      const heading = create_h({
+         level:'h1',
+         text:'Search for records',
+         classlist:['m_0']
+      })
+      this.#search_section.append(heading)
+   }
+
+   add_search_form = (search_term_max_len) => {
+      
+      let form_props = {
+         search_term:this.#props ? this.#props.context.search_term : '',
+         search_term_max_len:search_term_max_len,
+         submit_search_term:this.submit_search_term,
+         clear_search:this.clear_search
+      }
+         
+      const search_form = new SearchForm(form_props)
+      this.#search_section.append(search_form.render())
+      setTimeout(() => search_form.activate(),100)
+   }
+
+   add_number_results = () => {
+      this.#search_section.append(create_div({
+         attributes:[
+            {key:'id',value:'number_records'}
+         ],
+         classlist:['p_2']
+      }))
+   }
 
    // callback for SearchForm
    submit_search_term = (search_context) => {
@@ -212,8 +234,8 @@ class Search {
 
    //
    clear_search = () => {
-      if(this.#browse_results_container) {
-         this.#browse_results_container.replaceChildren()
+      if(this.#search_results_container) {
+         this.#search_results_container.replaceChildren()
       }
       let number_records = document.getElementById('number_records')
       if(number_records) {
