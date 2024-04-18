@@ -14,7 +14,6 @@ class WaitDialog {
 
    render = () => {
 
-      // window.app_api.setNavDisabled(true) // to do : remove
       App.enable_nav(false)
 
       let dimmer = create_section({
@@ -72,7 +71,6 @@ class WaitDialog {
 
    remove = () => {
       
-      // window.app_api.setNavDisabled(false) // to do : remove
       App.enable_nav(true)
 
       const dimmer = document.getElementById('dimmer')
