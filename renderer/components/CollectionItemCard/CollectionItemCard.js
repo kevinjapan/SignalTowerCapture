@@ -19,18 +19,18 @@ class CollectionItemCard {
       // 'fields' is an array including keys of properties in the 'item' and preserves the display order
       // card is row flex to align minor fields at foot while primary fields occupy flex_100 (width 100%)
       let card = create_section({
-         classlist:['collection_item_card','flex','gap_0.5']
+         classlist:['collection_item_card']
       })
 
-      let text_col = create_div()
-
-      let img_col = create_div({
-         classlist:['text_center']
+      let img_block = create_div({
+         classlist:['image_block','text_center','m_auto']
       })
+      let tags_block = create_div({classlist:['flex','no_wrap']})
+      let folder_path_block = create_div()
 
-      let icons_block = create_div({
-         classlist:['flex','mb_1']
-      })
+      // let icons_block = create_div({
+      //    classlist:['flex','mb_1']
+      // })
       
       let field_element
       let tags_list_elem
@@ -55,10 +55,10 @@ class CollectionItemCard {
                   attributes: [
                      {key:'data-id',value:item.id}
                   ],
-                  classlist:['text_blue','card_title_link','flex_100','m_0','mb_1','font_w_400','cursor_pointer','hover_line','break_words'],
+                  classlist:['text_blue','card_title_link','flex_100','m_0','mt_0.5','mb_0.5','font_w_400','cursor_pointer','hover_line','break_words'],
                   text:field_value
                })
-               text_col.append(field_element)
+               card.append(field_element)
             }
             else if(field.key === 'file_type') {
 
@@ -66,7 +66,7 @@ class CollectionItemCard {
                //
 
                let file_type_block = create_div({
-                  classlist:['flex','align_items_center','h_2','gap_.5','mt_0.25','fit_content','pr_3','break_words']
+                  classlist:['flex','align_items_center','gap_.5','mt_0.25','p_0.5','break_words']
                })
                field_element = create_div({
                   classlist:['pt_0.3'],
@@ -80,7 +80,7 @@ class CollectionItemCard {
                file_type_block.append(file_type,field_element)
 
                // append
-               icons_block.append(file_type_block)
+               card.append(file_type_block)
             }
             else if(field.key === 'file_name') {
             
@@ -88,7 +88,7 @@ class CollectionItemCard {
                //
 
                let file_ext_type_block = create_div({
-                  classlist:['flex','align_items_center','h_2','gap_.5','mt_0.25','fit_content','pr_3','break_words']
+                  classlist:['flex','align_items_center','gap_.5','mt_0.25','fit_content','p_0.5','break_words','no_wrap','w_full']
                })
                field_element = create_div({
                   classlist:['pt_0.3'],
@@ -101,7 +101,7 @@ class CollectionItemCard {
                file_ext_type_block.append(filetype_icon,field_element)
 
                // append
-               icons_block.append(file_ext_type_block)
+               card.append(file_ext_type_block)
             }         
             else if(field.key === 'folder_path') {
 
@@ -134,7 +134,7 @@ class CollectionItemCard {
                      )
                      if(img) {
                         record_card_image_wrap.append(img)
-                        img_col.replaceChildren(record_card_image_wrap)
+                        img_block.replaceChildren(record_card_image_wrap)
                      }
                   }
                   else {
@@ -147,38 +147,42 @@ class CollectionItemCard {
                      )
                      if(img) {
                         record_card_image_wrap.append(img)
-                        img_col.replaceChildren(record_card_image_wrap)
+                        img_block.replaceChildren(record_card_image_wrap)
                      }
                   }                  
                }
                else {
-                  const no_file_icon_img = build_img_elem('imgs\\icons\\exclamation-square.svg',`item date`,[{key:'height',value:'24px'}],['bg_yellow_100','mt_1'])
-                  img_col.append(create_div(),no_file_icon_img)
+                  const no_file_icon_img = build_img_elem('imgs\\icons\\exclamation-square.svg',`item date`,[{key:'height',value:'24px'}],['bg_yellow_100','mt_1','opacity_.6'])
+                  img_block.append(no_file_icon_img)
                   let msg = create_div({
-                     classlist:['text_sm'],
-                     text:'The file was not found.'
+                     classlist:['text_sm','text_grey','text_italic'],
+                     text:'No matching file was found.'
                   })
-                  img_col.append(create_div(),msg)
+                  img_block.append(msg)
                }    
 
                if(field_value) {
                   field_element = create_div({
-                     classlist:['break_words','mt_0.5','mr_2','pb_1','text_grey'],
+                     classlist:['break_words','mt_0.5','mr_2','p_1','text_grey'],
                      text:truncate(field_value,300)
                   })
-                  text_col.append(field_element)
+                  folder_path_block.append(field_element)
                }
             }
             else if(field.key === 'tags') {
 
                // Tags
                //
+               const tags_label = create_div({
+                  classlist:['mt_1','p_0.5','pt_0.75','text_grey'],
+                  text:'Tags'
+               })
 
                tags_list_elem = create_div({
                   attributes:[
                      {key:'id',value:'tags_list_elem'}
                   ],
-                  classlist:['m_0','w_full']
+                  classlist:['flex','align_items_center','m_0','pl_0.5','gap_1']
                }) 
                if(item.tags) {
                   const tags_list = new TagsLiteList('tags_list')
@@ -187,7 +191,7 @@ class CollectionItemCard {
                      setTimeout(() => tags_list.activate(),100)
                   }
                }
-               text_col.append(tags_list_elem)
+               tags_block.append(tags_label,tags_list_elem)
             }
             else if(field.key === 'item_date') {
                
@@ -196,7 +200,7 @@ class CollectionItemCard {
 
                if(field_value) {
                   let item_date_block = create_div({
-                     classlist:['flex','align_items_center','h_2','gap_.5','mt_0.25','fit_content','pr_3','break_words']
+                     classlist:['flex','align_items_center','gap_.5','mt_0.25','fit_content','p_0.5','break_words','w_full']
                   })
                   field_element = create_div({
                      classlist:['pt_0.3','break_words'],
@@ -206,7 +210,7 @@ class CollectionItemCard {
                   item_date_block.append(filetype_icon,field_element)
 
                   // append
-                  icons_block.append(item_date_block)
+                  card.append(item_date_block)
                }
 
 
@@ -218,18 +222,19 @@ class CollectionItemCard {
 
                if(field_value) {
                   field_element = create_div({
-                     classlist:['break_words','mt_0.5','mr_2','pb_1'],
+                     classlist:['break_words','pb_1','w_full'],
                      text:truncate(field_value,300)
                   })
-                  text_col.append(field_element)
+                  card.append(field_element)
                }
             }
          })
       }
       
       // assemble
-      text_col.insertBefore(icons_block, text_col.children[2])
-      card.append(img_col,text_col)
+      // text_block.insertBefore(icons_block, text_block.children[2])
+      card.prepend(img_block)
+      card.append(folder_path_block,tags_block)
       return card
    }
 

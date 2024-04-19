@@ -16,6 +16,8 @@
    --bg_semantic_warning_text:black;
    --bg_semantic_neutral: hsl(240, 100%, 90%);    /* blue   - neutral  */
    --bg_semantic_neutral_text:white;
+
+   --card_top_img:240px
 }
 
 
@@ -215,6 +217,11 @@ button.disabled:hover {
    -ms-flex-pack:left;
    justify-content:left;
 }
+.justify_start {
+   -webkit-box-pack:start;
+   -ms-flex-pack:start;
+   justify-content:start;
+}
 .space_between {
    -webkit-box-pack:justify;
    -ms-flex-pack:justify;
@@ -223,6 +230,11 @@ button.disabled:hover {
 .space_around {
    -ms-flex-pack:distribute;
    justify-content:space-around;
+}
+.align_items_start {
+   -webkit-box-align:start;
+   -ms-flex-align:start;
+   align-items:start;
 }
 .align_items_center {
    -webkit-box-align:center;
@@ -342,6 +354,7 @@ button.disabled:hover {
 .ml_5 {margin-left:5rem;}
 .mr_0\.5,mr_\.5 {margin-right:.5rem;}
 .mr_2 {margin-right:2rem;}
+.m_auto  {margin-left:auto;margin-right:auto;margin-top:auto;margin-bottom:auto;}
 .mx_auto {margin-left:auto;margin-right:auto;}
 .mr_auto {margin-left:0;margin-right:auto;}
 
@@ -430,9 +443,6 @@ button.disabled:hover {
 .border {
    border:solid 1px lightgrey;
 }
-.border_3 {
-   border:solid 3px orange;
-}
 .no_border {
    border:none;
 }
@@ -444,6 +454,9 @@ button.disabled:hover {
 }
 .rounded {
    border-radius:1rem;
+}
+.rounded_0\.5, .rounded_\.5 {
+   border-radius:0.5rem;
 }
 .text_center {
    text-align:center;
@@ -484,9 +497,8 @@ button.disabled:hover {
 }
 
 
-.opacity_\.5 {
-   opacity:.5;
-}
+.opacity_\.5, .opacity_0\.5 {opacity:.5;}
+.opacity_\.6, .opacity_0\.6 {opacity:.6;}
 
 
 /* 
@@ -550,7 +562,8 @@ button.disabled:hover {
 
 
 
-.italic {
+.italic,
+.text_italic {
    font-style:italic;
 }
 .font_w_400 {
@@ -760,7 +773,7 @@ label/[value|input] layout for Record and Form views
 /* we wrap card_image to enable full width while cropping tall images in this view */
 .record_card_image_wrap {
    width:100%;
-   max-height:300px;
+   max-height:var(--card_top_img);
    overflow-y:hidden;
 }
 .record_card_image {
@@ -777,7 +790,10 @@ label/[value|input] layout for Record and Form views
       position:static;
    }
 }
-
+/* image_block may contain image|warning|file_icon */
+.image_block {
+   min-height:80px;
+}
 
 
 /* Checkbox */
@@ -869,12 +885,11 @@ input[type='radio'] {
 
 
 .collection_item_card {
-   /* 
+   
    display:-ms-grid;
    display:grid;
-   -ms-grid-rows:1fr 3fr;
-   grid-template-rows: 1fr 3fr; 
-   */
+   -ms-grid-rows:      var(--card_top_img) max-content max-content max-content max-content max-content 1fr max-content;  
+   grid-template-rows: var(--card_top_img) max-content max-content max-content max-content max-content 1fr max-content; 
 
    border:solid 1px hsl(0, 0%, 80%);
    box-shadow: 1px 2px 3px 2px hsl(0, 0%, 90%);
@@ -901,11 +916,12 @@ input[type='radio'] {
       margin-bottom:2rem;
    }
 }
+
 .deleted_records {
    color:hsl(0, 0%, 65%);
 }
 .deleted_records .card_title_link {
-   opacity:.6;
+   opacity:.75;
 }
 .img_view {
    display:none;
