@@ -16,6 +16,8 @@ import {
 
 class DeletedRecordsTeaser {
 
+   #deleted_records_section
+
    #results_container
 
    // we retain browse state (page,scroll_y,etc) by passing a 'context token'
@@ -50,37 +52,22 @@ class DeletedRecordsTeaser {
       this.#root_folder = App.get_root_folder()
       if(this.#root_folder === '') return no_root_folder()
 
-      const deleted_Records_component = create_section({
+      this.#deleted_records_section = create_section({
          attributes:[
-            {key:'id',value:'deleted_records_component'}
+            {key:'id',value:'deleted_records_section'}
          ],
          classlist:['ui_component']
       })
 
-      const heading = create_h({
-         level:'h4',
-         text:'Deleted Records'
-      })
-
-      let desc_text = DESC.DELETED_RECORDS
-
-      const desc = create_p({
-         text:desc_text
-      })
-
-      
-      let number_records = create_div({
-         attributes:[
-            {key:'id',value:'number_records'}
-         ],
-         classlist:['p_2']
-      })
+      this.add_heading()
+      this.add_desc()
+      this.add_number_results()
 
       this.#results_container = create_div({
          attributes:[
             {key:'id',value:'results_container'}
          ],
-         classlist:['deleted_records']
+         classlist:['deleted_records','grid','grid_cards_layout','']
       })
 
       // required for re-instating search_context on 'back' to list actions
@@ -88,13 +75,7 @@ class DeletedRecordsTeaser {
          this.#results_container.append(this.get_items())
       }
 
-
-      
-      // assemble
-      deleted_Records_component.append(heading,desc,number_records,this.#results_container)
-
-      return deleted_Records_component
-
+      return this.#deleted_records_section
    }
 
    //
@@ -112,12 +93,17 @@ class DeletedRecordsTeaser {
          
                if(collection_items_obj.outcome === 'success') {
                   
+                  this.#deleted_records_section.replaceChildren()
                   this.#results_container.replaceChildren()
+                  
+                  this.add_heading()
+                  this.add_desc()
+                  this.add_number_results()
 
                   let page_count = Math.ceil(collection_items_obj.count / collection_items_obj.per_page)
 
                   const top_pagination_nav = new PaginationNav('top',this.go_to_page,page_count,this.#context.page)
-                  this.#results_container.append(top_pagination_nav.render())
+                  this.#deleted_records_section.append(top_pagination_nav.render())
                   top_pagination_nav.activate()
          
                   if(collection_items_obj.collection_items.length > 0) {
@@ -144,9 +130,11 @@ class DeletedRecordsTeaser {
                   else {
                      this.#results_container.innerText = 'No records were found. '
                   }
+                  
+                  this.#deleted_records_section.append(this.#results_container)
 
                   const bottom_pagination_nav = new PaginationNav('bottom',this.go_to_page,page_count,this.#context.page)
-                  this.#results_container.append(bottom_pagination_nav.render())
+                  this.#deleted_records_section.append(bottom_pagination_nav.render())
                   bottom_pagination_nav.activate()
                   
                   // re-instate scroll position if user had scrolled list before opening a record
@@ -180,6 +168,30 @@ class DeletedRecordsTeaser {
    // enable buttons/links displayed in the render
    activate = () => {
       init_card_img_loads()
+   }
+
+   
+   add_heading = () => {
+      const h = create_h({
+         level:'h4',
+         text:'Deleted Records'
+      })
+      this.#deleted_records_section.append(h)
+   }
+
+   add_desc = () => {
+      let desc_text = DESC.DELETED_RECORDS
+      const desc = create_p({text:desc_text})
+      this.#deleted_records_section.append(desc)
+   }
+
+   add_number_results = () => {
+      this.#deleted_records_section.append(create_div({
+         attributes:[
+            {key:'id',value:'number_records'}
+         ],
+         classlist:['p_2']
+      }))
    }
 
 }
