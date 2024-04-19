@@ -34,7 +34,7 @@ class Config {
          attributes:[
             {key:'id',value:'tags_section'}
          ],
-         classlist:['m_2','mt_4','mb_2']
+         classlist:['bg_white','m_2','mt_4','mb_2','pb_2']
       })
       const tags_header = create_div({
          classlist:['flex','align_items_center']
@@ -69,7 +69,7 @@ class Config {
          attributes:[
             {key:'id',value:'app_settings_section'}
          ],
-         classlist:['m_2','mt_4','mb_2']
+         classlist:['bg_white','m_2','mt_4','mb_2','pb_2']
       })
       const app_settings_header = create_div({
          classlist:['flex','align_items_center']

@@ -64,7 +64,7 @@ class Files {
 
       // 2-col layout
       const files_layout = create_div({
-         classlist:['files_layout','m_0','p_0']
+         classlist:['bg_white','files_layout','m_0','p_0']
       })
 
       // folder/file panels
