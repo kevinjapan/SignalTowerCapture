@@ -93,7 +93,9 @@ export const trim_start_char = (str,delim) => {
 // generate a title from file_name
 //
 export const get_title_from_filename = (file_name) => {
-   let candidate = file_name.substring(0,file_name.length - 4).replaceAll('-',' ')
-   candidate = candidate.charAt(0).toUpperCase() + candidate.slice(1)             
+
+   // remove any ext and replace '-'
+   let candidate = file_name.substring(0,file_name.lastIndexOf('.')).replaceAll('-',' ')
+   candidate = candidate.charAt(0).toUpperCase() + candidate.slice(1)
    return candidate
 }
