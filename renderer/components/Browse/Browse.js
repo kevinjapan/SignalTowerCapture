@@ -59,19 +59,10 @@ class Browse {
          ],
          classlist:['max_w_full']
       })
-            
-      const browse_heading = create_h({
-         level:'h1',
-         text:'Browse records',
-         classlist:['m_0']
-      })
-      this.#browse_section.append(browse_heading)
 
-      let number_records = create_div({
-         attributes:[
-            {key:'id',value:'number_records'}
-         ]
-      })
+      this.add_heading()
+      this.add_alpha_ctrl()
+      this.add_number_results()
       
       this.#browse_results_container = create_div({
          attributes:[
@@ -80,14 +71,6 @@ class Browse {
          classlist:['grid','grid_cards_layout']
       })
 
-      let alphabet_ctrl_props = {
-         submit_alpha_filter:this.submit_alpha_filter,
-         reset_alpha_filter:this.reset_alpha_filter
-      }
-      
-      const alphabet_ctrl = new AlphabetCtrl(alphabet_ctrl_props)
-      this.#browse_section.append(alphabet_ctrl.render())
-      setTimeout(() => alphabet_ctrl.activate(),100)
       
       
       // required for re-instating search_context on 'back' to list actions
@@ -96,7 +79,6 @@ class Browse {
       }
 
       // assemble
-      this.#browse_section.append(number_records)
       return this.#browse_section
    }
 
@@ -133,13 +115,9 @@ class Browse {
                   this.#browse_section.replaceChildren()
                   this.#browse_results_container.replaceChildren()
 
-                  
-                  const browse_heading = create_h({
-                     level:'h1',
-                     text:'Browse records',
-                     classlist:['m_0']
-                  })
-                  this.#browse_section.append(browse_heading)
+                  this.add_heading()
+                  this.add_alpha_ctrl()
+                  this.add_number_results()
 
                   let page_count = Math.ceil(collection_items_obj.count / collection_items_obj.per_page)
 
@@ -150,7 +128,9 @@ class Browse {
                      top_pagination_nav.activate()
 
                      let number_records = document.getElementById('number_records')
-                     if(number_records) this.display_number_records(collection_items_obj.count)
+                     if(number_records) {             
+                        number_records.innerText = `${ui_display_number_as_str(collection_items_obj.count)} matching records were found.`
+                     }
             
                      let props = {
                         root_folder: this.#root_folder,
@@ -174,7 +154,10 @@ class Browse {
                      bottom_pagination_nav.activate()
                   }
                   else {
-                     this.display_number_records(0)
+                     let number_records = document.getElementById('number_records')
+                     if(number_records) {             
+                        number_records.innerText = ``
+                     }
                   }
 
                   
@@ -225,12 +208,35 @@ class Browse {
       setTimeout(() => this.activate(),50)
    }
 
-   display_number_records = (count) => {   
-      const intro = count === 1 ? 'is ' : 'are '
-      const singular = count === 1 ? '' : 's'
-      let text = 
-         `There ${intro}${ui_display_number_as_str(count)} record${singular} ${this.#filter_char ? `with title${singular} starting with '` + this.#filter_char + `'`: ''}`
-      Notification.notify('#number_records',text,['bg_inform'],false)
+   add_heading = () => {
+
+      const h = create_h({
+         level:'h1',
+         text:'Browse records',
+         classlist:['m_0']
+      })
+      this.#browse_section.append(h)
+   }
+
+   add_number_results = () => {
+
+      this.#browse_section.append(create_div({
+         attributes:[
+            {key:'id',value:'number_records'}
+         ],
+         classlist:['p_2']
+      }))
+      
+   }
+
+   add_alpha_ctrl = () => {      
+      let alphabet_ctrl_props = {
+         submit_alpha_filter:this.submit_alpha_filter,
+         reset_alpha_filter:this.reset_alpha_filter
+      }      
+      const alphabet_ctrl = new AlphabetCtrl(alphabet_ctrl_props)
+      this.#browse_section.append(alphabet_ctrl.render())
+      setTimeout(() => alphabet_ctrl.activate(),100)
    }
 
 }
