@@ -14,7 +14,8 @@
    --bg_semantic_negative_text:black;
    --bg_semantic_warning: hsl(60, 100%, 60%);     /* yellow - warning  */
    --bg_semantic_warning_text:black;
-   --bg_semantic_neutral: hsl(240, 100%, 90%);    /* blue   - neutral  */
+   --bg_semantic_neutral: hsl(240, 100%, 95%);    /* blue   - neutral  */
+   --bg_semantic_neutral_dark: hsl(240, 100%, 75%);    /* blue   - neutral  */
    --bg_semantic_neutral_text:white;
 
    --card_top_img:240px
@@ -72,12 +73,15 @@ nav {
 }
 /* main nav links */
 nav .select_page_btn {
+   height:100%;
    background: none;
 	color: inherit;
 	border: solid 1px transparent;
+   border-radius:unset;
 	padding: 0;
    padding-left:.5rem;
    padding-right:.5rem;
+   padding-bottom:1rem;
 	font: inherit;
 	cursor: pointer;
 	outline: inherit;
@@ -86,7 +90,8 @@ nav .select_page_btn:hover {
    background:none;
 }
 nav .select_page_btn.selected_page {
-   font-weight:bold;
+   color:var(--bg_semantic_neutral_text);
+   background:var(--bg_semantic_neutral_dark);
 }
 main {
    margin-top:2rem;
@@ -150,15 +155,20 @@ button:hover {
    color:black;
    background:hsl(0, 0%, 93%);
 }
-/* we clearly highlight btns on forms on tab focus change */
+/* 
+we clearly highlight btns on forms on tab focus change 
+match color on eg input ctrls on focus
+*/
 button.form_btn:focus {
    border:solid 1px hsl(40, 100%, 45%);
    background:hsl(40, 100%, 80%);
 }
-/* btns in eg menu, we outline */
+/* 
+btns in eg menu, we can differentiate
 button:not(.form_btn):focus {
    border:solid 1px hsl(40, 100%, 45%);
 }
+*/
 button.disabled {
    color:lightgrey;
    border:solid 1px hsl(0, 0%, 93%);
@@ -550,6 +560,8 @@ button.disabled:hover {
 
 .bg_lightblue  {background:hsl(240, 100%, 95%);}
 .bg_blue       {background:blue;}
+
+.bg_white      {background:white;}
 
 .highlighted_btn {
    background:var(--bg_positive);
