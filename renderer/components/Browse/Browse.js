@@ -71,14 +71,11 @@ class Browse {
          classlist:['grid','grid_cards_layout']
       })
 
-      
-      
       // required for re-instating search_context on 'back' to list actions
       if(this.#browse_context) {
          this.get_items()
       }
 
-      // assemble
       return this.#browse_section
    }
 
@@ -209,7 +206,6 @@ class Browse {
    }
 
    add_heading = () => {
-
       const h = create_h({
          level:'h1',
          text:'Browse records',
@@ -219,14 +215,12 @@ class Browse {
    }
 
    add_number_results = () => {
-
       this.#browse_section.append(create_div({
          attributes:[
             {key:'id',value:'number_records'}
          ],
          classlist:['p_2']
-      }))
-      
+      }))      
    }
 
    add_alpha_ctrl = () => {      
