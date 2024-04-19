@@ -45,7 +45,7 @@ class TagsLiteList {
          attributes:[
             {key:'id',value:this.#key}
          ],
-         classlist:['flex','gap_.5','m_0','mt_0.5','mb_1']
+         classlist:['flex','align_items_start','gap_.5','m_0','mt_1','mb_1']
       })
       tags_list_div.append(header)
       let tag_elem
@@ -58,7 +58,7 @@ class TagsLiteList {
                attributes:[
                   {key:'id',value:'tags_list_div'}
                ],
-               classlist:['flex','gap_1','align_items_center','tag','border','rounded','pl_0.5','pr_0.5','pt_0','pb_0.25']
+               classlist:['align_items_center','tag','border','rounded_0.5','p_0.5','pt_0','pb_0.25']
             })
             tag_text = create_div({
                classlist:[],
