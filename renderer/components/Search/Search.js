@@ -190,12 +190,12 @@ class Search {
 
    add_heading = () => {
       
-      const heading = create_h({
+      const h = create_h({
          level:'h1',
          text:'Search for records',
          classlist:['m_0']
       })
-      this.#search_section.append(heading)
+      this.#search_section.append(h)
    }
 
    add_search_form = (search_term_max_len) => {
