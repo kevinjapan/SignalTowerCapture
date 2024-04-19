@@ -81,7 +81,7 @@ const is_valid_date = (value) => {
    }
    else {
       // we need to throw a message to notify user on form errors.
-      throw 'This value is not a valid date.'
+      throw 'This value is not a valid date (YYYY-MM-DD)'
    }
 }
 
@@ -206,7 +206,7 @@ const is_valid_collection_item = (fields_list,collection_item) => {
                   // some date fields are functionally null (deleted_at)
                   if(collection_item[key] === 'null') {
                      if(blueprint[0].data_type.indexOf('NOT NULL') >= 0) {
-                        throw 'This value is not a valid date.' 
+                        throw 'This value is not a valid date (YYYY-MM-DD)' 
                      }
                      else {
                         // do nothing
@@ -264,15 +264,14 @@ const is_valid_search_term = (search_term) => {
 
 // 
 // Filename
-// generally filenames should be added through OS file dialog,
-// but we do require user can manually update/enter if required.
+// filenames are added through O/S file dialog
+// Allow for legacy chars in current dataset files (- , _ , ~ , & , + )
 //
 const is_valid_file_name = (file_name) => {
    let parts = file_name.split('.')
    if(parts.length !== 2) return false
-   
    if(parts[1].length < 3 || parts[1].length > 4) return false
-   return !/[^a-z0-9_ .@()-]/i.test(file_name)
+   return !/[^a-z0-9\'-_~&+ .@()-]/i.test(file_name)
 }
 
 
