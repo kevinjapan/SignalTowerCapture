@@ -268,9 +268,16 @@ const is_valid_search_term = (search_term) => {
 // Allow for legacy chars in current dataset files (- , _ , ~ , & , + )
 //
 const is_valid_file_name = (file_name) => {
-   let parts = file_name.split('.')
-   if(parts.length !== 2) return false
-   if(parts[1].length < 3 || parts[1].length > 4) return false
+   
+   // we split on last '.', since legacy file_names may contain multiple '.' chars
+   let name_part = file_name.substring(0,file_name.lastIndexOf('.'))
+   let ext_part = file_name.substring(file_name.lastIndexOf('.') + 1)
+
+   // are component parts correct
+   if(name_part === '' || ext_part === '') return false   
+   if(ext_part.length < 3 || ext_part.length > 4) return false
+
+   // are all chars valid
    return !/[^a-z0-9\'-_~&+ .@()-]/i.test(file_name)
 }
 
