@@ -23,7 +23,9 @@ class AlphabetCtrl {
          attributes:[
             {key:'id',value:'reset_btn'}
          ],
-         classlist:['alpha_ctrl_btn','form_btn','border','h_2','m_0','p_0.25','pt_0','pb_0','cursor_pointer'],
+         classlist:[
+            'alpha_ctrl_btn','form_btn','border','h_2','m_0','p_0.25','pt_0','pb_0','cursor_pointer',this.#props.selected_char == null ? 'bg_positive' : ''
+         ],
          text:'All'
       })
 
@@ -33,7 +35,9 @@ class AlphabetCtrl {
                attributes:[
                   {key:'char',value:char}
                ],
-               classlist:['alpha_ctrl_btn','form_btn','border','h_2','m_0','p_0.25','pl_0.5','pr_0.5','pt_0','pb_0','cursor_pointer'],
+               classlist:[
+                  'alpha_ctrl_btn','form_btn','border','h_2','m_0','p_0.25','pl_0.5','pr_0.5','pt_0','pb_0','cursor_pointer',this.#props.selected_char === char ? 'bg_positive' : ''
+               ],
                text:char
             })
          )
@@ -55,10 +59,12 @@ class AlphabetCtrl {
 
             alpha_ctrl_btn.addEventListener('click',(event) => {
 
+               // clear all
                document.querySelectorAll('.alpha_ctrl_btn').forEach(btn => {
                   btn.classList.remove('bg_positive')
                })
 
+               // highlight selected
                this.#props.submit_alpha_filter(event.target.getAttribute('char'))
                alpha_ctrl_btn.classList.add('bg_positive')
             })

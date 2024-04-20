@@ -113,7 +113,7 @@ class Browse {
                   this.#browse_results_container.replaceChildren()
 
                   this.add_heading()
-                  this.add_alpha_ctrl()
+                  this.add_alpha_ctrl(this.#filter_char)
                   this.add_number_results()
 
                   let page_count = Math.ceil(collection_items_obj.count / collection_items_obj.per_page)
@@ -223,8 +223,9 @@ class Browse {
       }))      
    }
 
-   add_alpha_ctrl = () => {      
+   add_alpha_ctrl = (selected_char) => {   
       let alphabet_ctrl_props = {
+         selected_char:selected_char,
          submit_alpha_filter:this.submit_alpha_filter,
          reset_alpha_filter:this.reset_alpha_filter
       }      

@@ -155,6 +155,9 @@ button:hover {
    color:black;
    background:hsl(0, 0%, 93%);
 }
+button.alpha_ctrl_btn:hover {
+   background:hsl(120, 73%, 80%);
+}
 /* 
 we clearly highlight btns on forms on tab focus change 
 match color on eg input ctrls on focus
