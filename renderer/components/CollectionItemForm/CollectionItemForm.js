@@ -582,25 +582,6 @@ class CollectionItemForm {
          })
       }
 
-
-      // On file_name change, we display the new file if img and exists
-      // to do : is this relevant - now that user never manually changes file_name?
-      const file_name = document.getElementById('file_name')
-      const folder_path = document.getElementById('folder_path')
-      const img_col = document.getElementById('img_col')
-      if(file_name && folder_path && img_col) {            
-         file_name.addEventListener('change',async(event) => {
-            
-            // allow for empty folder_path (files in root_folder)
-            let relative_folder_path = folder_path.value
-            if(relative_folder_path !== '') relative_folder_path += '\\'
-
-            let file_path = `${relative_folder_path}${file_name.value}`
-            await this.display_image_or_filetype(img_col,file_path,this.#props.item ? this.#props.item['img_desc'] : 'image')
-         })
-      }
-
-
       // On change file_type radio btn
       //
       const file_type_radio_btns = document.querySelectorAll('input[name="file_type_radio_btns"]')
