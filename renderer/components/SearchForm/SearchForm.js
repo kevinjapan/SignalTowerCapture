@@ -54,7 +54,7 @@ class SearchForm {
          attributes:[
             {key:'id',value:'search_btn'}
          ],
-         classlist:['flex','align_items_center','p_0','pl_1','pr_1'],
+         classlist:['flex','align_items_center','p_0.75','pl_1','pr_1','mt_0.75'],
          text:'Search'
       }) 
 
