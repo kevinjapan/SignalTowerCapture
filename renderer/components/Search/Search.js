@@ -26,6 +26,9 @@ class Search {
    // props
    #props
 
+   
+   #search_term_max_len = 36
+
    // advanced search is extended
    #show_advanced
 
@@ -68,21 +71,21 @@ class Search {
          classlist:['grid','grid_cards_layout']
       })
 
-      let search_term_max_len = 36
       try {
-         search_term_max_len = await window.app_api.maxSearchTermLen()
+         this.#search_term_max_len = await window.app_api.maxSearchTermLen()
       }
       catch(error) {
          // use initially assigned
       }
       
-      this.add_search_form(search_term_max_len)
+      this.add_search_form()
     
       this.add_number_results()
 
       // required for re-instating search_context on 'back' to list actions
       if(this.#search_context) {
-         this.#search_results_container.append(this.get_items())
+         if(this.#search_context.search_term !== undefined)
+            this.#search_results_container.append(this.get_items())
       }
 
       // assemble
@@ -117,7 +120,7 @@ class Search {
                   this.#search_results_container.replaceChildren()
                   
                   this.add_heading()
-                  this.add_search_form()
+                  this.add_search_form(this.#search_context.search_term)
                   this.add_number_results()
                   
                   let page_count = Math.ceil(collection_items_obj.count / collection_items_obj.per_page)
@@ -198,11 +201,11 @@ class Search {
       this.#search_section.append(h)
    }
 
-   add_search_form = (search_term_max_len) => {
+   add_search_form = (search_term) => {
       
       let form_props = {
-         search_term:this.#props ? this.#props.context.search_term : '',
-         search_term_max_len:search_term_max_len,
+         search_term:search_term,
+         search_term_max_len:this.#search_term_max_len,
          submit_search_term:this.submit_search_term,
          clear_search:this.clear_search
       }
