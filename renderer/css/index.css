@@ -664,8 +664,8 @@ label,.label {
    -ms-grid-column-span: 1;
    grid-column-end: 3;
    padding:1rem;
-   padding-top:2rem;
-   padding-bottom:2rem;
+   padding-top:.5rem;
+   padding-bottom:.5rem;
 }
 .grid_span_2 {
    -ms-grid-column: 1;
@@ -1024,7 +1024,7 @@ input[type='radio'] {
 
 .notification {
    width:fit-content;
-   margin-top:2rem;
+   margin-top:0rem;
    margin-left:auto;
    margin-right:auto;
    padding:.75rem;

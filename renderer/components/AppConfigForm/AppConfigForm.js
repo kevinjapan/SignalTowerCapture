@@ -37,11 +37,12 @@ class AppConfigForm {
          attributes:[
             {key:'id',value:'item_form'}
          ],
-         classlist:['config_form','border','mt_0','mb_2']
+         classlist:['config_form','border','mt_0']
       })
       
-      let btn_group_1 = FormBtns.render(null,false)
-      form.append(btn_group_1)
+      // notification is at bottom of form only - so force user to act at that location
+      // let bottom_btns = FormBtns.render(null,false)
+      // form.append(bottom_btns)
 
       const text_col = create_div({
          classlist:['text_col']
@@ -151,7 +152,7 @@ class AppConfigForm {
          this.#id = app_config_record.id
       }
 
-      let btn_group_2 = FormBtns.render(null,false)
+      let top_btns = FormBtns.render(null,false)
 
       let submit_outcome = create_section({
          attributes:[
@@ -160,7 +161,7 @@ class AppConfigForm {
       })
       
       // assemble
-      form.append(create_div(),btn_group_2,submit_outcome)
+      form.append(create_div(),top_btns,submit_outcome)
    
       return form
    }
@@ -173,7 +174,6 @@ class AppConfigForm {
       // On 'Apply' add or update AppConfigForm
 
       const apply_btns = document.querySelectorAll('.apply_btn')
-      const submit_outcome = document.getElementById('submit_outcome')
 
       if(apply_btns) {
    
