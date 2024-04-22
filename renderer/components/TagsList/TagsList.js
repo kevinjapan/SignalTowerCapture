@@ -72,7 +72,7 @@ class TagsList {
                attributes:[
                   {key:'id',value:tag.id}
                ],
-               classlist:['del_tag_btn','no_border','text_lightgrey','m_0','p_0','pt_0'],
+               classlist:['del_tag_btn','bg_white','text_grey','p_0','pb_0.25','pl_0.25','pr_0.25'],
                text:'x'
             })
             
