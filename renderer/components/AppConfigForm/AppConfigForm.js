@@ -1,3 +1,4 @@
+import App from '../App/App.js'
 import SelectFolderComponent from '../SelectFolderComponent/SelectFolderComponent.js'
 import FormBtns from '../FormBtns/FormBtns.js'
 import Notification from '../../components/Notification/Notification.js'
@@ -76,6 +77,7 @@ class AppConfigForm {
                   {key:'name',value:field.key},
                   {key:'type',value:'text'},
                   {key:'value',value:value},
+                  {key:'readonly',value:field.readonly ? 'readonly' : false},
                ],
                classlist:['input_field']
             })
@@ -90,6 +92,7 @@ class AppConfigForm {
                   {key:'name',value:field.key},
                   {key:'type',value:'text'},
                   {key:'value',value:value},
+                  {key:'readonly',value:field.readonly ? 'readonly' : false},
                ],
                classlist:['input_field','w_full','m_1']
             })
@@ -99,8 +102,7 @@ class AppConfigForm {
 
          let warning = null
          if(field.key === 'root_folder') {
-            // lock input - we require user to use O/S file select
-            field_input.disabled = 'disabled'
+            
             // stress impact of changing this to user
             warning = create_p({
                classlist:['ml_1','bg_yellow','w_full','border_radius_1'],
@@ -143,10 +145,6 @@ class AppConfigForm {
             setTimeout(() => folder_selector.activate(field.key),300)
          }
 
-         let temp = create_div({
-            classlist:['form_row_divider']
-         })
-         text_col.append(temp)
       })
 
       if(typeof app_config_record !== 'undefined') {
@@ -207,10 +205,14 @@ class AppConfigForm {
          
                   // FormData only returns the non-disabled input key/value pairs - so we add 'id'
                   update_app_config.id = this.#id
+
                   let response = await window.config_api.updateAppConfig(update_app_config)
                   
                   if(response.outcome === 'success') {
                      Notification.notify('#submit_outcome',`${action} successfully applied.`,['bg_inform'])
+
+                     // future : make scaleable (if we incrse no. of settings)
+                     App.set_root_folder(form_data.get('root_folder'))
                   }
                   else {
                      if(Array.isArray(response.errors)) {

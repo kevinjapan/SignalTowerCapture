@@ -50,6 +50,11 @@ class App {
       return this.#root_folder
    }
 
+   // update if user modifes Config
+   static set_root_folder = (root_folder) => {
+      this.#root_folder = root_folder
+   }
+
    static switch_to_component = async(component_name,props) => {
 
       let component_container = document.getElementById('component_container')
