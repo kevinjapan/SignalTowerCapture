@@ -20,7 +20,7 @@ class ImportCSVComponent {
       //
       let fields_list = []
       const collection_item_obj = await window.collection_items_api.getCollectionItemFields()
-      console.log('collection_item_obj',collection_item_obj)
+
       if(typeof collection_item_obj !== undefined) {
          if(collection_item_obj.outcome === 'success')
          fields_list = collection_item_obj.fields.map((field) => {
