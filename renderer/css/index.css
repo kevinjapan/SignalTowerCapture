@@ -135,7 +135,7 @@ ul {
    list-style:none;
 }
 button {
-   background: none;
+   background:hsl(0, 0%, 93%);
    color: inherit;
    font: inherit;
    cursor: pointer;
@@ -153,7 +153,7 @@ button {
 }
 button:hover {
    color:black;
-   background:hsl(0, 0%, 93%);
+   background:hsl(0, 0%, 83%);
 }
 button.alpha_ctrl_btn:hover {
    background:hsl(120, 73%, 80%);
