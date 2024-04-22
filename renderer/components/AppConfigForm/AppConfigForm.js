@@ -112,9 +112,7 @@ class AppConfigForm {
             })
          }
 
-         // spacing on parent grid
-         let field_spacer_desc = create_div() 
-         let field_spacer_error = create_div()  
+         const desc_btn_row = create_div({classlist:['flex']})
 
          let field_desc = null
          if(typeof field.desc !== 'undefined') {
@@ -123,6 +121,15 @@ class AppConfigForm {
                text:field.desc
             })
          } 
+         desc_btn_row.append(field_desc)
+
+         // user can select folder via native file selector / explorer 
+         if(field.is_folder) {
+            let folder_selector = new SelectFolderComponent()
+            desc_btn_row.append(folder_selector.render(field.key))
+            // delay to let form.append below take effect
+            setTimeout(() => folder_selector.activate(field.key),300)
+         }
 
          let field_error = create_div({
             attributes:[
@@ -133,17 +140,10 @@ class AppConfigForm {
          })
 
          text_col.append(field_label,field_input)
-         if(field_desc)text_col.append(field_spacer_desc,field_desc)
+         if(desc_btn_row)text_col.append(desc_btn_row)
          if(warning)text_col.append(warning)
-         text_col.append(field_spacer_error,field_error)
+         text_col.append(field_error)
 
-         // user can select folder via native file selector / explorer 
-         if(field.is_folder) {
-            let folder_selector = new SelectFolderComponent()
-            text_col.append(create_div(),folder_selector.render(field.key))
-            // delay to let form.append below take effect
-            setTimeout(() => folder_selector.activate(field.key),300)
-         }
 
       })
 
