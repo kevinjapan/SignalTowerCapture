@@ -26,7 +26,7 @@ class AddCollectionItem {
          attributes:[
             {key:'id',value:'item_form_wrap'}
          ],
-         classlist:['bg_white'],
+         classlist:['bg_white','box_shadow','rounded'],
          level:'h1'
       })
 

@@ -38,7 +38,7 @@ class Actions {
          attributes:[
             {key:'id',value:'backup_section'}
          ],
-         classlist:['bg_white','m_2','mt_4','mb_2','pb_2']
+         classlist:['bg_white','box_shadow','rounded','m_2','mt_4','mb_2','pb_2']
       })
       const backup_header = create_div({
          classlist:['flex','align_items_center']
@@ -67,7 +67,7 @@ class Actions {
          attributes:[
             {key:'id',value:'csv_section'}
          ],
-         classlist:['bg_white','m_2','mt_4','mb_2','pb_2']
+         classlist:['bg_white','box_shadow','rounded','m_2','mt_4','mb_2','pb_2']
       })   
       const csv_header = create_div({
          classlist:['flex','align_items_center']
@@ -114,7 +114,7 @@ class Actions {
          attributes:[
             {key:'id',value:'json_section'}
          ],
-         classlist:['bg_white','m_2','mt_4','mb_2','pb_2']
+         classlist:['bg_white','box_shadow','rounded','m_2','mt_4','mb_2','pb_2']
       })
       const json_header = create_div({
          classlist:['flex','align_items_center']
@@ -163,7 +163,7 @@ class Actions {
          attributes:[
             {key:'id',value:'records_section'}
          ],
-         classlist:['bg_white','m_2','mt_4','mb_2','pb_2']
+         classlist:['bg_white','box_shadow','rounded','m_2','mt_4','mb_2','pb_2']
       })    
       const records_header = create_div({
          classlist:['flex','align_items_center']

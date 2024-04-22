@@ -64,7 +64,7 @@ class Files {
 
       // 2-col layout
       const files_layout = create_div({
-         classlist:['bg_white','files_layout','m_0','p_0']
+         classlist:['files_layout','m_0','p_0']
       })
 
       // folder/file panels
@@ -72,13 +72,13 @@ class Files {
          attributes:[
             {key:'id',value:'file_list_elem'}
          ],
-         classlist:['border','m_0','p_0.5','overflow_auto','max_h_24','text_sm','text_grey']
+         classlist:['bg_white','box_shadow','rounded','m_0','p_0.5','overflow_auto','max_h_24','text_sm','text_grey']
       })
       const file_view = create_div({
          attributes:[
             {key:'id',value:'file_view'}
          ],
-         classlist:['border'],
+         classlist:['bg_white','box_shadow','rounded',],
          text:''
       })
 
