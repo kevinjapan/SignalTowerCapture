@@ -54,8 +54,6 @@ class Search {
          ],
          classlist:['max_w_full']
       })
-    
-      this.add_heading()
 
       let search_status = create_section({
          attributes:[
@@ -119,7 +117,6 @@ class Search {
                   this.#search_section.replaceChildren()
                   this.#search_results_container.replaceChildren()
                   
-                  this.add_heading()
                   this.add_search_form(this.#search_context.search_term)
                   this.add_number_results()
                   
@@ -189,16 +186,6 @@ class Search {
       else {
          return null
       }
-   }
-
-   add_heading = () => {
-      
-      const h = create_h({
-         level:'h1',
-         text:'Search for records',
-         classlist:['m_0']
-      })
-      this.#search_section.append(h)
    }
 
    add_search_form = (search_term) => {

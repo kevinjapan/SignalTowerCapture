@@ -60,7 +60,6 @@ class Browse {
          classlist:['max_w_full']
       })
 
-      this.add_heading()
       this.add_alpha_ctrl()
       this.add_number_results()
       
@@ -112,7 +111,6 @@ class Browse {
                   this.#browse_section.replaceChildren()
                   this.#browse_results_container.replaceChildren()
 
-                  this.add_heading()
                   this.add_alpha_ctrl(this.#filter_char)
                   this.add_number_results()
 
@@ -203,15 +201,6 @@ class Browse {
       this.#browse_context.scroll_y = 0
       this.get_items()
       setTimeout(() => this.activate(),50)
-   }
-
-   add_heading = () => {
-      const h = create_h({
-         level:'h1',
-         text:'Browse records',
-         classlist:['m_0']
-      })
-      this.#browse_section.append(h)
    }
 
    add_number_results = () => {

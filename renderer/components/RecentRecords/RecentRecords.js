@@ -43,12 +43,6 @@ class RecentRecords {
 
       let recent_section = create_section()
 
-      const heading = create_h({
-         level:'h1',
-         text:'Recent records',
-         classlist:['m_0']
-      })
-
       this.#results_container = create_div({
          attributes:[
             {key:'id',value:'results_container'}
@@ -59,7 +53,7 @@ class RecentRecords {
       this.get_items()
 
       // assemble
-      recent_section.append(heading,this.#results_container)
+      recent_section.append(this.#results_container)
       return recent_section
    }
 

@@ -16,12 +16,6 @@ class AddCollectionItem {
          ]
       })
 
-      const add_item_heading = create_h({
-         level:'h1',
-         text:'Add a file to the collection',
-         classlist:['m_0']
-      })
-
       const item_form_wrap = create_section({
          attributes:[
             {key:'id',value:'item_form_wrap'}
@@ -32,7 +26,7 @@ class AddCollectionItem {
 
       // assemble
       this.build_form(item_form_wrap)
-      this.#record.append(add_item_heading,item_form_wrap)
+      this.#record.append(item_form_wrap)
       
       return this.#record
    }

@@ -46,17 +46,12 @@ class Files {
             {key:'id',value:'files_section'}
          ]
       })      
-      const heading = create_h({
-         level:'h1',
-         text:'Add a folder to the collection',
-         classlist:['m_0']
-      })
       const files_outcome = create_div({
          attributes:[
             {key:'id',value:'files_outcome'}
          ]
       })
-      files_section.append(heading,files_outcome)
+      files_section.append(files_outcome)
 
       this.#root_folder = App.get_root_folder()
       if(this.#root_folder === '') return no_root_folder()

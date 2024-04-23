@@ -25,13 +25,6 @@ class Actions {
          classlist:['mb_2','pb_2']
       })
 
-      const actions_heading = create_h({
-         level:'h1',
-         text:'Perform actions',
-         classlist:['m_0','mb_2']
-      })
-
-
       // Backup Section
       //
       let backup_section = create_section({
@@ -186,7 +179,7 @@ class Actions {
       }
 
       // assemble
-      actions_section.append(actions_heading,backup_section,csv_section,json_section,records_section)
+      actions_section.append(backup_section,csv_section,json_section,records_section)
       return actions_section
    }
 

@@ -14,12 +14,6 @@ class Config {
             {key:'id',value:'config_component'}
          ]
       })
-      
-      const heading = create_h({
-         level:'h1',
-         text:'Configure the system',
-         classlist:['m_0']
-      })
 
       let config_form_wrap = create_section({
          attributes:[
@@ -91,7 +85,7 @@ class Config {
 
 
       // assemble
-      config_component.append(heading,tags_section,app_settings_section)
+      config_component.append(tags_section,app_settings_section)
       return config_component
 
    }
