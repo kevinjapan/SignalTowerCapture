@@ -35,19 +35,21 @@ if(open_folder_btn) {
          let list = create_ul()
          let list_item
 
-         filenames.forEach(file => {
+         if(Array.isArray(filenames)) {
+            filenames.forEach(file => {
 
-            list_item = create_li({
-               attributes:[
-                  {key:'data-path',value:file.path}
-               ],
-               classlist:['folder_item'],
-               text:file.type + ' ' + file.filename
+               list_item = create_li({
+                  attributes:[
+                     {key:'data-path',value:file.path}
+                  ],
+                  classlist:['folder_item'],
+                  text:file.type + ' ' + file.filename
+               })
+
+               list.append(list_item)
+
             })
-
-            list.append(list_item)
-
-         })
+         }
          
          // assemble
          folder_path_elem.appendChild(list)
@@ -66,7 +68,7 @@ const init_folder_items = () => {
    if(folder_item_elements) {
       folder_item_elements.forEach((folder_item_element) => {
          folder_item_element.addEventListener('click', (event) => {
-            console.log(event.target.attributes['data-path'].value)
+            //console.log(event.target.attributes['data-path'].value)
          })
       })
    }
