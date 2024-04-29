@@ -87,7 +87,7 @@ class CollectionItem {
 
       // field_filters target conditional tests against fields/cols within the record
       let field_filters_sql = ''
-      if(context.field_filters) {         
+      if(context.field_filters && Array.isArray(context.field_filters)) {         
          context.field_filters.forEach(filter => {
             let value = trim_char(filter.value,',')
             if(filter.test && filter.test.toUpperCase() === 'IN') {

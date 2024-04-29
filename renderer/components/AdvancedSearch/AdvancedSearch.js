@@ -39,11 +39,8 @@ class AdvancedSearch {
    activate = () => {
 
       const record_status_btns = document.querySelectorAll('input[name="record_status"]')
-
       if(record_status_btns) {
-
-         record_status_btns.forEach((radio_btn) => {
-            
+         record_status_btns.forEach((radio_btn) => {            
             radio_btn.addEventListener('change',(event) => {
                this.#props.filter_search({
                   record_status:event.target.value
@@ -51,7 +48,6 @@ class AdvancedSearch {
             })
          })
       }
-
    }
 
 }

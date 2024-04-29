@@ -81,13 +81,13 @@ class ActionsLogComponent {
          if(typeof actions_log_obj !== 'undefined') {
       
             if(actions_log_obj.outcome === 'success') {
-
-               if(actions_log_obj.actions.length > 0) {
-         
+               if(actions_log_obj.actions.length > 0) {         
                   const actions_log_item = new ActionsLogItem() 
-                  actions_log_obj.actions.forEach((item) => {        
-                     this.#results_container.appendChild(actions_log_item.render(item))
-                  })
+                  if(Array.isArray(actions_log_obj.actions)) {
+                     actions_log_obj.actions.forEach((item) => {        
+                        this.#results_container.appendChild(actions_log_item.render(item))
+                     })
+                  }
                   setTimeout(() => actions_log_item.activate(),200)
                }
                else {

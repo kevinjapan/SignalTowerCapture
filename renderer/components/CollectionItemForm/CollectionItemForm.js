@@ -91,87 +91,17 @@ class CollectionItemForm {
       //    |               |   field_error   |
       //    |               | [find_file_btn] |
 
-      this.#props.fields.forEach( async(field) => {
+      if(Array.isArray(this.#props.fields)) {
 
-         // get the value for the current form field
-         let curr_field_value = ''
-         if(typeof this.#props.item !== 'undefined') curr_field_value = this.#props.item[field.key]
-         if(curr_field_value === null) curr_field_value = ''
-         if(field.key === 'file_type' && curr_field_value === '') curr_field_value = 'File'
-      
-         // build the row label
-         let field_label = create_label({
-            attributes:[
-               {key:'for',value:field.key}
-            ],
-            text:ui_friendly_text(field.key)
-         })
+         this.#props.fields.forEach( async(field) => {
 
-         // build the row input field
-         let field_input
-
-         if(field.test.type === 'string' && field.test.max > 120) {
-            field_input = create_textarea({
-               attributes:[
-                  {key:'id',value:field.key},
-                  {key:'name',value:field.key},
-                  {key:'type',value:'text'},
-                  {key:'value',value:curr_field_value},
-                  {key:'maxlength',value:field.test.max},
-                  {key:'readonly',value:field.readonly ? 'readonly' : false},
-               ],
-               classlist:['input_field']
-            })
-            if(field.hidden === true) field_input.hidden = true
-            field_input.value = curr_field_value   // req for textareas
-            field_input.style.height = field.test.max > 200 ? '16rem' : '4.25rem'
-            if(field.placeholder) field_input.setAttribute('placeholder',field.placeholder)
-            if(!field.editable) field_input.disabled = 'disabled'
-         }
-         else {
-            field_input = create_input({
-               attributes:[
-                  {key:'id',value:field.key},
-                  {key:'name',value:field.key},
-                  {key:'type',value:'text'},
-                  {key:'value',value:curr_field_value},
-                  {key:'maxlength',value:field.test.max},
-                  {key:'readonly',value:field.readonly ? 'readonly' : false},
-               ],
-               classlist:['input_field']
-            })
-            if(field.hidden === true) field_input.hidden = true
-            if(field.placeholder) field_input.setAttribute('placeholder',field.placeholder)
-            if(!field.editable) field_input.disabled = 'disabled'
-         }
-
-         // build the row error notification
-         let field_error = create_div({
-            attributes:[
-               {key:'id',value:`${field.key}_error`}
-            ],
-            classlist:['error_bar','bg_yellow']
-         })
-
-         // build the row stats
-         let field_stats = create_div({
-            classlist:['field_info'],
-            text:`max ${field.test.max} chars`
-         })
-
-         // assemble add current row to form grid
-
-         if(field.hidden !== true) form.append(field_label)
-         form.append(field_input)
-
-         if(field.editable && field.hidden !== true) form.append(create_div(),field_stats)
-
-         form.append(create_div(),field_error)
-
+            // get the value for the current form field
+            let curr_field_value = ''
+            if(typeof this.#props.item !== 'undefined') curr_field_value = this.#props.item[field.key]
+            if(curr_field_value === null) curr_field_value = ''
+            if(field.key === 'file_type' && curr_field_value === '') curr_field_value = 'File'
          
-         // tags checkboxes
-         if(field.key === 'tags') {
-
+            // build the row label
             let field_label = create_label({
                attributes:[
                   {key:'for',value:field.key}
@@ -179,111 +109,184 @@ class CollectionItemForm {
                text:ui_friendly_text(field.key)
             })
 
-            // current tags : this.#props.item[field.key]
-            const current_tags = this.#props.item ?
-                  this.#props.item[field.key] ? this.#props.item[field.key].split('*') : []
-                  : []
+            // build the row input field
+            let field_input
 
-            // placeholder - we inject once promise is resolved..
-            form.append(field_label,create_div({attributes:[{key:'id',value:'tags_placeholder'}]}))
+            if(field.test.type === 'string' && field.test.max > 120) {
+               field_input = create_textarea({
+                  attributes:[
+                     {key:'id',value:field.key},
+                     {key:'name',value:field.key},
+                     {key:'type',value:'text'},
+                     {key:'value',value:curr_field_value},
+                     {key:'maxlength',value:field.test.max},
+                     {key:'readonly',value:field.readonly ? 'readonly' : false},
+                  ],
+                  classlist:['input_field']
+               })
+               if(field.hidden === true) field_input.hidden = true
+               field_input.value = curr_field_value   // req for textareas
+               field_input.style.height = field.test.max > 200 ? '16rem' : '4.25rem'
+               if(field.placeholder) field_input.setAttribute('placeholder',field.placeholder)
+               if(!field.editable) field_input.disabled = 'disabled'
+            }
+            else {
+               field_input = create_input({
+                  attributes:[
+                     {key:'id',value:field.key},
+                     {key:'name',value:field.key},
+                     {key:'type',value:'text'},
+                     {key:'value',value:curr_field_value},
+                     {key:'maxlength',value:field.test.max},
+                     {key:'readonly',value:field.readonly ? 'readonly' : false},
+                  ],
+                  classlist:['input_field']
+               })
+               if(field.hidden === true) field_input.hidden = true
+               if(field.placeholder) field_input.setAttribute('placeholder',field.placeholder)
+               if(!field.editable) field_input.disabled = 'disabled'
+            }
 
-            try {
-               this.#tags_obj = await window.tags_api.getTags(this.#props.context ? this.#props.context : {})
+            // build the row error notification
+            let field_error = create_div({
+               attributes:[
+                  {key:'id',value:`${field.key}_error`}
+               ],
+               classlist:['error_bar','bg_yellow']
+            })
 
-               if (typeof this.#tags_obj !== "undefined") {
+            // build the row stats
+            let field_stats = create_div({
+               classlist:['field_info'],
+               text:`max ${field.test.max} chars`
+            })
+
+            // assemble add current row to form grid
+
+            if(field.hidden !== true) form.append(field_label)
+            form.append(field_input)
+
+            if(field.editable && field.hidden !== true) form.append(create_div(),field_stats)
+
+            form.append(create_div(),field_error)
+
             
-                  if(this.#tags_obj.outcome === 'success') {
+            // tags checkboxes
+            if(field.key === 'tags') {
 
-                     // get existing tags list (remove any non-registered tag tokens)
-                     const verified_curr_tags = current_tags.filter(curr_tag => {
-                        return this.#tags_obj.tags.some(tag => tag.tag === curr_tag)
-                     })
+               let field_label = create_label({
+                  attributes:[
+                     {key:'for',value:field.key}
+                  ],
+                  text:ui_friendly_text(field.key)
+               })
 
-                     const tags_checks = this.#tags_obj.tags.map(tag => {
-                        return {
-                           key:tag.tag,
-                           value:tag.tag,
-                           checked: verified_curr_tags.some(current_tag => {
-                              return tag.tag === current_tag
-                           }) ? 'checked' : null
-                        }
-                     })
+               // current tags : this.#props.item[field.key]
+               const current_tags = this.#props.item ?
+                     this.#props.item[field.key] ? this.#props.item[field.key].split('*') : []
+                     : []
 
-                     const tags_checkboxes = create_checkbox_fieldset({
-                        name:'tags_checkbox',
-                        checkboxes:tags_checks
-                     })
-                     tags_placeholder.replaceChildren(create_div(),tags_checkboxes)
+               // placeholder - we inject once promise is resolved..
+               form.append(field_label,create_div({attributes:[{key:'id',value:'tags_placeholder'}]}))
+
+               try {
+                  this.#tags_obj = await window.tags_api.getTags(this.#props.context ? this.#props.context : {})
+
+                  if (typeof this.#tags_obj !== "undefined") {
+               
+                     if(this.#tags_obj.outcome === 'success') {
+
+                        // get existing tags list (remove any non-registered tag tokens)
+                        const verified_curr_tags = current_tags.filter(curr_tag => {
+                           return this.#tags_obj.tags.some(tag => tag.tag === curr_tag)
+                        })
+
+                        const tags_checks = this.#tags_obj.tags.map(tag => {
+                           return {
+                              key:tag.tag,
+                              value:tag.tag,
+                              checked: verified_curr_tags.some(current_tag => {
+                                 return tag.tag === current_tag
+                              }) ? 'checked' : null
+                           }
+                        })
+
+                        const tags_checkboxes = create_checkbox_fieldset({
+                           name:'tags_checkbox',
+                           checkboxes:tags_checks
+                        })
+                        tags_placeholder.replaceChildren(create_div(),tags_checkboxes)
+                     }
+                     // we activate tags separately to tie activation to completion of getTags()
+                     this.activate_tags()
                   }
-                  // we activate tags separately to tie activation to completion of getTags()
-                  this.activate_tags()
+               }
+               catch(error) {
+                  setTimeout(() => Notification.notify('#tags_placeholder','Sorry, we were unable to access the Tags.',false),1500)
                }
             }
-            catch(error) {
-               setTimeout(() => Notification.notify('#tags_placeholder','Sorry, we were unable to access the Tags.',false),1500)
-            }
-         }
 
-         
-         // file_type checkboxes
-         if(field.key === 'file_type') {
-
-            let field_label = create_label({
-               attributes:[
-                  {key:'for',value:field.key}
-               ],
-               text:ui_friendly_text(field.key)
-            })
-
-            const file_type_radio = create_radio_fieldset({
-               name:'file_type_radio_btns',
-               classlist:['m_0'],
-               radio_buttons:[
-                  {key:'file',label:'Single PDF,JPG or other file',value:'File',checked:curr_field_value.toUpperCase() === 'FILE' ? true : false},
-                  {key:'folder',label:'Folder of multiple PDF,JPG or other files',value:'Folder',checked:curr_field_value.toUpperCase() === 'FOLDER' ? true : false}
-               ]
-            })
             
-            const file_type_info = create_div({
-               attributes:[
-                  {key:'id',value:'file_type_info'}
-               ],
-               classlist:['text_grey','border','rounded','mb_3','p_1'],
-               text:curr_field_value.toUpperCase() === 'FILE' ? DESC.FILE_ITEM_FILETYPE : DESC.FOLDER_ITEM_FILETYPE
-            })
+            // file_type checkboxes
+            if(field.key === 'file_type') {
 
-            form.append(field_label,file_type_radio,create_div(),file_type_info)
+               let field_label = create_label({
+                  attributes:[
+                     {key:'for',value:field.key}
+                  ],
+                  text:ui_friendly_text(field.key)
+               })
 
-            let find_file_outcome = create_div({
-               attributes:[
-                  {key:'id',value:'find_file_outcome'}
-               ]
-            })
+               const file_type_radio = create_radio_fieldset({
+                  name:'file_type_radio_btns',
+                  classlist:['m_0'],
+                  radio_buttons:[
+                     {key:'file',label:'Single PDF,JPG or other file',value:'File',checked:curr_field_value.toUpperCase() === 'FILE' ? true : false},
+                     {key:'folder',label:'Folder of multiple PDF,JPG or other files',value:'Folder',checked:curr_field_value.toUpperCase() === 'FOLDER' ? true : false}
+                  ]
+               })
+               
+               const file_type_info = create_div({
+                  attributes:[
+                     {key:'id',value:'file_type_info'}
+                  ],
+                  classlist:['text_grey','border','rounded','mb_3','p_1'],
+                  text:curr_field_value.toUpperCase() === 'FILE' ? DESC.FILE_ITEM_FILETYPE : DESC.FOLDER_ITEM_FILETYPE
+               })
 
-            // btn to select file for 'file_name' field
-            let find_file_btn = create_button({
-               attributes:[
-                  {key:'id',value:'find_file_btn'}
-               ],
-               classlist:['form_btn'],
-               text:'Find File'
-            }) 
-            // assemble find_file
-            form.append(create_div(),find_file_btn,create_div(),find_file_outcome)
-         }
+               form.append(field_label,file_type_radio,create_div(),file_type_info)
 
-         // display the file if it's a valid img and it exists
-         if(field.key === 'file_name' && this.#props.item) {
+               let find_file_outcome = create_div({
+                  attributes:[
+                     {key:'id',value:'find_file_outcome'}
+                  ]
+               })
 
-            let relative_folder_path = this.#props.item['folder_path']
+               // btn to select file for 'file_name' field
+               let find_file_btn = create_button({
+                  attributes:[
+                     {key:'id',value:'find_file_btn'}
+                  ],
+                  classlist:['form_btn'],
+                  text:'Find File'
+               }) 
+               // assemble find_file
+               form.append(create_div(),find_file_btn,create_div(),find_file_outcome)
+            }
 
-            // allow for empty folder_path (files in root_folder)
-            if(relative_folder_path !== '') relative_folder_path += '\\'
+            // display the file if it's a valid img and it exists
+            if(field.key === 'file_name' && this.#props.item) {
 
-            let file_path = `${this.#root_folder}\\${relative_folder_path}\\${this.#props.item[field.key]}`
-            await this.display_image_or_filetype(img_col,file_path,this.#props.item['img_desc'])
-         }
-      })
+               let relative_folder_path = this.#props.item['folder_path']
+
+               // allow for empty folder_path (files in root_folder)
+               if(relative_folder_path !== '') relative_folder_path += '\\'
+
+               let file_path = `${this.#root_folder}\\${relative_folder_path}\\${this.#props.item[field.key]}`
+               await this.display_image_or_filetype(img_col,file_path,this.#props.item['img_desc'])
+            }
+         })
+      }
 
       if(typeof this.#props.item !== 'undefined') {
          this.#record_id = this.#props.item.id
@@ -307,19 +310,20 @@ class CollectionItemForm {
 
       let elem = null
 
-      field_values.forEach((field_value) => {
-
-         if(field_value.field === 'img') {
-            let img_col = document.getElementById('img_col')
-            if(img_col) {
-               this.display_image_or_filetype(img_col,field_value.value,field_value.alt)
+      if(Array.isArray(field_values)) {
+         field_values.forEach((field_value) => {
+            if(field_value.field === 'img') {
+               let img_col = document.getElementById('img_col')
+               if(img_col) {
+                  this.display_image_or_filetype(img_col,field_value.value,field_value.alt)
+               }
             }
-         }
-         elem = document.getElementById(field_value.field)
-         if(elem) {
-            elem.value = field_value.value
-         }
-      })
+            elem = document.getElementById(field_value.field)
+            if(elem) {
+               elem.value = field_value.value
+            }
+         })
+      }
    }
 
 

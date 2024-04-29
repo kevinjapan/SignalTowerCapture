@@ -88,78 +88,81 @@ class CollectionItemRecord {
       let field_value
       
       // append form element for each Record field
-      this.#props.fields.forEach( async (field) => { 
+      if(Array.isArray(this.#props.fields)) {
+         
+         this.#props.fields.forEach( async (field) => { 
 
-         field_label = create_div({
-            classlist:['label','mb_1',`${field.key === 'title' ? 'line_2' : ''}`],
-            text:ui_friendly_text(field.key)
-         })
-
-         if(field.key === 'title') {            
-            // we rpt display of title above img when stacked on sm views
-            let img_col_title = create_div({
-               classlist:[`ci_form_${field.key}`,'stacked_img_title','mb_1'],
-               text:this.#props.item[field.key]
+            field_label = create_div({
+               classlist:['label','mb_1',`${field.key === 'title' ? 'line_2' : ''}`],
+               text:ui_friendly_text(field.key)
             })
-            img_col.append(img_col_title)
-         }
 
-         if(field.key === 'tags') {
-            field_value = create_div()
-            field_value.append(this.display_tags(this.#props.item[field.key]))
-         }
-         else {
-            field_value = create_div({        
-               classlist:['break_words',`ci_form_${field.key}`],
-               text:this.#props.item[field.key]
-            })
-         }
-                     
-         form_layout.append(field_label,field_value)
+            if(field.key === 'title') {            
+               // we rpt display of title above img when stacked on sm views
+               let img_col_title = create_div({
+                  classlist:[`ci_form_${field.key}`,'stacked_img_title','mb_1'],
+                  text:this.#props.item[field.key]
+               })
+               img_col.append(img_col_title)
+            }
 
-         // display file if file_name is recognized image type
-         if(field.key === 'file_name') {
-               
-            // build the file_path
-            let root_part = trim_end_char(this.#props.root_folder,'\\')
-            let relative_folder_part = trim_char(this.#props.item['folder_path'],'\\')
-            
-            // allow for empty folder_path (files in root_folder)
-            if(relative_folder_part !== '') relative_folder_part += '\\'
-
-            let file_part = this.#props.item[field.key]
-            let file_path = `${root_part}\\${relative_folder_part}${file_part}`
-
-            if(await file_exists(file_path)) {
-               
-               if(is_img_ext(file_path)) {                  
-                  // process img file
-                  let img = build_img_elem(file_path,this.#props.item['img_desc'],[{key:'id',value:'record_img'}],['record_image'])
-                  if(img) img_col.append(img)
-               }
-               else {
-                  // process non-img file
-                  const icon_img_file_path = get_file_type_icon(file_path)
-                  const ext = get_ext(file_path)
-                  let img = build_img_elem(icon_img_file_path,`${ext} file icon`,
-                     [],
-                     ['record_card_image','card_title_link','cursor_pointer']
-                  )
-                  if(img) img_col.replaceChildren(create_div(),img)
-
-               }
+            if(field.key === 'tags') {
+               field_value = create_div()
+               field_value.append(this.display_tags(this.#props.item[field.key]))
             }
             else {
-               const no_file_icon_img = build_img_elem('imgs\\icons\\exclamation-square.svg',`item date`,[{key:'height',value:'24px'}],['bg_yellow_100','mt_1'])
-               img_col.append(create_div(),no_file_icon_img)
-               let msg = create_div({
-                  classlist:['text_sm'],
-                  text:'The file was not found.'
+               field_value = create_div({        
+                  classlist:['break_words',`ci_form_${field.key}`],
+                  text:this.#props.item[field.key]
                })
-               img_col.append(create_div(),msg)
             }
-         }
-      })
+                        
+            form_layout.append(field_label,field_value)
+
+            // display file if file_name is recognized image type
+            if(field.key === 'file_name') {
+                  
+               // build the file_path
+               let root_part = trim_end_char(this.#props.root_folder,'\\')
+               let relative_folder_part = trim_char(this.#props.item['folder_path'],'\\')
+               
+               // allow for empty folder_path (files in root_folder)
+               if(relative_folder_part !== '') relative_folder_part += '\\'
+
+               let file_part = this.#props.item[field.key]
+               let file_path = `${root_part}\\${relative_folder_part}${file_part}`
+
+               if(await file_exists(file_path)) {
+                  
+                  if(is_img_ext(file_path)) {                  
+                     // process img file
+                     let img = build_img_elem(file_path,this.#props.item['img_desc'],[{key:'id',value:'record_img'}],['record_image'])
+                     if(img) img_col.append(img)
+                  }
+                  else {
+                     // process non-img file
+                     const icon_img_file_path = get_file_type_icon(file_path)
+                     const ext = get_ext(file_path)
+                     let img = build_img_elem(icon_img_file_path,`${ext} file icon`,
+                        [],
+                        ['record_card_image','card_title_link','cursor_pointer']
+                     )
+                     if(img) img_col.replaceChildren(create_div(),img)
+
+                  }
+               }
+               else {
+                  const no_file_icon_img = build_img_elem('imgs\\icons\\exclamation-square.svg',`item date`,[{key:'height',value:'24px'}],['bg_yellow_100','mt_1'])
+                  img_col.append(create_div(),no_file_icon_img)
+                  let msg = create_div({
+                     classlist:['text_sm'],
+                     text:'The file was not found.'
+                  })
+                  img_col.append(create_div(),msg)
+               }
+            }
+         })
+      }
       
 
       form_layout.append(RecordBtns.render(this.#props.item.id,this.#props.context ? true : false))

@@ -163,18 +163,14 @@ class SearchForm {
             }
          })
       }
-
-      
       search_term_input.focus()
-
    }
 
    
    // callback for AdvancedSearch
    filter_search = (filters) => {
-
       // register changes in AdvancedSearch 
-      let filter_keys = Object.keys(filters)   
+      let filter_keys = Object.keys(filters) 
       filter_keys.forEach((key) => {
          this.#filters[key] = filters[key]
       })

@@ -56,29 +56,31 @@ class TagsList {
       let del_elem
 
       if(tags) {
-         tags.forEach(tag => {
-            
-            tag_elem = create_div({
-               attributes:[
-                  {key:'id',value:'tags_list_div'}
-               ],
-               classlist:['flex','gap_1','align_items_center','tag','border','rounded','pl_1','pr_1','pt_0','pb_0.25']
+         if(Array.isArray(tags)) {
+            tags.forEach(tag => {
+               
+               tag_elem = create_div({
+                  attributes:[
+                     {key:'id',value:'tags_list_div'}
+                  ],
+                  classlist:['flex','gap_1','align_items_center','tag','border','rounded','pl_1','pr_1','pt_0','pb_0.25']
+               })
+               tag_text = create_div({
+                  classlist:[],
+                  text:tag.tag
+               })
+               del_elem = create_button({
+                  attributes:[
+                     {key:'id',value:tag.id}
+                  ],
+                  classlist:['del_tag_btn','bg_white','text_grey','p_0','pb_0.25','pl_0.25','pr_0.25'],
+                  text:'x'
+               })
+               
+               tag_elem.append(tag_text,del_elem)
+               tags_list_div.append(tag_elem)
             })
-            tag_text = create_div({
-               classlist:[],
-               text:tag.tag
-            })
-            del_elem = create_button({
-               attributes:[
-                  {key:'id',value:tag.id}
-               ],
-               classlist:['del_tag_btn','bg_white','text_grey','p_0','pb_0.25','pl_0.25','pr_0.25'],
-               text:'x'
-            })
-            
-            tag_elem.append(tag_text,del_elem)
-            tags_list_div.append(tag_elem)
-         })
+         }
       }
 
       return tags_list_div

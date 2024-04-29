@@ -51,102 +51,105 @@ class AppConfigForm {
       form.append(text_col)
       
       let value = ''
-      fields.forEach( async(field) => {
 
-         if(typeof app_config_record !== 'undefined') {
-            value = app_config_record[field.key]
-         }
+      if(Array.isArray(fields)) {
+         fields.forEach(async(field) => {
 
-         // all types we can set null to empty string
-         if(value === null) value = ''        
-         
-         let field_label = create_label({
-            attributes:[
-               {key:'for',value:field.key}
-            ],
-            classlist:['text_h4'],
-            text:ui_friendly_text(field.key)
-         })
+            if(typeof app_config_record !== 'undefined') {
+               value = app_config_record[field.key]
+            }
 
-         // Build the input element
-         let field_input
-
-         if(field.test.type === 'string' && field.test.len > 255) {
-            field_input = create_textarea({
-               attributes:[
-                  {key:'id',value:field.key},
-                  {key:'name',value:field.key},
-                  {key:'type',value:'text'},
-                  {key:'value',value:value},
-                  {key:'readonly',value:field.readonly ? 'readonly' : false},
-               ],
-               classlist:['input_field']
-            })
-            field_input.value = value
-            if(!field.editable) field_input.disabled = 'disabled'
-            if(field.placeholder) field_input.setAttribute('placeholder',field.placeholder)
-         }
-         else {
-            field_input = create_input({
-               attributes:[
-                  {key:'id',value:field.key},
-                  {key:'name',value:field.key},
-                  {key:'type',value:'text'},
-                  {key:'value',value:value},
-                  {key:'readonly',value:field.readonly ? 'readonly' : false},
-               ],
-               classlist:['input_field','w_full','m_1']
-            })
-            if(!field.editable) field_input.disabled = 'disabled'
-            if(field.placeholder) field_input.setAttribute('placeholder',field.placeholder)
-         }
-
-         let warning = null
-         if(field.key === 'root_folder') {
+            // all types we can set null to empty string
+            if(value === null) value = ''        
             
-            // stress impact of changing this to user
-            warning = create_p({
-               classlist:['ml_1','bg_yellow','w_full','border_radius_1'],
-               text:`IMPORTANT: changing this setting will point the system at the new root folder 
-               - and it will no longer find files in the previous location. Only change this if you
-               have reason to move your files to a new root folder location.`
+            let field_label = create_label({
+               attributes:[
+                  {key:'for',value:field.key}
+               ],
+               classlist:['text_h4'],
+               text:ui_friendly_text(field.key)
             })
-         }
 
-         const desc_btn_row = create_div({classlist:['flex']})
+            // Build the input element
+            let field_input
 
-         let field_desc = null
-         if(typeof field.desc !== 'undefined') {
-            field_desc = create_div({
-               classlist:['mt_0','mb_0','p_1','pt_0','pb_0'],
-               text:field.desc
+            if(field.test.type === 'string' && field.test.len > 255) {
+               field_input = create_textarea({
+                  attributes:[
+                     {key:'id',value:field.key},
+                     {key:'name',value:field.key},
+                     {key:'type',value:'text'},
+                     {key:'value',value:value},
+                     {key:'readonly',value:field.readonly ? 'readonly' : false},
+                  ],
+                  classlist:['input_field']
+               })
+               field_input.value = value
+               if(!field.editable) field_input.disabled = 'disabled'
+               if(field.placeholder) field_input.setAttribute('placeholder',field.placeholder)
+            }
+            else {
+               field_input = create_input({
+                  attributes:[
+                     {key:'id',value:field.key},
+                     {key:'name',value:field.key},
+                     {key:'type',value:'text'},
+                     {key:'value',value:value},
+                     {key:'readonly',value:field.readonly ? 'readonly' : false},
+                  ],
+                  classlist:['input_field','w_full','m_1']
+               })
+               if(!field.editable) field_input.disabled = 'disabled'
+               if(field.placeholder) field_input.setAttribute('placeholder',field.placeholder)
+            }
+
+            let warning = null
+            if(field.key === 'root_folder') {
+               
+               // stress impact of changing this to user
+               warning = create_p({
+                  classlist:['ml_1','bg_yellow','w_full','border_radius_1'],
+                  text:`IMPORTANT: changing this setting will point the system at the new root folder 
+                  - and it will no longer find files in the previous location. Only change this if you
+                  have reason to move your files to a new root folder location.`
+               })
+            }
+
+            const desc_btn_row = create_div({classlist:['flex']})
+
+            let field_desc = null
+            if(typeof field.desc !== 'undefined') {
+               field_desc = create_div({
+                  classlist:['mt_0','mb_0','p_1','pt_0','pb_0'],
+                  text:field.desc
+               })
+            } 
+            desc_btn_row.append(field_desc)
+
+            // user can select folder via native file selector / explorer 
+            if(field.is_folder) {
+               let folder_selector = new SelectFolderComponent()
+               desc_btn_row.append(folder_selector.render(field.key))
+               // delay to let form.append below take effect
+               setTimeout(() => folder_selector.activate(field.key),300)
+            }
+
+            let field_error = create_div({
+               attributes:[
+                  {key:'id',value:`${field.key}_error`}
+               ],
+               classlist:['error_bar','bg_yellow'],
+               text:''
             })
-         } 
-         desc_btn_row.append(field_desc)
 
-         // user can select folder via native file selector / explorer 
-         if(field.is_folder) {
-            let folder_selector = new SelectFolderComponent()
-            desc_btn_row.append(folder_selector.render(field.key))
-            // delay to let form.append below take effect
-            setTimeout(() => folder_selector.activate(field.key),300)
-         }
+            text_col.append(field_label,field_input)
+            if(desc_btn_row)text_col.append(desc_btn_row)
+            if(warning)text_col.append(warning)
+            text_col.append(field_error)
 
-         let field_error = create_div({
-            attributes:[
-               {key:'id',value:`${field.key}_error`}
-            ],
-            classlist:['error_bar','bg_yellow'],
-            text:''
+
          })
-
-         text_col.append(field_label,field_input)
-         if(desc_btn_row)text_col.append(desc_btn_row)
-         if(warning)text_col.append(warning)
-         text_col.append(field_error)
-
-
-      })
+      }
 
       if(typeof app_config_record !== 'undefined') {
          this.#id = app_config_record.id
@@ -174,7 +177,6 @@ class AppConfigForm {
       // On 'Apply' add or update AppConfigForm
 
       const apply_btns = document.querySelectorAll('.apply_btn')
-
       if(apply_btns) {
    
          apply_btns.forEach((apply_btn) => {

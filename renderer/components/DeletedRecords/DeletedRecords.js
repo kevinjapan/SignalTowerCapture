@@ -118,9 +118,11 @@ class DeletedRecordsTeaser {
                         context: this.#context
                      }
                      const collection_item_card = new CollectionItemCard(props) 
-                     collection_items_obj.collection_items.forEach((item) => {        
-                        this.#results_container.appendChild(collection_item_card.render(collection_items_obj.collection_item_fields,item))
-                     })
+                     if(Array.isArray(collection_items_obj.collection_items)) {
+                        collection_items_obj.collection_items.forEach((item) => {        
+                           this.#results_container.appendChild(collection_item_card.render(collection_items_obj.collection_item_fields,item))
+                        })
+                     }
          
                      // retain some spacing on short lists
                      this.#results_container.style.minHeight = '70vh'
