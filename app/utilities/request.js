@@ -1,0 +1,1 @@
+// to do : validate Requests from client (renderer process)
