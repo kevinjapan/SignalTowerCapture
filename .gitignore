@@ -46,6 +46,7 @@ out/
 # App directories
 /database/
 /exports/
+/imports/
 /backups/
 /collection-dataset/
 
