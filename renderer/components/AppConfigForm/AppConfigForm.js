@@ -108,7 +108,7 @@ class AppConfigForm {
                
                // stress impact of changing this to user
                warning = create_p({
-                  classlist:['ml_1','bg_yellow','w_full','border_radius_1'],
+                  classlist:['ml_1','bg_yellow','w_full','border_radius_1','p_1'],
                   text:`IMPORTANT: changing this setting will point the system at the new root folder 
                   - and it will no longer find files in the previous location. Only change this if you
                   have reason to move your files to a new root folder location.`
