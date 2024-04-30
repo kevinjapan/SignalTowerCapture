@@ -161,7 +161,6 @@ class CollectionItem {
 
    //
    // READ ALL - non-paginated
-   //
    // for generating csv file we want to extract all records,
    // we want to avoid performance issues with memory -
    // using db.all will put all records into memory, so use db.each and offsets to chunk load and write to file?
@@ -216,7 +215,7 @@ class CollectionItem {
 
       if(result) {
          let response_obj = {
-            query:'read_collection_items',
+            query:'read_all_collection_items',
             outcome:'success',
             count:total_count,
             collection_item_fields:fields,
@@ -226,7 +225,7 @@ class CollectionItem {
       }
       else {
          let fail_response = {
-            query:'read_collection_items',
+            query:'read_all_collection_items',
             outcome:'fail',
             message:'There was an error attempting to read the records. [CollectionItem.read_all]  ' + this.#last_error.message
          }
@@ -500,7 +499,8 @@ class CollectionItem {
             if(result) {
                return {
                   query:'create_collection_item_from_csv',
-                  outcome:'success'
+                  outcome:'success',
+                  collection_item:{}
                }
             }
             else {
@@ -773,14 +773,14 @@ class CollectionItem {
       // return result
       if(result) {
          return {
-            query:'flush_deleted',
+            query:'flush_deleted_collection_items',
             outcome:'success',
             message:'The records were successfully and permanently deleted.'
          }
       }
       else {
          let fail_response = {
-            query:'flush_deleted',
+            query:'flush_deleted_collection_items',
             outcome:'fail',
             message:'There was an error attempting to permanently delete multiple records. [CollectionItem.flush_deleted]  ' + this.#last_error.message
          }
