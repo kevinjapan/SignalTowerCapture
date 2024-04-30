@@ -66,35 +66,29 @@ class ExportJSONComponent {
 
             const result = await window.files_api.saveFile(options)
 
-            if(result.outcome === 'success') {
-               try {
-                  
+            if(result != "undefined" && result.outcome === 'success') {
+
+               try {                  
                   const file_name = extract_file_name(result.file_path)
 
                   const export_results_obj = await window.actions_api.exportJSONFile(file_name,result.file_path)  
 
-                  if (typeof export_results_obj != "undefined") { 
+                  if (typeof export_results_obj != "undefined" && export_results_obj.outcome === 'success') {
 
-                     if(export_results_obj.outcome === 'success') {
-
-                        let folder_path_only = export_results_obj.file_path.replace(export_results_obj.file_name,'')
-               
-                        let export_json_folder_btn = create_button({
-                           attributes:[
-                              {key:'data-folder-path',value:folder_path_only},
-                              {key:'id',value:'export_json_folder_btn'},
-                           ],
-                           text:'Open Export Folder'
-                        }) 
-                        if(export_json_outcome) {
-                           Notification.notify('#export_json_outcome',`The export was successful.`,['bg_inform'])
-                           export_json_outcome.append(export_json_folder_btn)
-                        }
-                        setTimeout(() => this.activate_folder_btn(),200)
+                     let folder_path_only = export_results_obj.file_path.replace(export_results_obj.file_name,'')
+            
+                     let export_json_folder_btn = create_button({
+                        attributes:[
+                           {key:'data-folder-path',value:folder_path_only},
+                           {key:'id',value:'export_json_folder_btn'},
+                        ],
+                        text:'Open Export Folder'
+                     }) 
+                     if(export_json_outcome) {
+                        Notification.notify('#export_json_outcome',`The export was successful.`,['bg_inform'])
+                        export_json_outcome.append(export_json_folder_btn)
                      }
-                     else {
-                        Notification.notify('#export_json_outcome',export_results_obj.message)
-                     }
+                     setTimeout(() => this.activate_folder_btn(),200)                     
                   }
                }
                catch(error) {

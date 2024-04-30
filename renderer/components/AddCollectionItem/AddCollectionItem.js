@@ -37,28 +37,22 @@ class AddCollectionItem {
       try {
          const collection_item_obj = await window.collection_items_api.getCollectionItemFields()
 
-         if (typeof collection_item_obj != "undefined") {
+         if (typeof collection_item_obj != "undefined" && collection_item_obj.outcome === 'success') {
 
             // remove non-editable fields
             let create_required_fields = collection_item_obj.fields.filter((field) => {
                return field.editable
             })
-
-            if(collection_item_obj.outcome === 'success') {
-
-               let props = {
-                  fields:create_required_fields,
-                  action:'add'
-               }
-               
-               // display empty CollectionItemForm for data entry
-               const collection_item_form = new CollectionItemForm(props)
-               item_form_wrap.appendChild(await collection_item_form.render())
-               collection_item_form.activate()
+            let props = {
+               fields:create_required_fields,
+               action:'add'
             }
-            else {
-               throw 'No records were returned.'
-            }
+            
+            // display empty CollectionItemForm for data entry
+            const collection_item_form = new CollectionItemForm(props)
+            item_form_wrap.appendChild(await collection_item_form.render())
+            collection_item_form.activate()
+            
          }
          else {
             throw 'No records were returned.'

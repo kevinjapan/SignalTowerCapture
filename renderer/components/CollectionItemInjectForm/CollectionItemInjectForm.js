@@ -57,45 +57,39 @@ class CollectionItemInjectForm {
       try {
          const collection_item_obj = await window.collection_items_api.getCollectionItemFields()
 
-         if (typeof collection_item_obj != "undefined") {
+         if (typeof collection_item_obj != "undefined" && collection_item_obj.outcome === 'success') {
 
             // remove non-injectable fields
             let create_required_fields = collection_item_obj.fields.filter((field) => {
                return field.injectable
             })
 
-            if(collection_item_obj.outcome === 'success') {
-
-               // provide fields and enable 'back' from CollectionItemRecord view
-               let props = {
-                  fields:create_required_fields,
-                  context:{
-                     selected_folder:this.#props.folder_path,
-                     ...this.#props.context
-                  },
-                  action:'add'
+            // provide fields and enable 'back' from CollectionItemRecord view
+            let props = {
+               fields:create_required_fields,
+               context:{
+                  selected_folder:this.#props.folder_path,
+                  ...this.#props.context
+               },
+               action:'add'
+            }
+            
+            // display empty CollectionItemForm for data entry
+            // allowing for empty folder_path (files in root_folder)
+            const collection_item_form = new CollectionItemForm(props)
+            item_form_wrap.appendChild(await collection_item_form.render())
+            collection_item_form.activate()
+            collection_item_form.hydrate([
+               {field:'title',value:get_title_from_filename(this.#props.file_name)},
+               {field:'file_name',value:this.#props.file_name},
+               {field:'folder_path',value:this.#props.folder_path},
+               {field:'item_ref',value:'ASTM_ARCHIVE_'},
+               {
+                  field:'img',
+                  value:`${this.#root_folder}${this.#props.folder_path === '' ? '' : this.#props.folder_path + '\\'}${this.#props.file_name}`,
+                  alt:get_title_from_filename(this.#props.file_name)
                }
-               
-               // display empty CollectionItemForm for data entry
-               // allowing for empty folder_path (files in root_folder)
-               const collection_item_form = new CollectionItemForm(props)
-               item_form_wrap.appendChild(await collection_item_form.render())
-               collection_item_form.activate()
-               collection_item_form.hydrate([
-                  {field:'title',value:get_title_from_filename(this.#props.file_name)},
-                  {field:'file_name',value:this.#props.file_name},
-                  {field:'folder_path',value:this.#props.folder_path},
-                  {field:'item_ref',value:'ASTM_ARCHIVE_'},
-                  {
-                     field:'img',
-                     value:`${this.#root_folder}${this.#props.folder_path === '' ? '' : this.#props.folder_path + '\\'}${this.#props.file_name}`,
-                     alt:get_title_from_filename(this.#props.file_name)
-                  }
-               ])
-            }
-            else {
-               throw 'No records were returned.'
-            }
+            ])
          }
          else {
             throw 'No records were returned.'

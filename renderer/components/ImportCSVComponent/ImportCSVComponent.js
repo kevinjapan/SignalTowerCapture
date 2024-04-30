@@ -21,11 +21,12 @@ class ImportCSVComponent {
       let fields_list = []
       const collection_item_obj = await window.collection_items_api.getCollectionItemFields()
 
-      if(typeof collection_item_obj !== undefined) {
-         if(collection_item_obj.outcome === 'success')
-         fields_list = collection_item_obj.fields.map((field) => {
-            return field.key
-         })
+      if(typeof collection_item_obj !== undefined && collection_item_obj.outcome === 'success') {
+         if(Array.isArray(collection_item_obj.fields)) {
+            fields_list = collection_item_obj.fields.map((field) => {
+               return field.key
+            })
+         }
       }
       const fields = create_div({
          classlist:['flex']
