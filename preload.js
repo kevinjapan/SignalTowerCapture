@@ -23,7 +23,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
 
 contextBridge.exposeInMainWorld('app_api', {
    maxSearchTermLen: () => ipcRenderer.invoke('app:maxSearchTermLen'),
-   maxTagsCount: () => ipcRenderer.invoke('app:maxTagsCount')
+   maxTagsCount: () => ipcRenderer.invoke('app:maxTagsCount'),
+   getResponseObjectKeys: (query_key) => ipcRenderer.invoke('app:getResponseObjectKeys',query_key)
 })
 
 contextBridge.exposeInMainWorld('collection_items_api', {

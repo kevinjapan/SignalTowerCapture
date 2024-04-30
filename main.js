@@ -15,6 +15,7 @@ const { app, BrowserWindow, ipcMain, dialog, Menu, shell } = require('electron')
 const path = require('node:path')
 const Database = require('./app/database/database')
 const AppConfig = require('./models/AppConfig')
+const APIKeys = require('./app/APIKeys/APIKeys')
 const ActionsLog = require('./models/ActionsLog')
 const CollectionItem = require('./models/CollectionItem')
 const Tag = require('./models/Tag')
@@ -103,6 +104,7 @@ app.whenReady().then(async() => {
    // App handlers
    ipcMain.handle('app:maxSearchTermLen',get_max_search_term_len)
    ipcMain.handle('app:maxTagsCount',get_max_tags_count)
+   ipcMain.handle('app:getResponseObjectKeys',get_response_obj_keys)
 
    // Items handlers
    ipcMain.handle('items:getItems',get_collection_items)
@@ -251,6 +253,27 @@ async function get_max_search_term_len(event) {
 async function get_max_tags_count(event) {
    const tag = new Tag(database)
    return tag.get_max_tags_count()
+}
+
+function get_response_obj_keys(event,query_key) {
+
+   const keys = new APIKeys().get_response_keys(query_key)
+   if(keys) {
+      let response_obj = {
+         query:'get_response_obj_keys',
+         outcome:'success',
+         keys:keys
+      }
+      return response_obj
+   }
+   else {
+      let fail_response = {
+         query:'get_response_obj_keys',
+         outcome:'fail',
+         message:'There was an error attempting to retrieve the Response object keys. [App.get_response_obj_keys]' 
+      }
+      return fail_response
+   }
 }
 
 
