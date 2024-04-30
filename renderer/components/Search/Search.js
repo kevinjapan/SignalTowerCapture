@@ -86,6 +86,8 @@ class Search {
             this.#search_results_container.append(this.get_items())
       }
 
+      window.scroll(0,0)
+      
       // assemble
       this.#search_section.append(search_status,this.#search_results_container)
       return this.#search_section

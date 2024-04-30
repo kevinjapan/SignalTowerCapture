@@ -83,6 +83,7 @@ class Config {
       this.build_form(config_form_wrap)
       app_settings_section.append(config_form_wrap)
 
+      window.scroll(0,0)
 
       // assemble
       config_component.append(tags_section,app_settings_section)

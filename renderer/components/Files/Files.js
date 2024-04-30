@@ -104,6 +104,8 @@ class Files {
          setTimeout(() => this.open_folder(),100) 
       }
 
+      window.scroll(0,0)
+      
       files_section.append(files_layout)
 
       return files_section
