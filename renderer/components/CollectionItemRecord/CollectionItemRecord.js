@@ -1,6 +1,7 @@
 import App from '../App/App.js'
 import RecordBtns from '../RecordBtns/RecordBtns.js'
 import RecordAdmin from '../RecordAdmin/RecordAdmin.js'
+import { is_valid_response_obj } from '../../utilities/ui_response.js'
 import { ui_friendly_text,trim_char,trim_end_char } from '../../utilities/ui_strings.js'
 import { get_ext,is_img_ext,get_file_type_icon,file_exists,build_img_elem,add_to_int_queue,ints_array,no_root_folder } from '../../utilities/ui_utilities.js'
 import { create_section,create_div,create_p } from '../../utilities/ui_elements.js'
@@ -199,10 +200,10 @@ class CollectionItemRecord {
                try {
                   const collection_item_obj = await window.collection_items_api.getCollectionItem(edit_button.attributes['data-id'].value)
       
-                  if (typeof collection_item_obj != "undefined") {
+                  if (typeof collection_item_obj != "undefined" && collection_item_obj.outcome === 'success') {
       
-                     if(collection_item_obj.outcome === 'success') {
-      
+                     if(await is_valid_response_obj('read_single_collection_item',collection_item_obj)) {
+
                         // display single CollectionItem for editing in CollectionItemForm
                         this.#props = {
                            fields:collection_item_obj.collection_item_fields,
@@ -211,13 +212,11 @@ class CollectionItemRecord {
                            action:'update'
                         }
                         App.switch_to_component('Form',this.#props)
-                     } 
+                     }
                      else {
-                        let props = {
-                           msg:'Sorry, we were unable to locate the Record.',
-                           error:error
-                        }
-                        App.switch_to_component('Error',props)
+                        App.switch_to_component('Error',{
+                           msg:'Sorry, we were unable to process an invalid response from the main process in CollectionItemRecord.'
+                        })
                      }
                   }
                   else {

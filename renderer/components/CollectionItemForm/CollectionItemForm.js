@@ -2,6 +2,7 @@ import App from '../App/App.js'
 import FormBtns from '../FormBtns/FormBtns.js'
 import Notification from '../../components/Notification/Notification.js'
 import { DESC } from '../../utilities/ui_descriptions.js'
+import { is_valid_response_obj } from '../../utilities/ui_response.js'
 import { ui_friendly_text } from '../../utilities/ui_strings.js'
 import { get_ext,is_img_ext,get_file_type_icon,file_exists,build_img_elem,title_from_file_name,no_root_folder } from '../../utilities/ui_utilities.js'
 import { create_section,create_div,create_form,create_label,create_button,create_input,
@@ -384,11 +385,9 @@ class CollectionItemForm {
                         
                         const collection_item_obj = await window.collection_items_api.getCollectionItem(collection_item_id)
 
-                        if (typeof collection_item_obj != "undefined") {
-                           if(collection_item_obj.outcome === 'success') {
-                              this.#props.item = collection_item_obj.collection_item
-                              App.switch_to_component('Record',this.#props)
-                           }
+                        if (typeof collection_item_obj != "undefined" && collection_item_obj.outcome === 'success') {
+                           this.#props.item = collection_item_obj.collection_item
+                           App.switch_to_component('Record',this.#props)
                         }
                      }
                      catch(error) {
@@ -438,14 +437,8 @@ class CollectionItemForm {
                   try {
                      const collection_item_obj = await window.collection_items_api.getCollectionItem(cancel_btn.attributes['data-id'].value)
 
-                     if (typeof collection_item_obj != "undefined") {
-                        if(collection_item_obj.outcome === 'success') {
-                           App.switch_to_component('Record',this.#props)
-                        }
-                        else {
-                           let props = {error:'Sorry, we were unable to locate the Record.'}
-                           App.switch_to_component('Error',props)
-                        }
+                     if (typeof collection_item_obj != "undefined" && collection_item_obj.outcome === 'success') {
+                        App.switch_to_component('Record',this.#props)
                      }
                      else {
                         throw 'Sorry, we were unable to locate the Record.'
@@ -532,9 +525,10 @@ class CollectionItemForm {
                try {
                   const collection_items_obj = await window.collection_items_api.getItems(context)                  
 
-                  if (typeof collection_items_obj != "undefined") {            
-                     if(collection_items_obj.outcome === 'success') {
+                  if (typeof collection_items_obj != "undefined" && collection_items_obj.outcome === 'success') {
                         
+                     if(await is_valid_response_obj('read_collection_items',collection_items_obj)) {
+
                         if(collection_items_obj.collection_items.length < 1) {
                            // There is no record for this file
                            this.enable_submit()
@@ -565,11 +559,13 @@ class CollectionItemForm {
                         }
                      }
                      else {
-                        throw 'No records were returned.' + collection_items_obj.message
+                        App.switch_to_component('Error',{
+                           msg:'Sorry, we were unable to process an invalid response from the main process in CollectionItemForm.'
+                        })
                      }
                   }
                   else {
-                     throw 'No records were returned.'
+                     throw 'No records were returned.' + collection_items_obj.message ? collection_items_obj.message : ''
                   }
                }
                catch(error) {

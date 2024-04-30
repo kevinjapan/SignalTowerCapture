@@ -2,6 +2,7 @@ import App from '../App/App.js'
 import FileInjector from '../FileInjector/FileInjector.js'
 import BreadCrumbNav from '../BreadCrumbNav/BreadCrumbNav.js'
 import Notification from '../Notification/Notification.js'
+import { is_valid_response_obj } from '../../utilities/ui_response.js'
 import {trim_end_char} from '../../utilities/ui_strings.js'
 import {filetype_icon,no_root_folder} from '../../utilities/ui_utilities.js'
 import {create_section,create_h,create_div,create_ul,create_li} from '../../utilities/ui_elements.js'
@@ -180,9 +181,11 @@ class Files {
    // we perform a single db call and reference off of this list rather than querying each time
    get_matching_records = async() => {
       try {
-         const result = await window.collection_items_api.getItems(this.#context)
-         this.#matching_records = result.collection_items
-         this.#record_fields = result.collection_item_fields
+         const result = await window.collection_items_api.getItems(this.#context)         
+         if(await is_valid_response_obj('read_collection_items',result)) {
+            this.#matching_records = result.collection_items
+            this.#record_fields = result.collection_item_fields
+         }
       }
       catch(error) {
          setTimeout(() => Notification.notify('#files_outcome','Sorry, we failed to retrieve the list of matching records, so matches may be missed. You might want to try again later.',[],false),200)

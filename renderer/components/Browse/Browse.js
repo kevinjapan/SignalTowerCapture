@@ -2,10 +2,10 @@ import App from '../App/App.js'
 import CollectionItemCard from '../CollectionItemCard/CollectionItemCard.js'
 import PaginationNav from '../PaginationNav/PaginationNav.js'
 import AlphabetCtrl from '../AlphabetCtrl/AlphabetCtrl.js'
+import { is_valid_response_obj } from '../../utilities/ui_response.js'
 import { ui_display_number_as_str } from '../../utilities/ui_strings.js'
 import { create_section,create_div,create_h } from '../../utilities/ui_elements.js'
 import { init_card_img_loads,no_root_folder } from '../../utilities/ui_utilities.js'
-import Notification from '../../components/Notification/Notification.js'
 
 
 
@@ -100,13 +100,12 @@ class Browse {
          }
 
          try {
-
             const collection_items_obj = await window.collection_items_api.getItems(this.#browse_context)
          
-            if (typeof collection_items_obj != "undefined") {
-         
-               if(collection_items_obj.outcome === 'success') {
-                  
+            if (typeof collection_items_obj != "undefined" && collection_items_obj.outcome === 'success') {
+
+               if(await is_valid_response_obj('read_collection_items',collection_items_obj)) {
+                        
                   // re-assemble
                   this.#browse_section.replaceChildren()
                   this.#browse_results_container.replaceChildren()
@@ -156,13 +155,13 @@ class Browse {
                         number_records.innerText = ``
                      }
                   }
-
-                  
                   // re-instate scroll position if user had scrolled list before opening a record
                   setTimeout(() => window.scroll(0,this.#browse_context.scroll_y),50)
                }
                else {
-                  throw 'No records were returned.' + collection_items_obj.message
+                  App.switch_to_component('Error',{
+                     msg:'Sorry, we were unable to process an invalid response from the main process in Browse.'
+                  })
                }
             }
             else {

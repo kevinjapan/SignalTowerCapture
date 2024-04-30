@@ -1,6 +1,7 @@
 import App from '../App/App.js'
 import CollectionItemCard from '../CollectionItemCard/CollectionItemCard.js'
 import PaginationNav from '../PaginationNav/PaginationNav.js'
+import { is_valid_response_obj } from '../../utilities/ui_response.js'
 import { ui_display_number_as_str } from '../../utilities/ui_strings.js'
 import { DESC } from '../../utilities/ui_descriptions.js'
 import { init_card_img_loads,no_root_folder } from '../../utilities/ui_utilities.js'
@@ -89,10 +90,10 @@ class DeletedRecordsTeaser {
 
             const collection_items_obj = await window.collection_items_api.getItems(this.#context)
          
-            if (typeof collection_items_obj != "undefined") {
-         
-               if(collection_items_obj.outcome === 'success') {
+            if (typeof collection_items_obj != "undefined" && collection_items_obj.outcome === 'success') {
                   
+               if(await is_valid_response_obj('read_collection_items',collection_items_obj)) {
+
                   this.#deleted_records_section.replaceChildren()
                   this.#results_container.replaceChildren()
                   
@@ -117,7 +118,8 @@ class DeletedRecordsTeaser {
                         root_folder: this.#root_folder,
                         context: this.#context
                      }
-                     const collection_item_card = new CollectionItemCard(props) 
+                     const collection_item_card = new CollectionItemCard(props)
+
                      if(Array.isArray(collection_items_obj.collection_items)) {
                         collection_items_obj.collection_items.forEach((item) => {        
                            this.#results_container.appendChild(collection_item_card.render(collection_items_obj.collection_item_fields,item))
@@ -143,11 +145,13 @@ class DeletedRecordsTeaser {
                   window.scroll(0,this.#context.scroll_y)
                }
                else {
-                  throw 'No records were returned. ' + collection_items_obj.message
+                  App.switch_to_component('Error',{
+                     msg:'Sorry, we were unable to process an invalid response from the main process in DeletedRecords.'
+                  })
                }
             }
             else {
-               throw 'No records were returned. 2'
+               throw 'No records were returned. ' + collection_items_obj.message ? collection_items_obj.message : ''
             }
          }
          catch(error) {

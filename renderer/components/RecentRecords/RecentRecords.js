@@ -1,5 +1,6 @@
 import App from '../App/App.js'
 import CollectionItemCard from '../CollectionItemCard/CollectionItemCard.js'
+import { is_valid_response_obj } from '../../utilities/ui_response.js'
 import { create_section,create_h,create_div } from '../../utilities/ui_elements.js'
 import { ui_display_number_as_str } from '../../utilities/ui_strings.js'
 import { init_card_img_loads,no_root_folder } from '../../utilities/ui_utilities.js'
@@ -36,8 +37,6 @@ class RecentRecords {
 
       let record_result_obj = await this.get_app_config_record()
       let app_config_record = record_result_obj.app_config
-      
-      this.get_matching_records()
 
       this.#queue = app_config_record.recent_records
 
@@ -67,11 +66,6 @@ class RecentRecords {
       return await window.config_api.getAppConfig()
    }
 
-   get_matching_records = async() => {
-      const result = await window.collection_items_api.getItems(this.#context)
-      // this.#matching_records = result.collection_items
-   }
-
    //
    // retrieve the items results (w/ no pagination)
    // 
@@ -89,12 +83,11 @@ class RecentRecords {
 
             const collection_items_obj = await window.collection_items_api.getItems(this.#context)
          
-            if (typeof collection_items_obj != "undefined") {
-         
-               if(collection_items_obj.outcome === 'success') {
+            if (typeof collection_items_obj != "undefined" && collection_items_obj.outcome === 'success') {
                   
-                  this.#results_container.replaceChildren()
+               if(await is_valid_response_obj('read_collection_items',collection_items_obj)) {
 
+                  this.#results_container.replaceChildren()
                   let ordered_items = []
                   this.#queue.split(',').forEach(id => {
                      let temp = collection_items_obj.collection_items.find(item => {
@@ -131,13 +124,15 @@ class RecentRecords {
                   
                   // re-instate scroll position if user had scrolled list before opening a record
                   setTimeout(() => window.scroll(0,this.#context.scroll_y),100)
-               }
+               }            
                else {
-                  throw 'No records were returned. ' + collection_items_obj.message
+                  throw 'No records were returned. ' + collection_items_obj.message ? collection_items_obj.message : ''
                }
             }
             else {
-               throw 'No records were returned. 2'
+               App.switch_to_component('Error',{
+                  msg:'Sorry, we were unable to process an invalid response from the main process in RecentRecords.'
+               })
             }
          }
          catch(error) {

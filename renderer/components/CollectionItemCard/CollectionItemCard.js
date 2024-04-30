@@ -1,5 +1,6 @@
 import App from '../App/App.js'
 import TagsLiteList from '../TagsLiteList/TagsLiteList.js'
+import { is_valid_response_obj } from '../../utilities/ui_response.js'
 import { get_ui_ready_date } from '../../utilities/ui_datetime.js'
 import { create_section,create_div,create_h } from '../../utilities/ui_elements.js'
 import { trim_char,trim_end_char,truncate } from '../../utilities/ui_strings.js'
@@ -258,9 +259,10 @@ class CollectionItemCard {
                   try {
                      const collection_item_obj = await window.collection_items_api.getCollectionItem(card_title_link.attributes['data-id'].value)
 
-                     if (typeof collection_item_obj != "undefined") {
-                        if(collection_item_obj.outcome === 'success') {
+                     if (typeof collection_item_obj != "undefined" && collection_item_obj.outcome === 'success') {
 
+                        if(await is_valid_response_obj('read_single_collection_item',collection_item_obj)) {
+                        
                            let component_container = document.getElementById('component_container')
                            if(component_container) {
 
@@ -274,7 +276,9 @@ class CollectionItemCard {
                            }
                         }
                         else {
-                           throw 'No records were returned.'
+                           App.switch_to_component('Error',{
+                              msg:'Sorry, we were unable to process an invalid response from the main process in CollectionItemCard.'
+                           })
                         }
                      }
                      else {
