@@ -31,6 +31,10 @@ class ImportCSVComponent {
       const fields = create_div({
          classlist:['flex']
       })
+      const fields_pre_warning = create_p({
+         classlist:['mt_0','mb_0','bg_yellow_200','p_1','rounded'],
+         text:'You are recommended to backup the database before any import actions to ensure you can recover if any issues arise.'
+      })
       const fields_intro = create_p({
          classlist:['mt_0','mb_0'],
          text:'Any import CSV file must match the following fields list for each record:'
@@ -43,7 +47,7 @@ class ImportCSVComponent {
          classlist:['mt_0','mb_0'],
          text:`Empty fields are permitted but must be included. For example 'fishing,,harbour' would be a valid 3-field csv list with an empty middle field.`
       })
-      fields.append(fields_intro,fields_list_elem,fields_desc)
+      fields.append(fields_pre_warning,fields_intro,fields_list_elem,fields_desc)
 
 
       // layout

@@ -28,6 +28,10 @@ class ImportJSONComponent {
          level:'h4',
          text:'Import JSON File'
       })
+      const fields_pre_warning = create_p({
+         classlist:['mt_0','mb_0','bg_yellow_200','p_1','rounded'],
+         text:'You are recommended to backup the database before any import actions to ensure you can recover if any issues arise.'
+      })
 
       let import_json_btn = create_button({
          attributes:[
@@ -50,7 +54,7 @@ class ImportJSONComponent {
       })
 
       // assemble
-      import_json_component.append(heading,import_json_btn,import_json_outcome,import_json_fields)
+      import_json_component.append(heading,fields_pre_warning,import_json_btn,import_json_outcome,import_json_fields)
    
       return import_json_component
    }
