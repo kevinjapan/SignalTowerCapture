@@ -50,9 +50,12 @@ class ImportCSVFile {
                // bail and notify if import file does not match expected fields
                if(valid_first_line.outcome === 'fail') {
 
-                  const error_strs = valid_first_line.errors.map(error => {
-                     return `${error.name ? error.name + ':' : ''} ${error.message} ${error.value ? error.value + ':' : ''}`
-                  })
+                  let error_strs = ''
+                  if(Array.isArray(valid_first_line.errors)) {
+                     error_strs = valid_first_line.errors.map(error => {
+                        return `${error.name ? error.name + ':' : ''} ${error.message} ${error.value ? error.value + ':' : ''}`
+                     })
+                  }
                   return  {
                      query:'import_csv_file',
                      outcome:'fail',

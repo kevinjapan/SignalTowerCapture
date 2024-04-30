@@ -23,16 +23,19 @@ class ExportCSVFile {
       const results = await collection_item.read_all()
 
       // Create an array of strings for each record
-      let strings_arrays = results.collection_items.map((collection_item) => {
-         let build_strings = []
-         if(Array.isArray(results.collection_item_fields)) {
-            results.collection_item_fields.forEach((field) => {
-               if(collection_item[field.key] === null) collection_item[field.key] = 'null'
-               build_strings.push(collection_item[field.key])
-            })
-         }
-         return build_strings
-      })
+      let strings_arrays = []
+      if(Array.isArray(results.collection_items)) {
+         strings_arrays = results.collection_items.map((collection_item) => {
+            let build_strings = []
+            if(Array.isArray(results.collection_item_fields)) {
+               results.collection_item_fields.forEach((field) => {
+                  if(collection_item[field.key] === null) collection_item[field.key] = 'null'
+                  build_strings.push(collection_item[field.key])
+               })
+            }
+            return build_strings
+         })
+      }
 
       const fs = require('fs')
       
@@ -46,11 +49,9 @@ class ExportCSVFile {
                message: 'Unable to create csv export file. ' + error.message
             }
          })
-         if(Array.isArray(strings_arrays)) {
-            strings_arrays.forEach(function(item) { 
-               file.write(item + '\n') 
-            })
-         }
+         strings_arrays.forEach(function(item) { 
+            file.write(item + '\n') 
+         })
          file.end()
          return {
             query:'export file',
