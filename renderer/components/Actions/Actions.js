@@ -31,10 +31,10 @@ class Actions {
          attributes:[
             {key:'id',value:'backup_section'}
          ],
-         classlist:['bg_white','box_shadow','rounded','m_2','mt_4','mb_2','pb_2']
+         classlist:['bg_white','box_shadow','rounded','m_2','mt_2','mb_4','pb_2']
       })
       const backup_header = create_div({
-         classlist:['flex','align_items_center']
+         classlist:['flex','align_items_center','mb_0']
       })
       const backup_section_h = create_h({
          level:'h2',
@@ -43,8 +43,8 @@ class Actions {
       })
       backup_header.append(icon('database',[]),backup_section_h)
       const backup_section_desc = create_p({
-         classlist:['mt_0','mb_0','pt_0','pb_0'],
-         text:'Create backup files for your Collection.'
+         classlist:['m_0','mb_2','pt_0','pb_0'],
+         text:'Create a backup of the database.'
       })
       backup_section.append(backup_header,backup_section_desc)
       const backup_component = new BackupComponent()
@@ -60,10 +60,10 @@ class Actions {
          attributes:[
             {key:'id',value:'csv_section'}
          ],
-         classlist:['bg_white','box_shadow','rounded','m_2','mt_4','mb_2','pb_2']
+         classlist:['bg_white','box_shadow','rounded','m_2','mt_2','mb_4','pb_2']
       })   
       const csv_header = create_div({
-         classlist:['flex','align_items_center']
+         classlist:['flex','align_items_center','mb_0']
       })
       const csv_section_h = create_h({
          level:'h2',
@@ -72,7 +72,7 @@ class Actions {
       })
       csv_header.append(icon('csv'),csv_section_h)
       const csv_section_desc = create_p({
-         classlist:['mt_0','mb_0','pt_0','pb_0'],
+         classlist:['m_0','mb_2','pt_0','pb_0'],
          text:'Comma-Separated-Value (CSV) files are a common file format for tranfering data between applications.'
       })
       csv_section.append(csv_header,csv_section_desc)
@@ -107,10 +107,10 @@ class Actions {
          attributes:[
             {key:'id',value:'json_section'}
          ],
-         classlist:['bg_white','box_shadow','rounded','m_2','mt_4','mb_2','pb_2']
+         classlist:['bg_white','box_shadow','rounded','m_2','mt_2','mb_4','pb_2']
       })
       const json_header = create_div({
-         classlist:['flex','align_items_center']
+         classlist:['flex','align_items_center','mb_0']
       })
       const json_section_h = create_h({
          level:'h2',
@@ -119,7 +119,7 @@ class Actions {
       })
       json_header.append(icon('json'),json_section_h)
       const json_section_desc = create_p({
-         classlist:['mt_0','mb_0','pt_0','pb_0'],
+         classlist:['m_0','mb_2','pt_0','pb_0'],
          text:`JavaScript Object Notation (JSON) files are a human-readable file format for tranfering data between applications.
          They are better suited for moving small sets of data where some manual manipulation is needed.`
       })
@@ -156,10 +156,10 @@ class Actions {
          attributes:[
             {key:'id',value:'records_section'}
          ],
-         classlist:['bg_white','box_shadow','rounded','m_2','mt_4','mb_2','pb_2']
+         classlist:['bg_white','box_shadow','rounded','m_2','mt_2','mb_4','pb_2']
       })    
       const records_header = create_div({
-         classlist:['flex','align_items_center']
+         classlist:['flex','align_items_center','mb_0']
       })
       const records_section_h = create_h({
          level:'h2',
@@ -168,7 +168,7 @@ class Actions {
       })
       records_header.append(icon('file_text'),records_section_h)
       const records_section_desc = create_p({
-         classlist:['mt_0','mb_0','pt_0','pb_0'],
+         classlist:['m_0','mb_2','pt_0','pb_0'],
          text:'Manage records here.'
       })
       records_section.append(records_header,records_section_desc)
@@ -177,6 +177,8 @@ class Actions {
          records_section.append(managed_deleted_component.render())
          setTimeout(() => managed_deleted_component.activate(),200)
       }
+
+      window.scroll(0,0)
 
       // assemble
       actions_section.append(backup_section,csv_section,json_section,records_section)
