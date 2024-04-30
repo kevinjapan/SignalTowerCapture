@@ -95,10 +95,11 @@ const is_valid_collection_item_csv = (fields_list,csv) => {
       return {
          outcome:'fail',
          errors:[
-            {name:'',message:'There was an error determing the required CSV fields.',value:''}
+            {name:'',message:'There was an error determining the required CSV fields.',value:''}
          ]
       }
    }
+
    if(typeof csv !== 'string' || csv.length === 0) {
       return {
          outcome:'fail',
@@ -145,11 +146,14 @@ const is_valid_collection_item_csv = (fields_list,csv) => {
    // and hence not required as the value is retained in the UI input field
 
    if(is_valid_record_obj.outcome === 'fail') {
-      // we simply pass is_valid_record_obj but inject additional error info. - failing value - if 'fail'
-      let temp_errors = is_valid_record_obj.errors.map((err) => {
-         err.value = collection_item[err.name]
-         return err
-      })
+      // we simply pass is_valid_record_obj but inject additional error info. - failing value - if 'fail's
+      let temp_errors = []
+      if(Array.isArray(is_valid_record_obj.errors)) {
+         temp_errors = is_valid_record_obj.errors.map((err) => {
+            err.value = collection_item[err.name]
+            return err
+         })
+      }
       is_valid_record_obj.errors = temp_errors
    }
 
@@ -163,7 +167,6 @@ const is_valid_collection_item = (fields_list,collection_item) => {
 
    // for each key, validate the submitted value against blueprint 'tests'
    let ci_array = Object.keys(collection_item)
-
    ci_array.forEach((key) => {
 
       // extract 'test' from the blueprint for this key
