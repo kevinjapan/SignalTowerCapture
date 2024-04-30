@@ -50,6 +50,8 @@ class RecentRecords {
       })
 
       this.get_items()
+      
+      window.scroll(0,0)
 
       // assemble
       recent_section.append(this.#results_container)
