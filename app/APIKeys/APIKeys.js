@@ -23,7 +23,6 @@ class APIKeys {
    #response_obj_keys = {
 
       // CollectionItem
-      // to do : verify '_records' work for eg using Model or Batch for BatchesList
       read_collection_items:
          ["query","outcome","count","per_page","collection_item_fields","collection_items"],
       read_all_collection_items:

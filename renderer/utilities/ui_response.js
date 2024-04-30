@@ -29,7 +29,7 @@ const is_matching_array = (arr_1,arr_2) => {
 
    if(arr_1.length !== arr_2.length) return false
 
-   // to do : on-going - not used in anger yet!
+   // future : on-going - not used in anger yet!
  
    // option #1
    // JSON.stringify(arr_1.toSorted()) === JSON.stringify(arr_2.toSorted())
@@ -37,7 +37,7 @@ const is_matching_array = (arr_1,arr_2) => {
    // option #2
    // arr_1.toSorted().join(',')=== arr_2.toSorted().join(',')
 
-   // to do : review
+   // review
    // - verify toSorted() working correctly (cd sort() which modifies original order)
    // - both above methods ok for primitive single-d arrays
    // - stringify won't handle differentiate btwn null or undefind (JSON converts undefined -> null)
