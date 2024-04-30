@@ -100,6 +100,7 @@ class Database {
                if(error) console.log('There was an error initializing the database. ',error.message)
             }
          )
+         this.add_new_columns('collection_items_fts')
 
          // Tags table
          //
