@@ -192,11 +192,13 @@ export const add_to_int_queue = (queue,max_len,int) => {
 // convert array of strings to array of ints
 //
 export const ints_array = (strings_array) => {
-   return strings_array.map(str => {
-      if(!isNaN(parseInt(str))) {
-         return parseInt(str)
-      }
-   })
+   if(Array.isArray(strings_array)) {
+      return strings_array.map(str => {
+         if(!isNaN(parseInt(str))) {
+            return parseInt(str)
+         }
+      })
+   }
 }
 
 
