@@ -66,7 +66,7 @@ class CollectionItemRecord {
       // mark/highlight if record has been soft-deleted
       if(this.#props.item['deleted_at']) {
          const notify_deleted = create_p({
-            classlist:['bg_yellow_100','grid_span_2'],
+            classlist:['bg_yellow_100','grid_span_2','rounded','p_1'],
             text:'This record has previously been deleted and will soon be permanently auto-deleted from the system.'
          })
          this.#record.append(notify_deleted)
@@ -179,7 +179,7 @@ class CollectionItemRecord {
 
       if(this.#props.item['deleted_at']) {
          const notify_deleted = create_p({
-            classlist:['bg_yellow_100','grid_span_2'],
+            classlist:['bg_yellow_100','grid_span_2','rounded','p_1'],
             text:'This record has previously been deleted and will soon be permanently auto-deleted from the system.'
          })
          this.#record.append(notify_deleted)
