@@ -20,6 +20,8 @@ class TagsList {
 
    render = async(tags,actions_callback) => {
 
+      if(typeof tags === 'undefined') return 'TagsList received no tags to display.'
+      
       this.#actions_callback = actions_callback
 
       let max_tags_count = 24
