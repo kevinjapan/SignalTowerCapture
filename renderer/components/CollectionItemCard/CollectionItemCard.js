@@ -166,9 +166,10 @@ class CollectionItemCard {
 
                   if(field_value) {
                      field_element = create_div({
-                        classlist:['break_words','mt_0.5','mr_2','p_1','text_grey'],
+                        classlist:['break_words','mt_0.5','mr_2','pl_1','text_grey'],
                         text:truncate(field_value,300)
                      })
+                     // to do : unnecessary containing div 'folder_path_block ?
                      folder_path_block.append(field_element)
                   }
                }
@@ -225,7 +226,7 @@ class CollectionItemCard {
 
                   if(field_value) {
                      field_element = create_div({
-                        classlist:['break_words','pb_1','w_full'],
+                        classlist:['break_words','w_full'],
                         text:truncate(field_value,300)
                      })
                      card.append(field_element)
