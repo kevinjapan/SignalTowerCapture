@@ -201,6 +201,9 @@ class Browse {
       this.#filter_char = null
       this.#browse_context.scroll_y = 0
       this.get_items()
+
+      // to do : review - what if we put await on this.get_items() above ? 
+      //         then we don't need timeout below  - rollout
       setTimeout(() => this.activate(),50)
    }
 
@@ -209,7 +212,7 @@ class Browse {
          attributes:[
             {key:'id',value:'number_records'}
          ],
-         classlist:['p_2']
+         classlist:['p_.5','pt_1','text_center']
       }))      
    }
 

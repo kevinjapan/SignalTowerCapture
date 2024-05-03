@@ -28,7 +28,7 @@ class Config {
          attributes:[
             {key:'id',value:'tags_section'}
          ],
-         classlist:['bg_white','box_shadow','rounded','m_2','mt_4','mb_2','pb_2']
+         classlist:['bg_white','box_shadow','rounded','m_2','mb_2','pb_2']
       })
       const tags_header = create_div({
          classlist:['flex','align_items_center']
