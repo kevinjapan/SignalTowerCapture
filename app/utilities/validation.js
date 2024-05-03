@@ -67,9 +67,9 @@ const is_valid_date = (value) => {
       if(time_parts.length === 3) {
          // check all are numbers
          if( (!/^\d+$/.test(time_parts[0]) ) || !(/^\d+$/.test(time_parts[1])) || !(/^\d+$/.test(time_parts[2]))) result = false
-         if((parseInt(time_parts[0]) < 0) || (parseInt(time_parts[0]) > 12)) result = false   
-         if((parseInt(time_parts[1]) < 0) || (parseInt(time_parts[1]) > 60)) result = false  
-         if((parseInt(time_parts[2]) < 0) || (parseInt(time_parts[2]) > 60)) result = false
+         if((parseInt(time_parts[0]) < 0) || (parseInt(time_parts[0]) > 23)) result = false   
+         if((parseInt(time_parts[1]) < 0) || (parseInt(time_parts[1]) > 59)) result = false  
+         if((parseInt(time_parts[2]) < 0) || (parseInt(time_parts[2]) > 59)) result = false
       }
       else {
          result = false
