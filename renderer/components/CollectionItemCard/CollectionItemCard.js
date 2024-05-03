@@ -186,7 +186,7 @@ class CollectionItemCard {
                      attributes:[
                         {key:'id',value:'tags_list_elem'}
                      ],
-                     classlist:['flex','align_items_center','m_0','pl_0.5','gap_1']
+                     classlist:['flex','align_items_center','m_0','pl_0.5','pt_.25','gap_1']
                   }) 
                   if(item.tags) {
                      const tags_list = new TagsLiteList('tags_list')
