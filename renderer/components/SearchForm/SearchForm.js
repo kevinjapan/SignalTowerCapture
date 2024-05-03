@@ -28,14 +28,14 @@ class SearchForm {
    render = () => {
 
       const search_form_wrap = create_section({
-         classlist:['flex_col','mr_auto','w_full','p_0','border']
+         classlist:['flex_col','ml_auto','mr_auto','w_full','p_0','text_center']
       })
 
       const search_form = create_form({
          attributes:[
             {key:'id',value:'search_form'}
          ],
-         classlist:['flex']
+         classlist:['flex','justify_center']
       })
 
       let search_term_input = create_input({

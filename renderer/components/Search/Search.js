@@ -52,7 +52,7 @@ class Search {
          attributes:[
             {key:'id',value:'search_section'}
          ],
-         classlist:['max_w_full']
+         classlist:['max_w_full','pt_1']
       })
 
       let search_status = create_section({
