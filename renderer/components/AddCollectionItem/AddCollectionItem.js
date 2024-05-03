@@ -13,7 +13,8 @@ class AddCollectionItem {
       this.#record = create_section({
          attributes:[
             {key:'id',value:'record'}
-         ]
+         ],
+         classlist:['mt_2']
       })
 
       const item_form_wrap = create_section({

@@ -40,7 +40,9 @@ class RecentRecords {
 
       this.#queue = app_config_record.recent_records
 
-      let recent_section = create_section()
+      let recent_section = create_section({
+         classlist:['mt_2']
+      })
 
       this.#results_container = create_div({
          attributes:[
