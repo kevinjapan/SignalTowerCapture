@@ -36,7 +36,7 @@ class PaginationNav {
          attributes:[
             {key:'id',value:'page_nav'}
          ],
-         classlist:['page_nav','w_full']
+         classlist:['page_nav','max_w_full']
       })
       
       // prev page
