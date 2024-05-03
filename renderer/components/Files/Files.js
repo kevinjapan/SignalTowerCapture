@@ -45,7 +45,8 @@ class Files {
       const files_section = create_section({
          attributes:[
             {key:'id',value:'files_section'}
-         ]
+         ],
+         classlist:['h_85vh','mt_0']
       })      
       const files_outcome = create_div({
          attributes:[
@@ -60,7 +61,7 @@ class Files {
 
       // 2-col layout
       const files_layout = create_div({
-         classlist:['files_layout','m_0','p_0']
+         classlist:['files_layout','m_0','p_0','h_100']
       })
 
       // folder/file panels
@@ -68,13 +69,13 @@ class Files {
          attributes:[
             {key:'id',value:'file_list_elem'}
          ],
-         classlist:['bg_white','box_shadow','rounded','m_0','p_0.5','overflow_auto','max_h_24','text_sm','text_grey']
+         classlist:['bg_white','box_shadow','rounded','m_0','p_0.5','overflow_auto','h_80','text_sm','text_grey']
       })
       const file_view = create_div({
          attributes:[
             {key:'id',value:'file_view'}
          ],
-         classlist:['bg_white','box_shadow','rounded',],
+         classlist:['bg_white','box_shadow','rounded','fit_content'],
          text:''
       })
 
