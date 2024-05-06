@@ -34,7 +34,7 @@ body {
    font-size:var(--font-size);
    font-family: var(--font-family);
 
-   background:hsl(214, 30%, 95%);
+   background:hsl(214, 30%, 90%);
 }
 nav {
    display:-webkit-box;
@@ -421,6 +421,7 @@ button.disabled:hover {
 .pr_1 {padding-right:1rem;}
 .pr_2 {padding-right:2rem;}
 .pr_3 {padding-right:3rem;}
+.pr_5 {padding-right:5rem;}
 
 /* line height */
 .line_1 {line-height:1rem;}
@@ -585,7 +586,15 @@ button.disabled:hover {
 
 /* Pagination */
 .page_selector {
+   height:fit-content;
+   padding-left:.5rem;
+   padding-right:.5rem;
+   padding-bottom:.25rem;
+   border-radius:.5rem;
    cursor:pointer;
+}
+.page_selector:hover {
+   background:hsl(120, 73%, 80%);
 }
 
 

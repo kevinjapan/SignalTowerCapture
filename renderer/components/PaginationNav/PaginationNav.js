@@ -44,7 +44,7 @@ class PaginationNav {
          attributes:[
             {key:'data-page',value:parseInt(this.#current_page) - 1}
          ],
-         classlist:this.#current_page > 1 ? [`${this.#key}_page_selector`,'page_selector','text_sm'] : ['text_lightgrey','text_sm'],
+         classlist:this.#current_page > 1 ? [`${this.#key}_page_selector`,'page_selector'] : ['text_lightgrey'],
          text: '< prev page'
       })
 
@@ -53,7 +53,7 @@ class PaginationNav {
          attributes:[
             {key:'data-page',value:parseInt(this.#current_page)}
          ],
-         classlist:['page_selector','text_sm','text_grey'],
+         classlist:['page_selector','text_grey'],
          text: `page ${this.#page_count.length > 0 ? this.#current_page : '0'} of ${this.#page_count.length}`
       })
 
@@ -62,7 +62,7 @@ class PaginationNav {
          attributes:[
             {key:'data-page',value:parseInt(this.#current_page) + 1}
          ],
-         classlist:this.#current_page < this.#page_count.length ? [`${this.#key}_page_selector`,'page_selector','text_sm'] : ['text_lightgrey','text_sm'],
+         classlist:this.#current_page < this.#page_count.length ? [`${this.#key}_page_selector`,'page_selector'] : ['text_lightgrey'],
          text: 'next page >'
       })
 
