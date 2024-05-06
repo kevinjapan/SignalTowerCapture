@@ -211,7 +211,7 @@ class Search {
          attributes:[
             {key:'id',value:'number_records'}
          ],
-         classlist:['p_2']
+         classlist:['p_.5','pt_1','text_center']
       }))
    }
 
