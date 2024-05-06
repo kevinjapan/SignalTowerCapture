@@ -34,7 +34,7 @@ class CollectionItemFTS {
 
       // return csv of weightings correspond to order of cols in collection_items_fts table: 
       // as ordered in this.#full_fields_list
-      return '0,10,2,6'
+      return '0,10,5,6'
 
    }
 
