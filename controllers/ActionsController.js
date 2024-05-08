@@ -140,27 +140,6 @@ async function get_actions_log(event,context) {
 
 
 
-// to do : review these two funcs - depr?
-
-// async function get_export_folder() {
-
-//    if(!actions_controller_database) return NOTIFY.DATABASE_UNAVAILABLE
-
-//    let app_config = new AppConfig(actions_controller_database)
-//    const app_config_record = await app_config.read_single()
-//    return app_config_record
-// }
-
-// async function get_backup_folder() {
-
-//    if(!actions_controller_database) return NOTIFY.DATABASE_UNAVAILABLE
-
-//    let app_config = new AppConfig(actions_controller_database)
-//    const app_config_record = await app_config.read_single()
-//    return app_config_record
-// }
-
-
 //
 // enable database injection
 //
