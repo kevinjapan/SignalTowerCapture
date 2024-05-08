@@ -18,6 +18,7 @@ const Database = require('./app/database/database')
 const AppConfig = require('./models/AppConfig')
 const CollectionItem = require('./models/CollectionItem')
 const { NOTIFY } = require('./app/utilities/notifications')
+const { notify_client_alert } = require('./app/utilities/client_utilities')
 
 const is_dev = process.env.NODE_ENV !== 'production'
 const is_mac = process.platform === 'darwin'
@@ -74,7 +75,7 @@ app.whenReady().then(async() => {
    // Only load Renderer process ONCE the database has been initialized
    // since we will load App with eg root_folder from database -
    // on initial database creation, we need to ensure some delay
-   setTimeout(() => createWindow(),800)
+   setTimeout(() => createWindow(),300)
 })
 
 
@@ -121,15 +122,7 @@ const createWindow = async() => {
 }
 
 
-//
-// client utility funcs
-//
-function notify_client_alert(message) {
-   main_window.webContents.send(
-      'notify',
-      message
-   )
-}
+
 function load_client_component(component_name = 'About') {
    main_window.webContents.send(
       'switch_component',
