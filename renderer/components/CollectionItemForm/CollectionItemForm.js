@@ -313,16 +313,16 @@ class CollectionItemForm {
 
    // hydrate w/ known field values
    //
-   hydrate = (field_values) => {
+   hydrate = async(field_values) => {
 
       let elem = null
 
       if(Array.isArray(field_values)) {
-         field_values.forEach((field_value) => {
+         field_values.forEach(async(field_value) => {
             if(field_value.field === 'img') {
                let img_col = document.getElementById('img_col')
                if(img_col) {
-                  this.display_image_or_filetype(img_col,field_value.value,field_value.alt)
+                  await this.display_image_or_filetype(img_col,field_value.value,field_value.alt)
                }
             }
             elem = document.getElementById(field_value.field)
@@ -666,6 +666,9 @@ class CollectionItemForm {
    }
 
    
+   // 
+   // We display the file if an image, otherwise we display icon for file type
+   //
    display_image_or_filetype = async (parent_elem,file_path,alt_text) => {
 
       if(await file_exists(file_path)) {
@@ -681,11 +684,13 @@ class CollectionItemForm {
             // process non-img file
             const icon_img_file_path = get_file_type_icon(file_path)
             const ext = get_ext(file_path)
-            let img = build_img_elem(icon_img_file_path,`${ext} file icon`,[{key:'id',value:'record_img'}],['record_image'])
+            let img = build_img_elem(icon_img_file_path,`${ext} file icon`,[{key:'id',value:'record_img'},{key:'width',value:'48px'},{key:'height',value:'48px'}],['record_image'])
             if(img) parent_elem.replaceChildren(create_div(),img)
          }
       }
       else {
+
+         // notify no file was found
          const no_file_icon_img = build_img_elem('imgs\\icons\\exclamation-square.svg',`item date`,[{key:'height',value:'24px'}],['bg_yellow_100','mt_1'])
          img_col.append(create_div(),no_file_icon_img)
          let msg = create_div({
