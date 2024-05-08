@@ -65,7 +65,7 @@ class CollectionItemForm {
       })
 
       // form & layout - inside text_col
-      let form = create_form({
+      let form_layout = create_form({
          attributes:[
             {key:'id',value:'item_form'}
          ],
@@ -82,15 +82,20 @@ class CollectionItemForm {
       const inc_cancel = this.#props.action === 'add' ? false : true
 
       let btn_group_1 = FormBtns.render(this.#props.item,inc_cancel)
-      form.append(create_div(),btn_group_1,create_div(),submit_outcome)
-      text_col.append(form)
+      form_layout.append(create_div(),btn_group_1,create_div(),submit_outcome)
+      text_col.append(form_layout)
       
 
-      // form_layout is grid inside text_col
+      // form_content is grid inside text_col
       // we build each form field row(s) in parent grid as:
       //    |  field_label  |   field_input   |
       //    |               |   field_error   |
       //    |               | [find_file_btn] |
+      
+      const form_content = create_div({
+         classlist:['form_content','bg_white','p_.5','pl_1','pr_1','rounded']
+      })
+
 
       if(Array.isArray(this.#props.fields)) {
 
@@ -164,12 +169,12 @@ class CollectionItemForm {
 
             // assemble add current row to form grid
 
-            if(field.hidden !== true) form.append(field_label)
-            form.append(field_input)
+            if(field.hidden !== true) form_content.append(field_label)
+            form_content.append(field_input)
 
-            if(field.editable && field.hidden !== true) form.append(create_div(),field_stats)
+            if(field.editable && field.hidden !== true) form_content.append(create_div(),field_stats)
 
-            form.append(create_div(),field_error)
+               form_content.append(create_div(),field_error)
 
             
             // tags checkboxes
@@ -188,7 +193,7 @@ class CollectionItemForm {
                      : []
 
                // placeholder - we inject once promise is resolved..
-               form.append(field_label,create_div({attributes:[{key:'id',value:'tags_placeholder'}]}))
+               form_content.append(field_label,create_div({attributes:[{key:'id',value:'tags_placeholder'}]}))
 
                try {
                   this.#tags_obj = await window.tags_api.getTags(this.#props.context ? this.#props.context : {})
@@ -255,7 +260,7 @@ class CollectionItemForm {
                   text:curr_field_value.toUpperCase() === 'FILE' ? DESC.FILE_ITEM_FILETYPE : DESC.FOLDER_ITEM_FILETYPE
                })
 
-               form.append(field_label,file_type_radio,create_div(),file_type_info)
+               form_content.append(field_label,file_type_radio,create_div(),file_type_info)
 
                let find_file_outcome = create_div({
                   attributes:[
@@ -272,7 +277,7 @@ class CollectionItemForm {
                   text:'Find File'
                }) 
                // assemble find_file
-               form.append(create_div(),find_file_btn,create_div(),find_file_outcome)
+               form_content.append(create_div(),find_file_btn,create_div(),find_file_outcome)
             }
 
             // display the file if it's a valid img and it exists
@@ -296,7 +301,8 @@ class CollectionItemForm {
       let btn_group_2 = FormBtns.render(this.#props.item,inc_cancel)
 
       // assemble
-      form.append(create_div(),btn_group_2)
+      form_layout.append(form_content)
+      form_layout.append(create_div(),btn_group_2)
       this.#record.append(img_col,text_col)
 
       window.scroll(0,0)

@@ -656,7 +656,7 @@ label,.label {
    font-size:1.1rem;
    align-self:start;
 }
-.form_layout div {   
+.form_content div {   
    align-self:start;
 }
 
@@ -755,7 +755,7 @@ label,.label {
 /* 
 label/[value|input] layout for Record and Form views 
 */
-.form_layout {
+.form_content {
    display:-ms-grid;
    display:grid;
    -ms-grid-columns: 1fr .7rem 4fr;
@@ -764,7 +764,7 @@ label/[value|input] layout for Record and Form views
 }
 @media screen and (max-width: 768px) {
    /* we vertically stack form on sm widths */
-   .form_layout {
+   .form_content {
       display:-webkit-box;
       display:-ms-flexbox;
       display:flex;
@@ -776,11 +776,11 @@ label/[value|input] layout for Record and Form views
       flex-wrap:wrap;
       gap:.7rem;
    }
-   .form_layout .label {
+   .form_content .label {
       margin-top:1rem;
       margin-bottom:0;
    }
-   .form_layout div {
+   .form_content div {
       margin-top:0;
    }
 }

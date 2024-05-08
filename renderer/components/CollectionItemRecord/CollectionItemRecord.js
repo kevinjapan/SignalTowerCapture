@@ -38,7 +38,7 @@ class CollectionItemRecord {
             id:app_config.id,
             recent_records: add_to_int_queue(ints_queue,20,this.#props.item.id).join()
          }
-         const result = await window.config_api.updateAppConfig(app_config_recent)
+         await window.config_api.updateAppConfig(app_config_recent)
       }
 
       // component container
@@ -83,6 +83,10 @@ class CollectionItemRecord {
 
       form_layout.append(RecordBtns.render(this.#props.item.id,this.#props.context ? true : false))
 
+
+      const form_content = create_div({
+         classlist:['form_content','bg_white','p_.5','pl_1','pr_1','rounded']
+      })
       
       // build each field row on the form
       let field_label
@@ -117,8 +121,9 @@ class CollectionItemRecord {
                   text:this.#props.item[field.key]
                })
             }
-                        
-            form_layout.append(field_label,field_value)
+            
+            // add current elem to form content
+            form_content.append(field_label,field_value)
 
             // display file if file_name is recognized image type
             if(field.key === 'file_name') {
@@ -165,7 +170,7 @@ class CollectionItemRecord {
          })
       }
       
-
+      form_layout.append(form_content)
       form_layout.append(RecordBtns.render(this.#props.item.id,this.#props.context ? true : false))
 
       const record_admin = new RecordAdmin(this.#props)
