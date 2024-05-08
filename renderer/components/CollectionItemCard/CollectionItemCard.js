@@ -169,7 +169,7 @@ class CollectionItemCard {
                         classlist:['break_words','mt_0.5','mr_2','pl_1','text_grey'],
                         text:truncate(field_value,300)
                      })
-                     // to do : unnecessary containing div 'folder_path_block ?
+                     // we don't add immediately to Card, to preserve desired order
                      folder_path_block.append(field_element)
                   }
                }
