@@ -4,14 +4,19 @@ import PaginationNav from '../PaginationNav/PaginationNav.js'
 import AlphabetCtrl from '../AlphabetCtrl/AlphabetCtrl.js'
 import { is_valid_response_obj } from '../../utilities/ui_response.js'
 import { ui_display_number_as_str } from '../../utilities/ui_strings.js'
-import { create_section,create_div,create_h } from '../../utilities/ui_elements.js'
+import { create_section,create_div } from '../../utilities/ui_elements.js'
 import { init_card_img_loads,no_root_folder } from '../../utilities/ui_utilities.js'
 
 
 
 class Browse {
 
+   #browse
+
+   #alphabet_ctrl
+
    #browse_section
+
 
    #browse_results_container
 
@@ -53,6 +58,13 @@ class Browse {
       this.#root_folder = App.get_root_folder()
       if(this.#root_folder === '') return no_root_folder()
 
+      this.#browse = create_section({
+         attributes:[
+            {key:'id',value:'browse'}
+         ],
+         classlist:['max_w_full']
+      })
+
       this.#browse_section = create_section({
          attributes:[
             {key:'id',value:'browse_section'}
@@ -60,7 +72,16 @@ class Browse {
          classlist:['max_w_full']
       })
 
-      this.add_alpha_ctrl()
+      
+      let alphabet_ctrl_props = {
+         selected_char:null,
+         submit_alpha_filter:this.submit_alpha_filter,
+         reset_alpha_filter:this.reset_alpha_filter
+      }      
+      this.#alphabet_ctrl = new AlphabetCtrl(alphabet_ctrl_props)
+      setTimeout(() => this.#alphabet_ctrl.activate(),100)
+      this.#browse.append(this.#alphabet_ctrl.render())
+
       this.add_number_results()
       
       this.#browse_results_container = create_div({
@@ -75,7 +96,8 @@ class Browse {
          this.get_items()
       }
 
-      return this.#browse_section
+      this.#browse.append(this.#browse_section)
+      return this.#browse
    }
 
 
@@ -110,7 +132,6 @@ class Browse {
                   this.#browse_section.replaceChildren()
                   this.#browse_results_container.replaceChildren()
 
-                  this.add_alpha_ctrl(this.#filter_char)
                   this.add_number_results()
 
                   let page_count = Math.ceil(collection_items_obj.count / collection_items_obj.per_page)
@@ -194,16 +215,13 @@ class Browse {
       this.#filter_char = char
       this.#browse_context.scroll_y = 0
       this.get_items()
-      setTimeout(() => this.activate(),500)
+      setTimeout(() => this.activate(),50)
    }
    reset_alpha_filter = () => {
       this.#browse_context.page = 1
       this.#filter_char = null
       this.#browse_context.scroll_y = 0
       this.get_items()
-
-      // to do : review - what if we put await on this.get_items() above ? 
-      //         then we don't need timeout below  - rollout
       setTimeout(() => this.activate(),50)
    }
 
@@ -216,16 +234,6 @@ class Browse {
       }))      
    }
 
-   add_alpha_ctrl = (selected_char) => {   
-      let alphabet_ctrl_props = {
-         selected_char:selected_char,
-         submit_alpha_filter:this.submit_alpha_filter,
-         reset_alpha_filter:this.reset_alpha_filter
-      }      
-      const alphabet_ctrl = new AlphabetCtrl(alphabet_ctrl_props)
-      this.#browse_section.append(alphabet_ctrl.render())
-      setTimeout(() => alphabet_ctrl.activate(),100)
-   }
 
 }
 

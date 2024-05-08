@@ -9,6 +9,7 @@ class AlphabetCtrl {
 
    #alphabet = [...Array(26).keys()].map((n) => String.fromCharCode(65 + n));
 
+
    constructor(props) {
       this.#props = props
    }
@@ -24,7 +25,7 @@ class AlphabetCtrl {
             {key:'id',value:'reset_btn'}
          ],
          classlist:[
-            'alpha_ctrl_btn','form_btn','border','h_2','m_0','p_0.25','pt_0','pb_0','cursor_pointer',this.#props.selected_char == null ? 'bg_positive' : ''
+            'alpha_btn','form_btn','border','h_2','m_0','p_0.25','pt_0','pb_0','cursor_pointer',this.#props.selected_char == null ? 'bg_positive' : ''
          ],
          text:'All'
       })
@@ -36,7 +37,7 @@ class AlphabetCtrl {
                   {key:'char',value:char}
                ],
                classlist:[
-                  'alpha_ctrl_btn','form_btn','border','h_2','m_0','p_0.25','pl_0.5','pr_0.5','pt_0','pb_0','cursor_pointer',this.#props.selected_char === char ? 'bg_positive' : ''
+                  'alpha_btn','alpha_char_btn','form_btn','border','h_2','m_0','p_0.25','pl_0.5','pr_0.5','pt_0','pb_0','cursor_pointer',this.#props.selected_char === char ? 'bg_positive' : ''
                ],
                text:char
             })
@@ -50,36 +51,43 @@ class AlphabetCtrl {
    // enable buttons/links displayed in the render
    activate = () => {
 
+      //
       // select alpha char btns
+      //
+      let alpha_char_btns = document.querySelectorAll('.alpha_char_btn')
+      if(alpha_char_btns){
 
-      let alpha_ctrl_btns = document.querySelectorAll('.alpha_ctrl_btn')
-      if(alpha_ctrl_btns){
+         alpha_char_btns.forEach(alpha_char_btn => {
 
-         alpha_ctrl_btns.forEach(alpha_ctrl_btn => {
-
-            alpha_ctrl_btn.addEventListener('click',(event) => {
+            alpha_char_btn.addEventListener('click',(event) => {
 
                // clear all
-               document.querySelectorAll('.alpha_ctrl_btn').forEach(btn => {
+               document.querySelectorAll('.alpha_btn').forEach(btn => {
                   btn.classList.remove('bg_positive')
                })
 
                // highlight selected
                this.#props.submit_alpha_filter(event.target.getAttribute('char'))
-               alpha_ctrl_btn.classList.add('bg_positive')
+               alpha_char_btn.classList.add('bg_positive')
             })
          })
       }
 
+      //
       // reset btn
-
+      //
       let reset_btn = document.getElementById('reset_btn')
       if(reset_btn) {
-         reset_btn.addEventListener('click',(event) => {
-            this.#props.reset_alpha_filter()
-         })
+         reset_btn.addEventListener('click',this.reset_alpha_filter)
       }
 
+   }
+   reset_alpha_filter = (event) => {
+      // clear all
+      document.querySelectorAll('.alpha_btn').forEach(btn => {
+         btn.classList.remove('bg_positive')
+      })
+      this.#props.reset_alpha_filter()
    }
 
 }
