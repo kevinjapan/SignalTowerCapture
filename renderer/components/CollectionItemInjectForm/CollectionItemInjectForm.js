@@ -1,6 +1,6 @@
 import App from '../App/App.js'
 import CollectionItemForm from '../CollectionItemForm/CollectionItemForm.js'
-import { create_section,create_div,create_h } from '../../utilities/ui_elements.js'
+import { create_section,create_h } from '../../utilities/ui_elements.js'
 import { get_title_from_filename } from '../../utilities/ui_strings.js'
 import { no_root_folder } from '../../utilities/ui_utilities.js'
 
@@ -35,15 +35,14 @@ class CollectionItemInjectForm {
 
       const heading = create_h({
          level:'h3',
-         text:'Add Collection Item record',
-         classlist:['border']
+         text:'Add Collection Item record'
       })
 
       const item_form_wrap = create_section({
          attributes:[
             {key:'id',value:'item_form_wrap'}
          ],
-         classlist:['border','inject_form']
+         classlist:['inject_form']
       })
       
       // assemble
