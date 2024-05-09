@@ -727,7 +727,9 @@ label,.label {
 
 
 @media screen and (max-width: 1000px) {
-   
+   /* 
+   stack form sooner in Files CollectionItemForm view - less horizontal space
+   */
    section.inject_form_container > section.inject_form > section.collection_item_record {
       display:-webkit-box;
       display:-ms-flexbox;
