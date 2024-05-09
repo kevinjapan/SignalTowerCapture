@@ -72,17 +72,18 @@ class CollectionItemForm {
          classlist:['form_layout']
       })
       
-      let submit_outcome = create_section({
+      let submit_outcome_top = create_section({
          attributes:[
             {key:'id',value:'submit_outcome'}
-         ]
+         ],
+         classlist:['submit_outcome']
       })
 
       // we don't inc cancel btn in 'new' record forms
       const inc_cancel = this.#props.action === 'add' ? false : true
 
       let btn_group_1 = FormBtns.render(this.#props.item,inc_cancel)
-      form_layout.append(create_div(),btn_group_1,create_div(),submit_outcome)
+      form_layout.append(create_div(),btn_group_1,create_div(),submit_outcome_top)
       text_col.append(form_layout)
       
 
@@ -300,9 +301,16 @@ class CollectionItemForm {
 
       let btn_group_2 = FormBtns.render(this.#props.item,inc_cancel)
 
+      let submit_outcome_btm = create_section({
+         attributes:[
+            {key:'id',value:'submit_outcome'}
+         ],
+         classlist:['submit_outcome']
+      })
+
       // assemble
       form_layout.append(form_content)
-      form_layout.append(create_div(),btn_group_2)
+      form_layout.append(submit_outcome_btm,create_div(),btn_group_2)
       this.#record.append(img_col,text_col)
 
       window.scroll(0,0)
@@ -388,7 +396,13 @@ class CollectionItemForm {
                      
                      try {
                         let collection_item_id = response.collection_item.id
-                        
+
+                        // to do : note, real issue is that we are not catching (as we did previously) that there
+                        //         is an existing record for the file - fix this after we deal w/ issue above
+                        //  bug: in Files.get_matching_records() we build a register of existing records for the current folder,
+                        //       but this is paginated, so we only get the first 21 back!
+                        //       see Files.get_matching_records()
+
                         const collection_item_obj = await window.collection_items_api.getCollectionItem(collection_item_id)
 
                         if (typeof collection_item_obj != "undefined" && collection_item_obj.outcome === 'success') {
@@ -405,7 +419,10 @@ class CollectionItemForm {
                      }
                   }
                   else {
-                     // highlight errors on ui
+                     // notify user any error msg rcvd
+                     if(response.message) Notification.notify('.submit_outcome',response.message,[],false)
+
+                     // highlight errors on ui fields
                      if(Array.isArray(response.errors)) {
                         this.highlight_errors(response.errors)
 
@@ -528,7 +545,7 @@ class CollectionItemForm {
                      {field:'folder_path',value:path.replace(this.#root_folder,'')}]
                }
 
-               try {
+               try {                
                   const collection_items_obj = await window.collection_items_api.getItems(context)                  
 
                   if (typeof collection_items_obj != "undefined" && collection_items_obj.outcome === 'success') {
