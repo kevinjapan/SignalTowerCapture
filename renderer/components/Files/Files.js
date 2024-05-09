@@ -46,7 +46,7 @@ class Files {
          attributes:[
             {key:'id',value:'files_section'}
          ],
-         classlist:['h_85vh','mt_0']
+         classlist:['h_85vh','mt_0','fit_content_height','pb_2']
       })      
       const files_outcome = create_div({
          attributes:[

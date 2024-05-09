@@ -751,12 +751,9 @@ label,.label {
    section.inject_form_container > section.inject_form > section.collection_item_record #record_admin{
       order:3;
    }
-   /* .img_col div.stacked_img_title {
-      display:block;
-   } */
-   .img_col  {
-      border:solid 2px blue;padding-top:0 !important;
-      padding-bottom:0 !important;height:fit-content;justify-content:flex-start;align-items:flex-start;
+   section.inject_form_container > section.inject_form > section.collection_item_record .img_col  {
+      padding-top:0 !important;
+      padding-bottom:0 !important;
    }
 }
 @media screen and (max-width: 768px) {
