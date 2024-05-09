@@ -28,7 +28,7 @@ class Files {
       field_filters:[
          {field:'folder_path',value:''}
       ],
-      page:1,
+      page:-1, // marks as no pagination 
       scroll_y:0
    }
 
@@ -184,13 +184,17 @@ class Files {
    // we perform a single db call and reference off of this list rather than querying each time
    get_matching_records = async() => {
       try {
-         const result = await window.collection_items_api.getItems(this.#context)         
+         // this.#context.page is -1 - disabling pagination
+         const result = await window.collection_items_api.getItems(this.#context) 
          if(await is_valid_response_obj('read_collection_items',result)) {
             this.#matching_records = result.collection_items
             this.#record_fields = result.collection_item_fields
          }
+
+         // to do : we may be able to reduce size of this.#matching_records (verify only requires file_name and folder_path)
       }
       catch(error) {
+         console.log('fail in get_matching_records')
          setTimeout(() => Notification.notify('#files_outcome','Sorry, we failed to retrieve the list of matching records, so matches may be missed. You might want to try again later.',[],false),200)
       }
    }
