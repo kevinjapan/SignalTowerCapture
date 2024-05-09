@@ -16,7 +16,7 @@ class RecentRecords {
    #context = {
       key:'RecentRecords',
       field_filters:[],
-      page:1,
+      page:-1,
       scroll_y:0
    }
 
