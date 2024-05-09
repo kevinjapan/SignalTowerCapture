@@ -67,13 +67,20 @@ class CollectionItem {
 
 
    //
-   // READ ALL : Paginated
+   // READ : Paginated
+   // set context.page -> -1 to switch off pagination
    //
    async read(context) {
 
-      let offset = (parseInt(context.page) - 1) * this.#items_per_page
-      let total_count = 0  
       let sql
+
+      let total_count = 0
+      
+      let offset_clause = ''
+      if(context.page && context.page !== -1) {
+         const offset = (parseInt(context.page) - 1) * this.#items_per_page
+         offset_clause = `OFFSET ${offset}`
+      }
 
       // filters target known specific conditional tests (not limited to WHERE clause)
       let status = 'collection_items.deleted_at IS NULL'    // our default 'WHERE' clause (always present or overwritten below)
@@ -118,8 +125,8 @@ class CollectionItem {
                      FROM collection_items 
                      WHERE ${status} ${filter_by_char} ${field_filters_sql} 
                      ORDER BY ${order_by}                      
-                     LIMIT ${this.#items_per_page}
-                     OFFSET ${offset}`
+                     LIMIT ${offset_clause === '' ? this.#limit_read_all_records : this.#items_per_page}
+                     ${offset_clause}`
 
             this.#database.all(sql, (error, rows) => {
                if(error) reject(error)
@@ -424,9 +431,9 @@ class CollectionItem {
          else {
             return {
                query:'create_collection_item',
-               outcome:'success',
+               outcome:'fail',
                collection_item:{id:-1,...collection_item},  // -1 signifies although no errors, we didn't create since a record already existed
-               message:`A record already exists for this file : ${collection_item.folder_name}\\${collection_item.file_name}`
+               message:`A record already exists for this file: ${collection_item.folder_path}\\${collection_item.file_name}`
             }
          }
       }
