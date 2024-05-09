@@ -724,6 +724,39 @@ label,.label {
 .img_col div.stacked_img_title {
    display:none;
 }
+
+
+@media screen and (max-width: 1000px) {
+   
+   section.inject_form_container > section.inject_form > section.collection_item_record {
+      display:-webkit-box;
+      display:-ms-flexbox;
+      display:flex;
+      -webkit-box-orient:vertical;
+      -webkit-box-direction:normal;
+      -ms-flex-direction:column;
+      flex-direction:column;
+      -ms-flex-wrap:wrap-reverse;
+      flex-wrap:wrap-reverse;
+      gap:.7rem;
+   }
+   section.inject_form_container > section.inject_form > section.collection_item_record .text_col{
+      order:2;
+   }
+   section.inject_form_container > section.inject_form > section.collection_item_record .img_col{
+      order:1;
+   }
+   section.inject_form_container > section.inject_form > section.collection_item_record #record_admin{
+      order:3;
+   }
+   /* .img_col div.stacked_img_title {
+      display:block;
+   } */
+   .img_col  {
+      border:solid 2px blue;padding-top:0 !important;
+      padding-bottom:0 !important;height:fit-content;justify-content:flex-start;align-items:flex-start;
+   }
+}
 @media screen and (max-width: 768px) {
    /* we vertically stack record on sm widths */
    .collection_item_record {
@@ -784,8 +817,6 @@ label/[value|input] layout for Record and Form views
       margin-top:0;
    }
 }
-
-
 .img_col {
    position:relative;
    height:fit-content;
@@ -793,16 +824,7 @@ label/[value|input] layout for Record and Form views
    color:grey;
    padding-top:8rem;
 }
-@media screen and (max-width: 768px) {
-   /* workaround for sm in Files injector form view */
-   .img_col {
-      padding-top:1rem;
-   }
-   section.inject_form_container img {
-      max-height:120px;
-      margin-bottom:100px;
-   }
-}
+
 .record_image {
    width:100%;
    border-radius:0.5rem;
