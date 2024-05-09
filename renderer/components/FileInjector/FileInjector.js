@@ -4,6 +4,8 @@ import CollectionItemInjectForm from '../CollectionItemInjectForm/CollectionItem
 import { init_card_img_loads,no_root_folder } from '../../utilities/ui_utilities.js'
 import { create_section,create_div } from '../../utilities/ui_elements.js'
 
+
+
 class FileInjector {
 
    #props
