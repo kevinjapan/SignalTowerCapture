@@ -56,7 +56,7 @@ class ExportJSONFile {
             return {
                query:'export file',
                outcome:'fail',
-               messge:error.message
+               message:error.message
             }
          }
       }
