@@ -1146,3 +1146,56 @@ CC0 License
    -webkit-box-shadow: 1px 2px 3px 2px hsl(0, 0%, 90%);
    box-shadow: 1px 2px 3px 2px hsl(0, 0%, 90%);
  }
+
+
+ 
+
+.app_status {
+
+   position:fixed;
+   top:var(--status-msg-top);
+   left:0;
+   right:0;
+   z-index:var(--app-status-z-index);
+   width:fit-content;
+   max-width:50%;
+   margin-left:auto;
+   margin-right:auto;
+   padding:1rem;
+
+   background:white;
+   border:solid 1px hsl(0, 0%, 80%);
+   border-radius:.5rem;
+   box-shadow: 1px 2px 3px 2px hsl(0, 0%, 90%);
+   cursor:pointer;
+
+   /* transitions */
+
+   -webkit-transform: translateY(-200%);
+   -ms-transform: translateY(-200%);
+   transform: translateY(-200%);
+
+   opacity:0;
+
+   -webkit-transition:opacity .35s ease-in-out,-webkit-transform .75s ease-in-out;
+   transition:opacity .35s ease-in-out,-webkit-transform .75s ease-in-out;
+   -o-transition:opacity .35s ease-in-out,transform .75s ease-in-out;
+   transition:opacity .35s ease-in-out,transform .75s ease-in-out;
+   transition:opacity .35s ease-in-out,transform .75s ease-in-out,-webkit-transform .75s ease-in-out;
+}
+.app_status_active {
+
+   /* transitions */
+
+   -webkit-transform: translateY(0);
+   -ms-transform: translateY(0);
+   transform: translateY(0);
+
+   opacity:1;
+
+   -webkit-transition:opacity 1s ease-in-out,-webkit-transform .75s ease-in-out;
+   transition:opacity 1s ease-in-out,-webkit-transform .75s ease-in-out;
+   -o-transition:opacity 1s ease-in-out,transform .75s ease-in-out;
+   transition:opacity 1s ease-in-out,transform .75s ease-in-out;
+   transition:opacity 1s ease-in-out,transform .75s ease-in-out,-webkit-transform .75s ease-in-out;
+}
