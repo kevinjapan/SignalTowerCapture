@@ -13,7 +13,7 @@ ipcMain.handle('files:getFolderPath',get_folder_path)
 ipcMain.handle('files:getFilePath',get_file_path)
 ipcMain.handle('files:openFolder',open_folder)
 ipcMain.handle('files:filePathSep',file_path_sep)
-ipcMain.handle('files:saveFile',save_file)
+ipcMain.handle('files:openSaveFileDlg',open_save_file_dlg)
 ipcMain.handle('files:getFileSize',get_file_size)
 
 
@@ -41,7 +41,7 @@ async function get_folder_path () {
    }
 }
 
-async function save_file (event,options) {
+async function open_save_file_dlg (event,options) {
 
    const fs = require('fs')
    const  { canceled, filePath  } = await dialog.showSaveDialog(options)
