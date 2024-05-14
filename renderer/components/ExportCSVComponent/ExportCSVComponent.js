@@ -71,7 +71,7 @@ class ExportCSVComponent {
                filters:[{ name: 'CSV', extensions: ['txt'] },]
             }
             
-            const result = await window.files_api.saveFile(options)
+            const result = await window.files_api.openSaveFileDlg(options)
 
             if(result.outcome === 'success') {
 

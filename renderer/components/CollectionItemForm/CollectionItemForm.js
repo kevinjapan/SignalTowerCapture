@@ -208,6 +208,8 @@ class CollectionItemForm {
                            return this.#tags_obj.tags.some(tag => tag.tag === curr_tag)
                         })
 
+                        // to do : create TagsSelector component (farm out this block) - see Todos BatchForm
+
                         const tags_checks = this.#tags_obj.tags.map(tag => {
                            return {
                               key:tag.tag,

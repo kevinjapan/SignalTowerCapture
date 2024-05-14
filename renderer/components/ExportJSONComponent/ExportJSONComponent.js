@@ -64,7 +64,7 @@ class ExportJSONComponent {
                filters:[{ name: 'JSON', extensions: ['json'] },]
             }
 
-            const result = await window.files_api.saveFile(options)
+            const result = await window.files_api.openSaveFileDlg(options)
 
             if(result != "undefined" && result.outcome === 'success') {
 
