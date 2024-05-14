@@ -71,7 +71,7 @@ contextBridge.exposeInMainWorld('files_api', {
    getFolderFilesList: (folder_path) => ipcRenderer.invoke('files:getFolderFilesList',folder_path),
    openFolder: (folder_path) => ipcRenderer.invoke('files:openFolder',folder_path),
    filePathSep: () => ipcRenderer.invoke('files:filePathSep'),
-   saveFile: (filters) => ipcRenderer.invoke('files:saveFile',filters),
+   openSaveFileDlg: (filters) => ipcRenderer.invoke('files:openSaveFileDlg',filters),
    getFileSize: (file_path) => ipcRenderer.invoke('files:getFileSize',file_path)
 })
 
