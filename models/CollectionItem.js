@@ -73,11 +73,10 @@ class CollectionItem {
    async read(context) {
 
       let sql
-
-      let total_count = 0
-      
+      let total_count = 0            
       let offset_clause = ''
-      if(context.page && context.page !== -1) {
+
+      if(context.page && context.page > 0) {
          const offset = (parseInt(context.page) - 1) * this.#items_per_page
          offset_clause = `OFFSET ${offset}`
       }
