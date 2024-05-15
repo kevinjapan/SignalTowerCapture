@@ -8,7 +8,6 @@ import { create_section,create_div,create_p } from '../../utilities/ui_elements.
 
 
 
-
 class CollectionItemRecord {
 
    // props.context, props.fields, props.item
@@ -25,7 +24,6 @@ class CollectionItemRecord {
 
       this.#props.root_folder = App.get_root_folder()
       if(this.#props.root_folder === '') return no_root_folder()
-
       
       // update Recent records
       const app_config_obj = await window.config_api.getAppConfig()
@@ -53,7 +51,6 @@ class CollectionItemRecord {
       let img_col = create_div({
          classlist:['img_col','text_center'],
       })
-
 
       // img viewer (hidden initially)
       let img_view = create_div({
@@ -83,9 +80,8 @@ class CollectionItemRecord {
 
       form_layout.append(RecordBtns.render(this.#props.item.id,this.#props.context ? true : false))
 
-
-      const form_content = create_div({
-         classlist:['form_content','bg_white','p_.5','pl_1','pr_1','rounded']
+      const record_content = create_div({
+         classlist:['record_content','bg_white','p_.5','pl_1','pr_1','rounded']
       })
       
       // build each field row on the form
@@ -123,7 +119,7 @@ class CollectionItemRecord {
             }
             
             // add current elem to form content
-            form_content.append(field_label,field_value)
+            record_content.append(field_label,field_value)
 
             // display file if file_name is recognized image type
             if(field.key === 'file_name') {
@@ -154,7 +150,6 @@ class CollectionItemRecord {
                         ['record_card_image','card_title_link','cursor_pointer']
                      )
                      if(img) img_col.replaceChildren(create_div(),img)
-
                   }
                }
                else {
@@ -168,17 +163,13 @@ class CollectionItemRecord {
                }
             }
          })
-      }
-      
-      form_layout.append(form_content)
+      }      
+      form_layout.append(record_content)
       form_layout.append(RecordBtns.render(this.#props.item.id,this.#props.context ? true : false))
-
       const record_admin = new RecordAdmin(this.#props)
       setTimeout(() => record_admin.activate(),300)
 
-
       // assemble
-
       img_col.append(img_view)
       this.#record.append(img_col,text_col,img_view,record_admin.render())
 
@@ -197,16 +188,12 @@ class CollectionItemRecord {
    activate = () => {
 
       const edit_buttons = document.querySelectorAll('.edit_button')
-
       if(edit_buttons) {
          edit_buttons.forEach((edit_button) => {
-            edit_button.addEventListener('click',async(event) => {
-   
+            edit_button.addEventListener('click',async(event) => {   
                try {
                   const collection_item_obj = await window.collection_items_api.getCollectionItem(edit_button.attributes['data-id'].value)
-      
-                  if (typeof collection_item_obj != "undefined" && collection_item_obj.outcome === 'success') {
-      
+                  if (typeof collection_item_obj != "undefined" && collection_item_obj.outcome === 'success') {      
                      if(await is_valid_response_obj('read_single_collection_item',collection_item_obj)) {
 
                         // display single CollectionItem for editing in CollectionItemForm
@@ -225,19 +212,17 @@ class CollectionItemRecord {
                      }
                   }
                   else {
-                     let props = {
+                     App.switch_to_component('Error',{
                         msg:'Sorry, we were unable to locate the Record.',
                         error:error
-                     }
-                     App.switch_to_component('Error',props)
+                     })
                   }
                }
                catch(error) {
-                  let props = {
+                  App.switch_to_component('Error',{
                      msg:'Sorry, we were unable to locate the Record.',
                      error:error
-                  }
-                  App.switch_to_component('Error',props)
+                  })
                }
             })
          })
@@ -266,7 +251,6 @@ class CollectionItemRecord {
       let back_btns = document.querySelectorAll('.back_btn')
       if(back_btns){
          back_btns.forEach(back_btn => {
-
             back_btn.addEventListener('click',async(event) => {
                // the context token identifies the current user context inc. component
                if(this.#props.context) {
@@ -278,7 +262,6 @@ class CollectionItemRecord {
    }
 
    display_tags = (tags_csv) => {
-
       if(tags_csv) {
          const tags = tags_csv.split('*')
          const tags_elem = create_div({
