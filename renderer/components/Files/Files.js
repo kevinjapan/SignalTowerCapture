@@ -190,8 +190,6 @@ class Files {
             this.#matching_records = result.collection_items
             this.#record_fields = result.collection_item_fields
          }
-
-         // to do : we may be able to reduce size of this.#matching_records (verify only requires file_name and folder_path)
       }
       catch(error) {
          console.log('fail in get_matching_records')
