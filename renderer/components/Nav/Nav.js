@@ -7,6 +7,7 @@ class Nav {
       {component:'Home',label:'Home'},
       {component:'Browse',label:'Browse'},
       {component:'Search',label:'Search'},
+      {component:'Tags',label:'Tags'},
       {component:'RecentRecords',label:'Recent'},
       {component:'AddCollectionItem',label:'New'},
       {component:'Files',label:'Files'},
