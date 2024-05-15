@@ -656,7 +656,7 @@ label,.label {
    font-size:1.1rem;
    align-self:start;
 }
-.form_content div {   
+.record_content div {   
    align-self:start;
 }
 
@@ -787,7 +787,14 @@ label,.label {
 /* 
 label/[value|input] layout for Record and Form views 
 */
-.form_content {
+.record_content {
+   display:-ms-grid;
+   display:grid;
+   -ms-grid-columns: 1fr .7rem 4fr;
+   grid-template-columns: 1fr 4fr;
+   grid-gap:.7rem;
+}
+.collection_item_form_row {
    display:-ms-grid;
    display:grid;
    -ms-grid-columns: 1fr .7rem 4fr;
@@ -796,7 +803,7 @@ label/[value|input] layout for Record and Form views
 }
 @media screen and (max-width: 768px) {
    /* we vertically stack form on sm widths */
-   .form_content {
+   .record_content {
       display:-webkit-box;
       display:-ms-flexbox;
       display:flex;
@@ -808,11 +815,11 @@ label/[value|input] layout for Record and Form views
       flex-wrap:wrap;
       gap:.7rem;
    }
-   .form_content .label {
+   .record_content .label {
       margin-top:1rem;
       margin-bottom:0;
    }
-   .form_content div {
+   .record_content div {
       margin-top:0;
    }
 }
