@@ -1,6 +1,7 @@
 import Home from '../Home/Home.js'
 import Browse from '../Browse/Browse.js'
 import Search from '../Search/Search.js'
+import Tags from '../Tags/Tags.js'
 import AddCollectionItem from '../AddCollectionItem/AddCollectionItem.js'
 import CollectionItemRecord from '../CollectionItemRecord/CollectionItemRecord.js'
 import CollectionItemForm from '../CollectionItemForm/CollectionItemForm.js'
@@ -73,6 +74,10 @@ class App {
                break
             case 'Search':
                component = new Search(props)
+               component_container.replaceChildren(await component.render())
+               break
+            case 'Tags':
+               component = new Tags(props)
                component_container.replaceChildren(await component.render())
                break
             case 'AddCollectionItem':
