@@ -1,13 +1,10 @@
 import { create_div,create_p } from '../../utilities/ui_elements.js'
 
-
-
 // parameters
 // elem_selector  - display element on current page
 // messages       - array of strings displayed in seperate <p> elements
 // classes        - modifed esp bg_color
 // fade_out       - defaults to fading out, set to false for errors
-
 
 class Notification {
 
