@@ -16,10 +16,10 @@ import { init_card_img_loads } from '../../utilities/ui_utilities.js'
 
 class Tags {
 
-   #tags_section
+   #tags_section = null
 
    // layout container
-   #tags_results_container
+   #tags_results_container = null
 
    #tags_context = {
       key:'Tags',
@@ -81,7 +81,7 @@ class Tags {
       window.scroll(0,0)
       
       // assemble
-      this.#tags_section.append(tags_status,this.#tags_results_container)
+      // this.#tags_section.append(tags_status,this.#tags_results_container)
       return this.#tags_section
    }
 
@@ -197,8 +197,16 @@ class Tags {
          clear_search:this.clear_search
       }
       const tags_nav = new TagsNavList(props)
-      const test = await tags_nav.render()
-      this.#tags_section.append(test)
+      const tags_nav_elem = await tags_nav.render()
+      if(tags_nav_elem) {
+         this.#tags_section.append(tags_nav_elem)
+      }
+      else {
+         this.#tags_section.append(create_div({
+            classlist:['bg_inform','p_1','fit_content','rounded'],
+            text:'There are no Tags configured in the system. You can add Tags in the Config menu.'
+         }))
+      }
       setTimeout(() => tags_nav.activate(),100)
    }
 
