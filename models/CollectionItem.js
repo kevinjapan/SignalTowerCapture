@@ -108,6 +108,9 @@ class CollectionItem {
                      field_filters_sql += ` AND ${filter.field} = "${value}"`
                }
             }
+            else {
+               field_filters_sql += ` AND ${filter.field} = "${value}"`
+            }
          })
       }
 
@@ -132,6 +135,8 @@ class CollectionItem {
                      ORDER BY ${order_by}                      
                      LIMIT ${offset_clause === '' ? this.#limit_read_all_records : this.#items_per_page}
                      ${offset_clause}`
+
+            console.log('sql',sql)
 
             this.#database.all(sql, (error, rows) => {
                if(error) reject(error)
@@ -346,6 +351,9 @@ class CollectionItem {
 
       // 'success' just means it worked, we still might not have a match
       if(attempt_read_existing.outcome === 'success') {
+
+         console.log('collection_item',collection_item)
+         console.log('attempt_read_existing',attempt_read_existing)
 
          // check for record
          if(attempt_read_existing.collection_items.length === 0) {
