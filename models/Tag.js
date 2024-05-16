@@ -1,9 +1,6 @@
-
 const { get_sqlready_datetime,get_sqlready_date_from_js_date } = require('../app/utilities/datetime')
-const {
-   get_status_condition_sql,
-   get_order_by_condition_sql
-} = require('../app/utilities/search_utilities')
+const { get_status_condition_sql,get_order_by_condition_sql } = require('../app/utilities/search_utilities')
+
 
 
 class Tag {
@@ -13,7 +10,7 @@ class Tag {
    #last_error
 
    // we limit number of possible tags (proliferation loses value of the system)
-   #max_tags_count = 24
+   #max_tags_count = 36
 
    // every read-all needs an absolute upper limit!
    #limit_read_all_records = this.#max_tags_count
@@ -63,7 +60,7 @@ class Tag {
       // filters
       let status = 'tags.deleted_at IS NULL'
       let order_by = 'tag COLLATE NOCASE ASC'
-      if(context.filters) {
+      if(context && context.filters) {
          status = get_status_condition_sql('tags',context.filters.record_status)
       }
 
