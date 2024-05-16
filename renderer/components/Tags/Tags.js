@@ -23,9 +23,18 @@ class Tags {
 
    #tags_context = {
       key:'Tags',
+      field_filters:[
+         {
+            field:'tags',
+            test:'LIKE',
+            value:''
+         }
+      ],
       page:1,
       scroll_y:0
    }
+
+   #tags_search_term
 
    // props
    #props
@@ -47,8 +56,7 @@ class Tags {
 
       this.#tags_section = create_section({
          attributes:[{key:'id',value:'tags_section'}],
-         classlist:['max_w_full','pt_1'],
-         text:'Tags in here'
+         classlist:['max_w_full','pt_1']
       })
 
       let tags_status = create_section({
@@ -88,8 +96,17 @@ class Tags {
    get_items = async () => {
 
       if(this.#tags_context) {
+
+         const updated_field_filters = this.#tags_context.field_filters.map(field => {
+            if(field.field === 'tags') {
+               field.value = this.#tags_search_term
+               return field
+            }
+         })
+         this.#tags_context.field_filters = updated_field_filters
+         
          try {
-            const collection_items_obj = await window.collection_items_api.searchCollectionItems(this.#tags_context)
+            const collection_items_obj = await window.collection_items_api.getItems(this.#tags_context)
 
             if (typeof collection_items_obj != "undefined") {
                if(collection_items_obj.outcome === 'success') {
@@ -181,9 +198,7 @@ class Tags {
       }
       const tags_nav = new TagsNavList(props)
       const test = await tags_nav.render()
-      console.log('got test',test)
       this.#tags_section.append(test)
-      console.log('in Tags')
       setTimeout(() => tags_nav.activate(),100)
    }
 
@@ -195,10 +210,11 @@ class Tags {
    }
 
    // callback for SearchForm
-   submit_tags_search_term = (tags_context) => {
-      console.log('submit_tags_search_term')
-      this.#tags_context = tags_context
-      this.#tags_context.scroll_y = 0
+   submit_tags_search_term = (tags_search_term) => {
+      if(tags_search_term) {
+         this.#tags_search_term = tags_search_term
+         this.#tags_context.scroll_y = 0
+      }
       this.get_items()
       setTimeout(() => this.activate(),200)
    }
