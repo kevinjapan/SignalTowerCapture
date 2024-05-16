@@ -96,11 +96,17 @@ class CollectionItem {
       if(context.field_filters && Array.isArray(context.field_filters)) {         
          context.field_filters.forEach(filter => {
             let value = trim_char(filter.value,',')
-            if(filter.test && filter.test.toUpperCase() === 'IN') {
-               field_filters_sql += ` AND ${filter.field} IN (${value})`
-            }
-            else {
-               field_filters_sql += ` AND ${filter.field} = "${value}"`
+            if(filter.test) {
+               switch(filter.test.toUpperCase()) {
+                  case 'IN':
+                     field_filters_sql += ` AND ${filter.field} IN (${value})`
+                     break
+                  case 'LIKE':
+                     field_filters_sql += ` AND ${filter.field} LIKE "%${value}%"`
+                     break
+                  default:
+                     field_filters_sql += ` AND ${filter.field} = "${value}"`
+               }
             }
          })
       }
@@ -110,7 +116,7 @@ class CollectionItem {
 
          this.#database.serialize(() => {
             
-            sql = `SELECT COUNT(id) as count FROM collection_items WHERE ${status} ${filter_by_char}`
+            sql = `SELECT COUNT(id) as count FROM collection_items WHERE ${status} ${filter_by_char} ${field_filters_sql}`
             this.#database.get(sql, (error, rows) => {
                if(error) reject(error)
                if(rows) total_count = rows.count           
