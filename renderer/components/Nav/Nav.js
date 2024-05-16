@@ -8,11 +8,11 @@ class Nav {
       {component:'Browse',label:'Browse'},
       {component:'Search',label:'Search'},
       {component:'Tags',label:'Tags'},
-      {component:'RecentRecords',label:'Recent'},
-      {component:'AddCollectionItem',label:'New'},
+      // {component:'RecentRecords',label:'Recent'},
+      // {component:'AddCollectionItem',label:'New'},
       {component:'Files',label:'Files'},
-      {component:'Actions',label:'Actions'},
-      {component:'Config',label:'Config'},
+      // {component:'Actions',label:'Actions'},
+      // {component:'Config',label:'Config'},
    ]
 
    init(){
