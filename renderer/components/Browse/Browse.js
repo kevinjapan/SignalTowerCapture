@@ -2,6 +2,7 @@ import App from '../App/App.js'
 import CollectionItemCard from '../CollectionItemCard/CollectionItemCard.js'
 import PaginationNav from '../PaginationNav/PaginationNav.js'
 import AlphabetCtrl from '../AlphabetCtrl/AlphabetCtrl.js'
+import Notification from '../../components/Notification/Notification.js'
 import { is_valid_response_obj } from '../../utilities/ui_response.js'
 import { ui_display_number_as_str } from '../../utilities/ui_strings.js'
 import { create_section,create_div } from '../../utilities/ui_elements.js'
@@ -171,10 +172,13 @@ class Browse {
                      bottom_pagination_nav.activate()
                   }
                   else {
+                        this.#browse_section.append(create_div({
+                           attributes:[{key:'id',value:'browse_outcome'}]
+                        }))
+                        Notification.notify('#browse_outcome','There are no records in the system.',['bg_inform'])
+                     
                      let number_records = document.getElementById('number_records')
-                     if(number_records) {             
-                        number_records.innerText = ``
-                     }
+                     if(number_records) number_records.innerText = ``
                   }
                   // re-instate scroll position if user had scrolled list before opening a record
                   setTimeout(() => window.scroll(0,this.#browse_context.scroll_y),50)
@@ -190,11 +194,10 @@ class Browse {
             }
          }
          catch(error) {
-            let props = {
+            App.switch_to_component('Error',{
                msg:'Sorry, we were unable to access the Records.',
                error:error
-            }
-            App.switch_to_component('Error',props)
+            })
          }
       }
    }
