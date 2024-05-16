@@ -4,7 +4,7 @@ import CollectionItemCard from '../CollectionItemCard/CollectionItemCard.js'
 import PaginationNav from '../PaginationNav/PaginationNav.js'
 import { ui_display_number_as_str } from '../../utilities/ui_strings.js'
 import { create_section,create_div } from '../../utilities/ui_elements.js'
-import { init_card_img_loads } from '../../utilities/ui_utilities.js'
+import { init_card_img_loads,no_root_folder } from '../../utilities/ui_utilities.js'
 
 
 
