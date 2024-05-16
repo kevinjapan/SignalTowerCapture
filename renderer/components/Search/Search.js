@@ -2,8 +2,8 @@ import App from '../App/App.js'
 import SearchForm from '../SearchForm/SearchForm.js'
 import CollectionItemCard from '../CollectionItemCard/CollectionItemCard.js'
 import PaginationNav from '../PaginationNav/PaginationNav.js'
-import { ui_display_number_as_str,trim_end_char } from '../../utilities/ui_strings.js'
-import { create_section,create_h,create_div } from '../../utilities/ui_elements.js'
+import { ui_display_number_as_str } from '../../utilities/ui_strings.js'
+import { create_section,create_div } from '../../utilities/ui_elements.js'
 import { init_card_img_loads } from '../../utilities/ui_utilities.js'
 
 
@@ -49,23 +49,17 @@ class Search {
       if(this.#root_folder === '') return no_root_folder()
 
       this.#search_section = create_section({
-         attributes:[
-            {key:'id',value:'search_section'}
-         ],
+         attributes:[{key:'id',value:'search_section'}],
          classlist:['max_w_full','pt_1']
       })
 
       let search_status = create_section({
-         attributes:[
-            {key:'id',value:'search_status'}
-         ],
+         attributes:[{key:'id',value:'search_status'}],
          classlist:['p_0','bg_warning']
       })
 
       this.#search_results_container = create_div({
-         attributes:[
-            {key:'id',value:'search_results_container'}
-         ],
+         attributes:[{key:'id',value:'search_results_container'}],
          classlist:['grid','grid_cards_layout']
       })
 
@@ -93,23 +87,18 @@ class Search {
       return this.#search_section
    }
 
-
-
    // enable buttons/links displayed in the render
    activate = () => {
       init_card_img_loads()
    }
 
-   
    //
    // retrieve the paginated search results 
    //
    get_items = async () => {
 
       if(this.#search_context) {
-
          try {
-
             const collection_items_obj = await window.collection_items_api.searchCollectionItems(this.#search_context)
 
             if (typeof collection_items_obj != "undefined") {
@@ -160,9 +149,7 @@ class Search {
                   }
                   else {
                      let number_records = document.getElementById('number_records')
-                     if(number_records) {             
-                        number_records.innerText = 'No matching records were found. '
-                     }
+                     if(number_records) number_records.innerText = 'No matching records were found. '
                   }
 
                   // re-instate scroll position if user had scrolled list before opening a record
@@ -170,9 +157,7 @@ class Search {
                }
                else {
                   let search_status = document.getElementById('search_status')
-                  if(search_status) {
-                     search_status.innerText = collection_items_obj.message
-                  }
+                  if(search_status) search_status.innerText = collection_items_obj.message
                }
             }
             else {
@@ -180,11 +165,10 @@ class Search {
             }
          }
          catch(error) {
-            let props = {
+            App.switch_to_component('Error',{
                msg:'Sorry, we were unable to access the Records.',
                error:error
-            }
-            App.switch_to_component('Error',props)
+            })
          }
       }
       else {
@@ -208,9 +192,7 @@ class Search {
 
    add_number_results = () => {
       this.#search_section.append(create_div({
-         attributes:[
-            {key:'id',value:'number_records'}
-         ],
+         attributes:[{key:'id',value:'number_records'}],
          classlist:['p_.5','pt_1','text_center']
       }))
    }
@@ -225,13 +207,9 @@ class Search {
 
    //
    clear_search = () => {
-      if(this.#search_results_container) {
-         this.#search_results_container.replaceChildren()
-      }
+      if(this.#search_results_container) this.#search_results_container.replaceChildren()
       let number_records = document.getElementById('number_records')
-      if(number_records) {
-         number_records.innerText = ''
-      }
+      if(number_records) number_records.innerText = ''
    }
 
    // callback for PageNavigation
@@ -242,10 +220,7 @@ class Search {
       setTimeout(() => this.activate(),200)
    }
 
-
-
 }
-
 
 
 export default Search
