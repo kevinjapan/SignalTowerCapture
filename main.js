@@ -93,6 +93,7 @@ const createWindow = async() => {
       }
    })
 
+   // future : place menu in separate file - but requires load_client_component / main_window
    Menu.setApplicationMenu(
       Menu.buildFromTemplate([
          {
@@ -101,6 +102,41 @@ const createWindow = async() => {
                {
                   label: 'Exit',
                   click:() => close_app()
+               }
+            ]
+         },
+         {
+            label: 'Records',
+            submenu: [
+               {
+                  label: 'Recent Records',
+                  click: () => load_client_component('RecentRecords')
+               },
+               {
+                  label: 'Add a New Record',
+                  click: () => load_client_component('AddCollectionItem')
+               },
+               {
+                  label: 'Deleted Records',
+                  click: () => load_client_component('DeletedRecords')
+               }
+            ]
+         },
+         {
+            label: 'Actions',
+            submenu: [
+               {
+                  label: 'Actions',
+                  click: () => load_client_component('Actions')
+               }
+            ]
+         },
+         {
+            label: 'Config',
+            submenu: [
+               {
+                  label: 'Config',
+                  click: () => load_client_component('Config')
                }
             ]
          },
