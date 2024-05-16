@@ -6,8 +6,6 @@ import { get_ext,is_img_ext,get_file_type_icon,file_exists,build_img_elem } from
 class DisplayImgOrIcon {
 
    static render = async(parent_elem,file_path,alt_text) => {
-      console.log('in here')
-
       if(await file_exists(file_path)) {
          if(is_img_ext(file_path)) {
             // process img file            
