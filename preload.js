@@ -31,7 +31,7 @@ contextBridge.exposeInMainWorld('collection_items_api', {
    getItems: (context) => ipcRenderer.invoke('items:getItems',context),
    getCollectionItemFields: () => ipcRenderer.invoke('items:getCollectionItemFields'),
    getCollectionItem: (id) => ipcRenderer.invoke('items:getCollectionItem',id),
-   addCollectionItem: (collection_item) => ipcRenderer.invoke('items:addCollectionItem',collection_item),   
+   addCollectionItem: (collection_item) => ipcRenderer.invoke('items:addCollectionItem',collection_item),
    updateCollectionItem: (collection_item) => ipcRenderer.invoke('items:updateCollectionItem',collection_item),
    deleteCollectionItem: (id) => ipcRenderer.invoke('items:deleteCollectionItem',id),
    restoreCollectionItem: (id) => ipcRenderer.invoke('items:restoreCollectionItem',id),

@@ -192,7 +192,6 @@ class Files {
          }
       }
       catch(error) {
-         console.log('fail in get_matching_records')
          setTimeout(() => Notification.notify('#files_outcome','Sorry, we failed to retrieve the list of matching records, so matches may be missed. You might want to try again later.',[],false),200)
       }
    }

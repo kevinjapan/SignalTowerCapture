@@ -91,6 +91,7 @@ async function add_collection_item (event,new_collection_item) {
    }
 }
 
+
 async function update_collection_item (event,updated_collection_item) {
 
    if(!collection_item_controller_db) return NOTIFY.DATABASE_UNAVAILABLE

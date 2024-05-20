@@ -5,7 +5,6 @@ import { create_h,create_p,create_div,create_section,create_button } from '../..
 
 
 
-
 class ImportJSONComponent {
 
    #completed_callback
@@ -18,9 +17,7 @@ class ImportJSONComponent {
    render = () => { 
 
       const import_json_component = create_section({
-         attributes:[
-            {key:'id',value:'import_json_component'}
-         ],
+         attributes:[{key:'id',value:'import_json_component'}],
          classlist:['ui_component','h_100']
       })
    
@@ -34,23 +31,17 @@ class ImportJSONComponent {
       })
 
       let import_json_btn = create_button({
-         attributes:[
-            {key:'id',value:'import_json_btn'}
-         ],
+         attributes:[{key:'id',value:'import_json_btn'}],
          text:'Import JSON File'
       })  
 
       const import_json_outcome = create_div({
-         attributes:[
-            {key:'id',value:'import_json_outcome'}
-         ]
+         attributes:[{key:'id',value:'import_json_outcome'}]
       })
 
       const import_json_fields = create_div({
          classlist:['break_words','bg_lightgrey','text_grey','italic','pl_1','pr_1'],
-         attributes:[
-            {key:'id',value:'import_json_fields'}
-         ]
+         attributes:[{key:'id',value:'import_json_fields'}]
       })
 
       // assemble
@@ -63,9 +54,7 @@ class ImportJSONComponent {
    // enable buttons/links displayed in the render
    activate = async () => {
 
-      //
       // Import a json file
-      //
       const import_json_btn = document.getElementById('import_json_btn')
       if(import_json_btn) {
 
@@ -94,8 +83,9 @@ class ImportJSONComponent {
 
                // call import func in main process
                const import_results_obj = await window.actions_api.importJSONFile(file_path)
-
+               
                if (typeof import_results_obj != "undefined") { 
+
 
                   if(import_results_obj.outcome === 'success') {
                      wait_dlg_component.close()

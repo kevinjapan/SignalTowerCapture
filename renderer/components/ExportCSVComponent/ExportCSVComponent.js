@@ -11,9 +11,7 @@ class ExportCSVComponent {
    render = () => {
 
       const export_csv_component = create_div({
-         attributes:[
-            {key:'id',value:'export_csv_component'}
-         ],
+         attributes:[{key:'id',value:'export_csv_component'}],
          classlist:['ui_component']
       })
    
@@ -23,28 +21,21 @@ class ExportCSVComponent {
       })
 
       let export_csv_btn = create_button({
-         attributes:[
-            {key:'id',value:'export_csv_btn'}
-         ],
+         attributes:[{key:'id',value:'export_csv_btn'}],
          text:'Export CSV File'
       })  
 
       const export_csv_outcome = create_div({
-         attributes:[
-            {key:'id',value:'export_csv_outcome'}
-         ]
+         attributes:[{key:'id',value:'export_csv_outcome'}]
       })
 
       const export_csv_fields = create_div({
          classlist:['break_words','bg_lightgrey','text_grey','italic','pl_1','pr_1'],
-         attributes:[
-            {key:'id',value:'export_csv_fields'}
-         ]
+         attributes:[{key:'id',value:'export_csv_fields'}]
       })
       
       // assemble
       export_csv_component.append(heading,export_csv_btn,export_csv_outcome,export_csv_fields)
-      
       
       return export_csv_component
    }

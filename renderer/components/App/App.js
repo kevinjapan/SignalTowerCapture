@@ -36,15 +36,11 @@ class App {
    }
 
    init = async() => {
-
       const app_config_obj = await window.config_api.getAppConfig()
       if(app_config_obj.outcome === 'success') {
-
          // load root_folder
-         App.#root_folder = trim_end_char(app_config_obj.app_config.root_folder,'\\')  
-          
+         App.#root_folder = trim_end_char(app_config_obj.app_config.root_folder,'\\')
       }
-
    }
 
    static get_root_folder = () => {
