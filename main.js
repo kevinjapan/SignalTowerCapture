@@ -113,24 +113,51 @@ const createWindow = async() => {
             label: 'Records',
             submenu: [
                {
-                  label: 'Recent Records',
-                  click: () => load_client_component('RecentRecords')
-               },
-               {
                   label: 'Add a New Record',
                   click: () => load_client_component('AddCollectionItem')
                },
                {
-                  label: 'Deleted Records',
+                  type:'separator'
+               },
+               {
+                  label: 'View Recent Records',
+                  click: () => load_client_component('RecentRecords')
+               },
+               {
+                  label: 'View Deleted Records',
                   click: () => load_client_component('DeletedRecords')
                }
             ]
          },
+         // to do : - align each submenu item to correct page
+         //         - break up Actions page into separate pages
          {
             label: 'Actions',
             submenu: [
                {
-                  label: 'Actions',
+                  label: 'Backup Database',
+                  click: () => load_client_component('Actions')
+               },
+               {
+                  type:'separator'
+               },
+               {
+                  label: 'Export CSV File',
+                  click: () => load_client_component('Actions')
+               },
+               {
+                  label: 'Import CSV File',
+                  click: () => load_client_component('Actions')
+               },
+               {
+                  type:'separator'
+               },
+               {
+                  label: 'Export JSON File',
+                  click: () => load_client_component('Actions')
+               },
+               {
+                  label: 'Import JSON File',
                   click: () => load_client_component('Actions')
                }
             ]
@@ -139,7 +166,14 @@ const createWindow = async() => {
             label: 'Config',
             submenu: [
                {
-                  label: 'Config',
+                  label: 'App Settings',
+                  click: () => load_client_component('Config')
+               },
+               {
+                  type:'separator'
+               },
+               {
+                  label: 'Configure Tags',
                   click: () => load_client_component('Config')
                }
             ]
