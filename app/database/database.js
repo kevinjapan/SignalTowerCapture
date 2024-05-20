@@ -1,9 +1,6 @@
 const sqlite3 = require('sqlite3').verbose()
-const { 
-   get_full_fields,
-   get_table_create_fields,
-   get_table_insert_fields 
-} = require('../utilities/database_utilities')
+// future: replace database_utilities file (see Todos app)
+const { get_full_fields,get_table_create_fields,get_table_insert_fields } = require('../utilities/database_utilities')
 
 
 //
@@ -11,16 +8,20 @@ const {
 // wrapper class for sqlite3 object
 //
 
+// to do : review all db calls - inc db.serialize() wrappers where appropriate -
+//         eg there are some issues in creating db from scratch. (eg fails to find root_folder)
 
 class Database {
 
    // the sqlite database
    #db
 
+   // db location & filename
    #database_path = './database/signal-tower-capture-db.sqlite'
 
    #last_error
 
+   //
    // Open database file if exists or create, while notify errors to client if any arise
    //
    open_safely = async () => {
@@ -53,8 +54,7 @@ class Database {
          })
       }).catch((error) => this.set_last_error(error))
       
-
-      // this class is just a wrapper for encapsulted sqlite3 database obj
+      // this class is a wrapper for encapsulted sqlite3 database obj
       if(result) {
          let response_obj = {
             outcome:'success',
@@ -71,6 +71,7 @@ class Database {
       }
    }
 
+   //
    // create the database tables
    // sqlite PRIMARY KEY auto-increments by default (we do not explicitly use AUTOINCREMENT)
    //
@@ -79,7 +80,6 @@ class Database {
       this.#db.serialize(async() => {
 
          // CollectionItems table
-         //
          let ci_create_cols_csv = get_table_create_fields('collection_items')
          this.#db.run(`CREATE TABLE IF NOT EXISTS collection_items (${ci_create_cols_csv})`, function (error) {
                if(error) console.log('There was an error initializing the database. ',error.message)
@@ -103,7 +103,6 @@ class Database {
          this.add_new_columns('collection_items_fts')
 
          // Tags table
-         //
          let tags_fields = get_table_create_fields('tags')
          this.#db.run(`CREATE TABLE IF NOT EXISTS tags (${tags_fields})`,function (error) {
                if(error) console.log('There was an error initializing the database. ',error.message)
@@ -113,7 +112,6 @@ class Database {
 
          
          // ActionsLog table
-         //
          let actions_log_fields = get_table_create_fields('actions_log')
          this.#db.run(`CREATE TABLE IF NOT EXISTS actions_log (${actions_log_fields})`, function (error) { 
                if(error) console.log('There was an error initializing the database. ',error.message)
@@ -121,9 +119,7 @@ class Database {
          )
          this.add_new_columns('actions_log')
          
-  
          // AppConfig table
-         //
          let app_config_fields = get_table_create_fields('app_config')
          this.#db.run(`CREATE TABLE IF NOT EXISTS app_config (${app_config_fields})`, function (error) { 
                if(error) console.log('There was an error initializing the database. ',error.message)
@@ -131,6 +127,7 @@ class Database {
          )
          this.add_new_columns('app_config')
 
+         // init for Full Text Search synching
          this.create_fts_triggers()
       })
    }
@@ -175,54 +172,53 @@ class Database {
       })
    }
 
-
    // Triggers for FTS
    // synch 'collection_items_fts' w/ 'collection_items'
    //
    create_fts_triggers() {
 
-         let fts_insert_fields = get_table_insert_fields('collection_items_fts')
-         let fts_insert_fields_values = fts_insert_fields.map(field => `NEW.${field}`)
+      let fts_insert_fields = get_table_insert_fields('collection_items_fts')
+      let fts_insert_fields_values = fts_insert_fields.map(field => `NEW.${field}`)
 
-         // create record trigger
-         this.#db.run(`CREATE TRIGGER IF NOT EXISTS insert_collection_items_fts 
-                        after INSERT on collection_items
-                        begin
-                           INSERT INTO collection_items_fts (${fts_insert_fields})
-                           VALUES(${fts_insert_fields_values});
-                        end;`,function (error) {
-               if(error) console.log('There was an error initializing the database. ',error.message)
-            }
-         )
+      // create record trigger
+      this.#db.run(`CREATE TRIGGER IF NOT EXISTS insert_collection_items_fts 
+                     after INSERT on collection_items
+                     begin
+                        INSERT INTO collection_items_fts (${fts_insert_fields})
+                        VALUES(${fts_insert_fields_values});
+                     end;`,function (error) {
+            if(error) console.log('There was an error initializing the database. ',error.message)
+         }
+      )
 
-         // update record trigger
-         let update_fields = fts_insert_fields.filter(field => {
-            return field !== 'id'
-         })
-         let new_update_fields = update_fields.map(field => {
-            return `${field} = NEW.${field}`
-         })
-         this.#db.run(`CREATE TRIGGER IF NOT EXISTS update_collection_items_fts 
-                        after UPDATE on collection_items
-                        begin
-                           UPDATE collection_items_fts
-                           SET ${new_update_fields}
-                           WHERE id = NEW.id;
-                        end;`, function (error) {
-               if(error) console.log('There was an error initializing the database. ',error.message)
-            }
-         )
+      // update record trigger
+      let update_fields = fts_insert_fields.filter(field => {
+         return field !== 'id'
+      })
+      let new_update_fields = update_fields.map(field => {
+         return `${field} = NEW.${field}`
+      })
+      this.#db.run(`CREATE TRIGGER IF NOT EXISTS update_collection_items_fts 
+                     after UPDATE on collection_items
+                     begin
+                        UPDATE collection_items_fts
+                        SET ${new_update_fields}
+                        WHERE id = NEW.id;
+                     end;`, function (error) {
+            if(error) console.log('There was an error initializing the database. ',error.message)
+         }
+      )
 
-         // delete record trigger
-         this.#db.run(`CREATE TRIGGER IF NOT EXISTS delete_collection_items_fts 
-                        after DELETE on collection_items
-                        begin
-                           DELETE FROM collection_items_fts
-                           WHERE id = OLD.id;
-                        end;`, function (error) {
-               if(error) console.log('There was an error initializing the database. ',error.message)
-            }
-         )
+      // delete record trigger
+      this.#db.run(`CREATE TRIGGER IF NOT EXISTS delete_collection_items_fts 
+                     after DELETE on collection_items
+                     begin
+                        DELETE FROM collection_items_fts
+                        WHERE id = OLD.id;
+                     end;`, function (error) {
+            if(error) console.log('There was an error initializing the database. ',error.message)
+         }
+      )
    }
 
    close() {
