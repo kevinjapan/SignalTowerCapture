@@ -11,6 +11,10 @@
 //
 //
 
+
+// to do : review all db calls - inc db.serialize() wrappers where appropriate -
+//         eg there are some issues in creating db from scratch.
+
 const { app, BrowserWindow, ipcMain, Menu } = require('electron')
 const glob = require('glob')
 const path = require('node:path')
@@ -154,7 +158,8 @@ const createWindow = async() => {
    // open devtools if dev env
    if(is_dev) main_window.webContents.openDevTools()
 
-   main_window.loadFile(`.${path.sep}renderer${path.sep}index.html`)
+   // delay to allow API setups to complete before renderer attempts to call
+   setTimeout(() => main_window.loadFile(`.${path.sep}renderer${path.sep}index.html`),300)
 }
 
 
