@@ -1,22 +1,8 @@
 const CollectionItem = require('./CollectionItem')
+const { chunk_array } = require('../app/utilities/utilities')
 
 
 // Import a JSON file of CollectionItem records.
-// Currently we insert single CollectionItem records at a time,
-// inefficient but sufficient for current use-cases (primarily dev)
-
-// risks
-// - large import files (>300 records) will noticeably lock the app
-//
-// mitigations
-// - batch inserts (see below)
-// - limit size of export files we create (say 500 records) but create multiples if required.
-//
-// future:
-// - build batch insert statements - say 100 records each insert (max permitted is 1000 values)
-//
-
-
 
 class ImportJSONFile {
 
@@ -25,7 +11,7 @@ class ImportJSONFile {
    #last_error
 
    // sql - the maximum number of rows in one VALUES clause is 1000
-   #batch_size = 100
+   #batch_size = 10 // to do : test w/ 100
 
 
    constructor(database) {
@@ -39,7 +25,10 @@ class ImportJSONFile {
       try {
          if(fs.existsSync(file_path)) {
             const collection_items = await this.get_json_file_contents(file_path)
-            return await this.process_records(collection_items)
+            const no_duplicate_collection_items = await this.remove_duplicates(collection_items)
+            const result = await this.process_records(no_duplicate_collection_items)
+            return {outcome:'success'} // to do : temp to verify UI front-end closes dlg
+                                       //         we need actual response ('result' above) from main process
          }
          else {
             throw 'The import file was not found.'
@@ -55,50 +44,77 @@ class ImportJSONFile {
       }
    }
 
+   // to do : we may have to manage json file sizes on export? - so export to batch files - not single monolithic file
 
-   process_records = async(collection_items) => {
+   //
+   // Duplicate check
+   // Remove any items for which we already have a record
+   // the unique key is 'folder_path\\file_name'
+   //
+   remove_duplicates = async(collection_items) => {
 
-      const collection_item = new CollectionItem(this.#database)
-      let promise_result = null
+      const filtered_items = []
 
-      // using for(..of..) instead of forEach() allows us to await successfully
-      for(const item of collection_items) {
-
-         // new item, we remove id
-         // cf ImportCSVFile - we have a predictable JSON object here, and create()
-         // will be used by CollectionItemForm UI, so we don't pass 'id' by default
-         delete item.id
-
-         promise_result = await new Promise(async(resolve,reject) => {
-
-            let result = await collection_item.create(item,false)            
-            if(result.outcome === 'success') {
-               resolve(result.collection_item.id)
-            }
-            else {
-               reject(result.message)
-            }
-         }).catch((error) => {
-            this.set_last_error(error)
+      for(const item of collection_items) {         
+         const collection_item_obj = new CollectionItem(this.#database)
+         let attempt_read_existing = await collection_item_obj.read({
+            page:1,
+            field_filters:[
+               {field:'folder_path',value:item.folder_path},
+               {field:'file_name',value:item.file_name}
+            ]
          })
-         
-         if(promise_result) {
-            // nothing
-         }
-         else {
-            let fail_response = {
-               query:'import_json_file',
-               outcome:'fail',
-               message:'There was an error attempting to create the record. [ImportJSONFile.process_records]  ' + this.#last_error
+         if(attempt_read_existing.outcome === 'success') {
+            if(attempt_read_existing.collection_items.length === 0) {
+               // ok to proceed - we will create a record for this item
+               filtered_items.push(item)
             }
-            this.clear_last_error()
-            return fail_response
          }
       }
+      return filtered_items
+   }
+
+
+   //
+   // Batch insert records (max permitted is 1000 values)
+   // We assume all are duplicate_checked prior to submission here
+   //
+   process_records = async(collection_items) => {
+
+      if(!Array.isArray(collection_items) || collection_items.length < 1) return false
+
+      const collection_item = new CollectionItem(this.#database)
       
-      return {
-         query:'import_json_file',
-         outcome:'success'
+      let promise_result = null
+      const arr_of_chunks = chunk_array(collection_items,this.#batch_size)
+ 
+      promise_result = await new Promise(async(resolve,reject) => {
+
+         // submit each 'chunk' of items for batch INSERT
+         for(const chunk of arr_of_chunks) {
+            let result = await collection_item.create_batch(chunk)    
+            if(result.outcome === 'success') {
+               resolve({outcome:'success'})
+            }
+            else {
+               reject({outcome:'fail'})
+            }
+         }
+         resolve({outcome:'success'})
+      })
+     
+      // to do : adapt this handling block
+      if(promise_result) {
+         // nothing
+      }
+      else {
+         let fail_response = {
+            query:'import_json_file',
+            outcome:'fail',
+            message:'There was an error attempting to create the record. [ImportJSONFile.process_records]  ' + this.#last_error
+         }
+         this.clear_last_error()
+         return fail_response
       }
    }
 
@@ -120,7 +136,6 @@ class ImportJSONFile {
       })
       .then(JSON.parse)
    }
-
 
 
    //
