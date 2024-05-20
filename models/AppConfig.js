@@ -167,7 +167,7 @@ class AppConfig {
       })
       
       // if no rows found, app_config hasn't been initialized
-      if(result.length < 1) {
+      if(!result || result.length < 1) {
          result = false
       }
       
