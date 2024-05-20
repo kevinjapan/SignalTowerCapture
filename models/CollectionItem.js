@@ -136,8 +136,6 @@ class CollectionItem {
                      LIMIT ${offset_clause === '' ? this.#limit_read_all_records : this.#items_per_page}
                      ${offset_clause}`
 
-            console.log('sql',sql)
-
             this.#database.all(sql, (error, rows) => {
                if(error) reject(error)
                if(rows) {
@@ -283,9 +281,6 @@ class CollectionItem {
          )
       }).catch((error) => this.set_last_error(error))
 
-      // const in_card_fields = this.#full_fields_list.filter((field) => {
-      //    if(field.in_card === true) return field
-      // })
       const fields = CollectionItem.#full_fields_list.map((field) => {
          return {
             key:field.key,
@@ -317,13 +312,9 @@ class CollectionItem {
    }
 
 
-
    //
    // CREATE
-   // we rely on single inserts even for batch inserts since -
-   // - allows us to cleanly prevent duplicates
-   // - the code w/ prepared statements becomes unclear with multiple inserts
-   // - batch inserts is a seldom used feature
+   //
    async create(collection_item,editable_only = true) {
 
       // min requirements
@@ -339,21 +330,16 @@ class CollectionItem {
       // prevent duplicate
       // we use read() since we need to use field_filters
       // small additional cost (count) but low impact as volume imports are v. infrequent 
-      let attempt_read_existing = await this.read(
-         {
+      let attempt_read_existing = await this.read({
             page:1,
             field_filters:[
                {field:'folder_path',value:collection_item.folder_path},
                {field:'file_name',value:collection_item.file_name}
             ]
-         }
-      )
+      })
 
       // 'success' just means it worked, we still might not have a match
       if(attempt_read_existing.outcome === 'success') {
-
-         console.log('collection_item',collection_item)
-         console.log('attempt_read_existing',attempt_read_existing)
 
          // check for record
          if(attempt_read_existing.collection_items.length === 0) {
@@ -370,12 +356,9 @@ class CollectionItem {
                fields = [...fields,{key:'created_at'},{key:'updated_at'}]
             }
 
-            const field_keys = fields.map((field) => {
-               return field.key
-            })
+            const field_keys = fields.map((field) => field.key)
 
-            // build '?' string
-            // const inserts = Array(fields.length).fill(0)
+            // build '?' string=
             const inserts = field_keys.map((field) => {
                return '?'
             })
@@ -407,19 +390,18 @@ class CollectionItem {
             if(field_values[updated_at_pos] === undefined) field_values[updated_at_pos] = created_at
 
             const sql = `INSERT INTO collection_items(${field_keys.toString()}) 
-                        VALUES(${inserts.toString()})`
+                         VALUES(${inserts.toString()})`
 
             const result = await new Promise((resolve,reject) => {
-               this.#database.run(
-                  sql,field_values, function(error) {
-                     if(error) {
-                        reject(error)
-                     }
-                     else {
+               
+               this.#database.serialize(() => {
+                  this.#database.run(
+                     sql,field_values, function(error) {
+                        if(error) reject(error)
                         resolve(this.lastID)
                      }
-                  }
-               )
+                  )
+               })
             }).catch((error) => this.set_last_error(error))
          
             if(result) {
@@ -461,9 +443,91 @@ class CollectionItem {
 
 
    //
+   // Create a batch of records
+   // For efficiency, we do not duplicate_check here, so clients are responsible for duplicate_checks
+   // The focus of this function is to batch insert - say 100 records each insert (max permitted is 1000 values)  
+   // syntax: INSERT INTO 'tablename' ('column1', 'column2') VALUES ('data1', 'data2'),('data1', 'data2'),('data1', 'data2');
+   // currently, we don't use placeholders in sql statement - ok for this func - only internal clients
+   // future: how to use placeholders for multiple VALUES LISTS in param to .run() below?
+   // to do : any issue w/ triggers on FTS not working since we are not doing single INSERTs?
+   //
+   async create_batch(collection_items) {
+
+      // to do : do we check each has required min required fields?
+      // if(collection_item.folder_path ===  undefined || collection_item.file_name === undefined) {
+      
+      let fields = CollectionItem.#full_fields_list.filter(field => field.key !== 'id')
+      const field_keys = fields.map((field) => field.key)
+      let values_lists = []
+
+      for(const item of collection_items) {
+         let item_values = []
+
+         for(const key of field_keys) {
+            let value = item[key]
+            if(value) {
+               item_values.push(`"${item[key]}"`)
+            }
+            else if(key === 'created_at' || key === 'updated_at') {
+               item_values.push(`"${get_sqlready_datetime()}"`)
+            }
+            else if(key === 'title') {
+               // Auto-gen candidate title from the file name if non-exists
+               item['file_name'] ? item_values.push(`"${title_from_file_name(item['file_name'])}"`) : item_values.push(`""`)
+            }
+            else if(key === 'deleted_at') {
+               item_values.push('null')
+            }
+            else {
+               item_values.push(`""`)
+            }
+         }         
+         values_lists.push('(' + item_values.join(',') + ')')
+      }
+
+      const sql = `INSERT INTO collection_items(${field_keys.join(',')}) VALUES ${values_lists.join(',')}`
+      let last_id = 0    // last inserted row ID
+      let changes = 0    // number rows affected      
+
+      const result = await new Promise((resolve,reject) => {         
+         this.#database.serialize(async() => {
+            this.#database.run(
+               sql,[], function(error) {
+                  if(error) reject(error)
+                     last_id = this.lastID
+                     changes = this.changes
+                     resolve('success')
+               }
+            )
+         })
+      }).catch((error) => this.set_last_error(error))
+   
+      if(result) {
+         return {
+            query:'create_collection_item',
+            outcome:'success',
+            last_id:last_id,
+            changes:changes
+         }
+      }
+      else {
+         let fail_response = {
+            query:'create_collection_item',
+            outcome:'fail',
+            message:`There was an error attempting to create the record. [CollectionItem.create]  
+                  ` + this.#last_error.message 
+         }
+         this.clear_last_error()
+         return fail_response
+      }
+   }
+
+
+   //
    // Create From CSV
    // cf create() - here, we always receive a raw csv line, which likely contains a prev. 'id' field
    // so we have to process and remove ourselves
+   // to do : separate duplicate_check from INSERT as we have done w/ create_batch above.
    //
    async create_from_csv(csv) {
 
@@ -480,15 +544,13 @@ class CollectionItem {
       // prevent duplicate
       // we use read() since we need to use field_filters
       // small additional cost (count) but low impact as volume imports are v. infrequent 
-      let attempt_read_existing = await this.read(
-         {
-            page:1,
-            field_filters:[
-               {field:'folder_path',value:mapped_values['folder_path']},
-               {field:'file_name',value:mapped_values['file_name']}
-            ]
-         }
-      )
+      let attempt_read_existing = await this.read({
+         page:1,
+         field_filters:[
+            {field:'folder_path',value:mapped_values['folder_path']},
+            {field:'file_name',value:mapped_values['file_name']}
+         ]
+      })
 
       // 'success' just means it worked, we still might not have a match
       if(attempt_read_existing.outcome === 'success') {
@@ -669,7 +731,6 @@ class CollectionItem {
          this.clear_last_error()
          return fail_response
       }
-
    }
 
    //
@@ -712,10 +773,8 @@ class CollectionItem {
          this.clear_last_error()
          return fail_response
       }
-
    }
    
-
    //
    // HARD DELETE
    //
@@ -810,7 +869,6 @@ class CollectionItem {
    }
 
 
-
    //
    // SEARCH
    // sql search 
@@ -883,7 +941,6 @@ class CollectionItem {
          return false
       })
 
-      
       // execute the search
       let search_result = null
       
@@ -950,7 +1007,6 @@ class CollectionItem {
       }
       this.clear_last_error()
       return response
-   
    }
 
 
@@ -959,7 +1015,6 @@ class CollectionItem {
    // FULL TEXT SEARCH
    // sql search using fts5 extension
    // dependency: virtual table / triggers
-   //
    // to vary search cols at user request - we can modify MATCH term to limit cols -
    //     eg   ci_fts MATCH 'title: eland';
    //          ci_fts MATCH '{title content_desc}:eland';
@@ -1089,9 +1144,7 @@ class CollectionItem {
       // Reduce fields to those required in CollectionItemCard (inc 'type' for displaying dates)
       const in_card_fields = this.get_in_card_fields(CollectionItem.#full_fields_list)
 
-
-      // Respond
-      
+      // Respond      
       if(search_result || search_result === null) {
          return {
             query:'search_collection_items',
@@ -1132,18 +1185,15 @@ class CollectionItem {
       })
    }
 
-
    //
    // Dynamically build the INSTR sql constuct for our search tokens
    //
    build_instr_funcs_sql = (tokens) => {
-
       let sql = ''
       for(let i in tokens) {
          sql += ` INSTR( ${SEARCH_FIELDS} , ? ) +`     
       }
       return sql.slice(0,-1)
-
    }
 
 
