@@ -5,6 +5,7 @@ const get_random_int = (min_value = 5, max_value = 15) => {
    return value
 }
 
+
 // 
 // Create assoc arr as obj from two 1-d arrays
 //
@@ -15,6 +16,18 @@ const assoc_arr_obj = (arr_1,arr_2) => {
       assoc_arr_obj[arr_1[i]] = arr_2[i]
    }
    return assoc_arr_obj
+}
+
+
+//
+// Break array into array of arrays of chunk_size
+//
+const chunk_array = (arr,chunk_size) => {
+   let chunked = []
+   for(let i = 0; i < arr.length; i += chunk_size) {
+      chunked.push(arr.slice(i,i + chunk_size))
+   }
+   return chunked
 }
 
 
@@ -47,6 +60,7 @@ const title_from_file_name = (file_name) => {
 module.exports = {
    get_random_int,
    assoc_arr_obj,
+   chunk_array,
    title_from_file_name,
    file_name_from_path
 }
