@@ -2,18 +2,13 @@ import App from '../App/App.js'
 import SelectFolderComponent from '../SelectFolderComponent/SelectFolderComponent.js'
 import FormBtns from '../FormBtns/FormBtns.js'
 import Notification from '../../components/Notification/Notification.js'
+import { icon } from '../../utilities/ui_utilities.js'
 import { ui_friendly_text } from '../../utilities/ui_strings.js'
-import { 
-   create_section,
-   create_div,
-   create_p,
-   create_form,
-   create_label,
-   create_input,
-   create_textarea
-} from '../../utilities/ui_elements.js'
+import { create_section,create_h,create_div,create_p,create_form,create_label,create_input,create_textarea } from '../../utilities/ui_elements.js'
 
 
+
+// App Settings
 
 
 class AppConfigForm {
@@ -33,6 +28,14 @@ class AppConfigForm {
 
       let app_config_record = record_result_obj.app_config
 
+      
+      let app_settings_section = create_section({
+         attributes:[
+            {key:'id',value:'app_settings_section'}
+         ],
+         classlist:['fade_in','bg_white','box_shadow','rounded','m_2','mb_2','pb_2']
+      })
+
       let form = create_form({
          attributes:[
             {key:'id',value:'item_form'}
@@ -40,9 +43,28 @@ class AppConfigForm {
          classlist:['config_form','border','mt_0']
       })
       
-      // notification is at bottom of form only - so force user to act at that location
+      // to do : review : notification is at bottom of form only - so force user to act at that location
       // let bottom_btns = FormBtns.render(null,false)
       // form.append(bottom_btns)
+
+
+      const app_settings_header = create_div({
+         classlist:['flex','align_items_center']
+      })
+      const app_settings_section_h = create_h({
+         level:'h2',
+         classlist:['mt_2','mb_0','pt_0','pb_0'],
+         text:'App Settings'
+      })
+      app_settings_header.append(icon('settings'),app_settings_section_h)
+      const app_settings_section_desc = create_p({
+         classlist:['mt_0','mb_0','pt_0','pb_0'],
+         text:`Update your application settings here.`
+
+      })
+      app_settings_section.append(app_settings_header,app_settings_section_desc)
+
+
 
       const text_col = create_div({
          classlist:['text_col']
@@ -165,8 +187,9 @@ class AppConfigForm {
       
       // assemble
       form.append(create_div(),top_btns,submit_outcome)
+      app_settings_section.append(form)
    
-      return form
+      return app_settings_section
    }
    
    //
