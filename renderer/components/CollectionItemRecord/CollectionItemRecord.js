@@ -16,6 +16,7 @@ class CollectionItemRecord {
 
    #record
 
+
    constructor(props) {
       this.#props = props
    }
@@ -41,7 +42,7 @@ class CollectionItemRecord {
 
       // component container
       this.#record = create_section({
-         classlist:['collection_item_record']
+         classlist:['collection_item_record','fade_in']
       })
 
       // 2-col layout
@@ -54,9 +55,7 @@ class CollectionItemRecord {
 
       // img viewer (hidden initially)
       let img_view = create_div({
-         attributes:[
-            {key:'id',value:'img_view'}
-         ],
+         attributes:[{key:'id',value:'img_view'}],
          classlist:['img_view']
       })
 
@@ -71,9 +70,7 @@ class CollectionItemRecord {
 
       // 'form' layout inside text_col
       let form_layout = create_div({
-         attributes:[
-            {key:'id',value:'item_form'}
-         ],
+         attributes:[{key:'id',value:'item_form'}],
          classlist:['form_layout']
       })
       text_col.append(form_layout)

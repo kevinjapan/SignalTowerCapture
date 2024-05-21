@@ -18,7 +18,6 @@ class Browse {
 
    #browse_section
 
-
    #browse_results_container
 
    // we retain browse state (page,scroll_y,etc) by passing a 'context token'
@@ -36,13 +35,12 @@ class Browse {
 
    #root_folder
 
+
    constructor(props) {
 
       // 'back' to list from Records will return the passed 'context token'
-      if(props) {
-         
+      if(props) {         
          this.#browse_context = props.context
-
          // retain 'filter_char' if 'back' from list item (CollectionItemRecord)
          if(props.context.filters) {
             if(props.context.filters.filter_char) {
@@ -60,20 +58,15 @@ class Browse {
       if(this.#root_folder === '') return no_root_folder()
 
       this.#browse = create_section({
-         attributes:[
-            {key:'id',value:'browse'}
-         ],
-         classlist:['max_w_full']
+         attributes:[{key:'id',value:'browse'}],
+         classlist:['fade_in','max_w_full']
       })
 
       this.#browse_section = create_section({
-         attributes:[
-            {key:'id',value:'browse_section'}
-         ],
+         attributes:[{key:'id',value:'browse_section'}],
          classlist:['max_w_full']
       })
 
-      
       let alphabet_ctrl_props = {
          selected_char:null,
          submit_alpha_filter:this.submit_alpha_filter,
@@ -86,21 +79,16 @@ class Browse {
       this.add_number_results()
       
       this.#browse_results_container = create_div({
-         attributes:[
-            {key:'id',value:'browse_results_container'}
-         ],
+         attributes:[{key:'id',value:'browse_results_container'}],
          classlist:['grid','grid_cards_layout']
       })
 
       // required for re-instating search_context on 'back' to list actions
-      if(this.#browse_context) {
-         this.get_items()
-      }
+      if(this.#browse_context) this.get_items()
 
       this.#browse.append(this.#browse_section)
       return this.#browse
    }
-
 
    // enable buttons/links displayed in the render
    activate = () => {
@@ -108,13 +96,10 @@ class Browse {
    }
 
 
-   //
    // retrieve the paginated items results 
-   //
    get_items = async () => {
 
       if(this.#browse_context) {
-
          if(this.#filter_char != null) {
             this.#browse_context.filters = {filter_char:`${this.#filter_char}`}
          }
@@ -126,19 +111,16 @@ class Browse {
             const collection_items_obj = await window.collection_items_api.getItems(this.#browse_context)
          
             if (typeof collection_items_obj != "undefined" && collection_items_obj.outcome === 'success') {
-
                if(await is_valid_response_obj('read_collection_items',collection_items_obj)) {
-                        
+
                   // re-assemble
                   this.#browse_section.replaceChildren()
                   this.#browse_results_container.replaceChildren()
 
                   this.add_number_results()
-
                   let page_count = Math.ceil(collection_items_obj.count / collection_items_obj.per_page)
 
-                  if(collection_items_obj.collection_items.length > 0) {
-                  
+                  if(collection_items_obj.collection_items.length > 0) {                  
                      const top_pagination_nav = new PaginationNav('top',this.go_to_page,page_count,this.#browse_context.page)
                      this.#browse_section.append(top_pagination_nav.render())
                      top_pagination_nav.activate()
@@ -152,7 +134,6 @@ class Browse {
                         root_folder: this.#root_folder,
                         context: this.#browse_context
                      }
-
                      const collection_item_card = new CollectionItemCard(props) 
                      if(Array.isArray(collection_items_obj.collection_items)) {
                         collection_items_obj.collection_items.forEach((item) => {        
@@ -211,7 +192,6 @@ class Browse {
       setTimeout(() => this.activate(),50)
    }
 
-
    // callbacks for AlphabetCtrl
    submit_alpha_filter = (char) => {
       this.#browse_context.page = 1
@@ -230,14 +210,10 @@ class Browse {
 
    add_number_results = () => {
       this.#browse_section.append(create_div({
-         attributes:[
-            {key:'id',value:'number_records'}
-         ],
+         attributes:[{key:'id',value:'number_records'}],
          classlist:['p_.5','pt_1','text_center']
       }))      
    }
-
-
 }
 
 

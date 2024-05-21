@@ -5,11 +5,11 @@ import { get_title_from_filename } from '../../utilities/ui_strings.js'
 import { no_root_folder } from '../../utilities/ui_utilities.js'
 
 
-//
+
 // Files - quick inject record into system
 // honed-down alternative to CollectionItemForm for rapid multiple file injection 
 // only includes field marked as 'injectable'
-//
+
 
 class CollectionItemInjectForm {
 
@@ -18,10 +18,10 @@ class CollectionItemInjectForm {
 
    #props
 
+
    constructor(props) {
       this.#props = props
    }
-
 
    render = async() => {
 
@@ -30,7 +30,7 @@ class CollectionItemInjectForm {
             
       // component container
       const inject_form_container = create_section({
-         classlist:['inject_form_container']
+         classlist:['fade_in','inject_form_container']
       })
 
       const heading = create_h({
@@ -39,9 +39,7 @@ class CollectionItemInjectForm {
       })
 
       const item_form_wrap = create_section({
-         attributes:[
-            {key:'id',value:'item_form_wrap'}
-         ],
+         attributes:[{key:'id',value:'item_form_wrap'}],
          classlist:['inject_form']
       })
       
@@ -95,19 +93,15 @@ class CollectionItemInjectForm {
          }
       }
       catch(error) {
-         let props = {
+         App.switch_to_component('Error',{
             msg:'Sorry, we were unable to access the Records.',
             error:error
-         }
-         App.switch_to_component('Error',props)
+         })
       }
    }
 
-
    // enable buttons/links displayed in the render
-   activate = () => {
-
-   }
+   activate = () => {}
 
 }
 
