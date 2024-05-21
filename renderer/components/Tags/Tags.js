@@ -53,7 +53,7 @@ class Tags {
 
       this.#tags_section = create_section({
          attributes:[{key:'id',value:'tags_section'}],
-         classlist:['max_w_full','pt_1']
+         classlist:['fade_in','max_w_full','pt_1']
       })
 
       let tags_status = create_section({
@@ -87,9 +87,8 @@ class Tags {
       init_card_img_loads()
    }
 
-   //
+
    // retrieve the paginated Tags results 
-   //
    get_items = async () => {
 
       if(this.#tags_context) {
@@ -132,7 +131,6 @@ class Tags {
                         root_folder: this.#root_folder,
                         context:this.#tags_context
                      }
-
                      const collection_item_card = new CollectionItemCard(props)
                      if(Array.isArray(collection_items_obj.collection_items)) {
                         collection_items_obj.collection_items.forEach((item) => {        

@@ -5,7 +5,7 @@ import Notification from '../Notification/Notification.js'
 import { is_valid_response_obj } from '../../utilities/ui_response.js'
 import {trim_end_char} from '../../utilities/ui_strings.js'
 import {filetype_icon,no_root_folder} from '../../utilities/ui_utilities.js'
-import {create_section,create_h,create_div,create_ul,create_li} from '../../utilities/ui_elements.js'
+import {create_section,create_div,create_ul,create_li} from '../../utilities/ui_elements.js'
 
 
 class Files {
@@ -46,7 +46,7 @@ class Files {
          attributes:[
             {key:'id',value:'files_section'}
          ],
-         classlist:['h_85vh','mt_0','fit_content_height','pb_2']
+         classlist:['fade_in','h_85vh','mt_0','fit_content_height','pb_2']
       })      
       const files_outcome = create_div({
          attributes:[
@@ -66,15 +66,11 @@ class Files {
 
       // folder/file panels
       const file_list_elem = create_div({
-         attributes:[
-            {key:'id',value:'file_list_elem'}
-         ],
+         attributes:[{key:'id',value:'file_list_elem'}],
          classlist:['bg_white','box_shadow','rounded','m_0','p_0.5','overflow_auto','h_80','text_sm','text_grey']
       })
       const file_view = create_div({
-         attributes:[
-            {key:'id',value:'file_view'}
-         ],
+         attributes:[{key:'id',value:'file_view'}],
          classlist:['bg_white','box_shadow','rounded','fit_content'],
          text:''
       })
@@ -104,22 +100,16 @@ class Files {
       else {
          setTimeout(() => this.open_folder(),100) 
       }
-
       window.scroll(0,0)
       
       files_section.append(files_layout)
-
       return files_section
    }
 
    // enable buttons/links displayed in the render
-   //
-   activate = () => {
-
-   }
+   activate = () => {}
 
    // enable buttons/links displayed in the render
-   //
    activate_file_links = () => {
 
       // User clicks on a file in file_list_elem
@@ -127,9 +117,7 @@ class Files {
       //
       const file_links = document.querySelectorAll('.file_item')
       if(file_links) {
-
          file_links.forEach((file_link) => {
-
             file_link.addEventListener('click',async(event) => {
                const file_view = document.getElementById('file_view')
                const folder_path_filter = this.#context.field_filters.find(filter => filter.field = 'folder_path' )
@@ -207,14 +195,12 @@ class Files {
    }
 
    // Hydrate page components with new folder_obj : {folder_name,files_list}
-   //
    hydrate = async(folder_obj) => {
               
       const file_list_elem = document.getElementById('file_list_elem')
       const file_view = document.getElementById('file_view')
 
       if(folder_obj.files_list && folder_obj.files_list.length > 0) {
-
          let list = create_ul({classlist:['flex','no_wrap','flex_col','gap_0.5','m_0','p_0','pb_0.5']})
          let list2 = create_ul({classlist:['flex','no_wrap','flex_col','gap_0.5','m_0','p_0','pb_0.5']})
 
@@ -222,8 +208,7 @@ class Files {
          const escaped_folder_path = folder_obj.files_list[0].path.split(/\ /).join('\ ');
 
          // verify we are in Collections folders
-         if(escaped_folder_path.indexOf(this.#root_folder) === 0) { 
-
+         if(escaped_folder_path.indexOf(this.#root_folder) === 0) {
             if(this.#breadcrumb_nav) {
                this.#breadcrumb_nav.hydrate(this.#root_folder,folder_obj.folder_name)
                setTimeout(() => this.#breadcrumb_nav.activate(),100)
@@ -231,9 +216,7 @@ class Files {
 
             // build list of filenames (incs folders)
             folder_obj.files_list.forEach(file => {
-
                let list_item
-
                // assign folder_path to context remove the 'root_folder' part from path
                this.#context.field_filters[0].value = file.path.replace(this.#root_folder,'')
 

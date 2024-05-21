@@ -40,26 +40,20 @@ class RecentRecords {
 
       this.#queue = app_config_record.recent_records
 
-      let recent_section = create_section({
-         classlist:['mt_2']
-      })
+      let recent_section = create_section({classlist:['fade_in','mt_2']})
 
       this.#results_container = create_div({
-         attributes:[
-            {key:'id',value:'results_container'}
-         ],
+         attributes:[{key:'id',value:'results_container'}],
          classlist:['grid','grid_cards_layout']
       })
 
       this.get_items()
-      
       window.scroll(0,0)
 
       // assemble
       recent_section.append(this.#results_container)
       return recent_section
    }
-
 
    // enable buttons/links displayed in the render
    activate = () => {
@@ -70,15 +64,11 @@ class RecentRecords {
       return await window.config_api.getAppConfig()
    }
 
-   //
    // retrieve the items results (w/ no pagination)
-   // 
    get_items = async () => {
 
       if(this.#context) {
-
          try {
-
             this.#context.field_filters.push({
                   field:'id',
                   test:'IN',
@@ -87,8 +77,7 @@ class RecentRecords {
 
             const collection_items_obj = await window.collection_items_api.getItems(this.#context)
          
-            if (typeof collection_items_obj != "undefined" && collection_items_obj.outcome === 'success') {
-                  
+            if (typeof collection_items_obj != "undefined" && collection_items_obj.outcome === 'success') {                  
                if(await is_valid_response_obj('read_collection_items',collection_items_obj)) {
 
                   this.#results_container.replaceChildren()
@@ -105,8 +94,7 @@ class RecentRecords {
                      let number_records = document.getElementById('number_records')
                      if(number_records) {             
                         number_records.innerText = `There are ${ui_display_number_as_str(collection_items_obj.count)} deleted records.`
-                     }
-            
+                     }            
                      let props = {
                         root_folder: this.#root_folder,
                         context: this.#context
@@ -124,7 +112,6 @@ class RecentRecords {
                   else {
                      this.#results_container.innerText = 'No records were found. '
                   }
-
                   
                   // re-instate scroll position if user had scrolled list before opening a record
                   setTimeout(() => window.scroll(0,this.#context.scroll_y),100)
@@ -148,10 +135,7 @@ class RecentRecords {
          }
       }
    }
-
-
 }
-
 
 
 export default RecentRecords

@@ -12,6 +12,7 @@ import {title_from_file_name,no_root_folder } from '../../utilities/ui_utilities
 import { create_section,create_div,create_form,create_label } from '../../utilities/ui_elements.js'
 
 
+
 // all our input validation is carried out in the main process in window.collection_items_api.updateCollectionItem()
 // any errors are returned from the same api function on failure
 
@@ -47,7 +48,7 @@ class CollectionItemForm {
       if(this.#root_folder === '') return no_root_folder()
 
       this.#record_elem = create_section({
-         classlist:['collection_item_record']
+         classlist:['collection_item_record','fade_in']
       })
       let text_col = create_div({
          classlist:['text_col','pl_1']
@@ -356,7 +357,6 @@ class CollectionItemForm {
          })
       }
    }
-
 
    activate_tags = () => {
       

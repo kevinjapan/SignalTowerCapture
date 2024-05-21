@@ -1,6 +1,6 @@
 import App from '../App/App.js'
 import CollectionItemForm from '../CollectionItemForm/CollectionItemForm.js'
-import { create_section,create_h,create_div } from '../../utilities/ui_elements.js'
+import { create_section } from '../../utilities/ui_elements.js'
 
 
 
@@ -11,16 +11,12 @@ class AddCollectionItem {
    render = () => {
       
       this.#record = create_section({
-         attributes:[
-            {key:'id',value:'record'}
-         ],
+         attributes:[{key:'id',value:'record'}],
          classlist:['mt_2']
       })
 
       const item_form_wrap = create_section({
-         attributes:[
-            {key:'id',value:'item_form_wrap'}
-         ],
+         attributes:[{key:'id',value:'item_form_wrap'}],
          level:'h1'
       })
 
@@ -52,26 +48,21 @@ class AddCollectionItem {
             const collection_item_form = new CollectionItemForm(props)
             item_form_wrap.appendChild(await collection_item_form.render())
             collection_item_form.activate()
-            
          }
          else {
             throw 'No records were returned.'
          }
       }
       catch(error) {
-         let props = {
+         App.switch_to_component('Error',{
             msg:'Sorry, we were unable to access the Records.',
             error:error
-         }
-         App.switch_to_component('Error',props)
+         })
       }
    }
 
    // enable buttons/links displayed in the render
-   activate = () => {
-
-
-   }
+   activate = () => {}
 
 }
 
