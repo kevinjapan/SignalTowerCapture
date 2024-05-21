@@ -129,8 +129,6 @@ const createWindow = async() => {
                }
             ]
          },
-         // to do : - align each submenu item to correct page
-         //         - break up Actions page into separate pages
          {
             label: 'Actions',
             submenu: [
@@ -166,15 +164,15 @@ const createWindow = async() => {
             label: 'Config',
             submenu: [
                {
-                  label: 'App Settings',
-                  click: () => load_client_component('Config')
+                  label: 'Configure Tags',
+                  click: () => load_client_component('TagsConfig')
                },
                {
                   type:'separator'
                },
                {
-                  label: 'Configure Tags',
-                  click: () => load_client_component('Config')
+                  label: 'App Settings',
+                  click: () => load_client_component('AppConfigForm')
                }
             ]
          },
@@ -196,14 +194,14 @@ const createWindow = async() => {
    setTimeout(() => main_window.loadFile(`.${path.sep}renderer${path.sep}index.html`),300)
 }
 
-
-
-function load_client_component(component_name = 'About') {
+function load_client_component(component_name = 'About',props) {
    main_window.webContents.send(
       'switch_component',
-      component_name
+      component_name,
+      props
    )
 }
+
 function set_title (event, title) {
    const webContents = event.sender
    const win = BrowserWindow.fromWebContents(webContents)
