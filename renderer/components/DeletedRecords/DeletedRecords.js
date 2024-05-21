@@ -5,12 +5,7 @@ import { is_valid_response_obj } from '../../utilities/ui_response.js'
 import { ui_display_number_as_str } from '../../utilities/ui_strings.js'
 import { DESC } from '../../utilities/ui_descriptions.js'
 import { init_card_img_loads,no_root_folder } from '../../utilities/ui_utilities.js'
-import { 
-   create_section,
-   create_div,
-   create_h,
-   create_p
-} from '../../utilities/ui_elements.js'
+import { create_section,create_div,create_h,create_p } from '../../utilities/ui_elements.js'
 
 
 
@@ -35,15 +30,13 @@ class DeletedRecordsTeaser {
          
    // props 
    #props = null
-
    
    #root_folder
 
+
    constructor(props) {
       // returning 'back to list' from Records will return the passed 'context token'
-      if(props) {
-         this.#context = props.context
-      }
+      if(props) this.#context = props.context
       this.#props = props
    }
 
@@ -54,10 +47,8 @@ class DeletedRecordsTeaser {
       if(this.#root_folder === '') return no_root_folder()
 
       this.#deleted_records_section = create_section({
-         attributes:[
-            {key:'id',value:'deleted_records_section'}
-         ],
-         classlist:['ui_component']
+         attributes:[{key:'id',value:'deleted_records_section'}],
+         classlist:['fade_in','ui_component']
       })
 
       this.add_heading()
@@ -65,42 +56,31 @@ class DeletedRecordsTeaser {
       this.add_number_results()
 
       this.#results_container = create_div({
-         attributes:[
-            {key:'id',value:'results_container'}
-         ],
+         attributes:[{key:'id',value:'results_container'}],
          classlist:['deleted_records','grid','grid_cards_layout','']
       })
 
       // required for re-instating search_context on 'back' to list actions
-      if(this.#context) {
-         this.#results_container.append(this.get_items())
-      }
-
+      if(this.#context) this.#results_container.append(this.get_items())
       return this.#deleted_records_section
    }
 
-   //
+
    // retrieve the paginated items results 
-   // 
    get_items = async () => {
 
       if(this.#context) {
-
          try {
-
             const collection_items_obj = await window.collection_items_api.getItems(this.#context)
          
-            if (typeof collection_items_obj != "undefined" && collection_items_obj.outcome === 'success') {
-                  
+            if (typeof collection_items_obj != "undefined" && collection_items_obj.outcome === 'success') {                  
                if(await is_valid_response_obj('read_collection_items',collection_items_obj)) {
 
                   this.#deleted_records_section.replaceChildren()
-                  this.#results_container.replaceChildren()
-                  
+                  this.#results_container.replaceChildren()                  
                   this.add_heading()
                   this.add_desc()
                   this.add_number_results()
-
                   let page_count = Math.ceil(collection_items_obj.count / collection_items_obj.per_page)
 
                   const top_pagination_nav = new PaginationNav('top',this.go_to_page,page_count,this.#context.page)
@@ -127,8 +107,7 @@ class DeletedRecordsTeaser {
                      }
          
                      // retain some spacing on short lists
-                     this.#results_container.style.minHeight = '70vh'
-         
+                     this.#results_container.style.minHeight = '70vh'         
                      setTimeout(() => collection_item_card.activate(),200)
                   }
                   else {
@@ -136,7 +115,6 @@ class DeletedRecordsTeaser {
                   }
                   
                   this.#deleted_records_section.append(this.#results_container)
-
                   const bottom_pagination_nav = new PaginationNav('bottom',this.go_to_page,page_count,this.#context.page)
                   this.#deleted_records_section.append(bottom_pagination_nav.render())
                   bottom_pagination_nav.activate()
@@ -155,11 +133,10 @@ class DeletedRecordsTeaser {
             }
          }
          catch(error) {
-            let props = {
+            App.switch_to_component('Error',{
                msg:'Sorry, we were unable to access the Records.',
                error:error
-            }
-            App.switch_to_component('Error',props)
+            })
          }
       }
    }
@@ -175,7 +152,6 @@ class DeletedRecordsTeaser {
    activate = () => {
       init_card_img_loads()
    }
-
    
    add_heading = () => {
       const h = create_h({
@@ -193,15 +169,11 @@ class DeletedRecordsTeaser {
 
    add_number_results = () => {
       this.#deleted_records_section.append(create_div({
-         attributes:[
-            {key:'id',value:'number_records'}
-         ],
+         attributes:[{key:'id',value:'number_records'}],
          classlist:['p_2']
       }))
    }
-
 }
-
 
 
 export default DeletedRecordsTeaser
