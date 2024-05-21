@@ -136,29 +136,29 @@ const createWindow = async() => {
             submenu: [
                {
                   label: 'Backup Database',
-                  click: () => load_client_component('Actions')
+                  click: () => load_client_component('BackupDatabase')
                },
                {
                   type:'separator'
                },
                {
                   label: 'Export CSV File',
-                  click: () => load_client_component('Actions')
+                  click: () => load_client_component('ExportCSVComponent')
                },
                {
                   label: 'Import CSV File',
-                  click: () => load_client_component('Actions')
+                  click: () => load_client_component('ImportCSVComponent')
                },
                {
                   type:'separator'
                },
                {
                   label: 'Export JSON File',
-                  click: () => load_client_component('Actions')
+                  click: () => load_client_component('ExportJSONComponent')
                },
                {
                   label: 'Import JSON File',
-                  click: () => load_client_component('Actions')
+                  click: () => load_client_component('ImportJSONComponent')
                }
             ]
          },
