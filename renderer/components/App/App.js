@@ -13,6 +13,8 @@ import ExportJSONComponent from '../ExportJSONComponent/ExportJSONComponent.js'
 import ImportJSONComponent from '../ImportJSONComponent/ImportJSONComponent.js'
 import DeletedRecords from '../DeletedRecords/DeletedRecords.js'
 import Config from '../Config/Config.js'
+import AppConfigForm from '../AppConfigForm/AppConfigForm.js'
+import TagsConfig from '../TagsConfig/TagsConfig.js'
 import Files from '../Files/Files.js'
 import BackupComponent from '../BackupComponent/BackupComponent.js'
 import RecentRecords from '../RecentRecords/RecentRecords.js'
@@ -121,6 +123,14 @@ class App {
                component = new Config()
                component_container.replaceChildren(await component.render())
                break
+            case 'AppConfigForm':
+               component = new AppConfigForm()
+               component_container.replaceChildren(await component.render())
+               break
+            case 'TagsConfig':
+               component = new TagsConfig()
+               component_container.replaceChildren(await component.render())
+               break
             case 'Files':
                component = new Files(props)
                component_container.replaceChildren(await component.render())
@@ -150,22 +160,28 @@ class App {
          // delay to allow rendering to complete
          setTimeout(() => component.activate(),100)
 
-         // to do : review - we need to ensure this has a fail-safe - eg always fades in.
-         //         if we can't guarantee, then we have to remove fade_in classes.
-         //         also, at least wrap this func in App.init_fade_ins()
-         setTimeout(() => init_fade_ins(),50)
-
-         // failsafe - harmless, but guarantees we should always fade_in - perhaps this is enough
-         setTimeout(() => init_fade_ins(),400)
+         setTimeout(() => init_fade_ins(),100)      
+         setTimeout(() => init_fade_ins(),400)   // failsafe - harmless, guarantees fade_in
       }
    }
 
+   // On Dlgs, we need to dim main nav (disable access)
    static enable_nav = (state) => {
       const nav = document.getElementById('nav')
       if(nav) {
          state ? nav.classList.remove('nav_dimmer') : nav.classList.add('nav_dimmer')
       }
    }
+
+   static disable_page_nav = () => {      
+      const select_page_buttons = document.querySelectorAll('.select_page_btn')
+      if(select_page_buttons) {
+         select_page_buttons.forEach((select_page_button) => {
+            select_page_buttons.forEach((btn) => btn.classList.remove('selected_page'))
+         })
+      }
+   }
+
 }
 
 
