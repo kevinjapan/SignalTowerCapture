@@ -7,9 +7,14 @@ import CollectionItemRecord from '../CollectionItemRecord/CollectionItemRecord.j
 import CollectionItemForm from '../CollectionItemForm/CollectionItemForm.js'
 import ImageViewer from '../ImageViewer/ImageViewer.js'
 import Actions from '../Actions/Actions.js'
+import ExportCSVComponent from '../ExportCSVComponent/ExportCSVComponent.js'
+import ImportCSVComponent from '../ImportCSVComponent/ImportCSVComponent.js'
+import ExportJSONComponent from '../ExportJSONComponent/ExportJSONComponent.js'
+import ImportJSONComponent from '../ImportJSONComponent/ImportJSONComponent.js'
 import DeletedRecords from '../DeletedRecords/DeletedRecords.js'
 import Config from '../Config/Config.js'
 import Files from '../Files/Files.js'
+import BackupComponent from '../BackupComponent/BackupComponent.js'
 import RecentRecords from '../RecentRecords/RecentRecords.js'
 import About from '../About/About.js'
 import Error from '../Error/Error.js'
@@ -23,17 +28,13 @@ import {trim_end_char} from '../../utilities/ui_strings.js'
 // or client components, allowing those secondary components to return the token on users clicking 'back' 
 // - thus allowing primary components to re-initialize their context (eg search term / current page)
 
-
+   
+// App-wide settings loaded once and accessible to renderer
 
 class App {
 
-   // App-wide settings loaded once and accessible to renderer
-
    static #root_folder = ''
 
-   constructor() {
-      
-   }
 
    init = async() => {
       const app_config_obj = await window.config_api.getAppConfig()
@@ -96,6 +97,22 @@ class App {
                component = new Actions()
                component_container.replaceChildren(await component.render())
                break
+            case 'ExportCSVComponent':
+               component = new ExportCSVComponent()
+               component_container.replaceChildren(await component.render())
+               break
+            case 'ImportCSVComponent':
+               component = new ImportCSVComponent()
+               component_container.replaceChildren(await component.render())
+               break
+            case 'ExportJSONComponent':
+               component = new ExportJSONComponent()
+               component_container.replaceChildren(await component.render())
+               break
+            case 'ImportJSONComponent':
+               component = new ImportJSONComponent()
+               component_container.replaceChildren(await component.render())
+               break
             case 'DeletedRecords':
                component = new DeletedRecords(props)
                component_container.replaceChildren(await component.render())
@@ -116,6 +133,10 @@ class App {
                component = new About(props)
                component_container.replaceChildren(component.render())
                break
+            case 'BackupDatabase':
+               component = new BackupComponent(props)
+               component_container.replaceChildren(component.render())
+               break
             case 'RecentRecords':
                component = new RecentRecords(props)
                component_container.replaceChildren(await component.render())
@@ -127,7 +148,15 @@ class App {
          }
 
          // delay to allow rendering to complete
-         setTimeout(() => component.activate(),200)
+         setTimeout(() => component.activate(),100)
+
+         // to do : review - we need to ensure this has a fail-safe - eg always fades in.
+         //         if we can't guarantee, then we have to remove fade_in classes.
+         //         also, at least wrap this func in App.init_fade_ins()
+         setTimeout(() => init_fade_ins(),50)
+
+         // failsafe - harmless, but guarantees we should always fade_in - perhaps this is enough
+         setTimeout(() => init_fade_ins(),400)
       }
    }
 
