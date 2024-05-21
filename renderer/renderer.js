@@ -87,8 +87,15 @@ window.notify_api.onNotification((event,value) => {
    alert(value)
 })
 
-
+//
+// Handle native app menu item clicks
+//
 window.component_api.onSwitchComponent((event,value) => {
+
+   // deselect all page nav items
+   App.disable_page_nav()
+
+   // switch component
    App.switch_to_component(value)
 })
 
