@@ -3,9 +3,7 @@ import { create_section,create_button,create_div } from '../../utilities/ui_elem
 import { get_ext,is_img_ext,get_file_type_icon,file_exists,build_img_elem } from '../../utilities/ui_utilities.js'
 
 
-
 // User clicks on img in CollectionItemRecord to view the image larger size
-
 
 class ImageViewer {
 
@@ -27,9 +25,7 @@ class ImageViewer {
    render = async() => {
 
       let viewer = create_section({
-         attributes:[
-            {key:'id',value:'viewer'}
-         ],
+         attributes:[{key:'id',value:'viewer'}],
          classlist:['text_center']
       })
 
@@ -38,23 +34,17 @@ class ImageViewer {
          classlist:['img_btn_group','flex','flex_col','align_items_center','pt_1','pb_1']
       })
       let x_btn = create_button({
-         attributes:[
-            {key:'id',value:'x_btn'}
-         ],
+         attributes:[{key:'id',value:'x_btn'}],
          classlist:['x_btn'],
          text:'Close'
       })
       let zoom_in_btn = create_button({
-         attributes:[
-            {key:'id',value:'zoom_in_btn'}
-         ],
+         attributes:[{key:'id',value:'zoom_in_btn'}],
          classlist:['x_btn'],
          text:'Zoom In'
       })
       let zoom_out_btn = create_button({
-         attributes:[
-            {key:'id',value:'zoom_out_btn'}
-         ],
+         attributes:[{key:'id',value:'zoom_out_btn'}],
          classlist:['x_btn'],
          text:'Zoom Out'
       })
@@ -74,19 +64,15 @@ class ImageViewer {
       
       let file_path = `${root_folder}${relative_folder_path}${this.#props.item['file_name']}`
 
-
-      if(await file_exists(file_path)) { 
-
+      if(await file_exists(file_path)) {
          let attributes = [{key:'id',value:'record_img'},{key:'draggable',value:false}]
 
          if(is_img_ext(file_path)) {
-
             // process img file                  
             let img = build_img_elem(file_path,'',attributes,['record_image'])
             if(img) wrapper.replaceChildren(img_btn_group,img)
          }
          else {
-
             // process non-img file
             const icon_img_file_path = get_file_type_icon(file_path)
             const ext = get_ext(file_path)
@@ -110,7 +96,6 @@ class ImageViewer {
       return viewer
    }
 
-   
 
    // enable buttons/links displayed in the render
    activate = () => {
@@ -126,7 +111,6 @@ class ImageViewer {
             App.switch_to_component('Record',this.#props)
          })
       }
-
    
       // Zoom
       const zoom_in_btn = document.getElementById('zoom_in_btn')
@@ -138,7 +122,6 @@ class ImageViewer {
                this.#zoom += 100
                record_img.style.minWidth = this.#zoom <= 300 ? `${this.#zoom}%` : `300%`
             }
-
          })
       }
       const zoom_out_btn = document.getElementById('zoom_out_btn')
@@ -150,14 +133,12 @@ class ImageViewer {
                this.#zoom -= 100
                record_img.style.minWidth = this.#zoom >= 100 ? `${this.#zoom}%` : `100%`
             }
-
          })        
       }
 
       
       // Click and move zoomed img
       // we failed to change to 'move' cursor while moving - it's a bit flakey (can't both show 'move' and return to 'pointer')
-
       viewer.addEventListener('mousedown',(event) => {
          event.preventDefault()
          viewer.addEventListener('mousemove',this.on_mouse_move)
@@ -170,9 +151,7 @@ class ImageViewer {
          event.preventDefault()
          viewer.removeEventListener('mousemove',this.on_mouse_move)
       })
-
    }
-
 
    on_mouse_move = (event) => {
       event.preventDefault()
@@ -181,7 +160,6 @@ class ImageViewer {
          top: this.#scroll_top + (this.#start_y - event.clientY)
       })
    }
-
 }
 
 
