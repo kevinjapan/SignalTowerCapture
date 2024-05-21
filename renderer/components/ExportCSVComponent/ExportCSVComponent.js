@@ -1,8 +1,8 @@
-import { create_h,create_div,create_button } from '../../utilities/ui_elements.js'
+import { create_section,create_h,create_div,create_button,create_p } from '../../utilities/ui_elements.js'
 import { get_sqlready_datetime } from '../../utilities/ui_datetime.js'
 import { extract_file_name } from '../../utilities/ui_strings.js'
 import Notification from '../../components/Notification/Notification.js'
-
+import { icon } from '../../utilities/ui_utilities.js'
 
 
 
@@ -10,11 +10,25 @@ class ExportCSVComponent {
    
    render = () => {
 
-      const export_csv_component = create_div({
-         attributes:[{key:'id',value:'export_csv_component'}],
-         classlist:['ui_component']
+      let export_csv_section = create_section({
+         attributes:[{key:'id',value:'export_csv_section'}],
+         classlist:['fade_in','bg_white','box_shadow','rounded','m_2','mt_2','mb_4','pb_2']
+      })   
+      const csv_header = create_div({
+         classlist:['flex','align_items_center','mb_0']
       })
-   
+      const csv_section_h = create_h({
+         level:'h2',
+         classlist:['mt_2','mb_0','pt_0','pb_0'],
+         text:'CSV Files : Export'
+      })
+      csv_header.append(icon('csv'),csv_section_h)
+      const csv_section_desc = create_p({
+         classlist:['m_0','mb_2','pt_0','pb_0'],
+         text:'Comma-Separated-Value (CSV) files are a common file format for tranfering data between applications.'
+      })
+      export_csv_section.append(csv_header,csv_section_desc)
+
       const heading = create_h({
          level:'h4',
          text:'Export CSV File'
@@ -35,9 +49,9 @@ class ExportCSVComponent {
       })
       
       // assemble
-      export_csv_component.append(heading,export_csv_btn,export_csv_outcome,export_csv_fields)
+      export_csv_section.append(heading,export_csv_btn,export_csv_fields)
       
-      return export_csv_component
+      return export_csv_section
    }
 
 
@@ -49,9 +63,7 @@ class ExportCSVComponent {
       const export_csv_outcome = document.getElementById('export_csv_outcome')
 
       if(export_csv_btn) {
-
          export_csv_btn.addEventListener('click', async(event) => {
-
             event.preventDefault()   
 
             // datestamp file
@@ -60,19 +72,16 @@ class ExportCSVComponent {
             const options = {
                defaultPath:`signal-tower-capture-export-${date_time_stamp}`,
                filters:[{ name: 'CSV', extensions: ['txt'] },]
-            }
-            
+            }            
             const result = await window.files_api.openSaveFileDlg(options)
 
             if(result.outcome === 'success') {
-
                try {
                   const file_name = extract_file_name(result.file_path)
                         
                   const export_results_obj = await window.actions_api.exportCSVFile(file_name,result.file_path)  
 
                   if (typeof export_results_obj != "undefined" && export_results_obj.outcome === 'success') {
-
                      let folder_path_only = export_results_obj.file_path.replace(export_results_obj.file_name,'')
             
                      let export_csv_folder_btn = create_button({
@@ -121,19 +130,14 @@ class ExportCSVComponent {
 
       // Open the export folder user selected
       const export_csv_folder_btn = document.getElementById('export_csv_folder_btn')
-
       if(export_csv_folder_btn) {
-
          export_csv_folder_btn.addEventListener('click', async() => {
-
             const folder_path = export_csv_folder_btn.getAttribute('data-folder-path')
             await window.files_api.openFolder(folder_path)
-
          })
       }
    }
 }
-
 
 
 export default ExportCSVComponent

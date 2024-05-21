@@ -1,8 +1,9 @@
+import ActionsLogComponent from '../ActionsLogComponent/ActionsLogComponent.js'
 import WaitDialog from '../WaitDialog/WaitDialog.js'
 import Notification from '../../components/Notification/Notification.js'
 import { get_ui_ready_date,get_ui_ready_time,get_sqlready_datetime } from '../../utilities/ui_datetime.js'
-import { create_h,create_p,create_div,create_section,create_button } from '../../utilities/ui_elements.js'
-
+import { create_section,create_h,create_p,create_div,create_button } from '../../utilities/ui_elements.js'
+import { icon } from '../../utilities/ui_utilities.js'
 
 
 class ImportJSONComponent {
@@ -14,18 +15,76 @@ class ImportJSONComponent {
       this.#completed_callback = completed_callback  
    }
 
-   render = () => { 
+   render = async() => { 
 
-      const import_json_component = create_section({
-         attributes:[{key:'id',value:'import_json_component'}],
-         classlist:['ui_component','h_100']
+      // required json fields
+      let fields_list = []
+      let required_json_fields = []
+      const collection_item_obj = await window.collection_items_api.getCollectionItemFields()
+      if(typeof collection_item_obj !== undefined && collection_item_obj.outcome === 'success') {
+         if(Array.isArray(collection_item_obj.fields)) {
+            fields_list = collection_item_obj.fields.map((field) => {
+               return field.key
+            })
+            required_json_fields = collection_item_obj.fields.filter((field) => {
+               return field.required_json === true
+            }).map(field => field.key)
+         }
+      }
+
+      let import_json_section = create_section({
+         attributes:[{key:'id',value:'json_section'}],
+         classlist:['fade_in','bg_white','box_shadow','rounded','m_2','mt_2','mb_4','pb_2']
       })
-   
+      const json_header = create_div({
+         classlist:['flex','align_items_center','mb_0']
+      })
+      const json_section_h = create_h({
+         level:'h2',
+         classlist:['mt_2','mb_0','pt_0','pb_0'],
+         text:'JSON Files : Import'
+      })
+      json_header.append(icon('json'),json_section_h)
+      const json_section_desc = create_p({
+         classlist:['m_0','mb_2','pt_0','pb_0'],
+         text:`JavaScript Object Notation (JSON) files are a human-readable file format for tranfering data between applications.
+         They are better suited for moving small sets of data where some manual manipulation is needed.`
+      })
+      import_json_section.append(json_header,json_section_desc)
+
+
+      // display fields info
+      const fields = create_div({
+         classlist:['flex']
+      })
+      const fields_intro = create_p({
+         classlist:['mt_0','mb_0'],
+         text:'The full list of available fields for a single record:'
+      })
+      const fields_list_elem = create_div({
+         classlist:['text_grey','border','rounded','p_1','m_0.5','mt_0','w_100'],
+         text:fields_list.join(', ')
+      })
+
+      const fields_required = create_p({
+         classlist:['mt_0','mb_0','w_100'],
+         text:'The following fields are the minimum required to create a record:'
+      })
+      const required_fields_elem = create_div({
+         classlist:['text_grey','border','rounded','p_1','m_0.5','mt_0','w_100'],
+         text:required_json_fields.join(', ')
+      })
+      const fields_desc = create_p({
+         classlist:['mt_0','mb_0','w_100'],
+         text:``
+      })
+      fields.append(fields_required,required_fields_elem,fields_intro,fields_list_elem,fields_desc)
+
       const heading = create_h({
          level:'h4',
-         text:'Import JSON File'
+         text:'Fields'
       })
-      const fields_pre_warning = create_p({
+      const warning = create_p({
          classlist:['mt_0','mb_0','bg_yellow_200','p_1','rounded'],
          text:'You are recommended to backup the database before any import actions to ensure you can recover if any issues arise.'
       })
@@ -44,10 +103,22 @@ class ImportJSONComponent {
          attributes:[{key:'id',value:'import_json_fields'}]
       })
 
+      
+      const json_history_section = create_div({
+         attributes:[
+            {key:'id',value:'json_history_section'}
+         ]
+      })
+      const json_actions_log_component = new ActionsLogComponent('import_json','JSON Import History')
+      if(json_actions_log_component) {
+         json_history_section.append(await json_actions_log_component.render('import_json'))
+         setTimeout(() => json_actions_log_component.activate(),200)
+      }
+
       // assemble
-      import_json_component.append(heading,fields_pre_warning,import_json_btn,import_json_outcome,import_json_fields)
+      import_json_section.append(warning,heading,fields,import_json_btn,import_json_outcome,import_json_fields,json_history_section)
    
-      return import_json_component
+      return import_json_section
    }
 
 
@@ -77,16 +148,12 @@ class ImportJSONComponent {
                // open 'please wait..' dlg
                const wait_dlg_component = new WaitDialog({file_name:file_path})
                let actions_section = document.getElementById('actions_section')
-               if(actions_section) {
-                  actions_section.append(wait_dlg_component.render())
-               }
+               if(actions_section) actions_section.append(wait_dlg_component.render())
 
                // call import func in main process
                const import_results_obj = await window.actions_api.importJSONFile(file_path)
                
                if (typeof import_results_obj != "undefined") { 
-
-
                   if(import_results_obj.outcome === 'success') {
                      wait_dlg_component.close()
                      await this.#completed_callback()
@@ -115,7 +182,6 @@ class ImportJSONComponent {
       let wait_dlg = document.getElementById('wait_dlg')
       if(wait_dlg) parent_section.removeChild(wait_dlg)
    }
-
 }
 
 export default ImportJSONComponent
