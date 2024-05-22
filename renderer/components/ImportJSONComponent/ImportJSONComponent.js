@@ -8,8 +8,9 @@ import { icon } from '../../utilities/ui_utilities.js'
 
 class ImportJSONComponent {
 
-   #completed_callback
+   #completed_callback // to do : remove this
 
+   #json_actions_log_component
    
    constructor(completed_callback) {
       this.#completed_callback = completed_callback  
@@ -33,7 +34,7 @@ class ImportJSONComponent {
       }
 
       let import_json_section = create_section({
-         attributes:[{key:'id',value:'json_section'}],
+         attributes:[{key:'id',value:'import_json_section'}],
          classlist:['fade_in','bg_white','box_shadow','rounded','m_2','mt_2','mb_4','pb_2']
       })
       const json_header = create_div({
@@ -147,8 +148,8 @@ class ImportJSONComponent {
 
                // open 'please wait..' dlg
                const wait_dlg_component = new WaitDialog({file_name:file_path})
-               let actions_section = document.getElementById('actions_section')
-               if(actions_section) actions_section.append(wait_dlg_component.render())
+               let import_json_section = document.getElementById('import_json_section')
+               if(import_json_section) import_json_section.append(wait_dlg_component.render())
 
                // call import func in main process
                const import_results_obj = await window.actions_api.importJSONFile(file_path)
@@ -156,7 +157,7 @@ class ImportJSONComponent {
                if (typeof import_results_obj != "undefined") { 
                   if(import_results_obj.outcome === 'success') {
                      wait_dlg_component.close()
-                     await this.#completed_callback()
+                     await this.import_json_completed()
                      Notification.notify(
                         '#import_json_outcome',
                         `The import on ${get_ui_ready_date(Date(),true)} at ${get_ui_ready_time(Date())} was successful.`,
@@ -166,13 +167,13 @@ class ImportJSONComponent {
                   else {
                      wait_dlg_component.close()
                      Notification.notify('#import_json_outcome',import_results_obj.message,[],false)
-                     await this.#completed_callback()
+                     await this.import_json_completed
                   }
                }
             }
             else {
                Notification.notify('#import_json_outcome',result.message)
-               await this.#completed_callback()
+               await this.import_json_completed
             }
          })
       }
@@ -181,6 +182,21 @@ class ImportJSONComponent {
    close_wait_dlg = (parent_section) => {
       let wait_dlg = document.getElementById('wait_dlg')
       if(wait_dlg) parent_section.removeChild(wait_dlg)
+   }
+
+   //
+   // Logs history - we refresh regardless of outcome
+   //
+   import_json_completed = async() => {
+      const json_history_section = document.getElementById('json_history_section')
+      if(json_history_section && this.#json_actions_log_component) {
+         // delay to prevent getting ahead of changes 
+         setTimeout(async() => {
+            json_history_section.replaceChildren(await this.#json_actions_log_component.render('import_json'))
+            this.#json_actions_log_component.extend_list()
+            setTimeout(() => this.#json_actions_log_component.activate(),200)
+         },500)
+      }
    }
 }
 

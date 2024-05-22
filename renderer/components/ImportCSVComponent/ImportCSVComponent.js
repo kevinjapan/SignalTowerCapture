@@ -9,8 +9,9 @@ import { icon } from '../../utilities/ui_utilities.js'
 
 class ImportCSVComponent {
 
-   #completed_callback
+   #completed_callback  // to do : remove this
 
+   #csv_actions_log_component
    
    constructor(completed_callback) {
       this.#completed_callback = completed_callback  
@@ -91,10 +92,10 @@ class ImportCSVComponent {
          attributes:[{key:'id',value:'csv_history_section'}]
       })
       
-      const csv_actions_log_component = new ActionsLogComponent('import_csv','CSV Import History')
-      if(csv_actions_log_component) {
-         csv_history_section.append(await csv_actions_log_component.render('import_csv'))
-         setTimeout(() => csv_actions_log_component.activate(),200)
+      this.#csv_actions_log_component = new ActionsLogComponent('import_csv','CSV Import History')
+      if(this.#csv_actions_log_component) {
+         csv_history_section.append(await this.#csv_actions_log_component.render('import_csv'))
+         setTimeout(() => this.#csv_actions_log_component.activate(),200)
       }
 
       // assemble
@@ -128,9 +129,9 @@ class ImportCSVComponent {
 
                   // open 'please wait..' dlg
                   const wait_dlg_component = new WaitDialog({file_name:file_path})
-                  let actions_section = document.getElementById('actions_section')
-                  if(actions_section) {
-                     actions_section.append(wait_dlg_component.render())
+                  let import_csv_section = document.getElementById('import_csv_section')
+                  if(import_csv_section) {
+                     import_csv_section.append(wait_dlg_component.render())
                   }
 
                   // call import func in main process
@@ -139,7 +140,7 @@ class ImportCSVComponent {
                   if (typeof import_results_obj != "undefined") { 
                      if(import_results_obj.outcome === 'success') {
                         wait_dlg_component.close()
-                        await this.#completed_callback()
+                        await this.import_csv_completed()
                         Notification.notify(
                            '#import_csv_outcome',
                            `The import on ${get_ui_ready_date(Date(),true)} at ${get_ui_ready_time(Date())} was successful.`,
@@ -147,14 +148,14 @@ class ImportCSVComponent {
                      }
                      else {
                         wait_dlg_component.close()
-                        await this.#completed_callback()
+                        await this.import_csv_completed()
                         Notification.notify('#import_csv_outcome',import_results_obj.message_arr,[],false)
                      }
                   }
                }
                else {
                   Notification.notify('#import_csv_outcome',result.message_arr)
-                  await this.#completed_callback()
+                  await this.import_csv_completed()
                }
             })
          }
@@ -163,6 +164,21 @@ class ImportCSVComponent {
    close_wait_dlg = (parent_section) => {
       let wait_dlg = document.getElementById('wait_dlg')
       if(wait_dlg) parent_section.removeChild(wait_dlg)
+   }
+
+   //
+   // Logs history - we refresh regardless of outcome
+   //
+   import_csv_completed = async() => {
+      const csv_history_section = document.getElementById('csv_history_section')
+      if(csv_history_section) {
+         // delay to prevent getting ahead of changes 
+         setTimeout(async() => {
+            csv_history_section.replaceChildren(await this.#csv_actions_log_component.render('import_csv'))
+            this.#csv_actions_log_component.extend_list()
+            setTimeout(() => this.#csv_actions_log_component.activate(),200)
+         },500)
+      }
    }
 
 }
