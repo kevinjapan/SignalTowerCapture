@@ -28,9 +28,10 @@ class CollectionItem {
    // full_fields_list
    // Our methods return appropriate filtered arrays of eg 'field_names', and we build rows/forms/etc  
    // from these arrays in the renderer, so the order of this array is carried over to front-end views.
-   //
+   // Some test values are undesirable (eg title string len min:1) but required for legacy files.
+   // 
    static #full_fields_list = [
-      {key:'title',data_type:'TEXT NOT NULL',editable:true,injectable:true,in_card:true,export:true,test:{type:'string',min:3,max:100}},
+      {key:'title',data_type:'TEXT NOT NULL',editable:true,injectable:true,in_card:true,export:true,test:{type:'string',min:1,max:100}},
       {key:'content_desc',data_type:'TEXT',editable:true,injectable:true,in_card:true,export:true,test:{type:'string',min:0,max:500}},
       {key:'file_type',data_type:'TEXT NOT NULL',editable:true,injectable:true,in_card:true,hidden:true,export:true,test:{type:'string',min:3,max:20}},
       {key:'file_name',data_type:'TEXT NOT NULL',editable:true,injectable:true,readonly:true,in_card:true,required_json:true,export:true,test:{type:'string',min:5,max:100}},
@@ -456,6 +457,7 @@ class CollectionItem {
       // to do : do we check each has required min required fields?
       // if(collection_item.folder_path ===  undefined || collection_item.file_name === undefined) {
       
+      // fields list - exluding 'id' 
       let fields = CollectionItem.#full_fields_list.filter(field => field.key !== 'id')
       const field_keys = fields.map((field) => field.key)
       let values_lists = []
@@ -465,26 +467,31 @@ class CollectionItem {
 
          for(const key of field_keys) {
             let value = item[key]
-            if(value) {
-               item_values.push(`"${item[key]}"`)
-            }
-            else if(key === 'created_at' || key === 'updated_at') {
-               item_values.push(`"${get_sqlready_datetime()}"`)
-            }
-            else if(key === 'title') {
-               // Auto-gen candidate title from the file name if non-exists
-               item['file_name'] ? item_values.push(`"${title_from_file_name(item['file_name'])}"`) : item_values.push(`""`)
-            }
-            else if(key === 'deleted_at') {
-               item_values.push('null')
-            }
-            else {
-               item_values.push(`""`)
+
+            switch(key) {
+               case 'title':
+                  // Auto-gen candidate title from the file name if non-exists
+                  item['file_name'] ? item_values.push(`"${title_from_file_name(item['file_name'])}"`) : item_values.push(`""`)
+                  break
+               case 'file_type':
+                  item['file_type'] === '' ? item_values.push('"FILE"') : item_values.push(`"${item[key]}"`)
+                  break
+               case 'created_at':
+               case 'updated_at':
+                  item_values.push(`"${get_sqlready_datetime()}"`)
+                  break
+               case 'deleted_at':
+                  if(value === null) 
+                     item_values.push(`null`)
+                  else 
+                     value === 'null' ? item_values.push(`null`) : item_values.push(`"${item[key]}"`)
+                     break
+               default:
+                  item_values.push(`"${item[key]}"`)
             }
          }         
          values_lists.push('(' + item_values.join(',') + ')')
       }
-
       const sql = `INSERT INTO collection_items(${field_keys.join(',')}) VALUES ${values_lists.join(',')}`
       let last_id = 0    // last inserted row ID
       let changes = 0    // number rows affected      
@@ -493,6 +500,7 @@ class CollectionItem {
          this.#database.serialize(async() => {
             this.#database.run(
                sql,[], function(error) {
+                  console.log('error',error)
                   if(error) reject(error)
                      last_id = this.lastID
                      changes = this.changes
@@ -514,7 +522,7 @@ class CollectionItem {
          let fail_response = {
             query:'create_collection_item',
             outcome:'fail',
-            message:`There was an error attempting to create the record. [CollectionItem.create]  
+            message:`There was an error attempting to create the batch of records. [CollectionItem.create_batch]  
                   ` + this.#last_error.message 
          }
          this.clear_last_error()
@@ -525,9 +533,10 @@ class CollectionItem {
 
    //
    // Create From CSV
+   // to do : review - on-oing duplicate_check here doesn't appear to break import, so will 
+   //         work with and test this until it proves otherwise. (cf json import needed separation)
    // cf create() - here, we always receive a raw csv line, which likely contains a prev. 'id' field
    // so we have to process and remove ourselves
-   // to do : separate duplicate_check from INSERT as we have done w/ create_batch above.
    //
    async create_from_csv(csv) {
 
@@ -1165,6 +1174,32 @@ class CollectionItem {
       }
       this.clear_last_error()
       return response
+   }
+
+   //
+   // Removes duplicates of existing records in a given array list of items
+   // the unique key is 'folder_path\\file_name'
+   //
+   filter_out_duplicates = async(collection_items) => {
+
+      const non_duplicate_items = []
+
+      for(const item of collection_items) {
+         let attempt_read_existing = await this.read({
+            page:1,
+            field_filters:[
+               {field:'folder_path',value:item.folder_path},
+               {field:'file_name',value:item.file_name}
+            ]
+         })
+         if(attempt_read_existing.outcome === 'success') {
+            if(attempt_read_existing.collection_items.length === 0) {
+               // ok to proceed - we will create a record for this item
+               non_duplicate_items.push(item)
+            }
+         }
+      }
+      return non_duplicate_items
    }
 
 
