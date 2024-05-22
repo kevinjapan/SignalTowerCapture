@@ -77,7 +77,7 @@ async function import_csv_file(event,file_path) {
    })
    
    // augment response w/ duration etc
-   import_csv_file_obj.duration = end_timer_at - start_timer_at
+   if(import_csv_file_obj) import_csv_file_obj.duration = end_timer_at - start_timer_at
 
    return import_csv_file_obj
 }
