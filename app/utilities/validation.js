@@ -42,6 +42,7 @@ const is_valid_date = (value) => {
    // expected format : sql-format : 2023-11-22 12:42:38 (time part is optional)
 
    if(value == null) return false // tests for both undefined and null
+   if(value === '') return true // we permit empty strings (DB will check NOT NULL and invalidate if required)
    let result = true
    let curr_year =  new Date().getFullYear()
    let parts = value.split(' ')
@@ -138,6 +139,9 @@ const is_valid_collection_item_csv = (fields_list,csv) => {
 
    // get collection_item as an assoc array
    const collection_item = assoc_arr_obj(field_keys,values)
+
+   // CSV may contain some missing data which we can default to:
+   if(collection_item['file_type'] === '') collection_item['file_type'] = 'FILE'
 
    const is_valid_record_obj =  is_valid_collection_item(fields_list,collection_item)
 
