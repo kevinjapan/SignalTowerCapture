@@ -36,6 +36,7 @@ class ExportCSVComponent {
 
       let export_csv_btn = create_button({
          attributes:[{key:'id',value:'export_csv_btn'}],
+         classlist:['action_btn'],
          text:'Export CSV File'
       })  
 

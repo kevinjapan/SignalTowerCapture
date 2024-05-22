@@ -53,6 +53,19 @@ class ImportJSONComponent {
       })
       import_json_section.append(json_header,json_section_desc)
 
+      const action_section = create_section({
+         classlist:['flex','align_items_center','no_wrap']
+      })
+      const warning = create_p({
+         classlist:['mt_0','mb_0','bg_yellow_200','p_1','rounded','w_50'],
+         text:'You are recommended to backup the database before any import actions to ensure you can recover if any issues arise.'
+      })      
+      let import_json_btn = create_button({
+         attributes:[{key:'id',value:'import_json_btn'}],
+         classlist:['action_btn'],
+         text:'Import JSON File'
+      })  
+      action_section.append(import_json_btn,warning)
 
       // display fields info
       const fields = create_div({
@@ -85,15 +98,8 @@ class ImportJSONComponent {
          level:'h4',
          text:'Fields'
       })
-      const warning = create_p({
-         classlist:['mt_0','mb_0','bg_yellow_200','p_1','rounded'],
-         text:'You are recommended to backup the database before any import actions to ensure you can recover if any issues arise.'
-      })
 
-      let import_json_btn = create_button({
-         attributes:[{key:'id',value:'import_json_btn'}],
-         text:'Import JSON File'
-      })  
+
 
       const import_json_outcome = create_div({
          attributes:[{key:'id',value:'import_json_outcome'}]
@@ -117,7 +123,7 @@ class ImportJSONComponent {
       }
 
       // assemble
-      import_json_section.append(warning,heading,fields,import_json_btn,import_json_outcome,import_json_fields,json_history_section)
+      import_json_section.append(action_section,import_json_outcome,heading,fields,import_json_fields,json_history_section)
    
       return import_json_section
    }
@@ -160,13 +166,14 @@ class ImportJSONComponent {
                      await this.import_json_completed()
                      Notification.notify(
                         '#import_json_outcome',
-                        `The import on ${get_ui_ready_date(Date(),true)} at ${get_ui_ready_time(Date())} was successful.`,
-                        ['bg_inform']
+                        [`The import on ${get_ui_ready_date(Date(),true)} at ${get_ui_ready_time(Date())} was successful.`,...import_results_obj.message_arr],
+                        ['bg_inform'],
+                        false
                      )
                   }
                   else {
                      wait_dlg_component.close()
-                     Notification.notify('#import_json_outcome',import_results_obj.message,[],false)
+                     Notification.notify('#import_json_outcome',import_results_obj.message_arr,[],false)
                      await this.import_json_completed
                   }
                }

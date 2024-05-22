@@ -38,6 +38,7 @@ class ExportJSONComponent {
 
       let export_json_btn = create_button({
          attributes:[{key:'id',value:'export_json_btn'}],
+         classlist:['action_btn'],
          text:'Export JSON File'
       })  
 

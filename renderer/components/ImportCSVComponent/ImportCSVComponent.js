@@ -48,11 +48,25 @@ class ImportCSVComponent {
          classlist:['m_0','mb_2','pt_0','pb_0'],
          text:'Comma-Separated-Value (CSV) files are a common file format for tranfering data between applications.'
       })
-      const warning = create_p({
-         classlist:['mt_0','mb_0','bg_yellow_200','p_1','rounded'],
-         text:'You are recommended to backup the database before any import actions to ensure you can recover if any issues arise.'
+
+      const action_section = create_section({
+         classlist:['flex','align_items_center','no_wrap']
       })
-      import_csv_section.append(csv_header,csv_section_desc,warning)
+      const warning = create_p({
+         classlist:['mt_0','mb_0','bg_yellow_200','p_1','rounded','w_50'],
+         text:'You are recommended to backup the database before any import actions to ensure you can recover if any issues arise.'
+      })      
+      let import_csv_btn = create_button({
+         attributes:[{key:'id',value:'import_csv_btn'}],
+         classlist:['action_btn'],
+         text:'Import CSV File'
+      })  
+      action_section.append(import_csv_btn,warning)
+
+      const import_csv_outcome = create_div({
+         attributes:[{key:'id',value:'import_csv_outcome'}]
+      })
+      import_csv_section.append(csv_header,csv_section_desc,action_section,import_csv_outcome)
 
       // display fields info
       const fields = create_div({
@@ -77,13 +91,6 @@ class ImportCSVComponent {
          text:'Fields'
       })
 
-      let import_csv_btn = create_button({
-         attributes:[{key:'id',value:'import_csv_btn'}],
-         text:'Import CSV File'
-      })  
-      const import_csv_outcome = create_div({
-         attributes:[{key:'id',value:'import_csv_outcome'}]
-      })
       const import_csv_fields = create_div({
          classlist:['break_words','bg_lightgrey','text_grey','italic','pl_1','pr_1'],
          attributes:[{key:'id',value:'import_csv_fields'}]
@@ -99,7 +106,7 @@ class ImportCSVComponent {
       }
 
       // assemble
-      import_csv_section.append(heading,fields,import_csv_btn,import_csv_outcome,import_csv_fields,csv_history_section)
+      import_csv_section.append(heading,fields,import_csv_fields,csv_history_section)
    
       return import_csv_section
    }
@@ -135,7 +142,9 @@ class ImportCSVComponent {
                   }
 
                   // call import func in main process
-                  const import_results_obj = await window.actions_api.importCSVFile(file_path)  
+                  const import_results_obj = await window.actions_api.importCSVFile(file_path)
+
+                  console.log('import_results_obj',import_results_obj)
 
                   if (typeof import_results_obj != "undefined") { 
                      if(import_results_obj.outcome === 'success') {
@@ -143,13 +152,20 @@ class ImportCSVComponent {
                         await this.import_csv_completed()
                         Notification.notify(
                            '#import_csv_outcome',
-                           `The import on ${get_ui_ready_date(Date(),true)} at ${get_ui_ready_time(Date())} was successful.`,
-                           ['bg_inform'])
+                           [`The import on ${get_ui_ready_date(Date(),true)} at ${get_ui_ready_time(Date())} was successful.`,...import_results_obj.message_arr],
+                           ['bg_inform'],
+                           false
+                        )
                      }
                      else {
                         wait_dlg_component.close()
                         await this.import_csv_completed()
-                        Notification.notify('#import_csv_outcome',import_results_obj.message_arr,[],false)
+                        Notification.notify(
+                           '#import_csv_outcome',
+                           import_results_obj.message_arr,
+                           [],
+                           false
+                        )
                      }
                   }
                }
