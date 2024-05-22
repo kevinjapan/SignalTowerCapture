@@ -21,7 +21,7 @@ class TagsNavList {
    render = async(actions_callback) => {
 
       const tags_obj = await window.tags_api.getTags()
-      if(tags_obj.tags === undefined || tags_obj.tags.length === 0) return // to do : return 'undefined' ok?
+      if(tags_obj.tags === undefined || tags_obj.tags.length === 0) return null
       const tags = tags_obj.tags
 
       this.#actions_callback = actions_callback
