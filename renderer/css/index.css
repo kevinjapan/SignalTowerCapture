@@ -183,6 +183,13 @@ button.disabled:hover {
    background:none;
 }
 
+button.action_btn {
+   font-size:1.5rem;
+   margin-left:1rem;
+   margin-right:1rem;
+   max-width:150px;
+}
+
 /* 
    flex 
 */
