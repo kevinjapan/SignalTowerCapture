@@ -1320,7 +1320,7 @@ section.feature_block.my_2 {margin-top:2rem;margin-bottom:2rem;}
 */
 /* .fade_in hides element initially, .appear reveals on Intersection Obs. */
 .fade_in {
-   opacity:0;
+   opacity:1; /* temp disabled - proving problematic and low priority */
    -webkit-transition:opacity .75s ease-in;
    -o-transition:opacity .75s ease-in;
    transition:opacity .75s ease-in;

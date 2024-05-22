@@ -160,8 +160,9 @@ class App {
          // delay to allow rendering to complete
          setTimeout(() => component.activate(),100)
 
-         setTimeout(() => init_fade_ins(),100)      
-         setTimeout(() => init_fade_ins(),400)   // failsafe - harmless, guarantees fade_in
+          /* temp disabled - proving problematic and low priority */
+         // setTimeout(() => init_fade_ins(),100)      
+         // setTimeout(() => init_fade_ins(),400)   // failsafe - harmless, guarantees fade_in
       }
    }
 
