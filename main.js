@@ -60,7 +60,7 @@ app.whenReady().then(async() => {
    setTimeout(() => house_keeping(),200)
 
    // AppConfig initialization
-   // future : requires timeout to wait on previous db jobs finishing (db initialization only) - why? can we tidy?
+   // Requires timeout to wait on previous db initialization completing - tweaked to give plenty of time
    setTimeout(async() => {
       try {
          await new AppConfig(database).initialize_config(database)
@@ -79,7 +79,7 @@ app.whenReady().then(async() => {
    // Only load Renderer process ONCE the database has been initialized
    // since we will load App with eg root_folder from database -
    // on initial database creation, we need to ensure some delay
-   setTimeout(() => createWindow(),300)
+   setTimeout(() => createWindow(),500)
 })
 
 
