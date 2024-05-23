@@ -17,7 +17,7 @@ class FileInjector {
 
    render = async() => {
 
-      this.#props.root_folder = App.get_root_folder()
+      this.#props.root_folder = await App.get_root_folder()
       if(this.#props.root_folder === '') return no_root_folder()
 
       let file_injector = create_section('fade_in')

@@ -23,7 +23,7 @@ class CollectionItemRecord {
 
    render = async() => {
 
-      this.#props.root_folder = App.get_root_folder()
+      this.#props.root_folder = await App.get_root_folder()
       if(this.#props.root_folder === '') return no_root_folder()
       
       // update Recent records

@@ -41,7 +41,7 @@ class Search {
 
    render = async () => {
 
-      this.#root_folder = App.get_root_folder()
+      this.#root_folder = await App.get_root_folder()
       if(this.#root_folder === '') return no_root_folder()
 
       this.#search_section = create_section({
