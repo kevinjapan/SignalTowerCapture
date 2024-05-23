@@ -116,7 +116,6 @@ if(back_btns){
 // App provides app-wide settings eg root_folder
 //
 const app = new App()
-await app.init()
 
 
 // load Home page on startup
