@@ -90,6 +90,11 @@ const is_valid_date = (value) => {
 //
 // Collection Item
 //
+
+//
+// is_valid_collection_item_csv
+// Does the CSV given match the expected CollectionItem fields exactly
+//
 const is_valid_collection_item_csv = (fields_list,csv) => {
 
    if(!Array.isArray(fields_list)) {
@@ -100,13 +105,10 @@ const is_valid_collection_item_csv = (fields_list,csv) => {
          ]
       }
    }
-
    if(typeof csv !== 'string' || csv.length === 0) {
       return {
          outcome:'fail',
-         errors:[
-            {name:'',message:'A line was read that contained an invalid string or was empty.',value:''}
-         ]
+         errors:[{name:'',message:'A line was read that contained an invalid string or was empty.',value:''}]
       }
    }
 
@@ -118,21 +120,8 @@ const is_valid_collection_item_csv = (fields_list,csv) => {
       return {
          outcome:'fail',
          errors:[
-            {
-               name:'',
-               message:'The number of tokens on the CSV line does not match the expected number.',
-               value:''
-            },
-            {
-               name:'',
-               message:`We expected ${field_keys.length} tokens on each line, but the read line contains ${values.length}.`,
-               value:''
-            },
-            {
-               name:'',
-               message:`Note, a single invalid line (eg at start of file) may stop the processing.`,
-               value:''
-            }
+            {message:'The number of tokens on the CSV line does not match the expected number.',},
+            {message:`We expected ${field_keys.length} tokens on each line, but the read line contains ${values.length}.`,}
          ]
       }
    }
@@ -164,6 +153,10 @@ const is_valid_collection_item_csv = (fields_list,csv) => {
    return is_valid_record_obj
 }
 
+
+//
+// is_valid_collection_item
+//
 const is_valid_collection_item = (fields_list,collection_item) => {
 
    let errors = []
