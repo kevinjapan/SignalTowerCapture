@@ -38,15 +38,14 @@ class App {
    static #root_folder = ''
 
 
-   init = async() => {
-      const app_config_obj = await window.config_api.getAppConfig()
-      if(app_config_obj.outcome === 'success') {
-         // load root_folder
-         App.#root_folder = trim_end_char(app_config_obj.app_config.root_folder,'\\')
+   static get_root_folder = async() => {
+      if(this.#root_folder === '') {
+         // we initialize on first request
+         let app_config_obj = await window.config_api.getAppConfig()
+         if(app_config_obj.outcome === 'success') {
+            this.#root_folder = trim_end_char(app_config_obj.app_config.root_folder,'\\')
+         }
       }
-   }
-
-   static get_root_folder = () => {
       return this.#root_folder
    }
 
