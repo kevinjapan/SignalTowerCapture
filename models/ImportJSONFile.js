@@ -28,6 +28,10 @@ class ImportJSONFile {
          if(fs.existsSync(file_path)) {
             const collection_items = await this.get_json_file_contents(file_path)
             const num_rcvd_items = collection_items.length
+
+            // to do : check first record  - is valid_collection_item ?
+            //         see if(first_line) block in ImportCSVFile.js
+
             const no_duplicate_collection_items = await this.remove_duplicate_records(collection_items)
             const num_non_duplicate_items = no_duplicate_collection_items.length
             
@@ -48,8 +52,6 @@ class ImportJSONFile {
                return {
                   query:'import_csv_file',
                   outcome:'success',
-                  last_id:last_id,
-                  changes:changes,
                   message_arr:[
                      `${num_non_duplicate_items} records were added from the ${num_rcvd_items} records read.`,
                      `${num_rcvd_items - num_non_duplicate_items} records were duplicates.`
@@ -80,7 +82,7 @@ class ImportJSONFile {
          return {
             query:'import_json_file',
             outcome:'fail',
-            message:'There was an error attempting to import the records. [ImportJSONFile.import]  ' + error
+            message_arr:['There was an error attempting to import the records. [ImportJSONFile.import]  ' + error]
          }
       }
    }

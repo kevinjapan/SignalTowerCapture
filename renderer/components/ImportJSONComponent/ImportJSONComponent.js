@@ -160,21 +160,28 @@ class ImportJSONComponent {
                // call import func in main process
                const import_results_obj = await window.actions_api.importJSONFile(file_path)
                
+               console.log(import_results_obj)
+               
                if (typeof import_results_obj != "undefined") { 
                   if(import_results_obj.outcome === 'success') {
                      wait_dlg_component.close()
                      await this.import_json_completed()
                      Notification.notify(
                         '#import_json_outcome',
-                        [`The import on ${get_ui_ready_date(Date(),true)} at ${get_ui_ready_time(Date())} was successful.`,...import_results_obj.message_arr],
+                        [`The import on ${get_ui_ready_date(Date(),true)} at ${get_ui_ready_time(Date())} was completed successfully.`,...import_results_obj.message_arr],
                         ['bg_inform'],
                         false
                      )
                   }
                   else {
                      wait_dlg_component.close()
-                     Notification.notify('#import_json_outcome',import_results_obj.message_arr,[],false)
                      await this.import_json_completed
+                     Notification.notify(
+                        '#import_json_outcome',
+                        import_results_obj.message_arr,
+                        [],
+                        false)
+                     
                   }
                }
             }

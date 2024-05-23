@@ -144,15 +144,42 @@ class ImportCSVComponent {
                   // call import func in main process
                   const import_results_obj = await window.actions_api.importCSVFile(file_path)
 
-                  console.log('import_results_obj',import_results_obj)
-
                   if (typeof import_results_obj != "undefined") { 
+
+                        // errors: [{
+                        //    name: 'file_name',
+                        //    message: 'This is not a valid filename.',
+                        //    value: 'coffee mug'
+                        // },
+                        // {
+                        //    name: 'item_date',
+                        //    message: 'This value is not a valid date (YYYY-MM-DD)',
+                        //    value: '\\Research_A-G\\bell-rock-lighthouse'
+                        // }]
+
+                     let failed_lines = []
+                     if(import_results_obj.failed_lines) {
+                        failed_lines = import_results_obj.failed_lines.map(failed_line => {
+                           return `Line ${failed_line.line} : ${this.failed_line_error_ui(failed_line.errors)}`
+                        })
+                     }
+
+                     // to do : if we put line no. inside each error, could we them display as separate lines in Notify?
+                     console.log('failed_lines',failed_lines)
+                     
+                     // prepend for Notification display
+                     if(failed_lines.length > 0) failed_lines = ['Some lines were not valid [max of 10 shown] :',...failed_lines]
+
                      if(import_results_obj.outcome === 'success') {
                         wait_dlg_component.close()
                         await this.import_csv_completed()
                         Notification.notify(
                            '#import_csv_outcome',
-                           [`The import on ${get_ui_ready_date(Date(),true)} at ${get_ui_ready_time(Date())} was successful.`,...import_results_obj.message_arr],
+                           [
+                              `The import on ${get_ui_ready_date(Date(),true)} at ${get_ui_ready_time(Date())} was completed successfully.`,
+                              ...import_results_obj.message_arr,
+                              ...failed_lines,
+                           ],
                            ['bg_inform'],
                            false
                         )
@@ -162,7 +189,10 @@ class ImportCSVComponent {
                         await this.import_csv_completed()
                         Notification.notify(
                            '#import_csv_outcome',
-                           import_results_obj.message_arr,
+                           [
+                              ...import_results_obj.message_arr,
+                              ...failed_lines,
+                           ],
                            [],
                            false
                         )
@@ -175,6 +205,18 @@ class ImportCSVComponent {
                }
             })
          }
+   }
+
+   // name|message|value to string
+   failed_line_error_ui = (errors) => {
+      let str = ''
+      errors.forEach(error => {
+         str+= `  ${error['name'] ? '<' + error['name'] + '> ' : ''}
+                  ${error['message'] ? error['message'] : ''}  
+                  ${error['value'] ? '"' + error['value'] + '"    ' : '    '} `
+
+      })
+      return str
    }
 
    close_wait_dlg = (parent_section) => {
