@@ -9,6 +9,9 @@ import { create_section,create_div,create_h,create_p } from '../../utilities/ui_
 import { icon } from '../../utilities/ui_utilities.js'
 
 
+// future : depr - remove this file
+
+
 
 class Actions {
 
@@ -82,7 +85,7 @@ class Actions {
          csv_section.append(export_csv_component.render())
          setTimeout(() => export_csv_component.activate(),200)
       }
-      const import_csv_component = new ImportCSVComponent(this.import_csv_completed)
+      const import_csv_component = new ImportCSVComponent()
       if(csv_section) {
          csv_section.append(await import_csv_component.render())
          setTimeout(() => import_csv_component.activate(),200)
@@ -130,7 +133,7 @@ class Actions {
          json_section.append(export_json_component.render())
          setTimeout(() => export_json_component.activate(),200)
       }
-      const import_json_component = new ImportJSONComponent(this.import_json_completed)
+      const import_json_component = new ImportJSONComponent()
       if(json_section) {
          json_section.append(import_json_component.render())
          setTimeout(() => import_json_component.activate(),200)
