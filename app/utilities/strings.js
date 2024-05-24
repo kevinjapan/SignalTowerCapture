@@ -84,11 +84,39 @@ const trim_start_char = (str,delim) => {
    return str.startsWith(str,delim) ? str.slice(1) : str
 }
 
+//
+// Split string on ',' exluding ',' within double-quotes
+// 
+const split_csv_ignore_quoted = (str) => {
+
+   // we inject a temp unique placeholder
+   const placeholder = '4590_CSV_PLACEHOLDER_%$'
+
+   const replace_comma = s => s.replace(',',placeholder)
+   const replace_placeholder = s => s.replace(placeholder,',')
+
+   // select any text within double-quotes
+   const double_quote_regex = /\".*\"/gi
+
+   // to do : what does double_quote_regext contain here?
+
+   // replace all commas within double quotes
+   const clean_str = str.replace(double_quote_regex,replace_comma)
+
+   const tokens = clean_str.split(',')
+
+   const clean_tokens = tokens.map(replace_placeholder)
+   
+
+   return clean_tokens
+}
+
 
 module.exports = {
    get_random_test_string,
    is_valid_tag,
    trim_char,
    trim_end_char,
-   trim_start_char
+   trim_start_char,
+   split_csv_ignore_quoted
 }
