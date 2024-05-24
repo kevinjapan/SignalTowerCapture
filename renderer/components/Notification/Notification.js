@@ -1,4 +1,4 @@
-import { create_div,create_p } from '../../utilities/ui_elements.js'
+import { create_div,create_p,create_button } from '../../utilities/ui_elements.js'
 
 // parameters
 // elem_selector  - display element on current page
@@ -27,15 +27,15 @@ class Notification {
             messages.forEach(msg => {
                notification_card.append(create_p({classlist:['p_0.5','m_0'],text:msg}))
             })
-
+            notification_card.append(this.get_ctrls())
             elem.append(notification_card) 
             if(fade_out) setTimeout(() => this.remove_notification(elem_selector),7000)
          })
       }
+      this.activate_ctrls(elem_selector)
    }
 
    static remove_notification = (elem_selector) => {
-
       const elem_selectors = document.querySelectorAll(elem_selector)
       if(elem_selectors) {
          elem_selectors.forEach(elem => {
@@ -44,6 +44,31 @@ class Notification {
       }
    }
 
+   static get_ctrls = () => {
+      const ctrls = create_div({
+         classlist:['flex','justify_center','p_1']
+      })
+      const remove_btn = create_button({
+         attributes:[{key:'id',value:'remove_notification_btn'}],
+         text:'Remove Notification'
+      })
+      ctrls.append(remove_btn)
+      return ctrls
+   }
+
+   static activate_ctrls = (elem_selector) => {
+      const remove_notification_btn = document.getElementById('remove_notification_btn')
+      if(remove_notification_btn) {
+         remove_notification_btn.addEventListener('click', async(event) => {
+            const elem_selectors = document.querySelectorAll(elem_selector)
+            if(elem_selectors) {
+               elem_selectors.forEach(elem => {
+                  elem.innerText = ''
+               })
+            }
+         })
+      }
+   }
 }
 
 
