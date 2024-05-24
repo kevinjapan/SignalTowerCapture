@@ -127,7 +127,8 @@ class Browse {
 
                      let number_records = document.getElementById('number_records')
                      if(number_records) {             
-                        number_records.innerText = `${ui_display_number_as_str(collection_items_obj.count)} matching records were found.`
+                        let {count} = collection_items_obj
+                        number_records.innerText = `${ui_display_number_as_str(count)} matching record${count === 1 ? '' : 's'} ${count === 1 ? 'was found' : 'were found'}.`
                      }
             
                      let props = {
@@ -152,14 +153,9 @@ class Browse {
                      this.#browse_section.append(bottom_pagination_nav.render())
                      bottom_pagination_nav.activate()
                   }
-                  else {
-                        this.#browse_section.append(create_div({
-                           attributes:[{key:'id',value:'browse_outcome'}]
-                        }))
-                        Notification.notify('#browse_outcome','There are no records in the system.',['bg_inform'])
-                     
+                  else {                     
                      let number_records = document.getElementById('number_records')
-                     if(number_records) number_records.innerText = ``
+                     if(number_records) number_records.innerText = 'There are no matching records.'
                   }
                   // re-instate scroll position if user had scrolled list before opening a record
                   setTimeout(() => window.scroll(0,this.#browse_context.scroll_y),50)
