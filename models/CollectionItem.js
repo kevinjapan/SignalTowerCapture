@@ -457,7 +457,7 @@ class CollectionItem {
       // to do : do we check each has required min required fields?
       // if(collection_item.folder_path ===  undefined || collection_item.file_name === undefined) {
       
-      // fields list - exluding 'id' 
+      // fields list - excluding 'id' 
       let fields = CollectionItem.#full_fields_list.filter(field => field.key !== 'id')
       const field_keys = fields.map((field) => field.key)
       let values_lists = []
@@ -471,7 +471,12 @@ class CollectionItem {
             switch(key) {
                case 'title':
                   // Auto-gen candidate title from the file name if non-exists
-                  item['file_name'] ? item_values.push(`"${title_from_file_name(item['file_name'])}"`) : item_values.push(`""`)
+                  if(item['title'] === '') {
+                     item['file_name'] ? item_values.push(`"${title_from_file_name(item['file_name'])}"`) : item_values.push(`""`)
+                  }
+                  else {
+                     item_values.push(`"${item['title']}"`)
+                  }
                   break
                case 'file_type':
                   item['file_type'] === '' ? item_values.push('"FILE"') : item_values.push(`"${item[key]}"`)
@@ -481,7 +486,7 @@ class CollectionItem {
                   item_values.push(`"${get_sqlready_datetime()}"`)
                   break
                case 'deleted_at':
-                  if(value === null) 
+                  if(!value) 
                      item_values.push(`null`)
                   else 
                      value === 'null' ? item_values.push(`null`) : item_values.push(`"${item[key]}"`)
@@ -493,6 +498,8 @@ class CollectionItem {
          values_lists.push('(' + item_values.join(',') + ')')
       }
       const sql = `INSERT INTO collection_items(${field_keys.join(',')}) VALUES ${values_lists.join(',')}`
+
+      console.log('sql',sql)
       let last_id = 0    // last inserted row ID
       let changes = 0    // number rows affected      
 
@@ -500,11 +507,10 @@ class CollectionItem {
          this.#database.serialize(async() => {
             this.#database.run(
                sql,[], function(error) {
-                  console.log('error',error)
                   if(error) reject(error)
-                     last_id = this.lastID
-                     changes = this.changes
-                     resolve('success')
+                  // last_id = this.lastID
+                  // changes = this.changes
+                  resolve('success')
                }
             )
          })
@@ -514,8 +520,8 @@ class CollectionItem {
          return {
             query:'create_collection_item',
             outcome:'success',
-            last_id:last_id,
-            changes:changes
+            // last_id:last_id,
+            // changes:changes
          }
       }
       else {
@@ -533,7 +539,7 @@ class CollectionItem {
 
    //
    // Create From CSV
-   // to do : review - on-oing duplicate_check here doesn't appear to break import, so will 
+   // future : review - duplicate_check here doesn't appear to break import, so will 
    //         work with and test this until it proves otherwise. (cf json import needed separation)
    // cf create() - here, we always receive a raw csv line, which likely contains a prev. 'id' field
    // so we have to process and remove ourselves
