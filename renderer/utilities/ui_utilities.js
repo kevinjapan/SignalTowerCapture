@@ -286,8 +286,6 @@ export const title_from_file_name = (file_name) => {
 }
 
 export const no_root_folder = () => {
-   // to do : this doesn't tell us where the error ocurred -
-   //         add a parameter from client giving some info.
    const elem = create_div({
       classlist:['bg_yellow','p_2','border_radius_0.5'],
       text:`Sorry, we couldn't locate or determine the root folder path.`
