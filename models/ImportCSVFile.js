@@ -21,11 +21,6 @@ class ImportCSVFile {
       this.#database = database
    }
 
-
-   // to do : - bug - import signal-tower-capture-export-2024-05-21.txt			to do 
-   //      currently saves all 500 non-duplicates to 'Deleted Records'
-
-
    async import(file_path) {
       
       const fs = require('fs')
@@ -48,11 +43,13 @@ class ImportCSVFile {
             // we will build arr of collection_items from lines
             let collection_items = []
             const field_keys = CollectionItem.get_full_fields_list().map(field => field.key)
-            let values         
+            let values
+
             for await (const line of rl) {
 
                // Validate file format from first line (if auto-generated CSV file, we assume consistent throughout - bar errors in values)
                if(first_line) {
+
                   const valid_first_line = is_valid_collection_item_csv(CollectionItem.get_full_fields_list(),line)
 
                   // bail and notify if import file does not match expected fields
@@ -74,29 +71,38 @@ class ImportCSVFile {
                      }
                   }
                   first_line = false  // prevent further line/record validation (we assume format followed throughout file)
-                  count++
                }
+
+               // future : review - do we want this line check out of loop?
+               // any additional work inside this for.. of.. loop may break on database operations
+               // perhaps an initial step of 'check file is valid' before 'import.. ' btn appears?
+
                // Validate subsequent lines - we only show first 10 failing lines (avoid proliferation on UI)
                // user can view subsequent by fixing current displayed issues if required.
                // This does nearly double time taken but we have already cut time significantly, 
                // and the payoff of getting info. back on errors in the CSV file is worth it.
-               // to do : test we cap off failed_lines cleanly..
-               else if(failed_lines.length < 11) {
-                  const valid_item_obj = is_valid_collection_item_csv(CollectionItem.get_full_fields_list(),line)
-                  if(valid_item_obj) {
-                     if(valid_item_obj.outcome === 'fail') {
-                        valid_item_obj.line = count
-                        failed_lines.push(valid_item_obj)
-                     }
+
+               const valid_item_obj = is_valid_collection_item_csv(CollectionItem.get_full_fields_list(),line)               
+               if(valid_item_obj) {
+                  if(valid_item_obj.outcome === 'fail') {
+                     valid_item_obj.line = count
+                     // we don't show all line errors to avoid proliferation
+                     if(failed_lines.length < 11) failed_lines.push(valid_item_obj)
+                     // but we do exclude them from insertion
+                     count++
+                     continue
                   }
-                  count++
                }
+               count++
+
+               // to do : support legacy file_names w/ ',' - see split_csv_ignore_quoted() in string.js
+               // requires that we provide quoted strings in our own CSV exports as well as handling here
 
                values = line.split(',')
                collection_items.push(assoc_arr_obj(field_keys,values))
             }
 
-            const num_rcvd_items = collection_items.length
+            const num_rcvd_items = count - 1
             const no_duplicate_collection_items = await this.remove_duplicate_records(collection_items)
             const num_non_duplicate_items = no_duplicate_collection_items.length
 
