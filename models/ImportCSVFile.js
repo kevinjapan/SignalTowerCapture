@@ -15,7 +15,7 @@ class ImportCSVFile {
    #last_error
 
    // sql - the maximum number of rows in one VALUES clause is 1000
-   #batch_size = 10 // to do : test w/ 100 - rollout to ImportJSONFile
+   #batch_size = 100
 
    constructor(database) {
       this.#database = database

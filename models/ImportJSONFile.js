@@ -13,7 +13,7 @@ class ImportJSONFile {
    #last_error
 
    // sql - the maximum number of rows in one VALUES clause is 1000
-   #batch_size = 10
+   #batch_size = 100
 
 
    constructor(database) {
@@ -28,10 +28,6 @@ class ImportJSONFile {
          if(fs.existsSync(file_path)) {
             const collection_items = await this.get_json_file_contents(file_path)
             const num_rcvd_items = collection_items.length
-
-            // to do : check first record  - is valid_collection_item ?
-            //         see if(first_line) block in ImportCSVFile.js
-
             const no_duplicate_collection_items = await this.remove_duplicate_records(collection_items)
             const num_non_duplicate_items = no_duplicate_collection_items.length
             
