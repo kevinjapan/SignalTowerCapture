@@ -450,12 +450,8 @@ class CollectionItem {
    // syntax: INSERT INTO 'tablename' ('column1', 'column2') VALUES ('data1', 'data2'),('data1', 'data2'),('data1', 'data2');
    // currently, we don't use placeholders in sql statement - ok for this func - only internal clients
    // future: how to use placeholders for multiple VALUES LISTS in param to .run() below?
-   // to do : any issue w/ triggers on FTS not working since we are not doing single INSERTs?
    //
    async create_batch(collection_items) {
-
-      // to do : do we check each has required min required fields?
-      // if(collection_item.folder_path ===  undefined || collection_item.file_name === undefined) {
       
       // fields list - excluding 'id' 
       let fields = CollectionItem.#full_fields_list.filter(field => field.key !== 'id')
@@ -463,6 +459,14 @@ class CollectionItem {
       let values_lists = []
 
       for(const item of collection_items) {
+
+         // exclude records w/ no file specified
+         if(item.file_name ===  undefined || item.folder_path === undefined) {
+            // future : review - do we want to notify user of nums. not added due to this check? (no file)
+            // careful it doesn't trip up on files in the root_folder (eg folder_path = '')
+            continue
+         }
+
          let item_values = []
 
          for(const key of field_keys) {
@@ -471,7 +475,7 @@ class CollectionItem {
             switch(key) {
                case 'title':
                   // Auto-gen candidate title from the file name if non-exists
-                  if(item['title'] === '') {
+                  if(!item['title'] || item['title'] === '') {
                      item['file_name'] ? item_values.push(`"${title_from_file_name(item['file_name'])}"`) : item_values.push(`""`)
                   }
                   else {
@@ -479,7 +483,7 @@ class CollectionItem {
                   }
                   break
                case 'file_type':
-                  item['file_type'] === '' ? item_values.push('"FILE"') : item_values.push(`"${item[key]}"`)
+                  !item['file_type'] || item['file_type'] === ''  ? item_values.push('"FILE"') : item_values.push(`"${item[key]}"`)
                   break
                case 'created_at':
                case 'updated_at':
@@ -492,24 +496,19 @@ class CollectionItem {
                      value === 'null' ? item_values.push(`null`) : item_values.push(`"${item[key]}"`)
                      break
                default:
-                  item_values.push(`"${item[key]}"`)
+                  // empty str is fine for now since we don't have any INTEGER fields other than the excluded 'id'
+                  item_values.push(item[key] ? `"${item[key]}"` : '""')
             }
          }         
          values_lists.push('(' + item_values.join(',') + ')')
       }
       const sql = `INSERT INTO collection_items(${field_keys.join(',')}) VALUES ${values_lists.join(',')}`
-
-      console.log('sql',sql)
-      let last_id = 0    // last inserted row ID
-      let changes = 0    // number rows affected      
-
+    
       const result = await new Promise((resolve,reject) => {         
          this.#database.serialize(async() => {
             this.#database.run(
                sql,[], function(error) {
                   if(error) reject(error)
-                  // last_id = this.lastID
-                  // changes = this.changes
                   resolve('success')
                }
             )
@@ -519,9 +518,7 @@ class CollectionItem {
       if(result) {
          return {
             query:'create_collection_item',
-            outcome:'success',
-            // last_id:last_id,
-            // changes:changes
+            outcome:'success'
          }
       }
       else {
@@ -750,8 +747,30 @@ class CollectionItem {
 
    //
    // RESTORE (SOFT DELETED)
+   // parameter 'collection_item' is used to duplicate_check against 'folder_path\file_name'
    // 
-   async restore(id) {
+   async restore(id,collection_item) {
+
+      // check & notify if there is an existing record (created or imported after this record was deleted) 
+      let attempt_read_existing = await this.read({
+         page:1,
+         field_filters:[
+            {field:'folder_path',value:collection_item.folder_path},
+            {field:'file_name',value:collection_item.file_name}
+         ]
+      })
+      if(attempt_read_existing.outcome === 'success') {
+         if(attempt_read_existing.collection_items.length > 0) {
+            // duplicate - we notify and don't restore    
+            return {
+               outcome:'fail',
+               message:`The attempt to restore this record failed 
+                        as there is already an existing record for the specified file.
+                        You may have created or imported a new record since deleting this one.
+                        To restore this file, please delete the duplicate file first.`
+            }
+         }
+      }
 
       if(!Number.isInteger(parseInt(id))) {
          return {

@@ -130,13 +130,13 @@ async function delete_collection_item (event,id,permanent = false) {
    }
 }
 
-async function restore_collection_item (event,id) {
+async function restore_collection_item (event,id,item) {
 
    if(!collection_item_controller_db) return NOTIFY.DATABASE_UNAVAILABLE
 
    if(is_valid_int(id)) {
       let collection_item = new CollectionItem(collection_item_controller_db)
-      const result = await collection_item.restore(id)
+      const result = await collection_item.restore(id,item)
       return result
    }
    else {

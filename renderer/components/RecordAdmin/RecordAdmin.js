@@ -4,7 +4,6 @@ import Notification from '../../components/Notification/Notification.js'
 
 
 
-
 class RecordAdmin {
 
    #props
@@ -15,7 +14,6 @@ class RecordAdmin {
 
    render = () => {
      
-
       let record_admin = create_section({
          attributes:[
             {key:'id',value:'record_admin'}
@@ -53,9 +51,7 @@ class RecordAdmin {
 
 
       const outcome = create_p({
-         attributes:[
-            {key:'id',value:'outcome'}
-         ]
+         attributes:[{key:'id',value:'outcome'}]
       })
 
       // assemble
@@ -69,15 +65,12 @@ class RecordAdmin {
       // del
       const del_btn = document.getElementById('del_btn')
       if(del_btn) {
-
          del_btn.addEventListener('click',async() => {
-
             const record_id = del_btn.getAttribute('data-id')
 
             if(confirm('Are you sure you want to delete this record?')) {
                try {
                   const result = await window.collection_items_api.deleteCollectionItem(record_id)
-                  const outcome = document.getElementById('outcome')
                   if(result.outcome === 'success'){
                      this.show_restore_btn()
                      Notification.notify('#outcome',result.message)
@@ -94,42 +87,33 @@ class RecordAdmin {
                   }
                   App.switch_to_component('Error',props)
                }
-
-
-               // redirect 'back'
-
             }
          })
       }
-
       
       // restore
       const restore_btn = document.getElementById('restore_btn')
       if(restore_btn) {
-
          restore_btn.addEventListener('click',async() => {
-
             try {
                const record_id = del_btn.getAttribute('data-id')
-               const result = await window.collection_items_api.restoreCollectionItem(record_id)
+               const result = await window.collection_items_api.restoreCollectionItem(record_id,this.#props.item)
 
                if(result.outcome === 'success'){
                   Notification.notify('#outcome',result.message,['bg_inform'])
                   restore_btn.classList.add('hidden')
                }
                else {
-                  Notification.notify('#outcome',result.message)
+                  Notification.notify('#outcome',result.message,[],false)
                }
             }
             catch(error) {
-               let props = {
+               App.switch_to_component('Error',{
                   msg:'Sorry, we were unable to delete the Record.',
                   error:error
-               }
-               App.switch_to_component('Error',props)
+               })
             }
          })
-
       }
    }
 
@@ -141,7 +125,6 @@ class RecordAdmin {
    }
 
 }
-
 
 
 export default RecordAdmin
