@@ -74,7 +74,7 @@ class SearchForm {
          attributes:[
             {key:'id',value:'advanced_search_link'}
          ],
-         classlist:['w_full','cursor_pointer'],
+         classlist:['','cursor_pointer'],
          text:'Advanced Search'
       })
 
