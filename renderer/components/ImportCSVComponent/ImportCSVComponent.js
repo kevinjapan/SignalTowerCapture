@@ -9,13 +9,7 @@ import { icon } from '../../utilities/ui_utilities.js'
 
 class ImportCSVComponent {
 
-   #completed_callback  // to do : remove this
-
    #csv_actions_log_component
-   
-   constructor(completed_callback) {
-      this.#completed_callback = completed_callback  
-   }
 
    render = async() => {
       

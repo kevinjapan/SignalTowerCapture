@@ -8,14 +8,8 @@ import { icon } from '../../utilities/ui_utilities.js'
 
 class ImportJSONComponent {
 
-   #completed_callback // to do : remove this
-
    #json_actions_log_component
    
-   constructor(completed_callback) {
-      this.#completed_callback = completed_callback  
-   }
-
    render = async() => { 
 
       // required json fields
