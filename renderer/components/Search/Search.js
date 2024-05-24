@@ -48,13 +48,10 @@ class Search {
          attributes:[{key:'id',value:'search_section'}],
          classlist:['fade_in','max_w_full','pt_1']
       })
-
       let search_status = create_section({
          attributes:[{key:'id',value:'search_status'}],
          classlist:['p_0','bg_warning']
       })
-
-      // to do : will fade_in too early, and not on subsequent submits
       this.#search_results_container = create_div({
          attributes:[{key:'id',value:'search_results_container'}],
          classlist:['grid','grid_cards_layout']
