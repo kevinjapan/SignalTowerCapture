@@ -121,13 +121,18 @@ export const icon = (icon_name,classes = []) => {
       'UP_ARROW':'imgs\\icons\\arrow-up-left-square.svg',
       'FOLDER_OPEN':'imgs\\icons\\folder2-open.svg',
       'DATABASE':'imgs\\icons\\database.svg',
+      'DEFAULT':'imgs\\icons\\person-raised-hand.svg',
+      'DELETED':'imgs\\icons\\trash.svg',
       'CSV':'imgs\\filetypes\\filetype-csv.svg',
       'JSON':'imgs\\filetypes\\filetype-json.svg',
       'FILE_TEXT':'imgs\\icons\\file-text.svg',
+      'FILES':'imgs\\icons\\files.svg',
       'TAG':'imgs\\icons\\tag.svg',
+      'TRASH':'imgs\\icons\\trash.svg',
       'SETTINGS':'imgs\\icons\\gear.svg',
    }
-   return build_img_elem(icons[icon_name.toUpperCase()],`${icon_name} icon`,[{key:'height',value:'35px'}],['pr_0.25','pt_0.5',...classes]) 
+   const icon_path = icons[icon_name.toUpperCase()] ? icons[icon_name.toUpperCase()] : icons['DEFAULT']
+   return build_img_elem(icon_path,`${icon_name} icon`,[{key:'height',value:'35px'}],['pr_0.25','pt_0.5',...classes]) 
 }
 
 // 
