@@ -56,14 +56,14 @@ export const create_a = (props) => {
 export const create_h = (props) => {
    let valid_headings = ['h1','h2','h3','h4','h5','h6']   
    let heading_elem
-   if(typeof props.level !== undefined) {
-      if(valid_headings.some((valid_heading) => {
+   if(typeof props.level !== 'undefined') {
+      if(valid_headings.some(valid_heading => {
          return props.level === valid_heading
       })) {
          heading_elem = document.createElement(props.level)
       }
       else {
-         heading_elem = 'h3'
+         heading_elem = document.createElement('h3')
       }
       hydrate_element(heading_elem,props)
       return heading_elem
@@ -189,7 +189,7 @@ const create_element = (tag,props) => {
 // hydrate the element with the given props - attributes/class/text
 //
 const hydrate_element = (elem,props) => {
-   if(props) {
+   if(elem && props) {
       if(typeof props.attributes !== 'undefined') {
          props.attributes.forEach((attr) => {
             if(attr.value) {    
