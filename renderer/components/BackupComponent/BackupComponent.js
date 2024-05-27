@@ -33,16 +33,12 @@ class BackupComponent {
       backup_section.append(backup_header,backup_section_desc)
 
       let backup_database_btn = create_button({
-         attributes:[
-            {key:'id',value:'backup_database_btn'}
-         ],
+         attributes:[{key:'id',value:'backup_database_btn'}],
          text:'Backup Database'
       }) 
 
       const backup_outcome = create_div({
-         attributes:[
-            {key:'id',value:'backup_outcome'}
-         ]
+         attributes:[{key:'id',value:'backup_outcome'}]
       })
 
       // assemble
@@ -76,8 +72,11 @@ class BackupComponent {
                
                const backup_results_obj = await window.actions_api.backupDatabase(file_name,result.file_path)
 
-               if(backup_results_obj.outcome === 'success') {                                  
-                  let folder_path_only = backup_results_obj.file_path.replace(backup_results_obj.file_name,'')
+               if(backup_results_obj.outcome === 'success') {           
+                  
+                  let { file_path,file_name } = backup_results_obj
+
+                  let folder_path_only = file_path.replace(file_name,'')
                   
                   let backup_folder_btn = create_button({
                      attributes:[
@@ -105,7 +104,6 @@ class BackupComponent {
    }
 
    activate_folder_btn = () => {
-
       // Open the backup folder user selected
       const open_backup_folder_btn = document.getElementById('open_backup_folder_btn')
       if(open_backup_folder_btn) {
@@ -115,7 +113,6 @@ class BackupComponent {
          })
       }
    }
-
 }
 
 

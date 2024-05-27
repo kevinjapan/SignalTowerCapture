@@ -98,7 +98,7 @@ const split_csv_ignore_quoted = (str) => {
    // select any text within double-quotes
    const double_quote_regex = /\".*\"/gi
 
-   // to do : what does double_quote_regext contain here?
+   // future : verify - what does double_quote_regext contain here?
 
    // replace all commas within double quotes
    const clean_str = str.replace(double_quote_regex,replace_comma)

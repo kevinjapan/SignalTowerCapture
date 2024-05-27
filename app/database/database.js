@@ -8,9 +8,6 @@ const { get_full_fields,get_table_create_fields,get_table_insert_fields } = requ
 // wrapper class for sqlite3 object
 //
 
-// to do : review all db calls - inc db.serialize() wrappers where appropriate -
-//         eg there are some issues in creating db from scratch. (eg fails to find root_folder)
-
 class Database {
 
    // the sqlite database

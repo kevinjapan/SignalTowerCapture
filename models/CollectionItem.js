@@ -87,9 +87,10 @@ class CollectionItem {
       let order_by = 'title COLLATE NOCASE ASC'             // our default 'ORDER BY' clause
       let filter_by_char = ''                               // where 'title' starts with _char 
       if(context.filters) {
-         if(context.filters.record_status) status = get_status_condition_sql('collection_items',context.filters.record_status)
-         if(context.filters.order_by) order_by = get_order_by_condition_sql('collection_items',context.filters.order_by,context.filters.order_by_direction)
-         if(context.filters.filter_char) filter_by_char = ` AND title LIKE '${context.filters.filter_char}%' `
+         let { record_status,order_by,order_by_direction,filter_char } = context.filters
+         if(record_status) status = get_status_condition_sql('collection_items',record_status)
+         if(order_by) order_by = get_order_by_condition_sql('collection_items',order_by,order_by_direction)
+         if(filter_char) filter_by_char = ` AND title LIKE '${filter_char}%' `
       }
 
       // field_filters target conditional tests against fields/cols within the record
@@ -319,7 +320,7 @@ class CollectionItem {
    async create(collection_item,editable_only = true) {
 
       // min requirements
-      if(collection_item.folder_path ===  undefined || collection_item.file_name === undefined) {
+      if(collection_item.folder_path === undefined || collection_item.file_name === undefined) {
          return {
             query:'create_collection_item',
             outcome:'fail',
@@ -647,9 +648,7 @@ class CollectionItem {
          })
       }
 
-      const field_keys = fields.map((field) => {
-         return field.key
-      })
+      const field_keys = fields.map((field) => field.key)
 
       // build sql set assignments - eg 'title = ?,tagline = ?...'
       let sql_set_assign_placeholders = field_keys.map((field) => {

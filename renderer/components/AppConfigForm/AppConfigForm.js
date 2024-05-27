@@ -43,11 +43,6 @@ class AppConfigForm {
          classlist:['config_form','border','mt_0']
       })
       
-      // to do : review : notification is at bottom of form only - so force user to act at that location
-      // let bottom_btns = FormBtns.render(null,false)
-      // form.append(bottom_btns)
-
-
       const app_settings_header = create_div({
          classlist:['flex','align_items_center']
       })
@@ -177,7 +172,7 @@ class AppConfigForm {
          this.#id = app_config_record.id
       }
 
-      let top_btns = FormBtns.render(null,false)
+      let form_btns = FormBtns.render(null,false)
 
       let submit_outcome = create_section({
          attributes:[
@@ -186,7 +181,7 @@ class AppConfigForm {
       })
       
       // assemble
-      form.append(create_div(),top_btns,submit_outcome)
+      form.append(create_div(),form_btns,submit_outcome)
       app_settings_section.append(form)
    
       return app_settings_section

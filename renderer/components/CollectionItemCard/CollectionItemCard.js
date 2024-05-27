@@ -28,10 +28,6 @@ class CollectionItemCard {
       })
       let tags_block = create_div({classlist:['flex','no_wrap']})
       let folder_path_block = create_div()
-
-      // let icons_block = create_div({
-      //    classlist:['flex','mb_1']
-      // })
       
       let field_element
       let tags_list_elem
@@ -51,13 +47,10 @@ class CollectionItemCard {
                if(field.key === 'title') {
 
                   // title as link
-                  //
                   if(field_value === '') field_value = 'no title'
                   field_element = create_h({
                      level:'h3',
-                     attributes: [
-                        {key:'data-id',value:item.id}
-                     ],
+                     attributes: [{key:'data-id',value:item.id}],
                      classlist:['text_blue','card_title_link','flex_100','m_0','mt_0.5','mb_0.5','font_w_400','cursor_pointer','hover_line','break_words'],
                      text:field_value
                   })
@@ -66,8 +59,6 @@ class CollectionItemCard {
                else if(field.key === 'file_type') {
 
                   // CollectionItem.file_type is 'file' | 'folder'
-                  //
-
                   let file_type_block = create_div({
                      classlist:['flex','align_items_center','gap_.5','mt_0.25','p_0.5','break_words']
                   })
@@ -76,13 +67,9 @@ class CollectionItemCard {
                      text:field_value
                   })
                   const icon = field_value.toUpperCase() === 'FILE' ? 'imgs\\filetypes\\file.svg' : 'imgs\\icons\\folder.svg'
-                  
                   const ext = get_ext(field_value)
-
                   const file_type = build_img_elem(icon,`${ext} filetype`,[{key:'height',value:'24px'}],[]) 
                   file_type_block.append(file_type,field_element)
-
-                  // append
                   card.append(file_type_block)
                }
                else if(field.key === 'file_name') {
@@ -102,14 +89,10 @@ class CollectionItemCard {
                   const ext = get_ext(field_value)
                   const filetype_icon = build_img_elem(icon,`${ext} filetype`,[{key:'height',value:'24px'}],[])
                   file_ext_type_block.append(filetype_icon,field_element)
-
-                  // append
                   card.append(file_ext_type_block)
                }         
                else if(field.key === 'folder_path') {
-
-                  // Card image               
-                  // 
+                  // Card image
                   const root_part = trim_end_char(this.#props.root_folder,'\\')
                   let relative_folder_part = trim_char(item.folder_path,'\\')
                   
@@ -174,14 +157,11 @@ class CollectionItemCard {
                   }
                }
                else if(field.key === 'tags') {
-
                   // Tags
-                  //
                   const tags_label = create_div({
                      classlist:['mt_1','p_0.5','pt_0.75','text_grey'],
                      text:'Tags'
                   })
-
                   tags_list_elem = create_div({
                      attributes:[
                         {key:'id',value:'tags_list_elem'}
@@ -200,8 +180,6 @@ class CollectionItemCard {
                else if(field.key === 'item_date') {
                   
                   // item date
-                  //
-
                   if(field_value) {
                      let item_date_block = create_div({
                         classlist:['flex','align_items_center','gap_.5','mt_0.25','fit_content','p_0.5','break_words','w_full']
@@ -212,18 +190,11 @@ class CollectionItemCard {
                      })
                      const filetype_icon = build_img_elem('imgs\\icons\\calendar.svg',`item date`,[{key:'height',value:'24px'}],[])
                      item_date_block.append(filetype_icon,field_element)
-
-                     // append
                      card.append(item_date_block)
                   }
-
-
                }
                else {
-
                   // Default field display
-                  //
-
                   if(field_value) {
                      field_element = create_div({
                         classlist:['break_words','w_full'],
@@ -237,7 +208,6 @@ class CollectionItemCard {
       }
       
       // assemble
-      // text_block.insertBefore(icons_block, text_block.children[2])
       card.prepend(img_block)
       card.append(folder_path_block,tags_block)
       return card
@@ -254,26 +224,24 @@ class CollectionItemCard {
          card_title_links.forEach(card_title_link => {
 
             card_title_link.addEventListener('click', async(event) => {
-
                if(typeof card_title_link.attributes['data-id'] !== 'undefined') {
-
                   try {
                      const collection_item_obj = await window.collection_items_api.getCollectionItem(card_title_link.attributes['data-id'].value)
 
                      if (typeof collection_item_obj != "undefined" && collection_item_obj.outcome === 'success') {
-
                         if(await is_valid_response_obj('read_single_collection_item',collection_item_obj)) {
+                           
+                           let { collection_item_fields,collection_item } = collection_item_obj
                         
                            let component_container = document.getElementById('component_container')
                            if(component_container) {
-
-                              let props = {
-                                 fields:collection_item_obj.collection_item_fields,
-                                 item:collection_item_obj.collection_item,
+                              let record_props = {
+                                 fields:collection_item_fields,
+                                 item:collection_item,
                                  ...this.#props
                               }
-                              props.context.scroll_y = window.scrollY
-                              App.switch_to_component('Record',props)
+                              record_props.context.scroll_y = window.scrollY
+                              App.switch_to_component('Record',record_props)
                            }
                         }
                         else {
@@ -283,20 +251,19 @@ class CollectionItemCard {
                         }
                      }
                      else {
-                        throw 'No records were returned.'
+                        throw 'No records were returned in CollectionItemCard.'
                      }
                   }
                   catch(error) {
-                     let props = {
-                        msg:'Sorry, we were unable to access the Records',
+                     App.switch_to_component('Error',{
+                        msg:'Sorry, we were unable to access the Records in the CollectionItemCard',
                         error:error
-                     }
-                     App.switch_to_component('Error',props)
+                     })
                   }
                }
                else {
                   let props = {
-                     msg:'Sorry, no valid id was provided for the Collection Item.'
+                     msg:'Sorry, no valid id was provided for the Collection Item in ColletionItemCard.'
                   }
                   App.switch_to_component('Error',props)
                }
@@ -305,9 +272,7 @@ class CollectionItemCard {
       }
    }
 
-   actions = async(key,id) => {
-      
-   }
+   actions = async(key,id) => {}
 
 }
 

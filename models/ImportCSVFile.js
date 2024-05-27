@@ -95,8 +95,10 @@ class ImportCSVFile {
                }
                count++
 
-               // to do : support legacy file_names w/ ',' - see split_csv_ignore_quoted() in string.js
+               // to do :  we just need to enforce output of csv - either enclose in "" or exclude ',' chars
+               // support legacy file_names with ',' - see split_csv_ignore_quoted() in string.js
                // requires that we provide quoted strings in our own CSV exports as well as handling here
+               // note: clearly, ImportJSON has no problem with this - so we can import existing dataset ok 
 
                values = line.split(',')
                collection_items.push(assoc_arr_obj(field_keys,values))
@@ -162,13 +164,11 @@ class ImportCSVFile {
 
    //
    // Duplicate check
-   // to do : we prob don't want to also check for duplicates in Deleted Records -
-   //         but consider - what if a duplicate record is 'restored'? (rollout ImportJSONFile)
+   //
    remove_duplicate_records = async(collection_items) => {      
       const collection_item_obj = new CollectionItem(this.#database)
       return await collection_item_obj.filter_out_duplicates(collection_items)
    }
-
 
    //
    // Batch insert records (max permitted is 1000 values)
@@ -186,7 +186,6 @@ class ImportCSVFile {
       promise_result = await new Promise(async(resolve,reject) => {
          // submit each 'chunk' of items for batch INSERT
          for(const chunk of arr_of_chunks) {
-            console.log('CHUNK',chunk)
             await collection_item.create_batch(chunk)
          }
          resolve({outcome:'success'})

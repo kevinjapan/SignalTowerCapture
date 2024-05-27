@@ -43,8 +43,6 @@ class FileInjector {
                   If you wish to have a separate record for any specific file, please
                   move that file out of this folder.`
          })
-
-         // assemble
          file_injector.append(check_outcome)
 
          const collection_item_card = new CollectionItemCard(this.#props)
@@ -55,16 +53,12 @@ class FileInjector {
          // a matching record for this file was found
          const collection_item_card = new CollectionItemCard(this.#props)
          file_injector.appendChild(collection_item_card.render(record_fields,matching_file_record))
-         setTimeout(() => collection_item_card.activate(),200)
-         
+         setTimeout(() => collection_item_card.activate(),200)         
       }
       else {
          // no matching record was found for this file
-   
-         // assemble
          const inject_form = new CollectionItemInjectForm(this.#props)
-         file_injector.appendChild(await inject_form.render())         
-         setTimeout(() => init_fade_ins(),100)
+         file_injector.appendChild(await inject_form.render())
       }
       return file_injector
    }

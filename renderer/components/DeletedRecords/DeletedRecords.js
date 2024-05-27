@@ -76,22 +76,24 @@ class DeletedRecordsTeaser {
             if (typeof collection_items_obj != "undefined" && collection_items_obj.outcome === 'success') {                  
                if(await is_valid_response_obj('read_collection_items',collection_items_obj)) {
 
+                  let { count,per_page,collection_item_fields,collection_items } = collection_items_obj
+
                   this.#deleted_records_section.replaceChildren()
                   this.#results_container.replaceChildren()                  
                   this.add_heading()
                   this.add_desc()
                   this.add_number_results()
-                  let page_count = Math.ceil(collection_items_obj.count / collection_items_obj.per_page)
+                  let page_count = Math.ceil(count / per_page)
 
                   const top_pagination_nav = new PaginationNav('top',this.go_to_page,page_count,this.#context.page)
                   this.#deleted_records_section.append(top_pagination_nav.render())
                   top_pagination_nav.activate()
          
-                  if(collection_items_obj.collection_items.length > 0) {
+                  if(collection_items.length > 0) {
                   
                      let number_records = document.getElementById('number_records')
                      if(number_records) {             
-                        number_records.innerText = `There are ${ui_display_number_as_str(collection_items_obj.count)} deleted records.`
+                        number_records.innerText = `There are ${ui_display_number_as_str(count)} deleted records.`
                      }
             
                      let props = {
@@ -100,9 +102,9 @@ class DeletedRecordsTeaser {
                      }
                      const collection_item_card = new CollectionItemCard(props)
 
-                     if(Array.isArray(collection_items_obj.collection_items)) {
-                        collection_items_obj.collection_items.forEach((item) => {        
-                           this.#results_container.appendChild(collection_item_card.render(collection_items_obj.collection_item_fields,item))
+                     if(Array.isArray(collection_items)) {
+                        collection_items.forEach((item) => {        
+                           this.#results_container.appendChild(collection_item_card.render(collection_item_fields,item))
                         })
                      }
          

@@ -80,10 +80,12 @@ class RecentRecords {
             if (typeof collection_items_obj != "undefined" && collection_items_obj.outcome === 'success') {                  
                if(await is_valid_response_obj('read_collection_items',collection_items_obj)) {
 
+                  let { count,collection_item_fields,collection_items } = collection_items_obj
+
                   this.#results_container.replaceChildren()
                   let ordered_items = []
                   this.#queue.split(',').forEach(id => {
-                     let temp = collection_items_obj.collection_items.find(item => {
+                     let temp = collection_items.find(item => {
                         return parseInt(item.id) === parseInt(id)
                      })
                      if(temp) ordered_items.push(temp)
@@ -93,7 +95,7 @@ class RecentRecords {
                   
                      let number_records = document.getElementById('number_records')
                      if(number_records) {             
-                        number_records.innerText = `There are ${ui_display_number_as_str(collection_items_obj.count)} deleted records.`
+                        number_records.innerText = `There are ${ui_display_number_as_str(count)} deleted records.`
                      }            
                      let props = {
                         root_folder: this.#root_folder,
@@ -101,7 +103,7 @@ class RecentRecords {
                      }
                      const collection_item_card = new CollectionItemCard(props) 
                      ordered_items.forEach((item) => {  
-                        this.#results_container.appendChild(collection_item_card.render(collection_items_obj.collection_item_fields,item))
+                        this.#results_container.appendChild(collection_item_card.render(collection_item_fields,item))
                      })
          
                      // retain some spacing on short lists
@@ -127,11 +129,10 @@ class RecentRecords {
             }
          }
          catch(error) {
-            let props = {
+            App.switch_to_component('Error',{
                msg:'Sorry, we were unable to access the Records.',
                error:error
-            }
-            App.switch_to_component('Error',props)
+            })
          }
       }
    }

@@ -157,9 +157,6 @@ class ImportCSVComponent {
                            return `Line ${failed_line.line} : ${this.failed_line_error_ui(failed_line.errors)}`
                         })
                      }
-
-                     // to do : if we put line no. inside each error, could we them display as separate lines in Notify?
-                     console.log('failed_lines',failed_lines)
                      
                      // prepend for Notification display
                      if(failed_lines.length > 0) failed_lines = ['Some lines were not valid [max of 10 shown] :',...failed_lines]

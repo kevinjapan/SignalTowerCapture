@@ -73,7 +73,6 @@ class ImportJSONComponent {
          classlist:['text_grey','border','rounded','p_1','m_0.5','mt_0','w_100'],
          text:fields_list.join(', ')
       })
-
       const fields_required = create_p({
          classlist:['mt_0','mb_0','w_100'],
          text:'The following fields are the minimum required to create a record:'
@@ -92,9 +91,6 @@ class ImportJSONComponent {
          level:'h4',
          text:'Fields'
       })
-
-
-
       const import_json_outcome = create_div({
          attributes:[{key:'id',value:'import_json_outcome'}]
       })
@@ -102,9 +98,7 @@ class ImportJSONComponent {
       const import_json_fields = create_div({
          classlist:['break_words','bg_lightgrey','text_grey','italic','pl_1','pr_1'],
          attributes:[{key:'id',value:'import_json_fields'}]
-      })
-
-      
+      })      
       const json_history_section = create_div({
          attributes:[
             {key:'id',value:'json_history_section'}
@@ -154,8 +148,6 @@ class ImportJSONComponent {
                // call import func in main process
                const import_results_obj = await window.actions_api.importJSONFile(file_path)
                
-               console.log(import_results_obj)
-               
                if (typeof import_results_obj != "undefined") { 
                   if(import_results_obj.outcome === 'success') {
                      wait_dlg_component.close()
@@ -174,8 +166,7 @@ class ImportJSONComponent {
                         '#import_json_outcome',
                         import_results_obj.message_arr,
                         [],
-                        false)
-                     
+                        false)                     
                   }
                }
             }
@@ -192,9 +183,7 @@ class ImportJSONComponent {
       if(wait_dlg) parent_section.removeChild(wait_dlg)
    }
 
-   //
-   // Logs history - we refresh regardless of outcome
-   //
+   // history log - we refresh regardless of outcome
    import_json_completed = async() => {
       const json_history_section = document.getElementById('json_history_section')
       if(json_history_section && this.#json_actions_log_component) {

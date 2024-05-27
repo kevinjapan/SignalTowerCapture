@@ -40,7 +40,6 @@ class ExportCSVFile {
       const fs = require('fs')
       
       try {
-
          let file = fs.createWriteStream(`${file_path}`)
 
          file.on('error', function(error) {

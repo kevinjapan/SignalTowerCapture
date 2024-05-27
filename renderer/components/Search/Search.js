@@ -10,6 +10,8 @@ import { init_card_img_loads,no_root_folder } from '../../utilities/ui_utilities
 
 class Search {
 
+   #props
+
    #search_section
 
    // layout container
@@ -22,16 +24,13 @@ class Search {
       scroll_y:0
    }
 
-   // props
-   #props
-
-   
    #search_term_max_len = 36
 
    // advanced search is extended
    #show_advanced
 
    #root_folder
+
 
    constructor(props) {
       // returning 'back to list' from Records will return the passed 'search_context'
@@ -85,7 +84,6 @@ class Search {
       init_card_img_loads()
    }
 
-
    // retrieve the paginated search results 
    get_items = async () => {
 
@@ -96,22 +94,24 @@ class Search {
             if (typeof collection_items_obj != "undefined") {
                if(collection_items_obj.outcome === 'success') {
 
+                  let { count,per_page,collection_item_fields,collection_items } = collection_items_obj
+
                   // re-assemble
                   this.#search_section.replaceChildren()
                   this.#search_results_container.replaceChildren()
                   
                   this.add_search_form(this.#search_context.search_term)
                   this.add_number_results()                  
-                  let page_count = Math.ceil(collection_items_obj.count / collection_items_obj.per_page)
+                  let page_count = Math.ceil(count / per_page)
 
-                  if(collection_items_obj.collection_items && collection_items_obj.collection_items.length > 0) {                     
+                  if(collection_items && collection_items.length > 0) {                     
                      const top_pagination_nav = new PaginationNav('top',this.go_to_page,page_count,this.#search_context.page)
                      this.#search_section.append(top_pagination_nav.render())
                      top_pagination_nav.activate()
 
                      let number_records = document.getElementById('number_records')
-                     if(number_records) {             
-                        number_records.innerText = `${ui_display_number_as_str(collection_items_obj.count)} matching records were found.`
+                     if(number_records) {      
+                        number_records.innerText = `${ui_display_number_as_str(count)} matching records were found.`
                      }
                      
                      let props = {
@@ -120,9 +120,9 @@ class Search {
                      }
                      const collection_item_card = new CollectionItemCard(props)
 
-                     if(Array.isArray(collection_items_obj.collection_items)) {
-                        collection_items_obj.collection_items.forEach((item) => {        
-                           this.#search_results_container.appendChild(collection_item_card.render(collection_items_obj.collection_item_fields,item))
+                     if(Array.isArray(collection_items)) {
+                        collection_items.forEach((item) => {        
+                           this.#search_results_container.appendChild(collection_item_card.render(collection_item_fields,item))
                         })
                      }
          
@@ -165,14 +165,14 @@ class Search {
    }
 
    add_search_form = (search_term) => {
-      
-      let form_props = {
+  
+      const search_form = new SearchForm({
          search_term:search_term,
          search_term_max_len:this.#search_term_max_len,
          submit_search_term:this.submit_search_term,
          clear_search:this.clear_search
-      }         
-      const search_form = new SearchForm(form_props)
+      })
+
       this.#search_section.append(search_form.render())
       setTimeout(() => search_form.activate(),100)
    }
@@ -192,19 +192,18 @@ class Search {
       setTimeout(() => this.activate(),200)
    }
 
-   //
-   clear_search = () => {
-      if(this.#search_results_container) this.#search_results_container.replaceChildren()
-      let number_records = document.getElementById('number_records')
-      if(number_records) number_records.innerText = ''
-   }
-
    // callback for PageNavigation
    go_to_page = (page) => {
       this.#search_context.page = page
       this.#search_context.scroll_y = 0
       this.get_items()
       setTimeout(() => this.activate(),200)
+   }
+
+   clear_search = () => {
+      if(this.#search_results_container) this.#search_results_container.replaceChildren()
+      let number_records = document.getElementById('number_records')
+      if(number_records) number_records.innerText = ''
    }
 
 }

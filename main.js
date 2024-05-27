@@ -9,11 +9,6 @@
 // generate deployable:
 // npm run make
 //
-//
-
-
-// to do : review all db calls - inc db.serialize() wrappers where appropriate -
-//         eg there are some issues in creating db from scratch.
 
 const { app, BrowserWindow, ipcMain, Menu } = require('electron')
 const glob = require('glob')
@@ -23,7 +18,6 @@ const AppConfig = require('./models/AppConfig')
 const CollectionItem = require('./models/CollectionItem')
 const { NOTIFY } = require('./app/utilities/notifications')
 const { notify_client_alert } = require('./app/utilities/client_utilities')
-
 const is_dev = process.env.NODE_ENV !== 'production'
 const is_mac = process.platform === 'darwin'
 
