@@ -37,7 +37,7 @@ class AlphabetCtrl {
                   {key:'char',value:char}
                ],
                classlist:[
-                  'alpha_btn','alpha_char_btn','form_btn','border','h_2','m_0','p_0.25','pl_0.5','pr_0.5','pt_0','pb_0','cursor_pointer',this.#props.selected_char === char ? 'bg_positive' : ''
+                  'form_btn','alpha_btn','alpha_char_btn','h_2','m_0','p_0.25','pl_0.5','pr_0.5','pt_0','pb_0','cursor_pointer',this.#props.selected_char === char ? 'bg_positive' : ''
                ],
                text:char
             })
