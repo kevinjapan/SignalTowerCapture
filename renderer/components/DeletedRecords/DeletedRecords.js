@@ -1,6 +1,7 @@
 import App from '../App/App.js'
 import CollectionItemCard from '../CollectionItemCard/CollectionItemCard.js'
 import PaginationNav from '../PaginationNav/PaginationNav.js'
+import PageBanner from '../PageBanner/PageBanner.js'
 import { is_valid_response_obj } from '../../utilities/ui_response.js'
 import { ui_display_number_as_str } from '../../utilities/ui_strings.js'
 import { DESC } from '../../utilities/ui_descriptions.js'
@@ -51,8 +52,13 @@ class DeletedRecordsTeaser {
          classlist:['fade_in','ui_component']
       })
 
-      this.add_heading()
-      this.add_desc()
+      const page_banner = new PageBanner({
+         icon_name:'deleted',
+         title:'Deleted Records',
+         lead:DESC.DELETED_RECORDS
+      })
+      this.#deleted_records_section.append(page_banner.render())
+
       this.add_number_results()
 
       this.#results_container = create_div({
@@ -79,9 +85,18 @@ class DeletedRecordsTeaser {
                   let { count,per_page,collection_item_fields,collection_items } = collection_items_obj
 
                   this.#deleted_records_section.replaceChildren()
-                  this.#results_container.replaceChildren()                  
-                  this.add_heading()
-                  this.add_desc()
+                  this.#results_container.replaceChildren()          
+                  // this.add_heading()
+                  // this.add_desc()
+
+                  // to do : duplicating code above..
+                  const page_banner = new PageBanner({
+                     icon_name:'deleted',
+                     title:'Deleted Records',
+                     lead:DESC.DELETED_RECORDS
+                  })
+                  this.#deleted_records_section.append(page_banner.render())
+
                   this.add_number_results()
                   let page_count = Math.ceil(count / per_page)
 
@@ -155,20 +170,6 @@ class DeletedRecordsTeaser {
       init_card_img_loads()
    }
    
-   add_heading = () => {
-      const h = create_h({
-         level:'h4',
-         text:'Deleted Records'
-      })
-      this.#deleted_records_section.append(h)
-   }
-
-   add_desc = () => {
-      let desc_text = DESC.DELETED_RECORDS
-      const desc = create_p({text:desc_text})
-      this.#deleted_records_section.append(desc)
-   }
-
    add_number_results = () => {
       this.#deleted_records_section.append(create_div({
          attributes:[{key:'id',value:'number_records'}],

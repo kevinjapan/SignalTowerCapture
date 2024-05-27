@@ -1,7 +1,8 @@
 import App from '../App/App.js'
 import CollectionItemCard from '../CollectionItemCard/CollectionItemCard.js'
+import PageBanner from '../PageBanner/PageBanner.js'
 import { is_valid_response_obj } from '../../utilities/ui_response.js'
-import { create_section,create_h,create_div } from '../../utilities/ui_elements.js'
+import { create_section,create_h,create_div,create_p } from '../../utilities/ui_elements.js'
 import { ui_display_number_as_str } from '../../utilities/ui_strings.js'
 import { init_card_img_loads,no_root_folder } from '../../utilities/ui_utilities.js'
 
@@ -40,7 +41,17 @@ class RecentRecords {
 
       this.#queue = app_config_record.recent_records
 
-      let recent_section = create_section({classlist:['fade_in','mt_2']})
+      let recent_section = create_section({
+         attributes:[{key:'id',value:'recent_section'}]
+      })  
+
+      
+      const page_banner = new PageBanner({
+         icon_name:'files',
+         title:'Recent Records',
+         lead:'Revisit the most recently viewed records here.'
+      })
+
 
       this.#results_container = create_div({
          attributes:[{key:'id',value:'results_container'}],
@@ -51,7 +62,7 @@ class RecentRecords {
       window.scroll(0,0)
 
       // assemble
-      recent_section.append(this.#results_container)
+      recent_section.append(page_banner.render(),this.#results_container)
       return recent_section
    }
 
