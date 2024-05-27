@@ -2,7 +2,6 @@ import App from '../App/App.js'
 import CollectionItemCard from '../CollectionItemCard/CollectionItemCard.js'
 import PaginationNav from '../PaginationNav/PaginationNav.js'
 import AlphabetCtrl from '../AlphabetCtrl/AlphabetCtrl.js'
-import Notification from '../../components/Notification/Notification.js'
 import { is_valid_response_obj } from '../../utilities/ui_response.js'
 import { ui_display_number_as_str } from '../../utilities/ui_strings.js'
 import { create_section,create_div } from '../../utilities/ui_elements.js'
@@ -11,6 +10,8 @@ import { init_card_img_loads,no_root_folder } from '../../utilities/ui_utilities
 
 
 class Browse {
+
+   #props
 
    #browse
 
@@ -29,9 +30,6 @@ class Browse {
    }
 
    #filter_char = null  // future - just use browse_context directly?
-
-   // props 
-   #props = null
 
    #root_folder
 
@@ -126,7 +124,7 @@ class Browse {
                      top_pagination_nav.activate()
 
                      let number_records = document.getElementById('number_records')
-                     if(number_records) {             
+                     if(number_records) {
                         let {count} = collection_items_obj
                         number_records.innerText = `${ui_display_number_as_str(count)} matching record${count === 1 ? '' : 's'} ${count === 1 ? 'was found' : 'were found'}.`
                      }
@@ -155,7 +153,7 @@ class Browse {
                   }
                   else {                     
                      let number_records = document.getElementById('number_records')
-                     if(number_records) number_records.innerText = 'There are no matching records.'
+                     if(number_records) number_records.innerText = 'No matching records were found.'
                   }
                   // re-instate scroll position if user had scrolled list before opening a record
                   setTimeout(() => window.scroll(0,this.#browse_context.scroll_y),50)
