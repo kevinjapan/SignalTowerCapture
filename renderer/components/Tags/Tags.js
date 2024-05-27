@@ -1,4 +1,5 @@
 import App from '../App/App.js'
+import PageBanner from '../PageBanner/PageBanner.js'
 import CollectionItemCard from '../CollectionItemCard/CollectionItemCard.js'
 import TagsNavList from '../TagsNavList/TagsNavList.js'
 import PaginationNav from '../PaginationNav/PaginationNav.js'
@@ -47,6 +48,16 @@ class Tags {
          classlist:['fade_in','max_w_full','pt_1']
       })
 
+      // to do : tags banner is appearing above results and pushing list too far down the page on 'next page' 
+      //         reduce height of banner?
+      
+      const page_banner = new PageBanner({
+         icon_name:'tag',
+         title:'Tags',
+         lead:'to do : tags info here'
+      })
+
+
       let tags_status = create_section({
          attributes:[{key:'id',value:'tags_status'}],
          classlist:['p_0','bg_warning']
@@ -57,6 +68,8 @@ class Tags {
          classlist:['grid','grid_cards_layout']
       })
       
+      this.#tags_section.append(page_banner.render())
+
       await this.add_tags_nav()    
       this.add_number_results()
 
@@ -93,6 +106,14 @@ class Tags {
                   // re-assemble
                   this.#tags_section.replaceChildren()
                   this.#tags_results_container.replaceChildren()
+
+                  
+                  const page_banner = new PageBanner({
+                     icon_name:'tag',
+                     title:'Tags',
+                     lead:'to do : tags info here'
+                  })
+                  this.#tags_section.append(page_banner.render())
                   
                   await this.add_tags_nav(this.#tags_context.field_filters[0].value)
                   this.add_number_results()
