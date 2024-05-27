@@ -292,3 +292,15 @@ export const no_root_folder = () => {
    })
    return elem
 }
+
+
+//
+// Verify if given filter_name is present in context, and has a value
+// 
+export const has_valid_field_filter = (filter_name,context) => {
+   if(!Array.isArray(context.field_filters)) return false
+   let { field_filters } = context
+   let target_filter = field_filters.find(filter =>  filter.field === filter_name)      
+   if(target_filter && target_filter.value && target_filter.value !== '') return true
+   return false
+}
