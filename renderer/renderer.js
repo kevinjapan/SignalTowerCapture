@@ -93,10 +93,10 @@ window.notify_api.onNotification((event,value) => {
 window.component_api.onSwitchComponent((event,value) => {
 
    // deselect all page nav items
-   App.disable_page_nav()
+   app.disable_page_nav()
 
    // switch component
-   App.switch_to_component(value)
+   app.switch_to_component(value)
 })
 
 
