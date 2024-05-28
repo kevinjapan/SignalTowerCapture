@@ -18,6 +18,7 @@ import TagsConfig from '../TagsConfig/TagsConfig.js'
 import Files from '../Files/Files.js'
 import BackupComponent from '../BackupComponent/BackupComponent.js'
 import RecentRecords from '../RecentRecords/RecentRecords.js'
+import History from '../History/History.js'
 import About from '../About/About.js'
 import Error from '../Error/Error.js'
 import NotFound from '../NotFound/NotFound.js'
@@ -30,15 +31,25 @@ import {trim_end_char} from '../../utilities/ui_strings.js'
 // or client components, allowing those secondary components to return the token on users clicking 'back' 
 // - thus allowing primary components to re-initialize their context (eg search term / current page)
 
+
+// to do : back button
+// support browser-like back btn
+// in app - keep list (array) of contexts
+// - this may conflict w/ current 'back' btn implementation - but reckon we can just simply replace that...
    
 // App-wide settings loaded once and accessible to renderer
 
 class App {
 
-   static #root_folder = ''
+   #root_folder = ''
 
+   #history
 
-   static get_root_folder = async() => {
+   constructor() {
+      this.#history = new History(this.switch_to_component)
+   }
+
+   get_root_folder = async() => {
       if(this.#root_folder === '') {
          // we initialize on first request
          let app_config_obj = await window.config_api.getAppConfig()
@@ -50,11 +61,15 @@ class App {
    }
 
    // update if user modifes Config
-   static set_root_folder = (root_folder) => {
+   set_root_folder = (root_folder) => {
       this.#root_folder = root_folder
    }
 
-   static switch_to_component = async(component_name,props) => {
+   test = () => {
+      console.log('app.test')  // to do : remove
+   }
+
+   switch_to_component = async(component_name,props) => {
 
       let component_container = document.getElementById('component_container')
       if(component_container) {
@@ -156,6 +171,15 @@ class App {
                break
          }
 
+         // ----------------------------------------------------------------
+         //
+         // to do : history : register the selected page in App.history
+         // to do : only add if different from current page! (click is still enabled)
+         this.#history.add_visited_page(component_name,props)
+         // to do : update/render History component
+         //
+         // ----------------------------------------------------------------
+
          // delay to allow rendering to complete
          setTimeout(() => component.activate(),100)
 
@@ -182,6 +206,15 @@ class App {
       }
    }
 
+   get_service = (service) => {
+      switch(service.toUpperCase()) {
+         case 'HISTORY':
+            return this.#history
+            break
+         default:
+            console.log('to do : app service not recognized')
+      }
+   }
 }
 
 
