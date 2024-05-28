@@ -12,10 +12,13 @@ class Nav {
       {component:'Files',label:'Files'},
    ]
 
-   init(){
+   init = () => {
+
       const nav = document.getElementById('nav')
+
       const history = app.get_service('history')
       nav.appendChild(history.render())
+
       if(nav) {
          // build each nav item
          this.nav_items.forEach((nav_item) => {            
