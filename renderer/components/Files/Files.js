@@ -83,23 +83,25 @@ class Files {
          files_section.append(this.#breadcrumb_nav.render())
          setTimeout(() => this.#breadcrumb_nav.activate(),100)
       }
-
-      const folder_path_filter = this.#props ? this.#props.context.field_filters.find(filter => filter.field = 'folder_path' ) : ''
-
-      // if we are coming 'back' from a Record,, hydrate breadcrumb_nav
       if(this.#props && this.#props.context) {
-         this.#breadcrumb_nav.hydrate(this.#root_folder,folder_path_filter)
-      }
+         const folder_path_filter = this.#props ? this.#props.context.field_filters.find(filter => filter.field = 'folder_path' ) : ''
 
-      // if we are coming 'back' from a Record, open the appropriate folder
-      if(this.#props) {
-         if(this.#props.context) {
-            setTimeout(() => this.open_folder(folder_path_filter.value),100)  
+         // if we are coming 'back' from a Record,, hydrate breadcrumb_nav
+         if(this.#props && this.#props.context) {
+            this.#breadcrumb_nav.hydrate(this.#root_folder,folder_path_filter)
+         }
+
+         // if we are coming 'back' from a Record, open the appropriate folder
+         if(this.#props) {
+            if(this.#props.context) {
+               setTimeout(() => this.open_folder(folder_path_filter.value),100)  
+            }
+         }
+         else {
+            setTimeout(() => this.open_folder(),100) 
          }
       }
-      else {
-         setTimeout(() => this.open_folder(),100) 
-      }
+
       window.scroll(0,0)
       
       files_section.append(files_layout)
@@ -257,7 +259,7 @@ class Files {
                let msg = create_div({text:'There are no files in this folder.'})
                if(file_list_elem) file_list_elem.replaceChildren(msg)
             }
-            // file_list_elem.prepend(icon('up_arrow'))
+            // file_list_elem.prepend(icon('arrow_up'))
             
             if(file_view) file_view.replaceChildren()
             setTimeout(() => this.activate_file_links(),100)
@@ -293,6 +295,11 @@ class Files {
          this.activate_file_links()
       }
    }
+   
+   get_default_context = () => {
+      return this.#context
+   }
+   
 }
 
 
