@@ -1,4 +1,4 @@
-import App from '../App/App.js'
+import { app } from '../../renderer.js'
 import CollectionItemForm from '../CollectionItemForm/CollectionItemForm.js'
 import { create_section } from '../../utilities/ui_elements.js'
 
@@ -54,7 +54,7 @@ class AddCollectionItem {
          }
       }
       catch(error) {
-         App.switch_to_component('Error',{
+         app.switch_to_component('Error',{
             msg:'Sorry, we were unable to access the Records.',
             error:error
          })

@@ -1,4 +1,4 @@
-import App from '../App/App.js'
+import { app } from '../../renderer.js'
 import ActionsLogItem from '../../components/ActionsLogItem/ActionsLogItem.js'
 import { create_h,create_div,create_section } from '../../utilities/ui_elements.js'
 
@@ -108,7 +108,7 @@ class ActionsLogComponent {
             msg:'Sorry, we were unable to access the Records.',
             error:error
          }
-         App.switch_to_component('Error',props)
+         app.switch_to_component('Error',props)
       }
 
    }
