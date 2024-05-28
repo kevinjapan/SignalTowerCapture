@@ -176,6 +176,10 @@ class DeletedRecordsTeaser {
          classlist:['p_2']
       }))
    }
+   
+   get_default_context = () => {
+      return this.#context
+   }
 }
 
 
