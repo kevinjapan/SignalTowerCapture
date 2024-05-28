@@ -147,6 +147,10 @@ class RecentRecords {
          }
       }
    }
+   
+   get_default_context = () => {
+      return this.#context
+   }
 }
 
 

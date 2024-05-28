@@ -17,7 +17,7 @@ class Tags {
 
    #tags_results_container
 
-   #tags_context = {
+   #context = {
       key:'Tags',
       field_filters:[
          {
@@ -34,7 +34,7 @@ class Tags {
 
 
    constructor(props) {
-      if(props) this.#tags_context = props.context
+      if(props) this.#context = props.context
       this.#props = props
    }
 
@@ -74,7 +74,7 @@ class Tags {
       this.add_number_results()
 
       // required for re-instating tags_context on 'back' to list actions
-      if(this.#tags_context && has_valid_field_filter('tags',this.#tags_context)) {
+      if(this.#context && has_valid_field_filter('tags',this.#context)) {
          this.#tags_results_container.append(this.get_items())
       }
 
@@ -95,10 +95,10 @@ class Tags {
    // retrieve the paginated Tags results 
    get_items = async () => {
 
-      if(this.#tags_context) {
+      if(this.#context) {
          
          try {
-            const collection_items_obj = await window.collection_items_api.getItems(this.#tags_context)
+            const collection_items_obj = await window.collection_items_api.getItems(this.#context)
 
             if (typeof collection_items_obj != "undefined") {
                if(collection_items_obj.outcome === 'success') {
@@ -115,14 +115,14 @@ class Tags {
                   })
                   this.#tags_section.append(page_banner.render())
                   
-                  await this.add_tags_nav(this.#tags_context.field_filters[0].value)
+                  await this.add_tags_nav(this.#context.field_filters[0].value)
                   this.add_number_results()
                   
                   let page_count = Math.ceil(collection_items_obj.count / collection_items_obj.per_page)
 
                   if(collection_items_obj.collection_items && collection_items_obj.collection_items.length > 0) {
                      
-                     const top_pagination_nav = new PaginationNav('top',this.go_to_page,page_count,this.#tags_context.page)
+                     const top_pagination_nav = new PaginationNav('top',this.go_to_page,page_count,this.#context.page)
                      this.#tags_section.append(top_pagination_nav.render())
                      top_pagination_nav.activate()
 
@@ -134,7 +134,7 @@ class Tags {
 
                      let props = {
                         root_folder: this.#root_folder,
-                        context:this.#tags_context
+                        context:this.#context
                      }
                      const collection_item_card = new CollectionItemCard(props)
                      if(Array.isArray(collection_items_obj.collection_items)) {
@@ -149,7 +149,7 @@ class Tags {
                      this.#tags_section.append(this.#tags_results_container)
                      setTimeout(() => collection_item_card.activate(),200)
 
-                     const bottom_pagination_nav = new PaginationNav('bottom',this.go_to_page,page_count,this.#tags_context.page)  //this.go_to_page,page_count,this.#browse_context.page
+                     const bottom_pagination_nav = new PaginationNav('bottom',this.go_to_page,page_count,this.#context.page)  //this.go_to_page,page_count,this.#browse_context.page
                      this.#tags_section.append(bottom_pagination_nav.render())
                      bottom_pagination_nav.activate()
 
@@ -162,7 +162,7 @@ class Tags {
                   }
 
                   // re-instate scroll position if user had scrolled list before opening a record
-                  setTimeout(() => window.scroll(0,this.#tags_context.scroll_y),100)
+                  setTimeout(() => window.scroll(0,this.#context.scroll_y),100)
                }
                else {
                   let tags_status = document.getElementById('tags_status')
@@ -216,9 +216,9 @@ class Tags {
    // callback for TagsNavList
    submit_tag = (tag) => {
       if(tag) {         
-         let target_filter = this.#tags_context.field_filters.find(filter => filter.field === 'tags')
+         let target_filter = this.#context.field_filters.find(filter => filter.field === 'tags')
          if(target_filter) target_filter.value = tag
-         this.#tags_context.scroll_y = 0
+         this.#context.scroll_y = 0
       }
       this.get_items()
       setTimeout(() => this.activate(),200)
@@ -226,8 +226,8 @@ class Tags {
 
    // callback for PageNavigation
    go_to_page = (page) => {
-      this.#tags_context.page = page
-      this.#tags_context.scroll_y = 0
+      this.#context.page = page
+      this.#context.scroll_y = 0
       this.get_items()
       setTimeout(() => this.activate(),200)
    }
@@ -240,6 +240,9 @@ class Tags {
       if(number_records) number_records.innerText = ''
    }
 
+   get_default_context = () => {
+      return this.#context
+   }
 
 }
 

@@ -15,6 +15,10 @@ class AppConfigForm {
 
    #id
 
+   #context = {
+      key:'AppConfigForm'
+   }
+
    render = async() =>  {
 
       let fields_result_obj = await this.get_app_config_fields()
@@ -311,6 +315,10 @@ class AppConfigForm {
             error_bar.innerText = ''
          })
       }
+   }
+      
+   get_default_context = () => {
+      return this.#context
    }
 }
 

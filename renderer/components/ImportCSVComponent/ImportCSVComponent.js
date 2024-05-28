@@ -11,6 +11,11 @@ class ImportCSVComponent {
 
    #csv_actions_log_component
 
+   #context = {
+      key:'ImportCSVComponent'
+   }
+
+
    render = async() => {
       
       // required csv fields
@@ -230,6 +235,9 @@ class ImportCSVComponent {
       }
    }
 
+   get_default_context = () => {
+      return this.#context
+   }
 }
 
 export default ImportCSVComponent

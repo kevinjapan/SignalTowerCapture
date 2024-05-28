@@ -8,6 +8,11 @@ class AddCollectionItem {
 
    #record
 
+   #context = {
+      key:'AddCollectionItem'
+   }
+   
+
    render = () => {
       
       this.#record = create_section({
@@ -64,6 +69,10 @@ class AddCollectionItem {
    // enable buttons/links displayed in the render
    activate = () => {}
 
+   
+   get_default_context = () => {
+      return this.#context
+   }
 }
 
 

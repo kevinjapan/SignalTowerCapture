@@ -7,6 +7,11 @@ import { icon } from '../../utilities/ui_utilities.js'
 
 
 class ExportCSVComponent {
+
+   #context = {
+      key:'ExportCSVComponent'
+   }
+
    
    render = () => {
 
@@ -137,6 +142,10 @@ class ExportCSVComponent {
             await window.files_api.openFolder(folder_path)
          })
       }
+   }
+   
+   get_default_context = () => {
+      return this.#context
    }
 }
 

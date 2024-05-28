@@ -10,6 +10,11 @@ import { icon } from '../../utilities/ui_utilities.js'
 
 class BackupComponent {
 
+   #context = {
+      key:'BackupComponent'
+   }
+
+
    render = () => {
       
       // Backup Section
@@ -112,6 +117,10 @@ class BackupComponent {
             await window.files_api.openFolder(folder_path)
          })
       }
+   }
+   
+   get_default_context = () => {
+      return this.#context
    }
 }
 

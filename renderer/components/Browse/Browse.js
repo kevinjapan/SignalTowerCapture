@@ -23,7 +23,7 @@ class Browse {
 
    // we retain browse state (page,scroll_y,etc) by passing a 'context token'
    // initialising here will display the list on opening this page
-   #browse_context = {
+   #context = {
       key:'Browse',
       page:1,
       scroll_y:0
@@ -36,17 +36,20 @@ class Browse {
 
    constructor(props) {
 
+      console.log('Browse props:',props)
+
       // 'back' to list from Records will return the passed 'context token'
       if(props) {         
-         this.#browse_context = props.context
+         console.log('going in')
+         this.#context = props.context
          // retain 'filter_char' if 'back' from list item (CollectionItemRecord)
-         if(props.context.filters) {
+         if(props.context && props.context.filters) {
             if(props.context.filters.filter_char) {
                this.#filter_char = props.context.filters.filter_char
             }
          }
+         this.#props = props
       }
-      this.#props = props
    }
 
 
@@ -82,7 +85,7 @@ class Browse {
       })
 
       // required for re-instating search_context on 'back' to list actions
-      if(this.#browse_context) this.get_items()
+      if(this.#context) this.get_items()
 
       this.#browse.append(this.#browse_section)
       return this.#browse
@@ -97,16 +100,20 @@ class Browse {
    // retrieve the paginated items results 
    get_items = async () => {
 
-      if(this.#browse_context) {
+      if(this.#context) {
          if(this.#filter_char != null) {
-            this.#browse_context.filters = {filter_char:`${this.#filter_char}`}
+            this.#context.filters = {filter_char:`${this.#filter_char}`}
          }
          else {
-            this.#browse_context.filters = null
+            this.#context.filters = null
          }
 
+
+         // this.#context.page = 1         // to do : remove
+
+
          try {
-            const collection_items_obj = await window.collection_items_api.getItems(this.#browse_context)
+            const collection_items_obj = await window.collection_items_api.getItems(this.#context)
          
             if (typeof collection_items_obj != "undefined" && collection_items_obj.outcome === 'success') {
                if(await is_valid_response_obj('read_collection_items',collection_items_obj)) {
@@ -119,7 +126,7 @@ class Browse {
                   let page_count = Math.ceil(collection_items_obj.count / collection_items_obj.per_page)
 
                   if(collection_items_obj.collection_items.length > 0) {                  
-                     const top_pagination_nav = new PaginationNav('top',this.go_to_page,page_count,this.#browse_context.page)
+                     const top_pagination_nav = new PaginationNav('top',this.go_to_page,page_count,this.#context.page)
                      this.#browse_section.append(top_pagination_nav.render())
                      top_pagination_nav.activate()
 
@@ -131,7 +138,7 @@ class Browse {
             
                      let props = {
                         root_folder: this.#root_folder,
-                        context: this.#browse_context
+                        context: this.#context
                      }
                      const collection_item_card = new CollectionItemCard(props) 
                      if(Array.isArray(collection_items_obj.collection_items)) {
@@ -147,7 +154,7 @@ class Browse {
 
                      this.#browse_section.append(this.#browse_results_container)
 
-                     const bottom_pagination_nav = new PaginationNav('bottom',this.go_to_page,page_count,this.#browse_context.page)
+                     const bottom_pagination_nav = new PaginationNav('bottom',this.go_to_page,page_count,this.#context.page)
                      this.#browse_section.append(bottom_pagination_nav.render())
                      bottom_pagination_nav.activate()
                   }
@@ -156,7 +163,7 @@ class Browse {
                      if(number_records) number_records.innerText = 'No matching records were found.'
                   }
                   // re-instate scroll position if user had scrolled list before opening a record
-                  setTimeout(() => window.scroll(0,this.#browse_context.scroll_y),50)
+                  setTimeout(() => window.scroll(0,this.#context.scroll_y),50)
                }
                else {
                   app.switch_to_component('Error',{
@@ -177,36 +184,47 @@ class Browse {
       }
    }
 
+   get_default_context = () => {
+      return this.#context
+   }
 
    // callback for PageNavigation
    go_to_page = (page) => {
-      this.#browse_context.page = page
-      this.#browse_context.scroll_y = 0
-      this.get_items()
-      setTimeout(() => this.activate(),50)
+      if(this.#context) {
+         this.#context.page = page
+         this.#context.scroll_y = 0
+         this.get_items()
+         setTimeout(() => this.activate(),50)
+      }
    }
 
    // callbacks for AlphabetCtrl
    submit_alpha_filter = (char) => {
-      this.#browse_context.page = 1
-      this.#filter_char = char
-      this.#browse_context.scroll_y = 0
-      this.get_items()
-      setTimeout(() => this.activate(),50)
+      if(this.#context) {
+         this.#context.page = 1
+         this.#filter_char = char
+         this.#context.scroll_y = 0
+         this.get_items()
+         setTimeout(() => this.activate(),50)
+      }
    }
    reset_alpha_filter = () => {
-      this.#browse_context.page = 1
-      this.#filter_char = null
-      this.#browse_context.scroll_y = 0
-      this.get_items()
-      setTimeout(() => this.activate(),50)
+      if(this.#context) {
+         this.#context.page = 1
+         this.#filter_char = null
+         this.#context.scroll_y = 0
+         this.get_items()
+         setTimeout(() => this.activate(),50)
+      }
    }
 
    add_number_results = () => {
-      this.#browse_section.append(create_div({
-         attributes:[{key:'id',value:'number_records'}],
-         classlist:['p_.5','pt_1','text_center']
-      }))      
+      if(this.#browse_section) {
+         this.#browse_section.append(create_div({
+            attributes:[{key:'id',value:'number_records'}],
+            classlist:['p_.5','pt_1','text_center']
+         })) 
+      }     
    }
 }
 

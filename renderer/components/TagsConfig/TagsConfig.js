@@ -9,7 +9,7 @@ class TagsConfig {
 
    // we retain browse state (page,scroll_y,etc) by passing a 'context token'
    #context = {
-      key:'Tags',
+      key:'TagsConfig',
       filters:{
          record_status:'tags',
          order_by:'tag',
@@ -276,6 +276,10 @@ class TagsConfig {
       
    }
 
+   
+   get_default_context = () => {
+      return this.#context
+   }
 }
 
 

@@ -1,17 +1,22 @@
-import { create_section,create_h,create_div,create_form } from '../../utilities/ui_elements.js'
+import { create_section,create_h,create_p,create_div,create_form,create_button } from '../../utilities/ui_elements.js'
 import { build_img_elem } from '../../utilities/ui_utilities.js'
 
 
 class Home {
+   
+   #context = {
+      key:'Home',
+      scroll_y:0
+   }
 
    render = () => {
 
       let home = create_section({
          classlist:['home_section','mt_0','pt_0']
       })
-      
+
       const main_feature_block = create_section({
-         classlist:['feature_block','fade_in','my_2','p_0','bg_yellow','rounded']
+         classlist:['feature_block','fade_in','my_2','p_0','bg_primary','rounded']
       })
 
       const feature_text = create_div({
@@ -19,11 +24,11 @@ class Home {
       })
       const heading_2 = create_h({
          level:'h1',
-         classlist:['logo_heading','mb_0','m_0'],
+         classlist:['logo_heading','mb_0','m_0','text_white'],
          text:'Signal Tower Capture'
       })
       const tagline = create_h({
-         classlist:['logo_heading','m_0','mt_2','text_weight_200'],
+         classlist:['logo_heading','m_0','mt_2','text_weight_200','text_white'],
          level:'h2',
          text:'Desktop Digital Collections Management'
       })
@@ -33,7 +38,7 @@ class Home {
          {key:'id',value:'record_img'},
          {key:'draggable',value:false}
       ]
-      const feature_img = build_img_elem('imgs/home_3.jpg','',attributes,['h_100'])
+      const feature_img = build_img_elem('imgs/home.jpg','',attributes,['h_100'])
 
       let home_form = create_form({
          attributes:[
@@ -51,6 +56,9 @@ class Home {
    // enable buttons/links displayed in the render
    activate = () => {}
 
+   get_default_context = () => {
+      return this.#context
+   }
 }
 
 

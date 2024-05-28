@@ -6,6 +6,9 @@ import { icon } from '../../utilities/ui_utilities.js'
 
 class Config {
 
+   #context = {
+      key:'Config'
+   }
 
    render = async() => {
 
@@ -103,6 +106,9 @@ class Config {
 
    }
 
+   get_default_context = () => {
+      return this.#context
+   }
 }
 
 

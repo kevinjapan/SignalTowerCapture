@@ -8,7 +8,12 @@ import { icon } from '../../utilities/ui_utilities.js'
 
 
 class ExportJSONComponent {
-   
+
+   #context = {
+      key:'ExportJSONComponent'
+   }
+
+
    render = () => {
 
       let export_json_section = create_section({
@@ -118,6 +123,11 @@ class ExportJSONComponent {
          })
       }
    }
+   
+   get_default_context = () => {
+      return this.#context
+   }
+
 }
 
 

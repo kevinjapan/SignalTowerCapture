@@ -9,6 +9,11 @@ import { icon } from '../../utilities/ui_utilities.js'
 class ImportJSONComponent {
 
    #json_actions_log_component
+
+   #context = {
+      key:'ImportJSONComponent'
+   }
+
    
    render = async() => { 
 
@@ -194,6 +199,10 @@ class ImportJSONComponent {
             setTimeout(() => this.#json_actions_log_component.activate(),200)
          },500)
       }
+   }
+   
+   get_default_context = () => {
+      return this.#context
    }
 }
 
