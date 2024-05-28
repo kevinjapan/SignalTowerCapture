@@ -1,5 +1,5 @@
 import { create_img } from '../utilities/ui_elements.js'
-import { truncate } from '../utilities/ui_strings.js'
+import { truncate,ui_friendly_text } from '../utilities/ui_strings.js'
 import { create_div } from '../utilities/ui_elements.js'
 
 
@@ -116,23 +116,29 @@ const folder_icon = (folder_icon_type) => {
    return build_img_elem(icon,`${folder_icon_type.toUpperCase() === 'DIR' ? 'Folder' : 'Open Folder'}`,[{key:'height',value:'14px'}],['pr_0.25','pt_0.3']) 
 }
 
-export const icon = (icon_name,classes = []) => {
+export const icon = (icon_name,attributes = [],classes = []) => {
+
+   // use semantic icon_names - they will be used as alt text in clickable ctrls
+
    const icons = {
-      'UP_ARROW':'imgs\\icons\\arrow-up-left-square.svg',
-      'FOLDER_OPEN':'imgs\\icons\\folder2-open.svg',
+      'ARROW_UP':'imgs\\icons\\arrow-up-left-square.svg',
+      'CIRCLE':'imgs\\icons\\circle.svg',
+      'CSV':'imgs\\filetypes\\filetype-csv.svg',
       'DATABASE':'imgs\\icons\\database.svg',
       'DEFAULT':'imgs\\icons\\person-raised-hand.svg',
       'DELETED':'imgs\\icons\\trash.svg',
-      'CSV':'imgs\\filetypes\\filetype-csv.svg',
-      'JSON':'imgs\\filetypes\\filetype-json.svg',
       'FILE_TEXT':'imgs\\icons\\file-text.svg',
       'FILES':'imgs\\icons\\files.svg',
-      'TAG':'imgs\\icons\\tag.svg',
-      'TRASH':'imgs\\icons\\trash.svg',
+      'HISTORY_BACK':'imgs\\icons\\arrow-left-short-white.svg',
+      'HISTORY_FORWARD':'imgs\\icons\\arrow-right-short-white.svg',
+      'JSON':'imgs\\filetypes\\filetype-json.svg',
+      'OPEN_FOLDER':'imgs\\icons\\folder2-open.svg',
       'SETTINGS':'imgs\\icons\\gear.svg',
+      'TAG':'imgs\\icons\\tag.svg',
+      'TRASH':'imgs\\icons\\trash.svg'
    }
    const icon_path = icons[icon_name.toUpperCase()] ? icons[icon_name.toUpperCase()] : icons['DEFAULT']
-   return build_img_elem(icon_path,`${icon_name} icon`,[{key:'height',value:'35px'}],['pr_0.25','pt_0.5',...classes]) 
+   return build_img_elem(icon_path,`${ui_friendly_text(icon_name)} icon`,[...attributes,{key:'height',value:'35px'}],['pr_0.25','pt_0.5',...classes]) 
 }
 
 // 
@@ -265,7 +271,7 @@ export const linked_path = (root_folder,path) => {
          classlist:['flex','folder_path_link','cursor_pointer','pl_1',i < tokens.length - 1 ? 'text_blue' : ''],
          text:truncate(tokens[i].label,15)
       })
-      link.prepend(folder_icon(i === tokens.length - 1 ? 'folder_open' : 'dir'))
+      link.prepend(folder_icon(i === tokens.length - 1 ? 'open_folder' : 'dir'))
       link.prepend(create_div({text:'\\',classlist:['pr_0.5']}))
       display_path_elem.append(link)
    }
