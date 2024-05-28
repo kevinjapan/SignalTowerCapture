@@ -65,11 +65,11 @@ class App {
       this.#root_folder = root_folder
    }
 
-   test = () => {
-      console.log('app.test')  // to do : remove
-   }
 
-   switch_to_component = async(component_name,props) => {
+   //
+   // Load component in to 'component_container'
+   //
+   switch_to_component = async(component_name,props,add_to_history = true) => {
 
       let component_container = document.getElementById('component_container')
       if(component_container) {
@@ -175,7 +175,10 @@ class App {
          //
          // to do : history : register the selected page in App.history
          // to do : only add if different from current page! (click is still enabled)
-         this.#history.add_visited_page(component_name,props)
+         if(add_to_history) {
+            this.#history.add_visited_page(component_name,props)
+            setTimeout(() => this.#history.activate(),100)
+         }
          // to do : update/render History component
          //
          // ----------------------------------------------------------------
@@ -190,14 +193,14 @@ class App {
    }
 
    // On Dlgs, we need to dim main nav (disable access)
-   static enable_nav = (state) => {
+   enable_nav = (state) => {
       const nav = document.getElementById('nav')
       if(nav) {
          state ? nav.classList.remove('nav_dimmer') : nav.classList.add('nav_dimmer')
       }
    }
 
-   static disable_page_nav = () => {      
+   disable_page_nav = () => {      
       const select_page_buttons = document.querySelectorAll('.select_page_btn')
       if(select_page_buttons) {
          select_page_buttons.forEach((select_page_button) => {
