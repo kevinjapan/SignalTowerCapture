@@ -1,4 +1,4 @@
-import App from '../App/App.js'
+import { app } from '../../renderer.js'
 import RecordBtns from '../RecordBtns/RecordBtns.js'
 import RecordAdmin from '../RecordAdmin/RecordAdmin.js'
 import { is_valid_response_obj } from '../../utilities/ui_response.js'
@@ -23,7 +23,7 @@ class CollectionItemRecord {
 
    render = async() => {
 
-      this.#props.root_folder = await App.get_root_folder()
+      this.#props.root_folder = await app.get_root_folder()
       if(this.#props.root_folder === '') return no_root_folder()
       
       // update Recent records
@@ -200,23 +200,23 @@ class CollectionItemRecord {
                            context:this.#props.context ? this.#props.context : null,
                            action:'update'
                         }
-                        App.switch_to_component('Form',this.#props)
+                        app.switch_to_component('Form',this.#props)
                      }
                      else {
-                        App.switch_to_component('Error',{
+                        app.switch_to_component('Error',{
                            msg:'Sorry, we were unable to process an invalid response from the main process in CollectionItemRecord.'
                         })
                      }
                   }
                   else {
-                     App.switch_to_component('Error',{
+                     app.switch_to_component('Error',{
                         msg:'Sorry, we were unable to locate the Record.',
                         error:error
                      })
                   }
                }
                catch(error) {
-                  App.switch_to_component('Error',{
+                  app.switch_to_component('Error',{
                      msg:'Sorry, we were unable to locate the Record.',
                      error:error
                   })
@@ -240,7 +240,7 @@ class CollectionItemRecord {
       if(record_img) {
          record_img.addEventListener('click',() => {
             // we pass 'props.context' as a token for info and to enable returning to this Record
-            App.switch_to_component('ImageViewer',this.#props)
+            app.switch_to_component('ImageViewer',this.#props)
          })
       }
 
@@ -251,7 +251,7 @@ class CollectionItemRecord {
             back_btn.addEventListener('click',async(event) => {
                // the context token identifies the current user context inc. component
                if(this.#props.context) {
-                  App.switch_to_component(this.#props.context.key,this.#props)
+                  app.switch_to_component(this.#props.context.key,this.#props)
                }             
             })
          })

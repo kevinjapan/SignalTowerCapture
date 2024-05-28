@@ -1,4 +1,4 @@
-import App from '../App/App.js'
+import { app } from '../../renderer.js'
 import CollectionItemCard from '../CollectionItemCard/CollectionItemCard.js'
 import PageBanner from '../PageBanner/PageBanner.js'
 import { is_valid_response_obj } from '../../utilities/ui_response.js'
@@ -33,7 +33,7 @@ class RecentRecords {
 
    render = async() => {
 
-      this.#root_folder = await App.get_root_folder()
+      this.#root_folder = await app.get_root_folder()
       if(this.#root_folder === '') return no_root_folder()
 
       let record_result_obj = await this.get_app_config_record()
@@ -134,13 +134,13 @@ class RecentRecords {
                }
             }
             else {
-               App.switch_to_component('Error',{
+               app.switch_to_component('Error',{
                   msg:'Sorry, we were unable to process an invalid response from the main process in RecentRecords.'
                })
             }
          }
          catch(error) {
-            App.switch_to_component('Error',{
+            app.switch_to_component('Error',{
                msg:'Sorry, we were unable to access the Records.',
                error:error
             })

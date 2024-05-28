@@ -1,4 +1,4 @@
-import App from '../App/App.js'
+import { app } from '../../renderer.js'
 import CollectionItemCard from '../CollectionItemCard/CollectionItemCard.js'
 import CollectionItemInjectForm from '../CollectionItemInjectForm/CollectionItemInjectForm.js'
 import { init_card_img_loads,no_root_folder } from '../../utilities/ui_utilities.js'
@@ -17,7 +17,7 @@ class FileInjector {
 
    render = async() => {
 
-      this.#props.root_folder = await App.get_root_folder()
+      this.#props.root_folder = await app.get_root_folder()
       if(this.#props.root_folder === '') return no_root_folder()
 
       let file_injector = create_section('fade_in')

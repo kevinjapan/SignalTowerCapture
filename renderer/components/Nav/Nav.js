@@ -1,3 +1,4 @@
+import { app } from '../../renderer.js'
 import { create_button } from '../../utilities/ui_elements.js'
 
 
@@ -13,6 +14,8 @@ class Nav {
 
    init(){
       const nav = document.getElementById('nav')
+      const history = app.get_service('history')
+      nav.appendChild(history.render())
       if(nav) {
          // build each nav item
          this.nav_items.forEach((nav_item) => {            

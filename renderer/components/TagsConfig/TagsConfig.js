@@ -1,4 +1,4 @@
-import App from '../App/App.js'
+import { app } from '../../renderer.js'
 import TagsList from '../TagsList/TagsList.js'
 import Notification from '../../components/Notification/Notification.js'
 import { icon } from '../../utilities/ui_utilities.js'
@@ -126,7 +126,7 @@ class TagsConfig {
             msg:'Sorry, we were unable to access the Tags.',
             error:error
          }
-         App.switch_to_component('Error',props)
+         app.switch_to_component('Error',props)
       }
    }
 

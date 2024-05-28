@@ -1,4 +1,4 @@
-import App from '../App/App.js'
+import { app } from '../../renderer.js'
 import CollectionItemCard from '../CollectionItemCard/CollectionItemCard.js'
 import PaginationNav from '../PaginationNav/PaginationNav.js'
 import AlphabetCtrl from '../AlphabetCtrl/AlphabetCtrl.js'
@@ -52,7 +52,7 @@ class Browse {
 
    render = async () => {
 
-      this.#root_folder = await App.get_root_folder()
+      this.#root_folder = await app.get_root_folder()
       if(this.#root_folder === '') return no_root_folder()
 
       this.#browse = create_section({
@@ -159,7 +159,7 @@ class Browse {
                   setTimeout(() => window.scroll(0,this.#browse_context.scroll_y),50)
                }
                else {
-                  App.switch_to_component('Error',{
+                  app.switch_to_component('Error',{
                      msg:'Sorry, we were unable to process an invalid response from the main process in Browse.'
                   })
                }
@@ -169,7 +169,7 @@ class Browse {
             }
          }
          catch(error) {
-            App.switch_to_component('Error',{
+            app.switch_to_component('Error',{
                msg:'Sorry, we were unable to access the Records.',
                error:error
             })

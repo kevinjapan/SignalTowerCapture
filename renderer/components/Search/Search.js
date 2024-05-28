@@ -1,4 +1,4 @@
-import App from '../App/App.js'
+import { app } from '../../renderer.js'
 import SearchForm from '../SearchForm/SearchForm.js'
 import CollectionItemCard from '../CollectionItemCard/CollectionItemCard.js'
 import PaginationNav from '../PaginationNav/PaginationNav.js'
@@ -40,7 +40,7 @@ class Search {
 
    render = async () => {
 
-      this.#root_folder = await App.get_root_folder()
+      this.#root_folder = await app.get_root_folder()
       if(this.#root_folder === '') return no_root_folder()
 
       this.#search_section = create_section({
@@ -153,7 +153,7 @@ class Search {
             }
          }
          catch(error) {
-            App.switch_to_component('Error',{
+            app.switch_to_component('Error',{
                msg:'Sorry, we were unable to access the Records.',
                error:error
             })

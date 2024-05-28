@@ -1,4 +1,4 @@
-import App from '../App/App.js'
+import { app } from '../../renderer.js'
 import { create_div,create_button,create_section,create_h,create_p } from '../../utilities/ui_elements.js'
 import Notification from '../../components/Notification/Notification.js'
 
@@ -85,7 +85,7 @@ class RecordAdmin {
                      msg:'Sorry, we were unable to delete the Record.',
                      error:error
                   }
-                  App.switch_to_component('Error',props)
+                  app.switch_to_component('Error',props)
                }
             }
          })
@@ -108,7 +108,7 @@ class RecordAdmin {
                }
             }
             catch(error) {
-               App.switch_to_component('Error',{
+               app.switch_to_component('Error',{
                   msg:'Sorry, we were unable to delete the Record.',
                   error:error
                })

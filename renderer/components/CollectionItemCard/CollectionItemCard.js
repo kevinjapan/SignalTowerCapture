@@ -1,4 +1,4 @@
-import App from '../App/App.js'
+import { app } from '../../renderer.js'
 import TagsLiteList from '../TagsLiteList/TagsLiteList.js'
 import { is_valid_response_obj } from '../../utilities/ui_response.js'
 import { get_ui_ready_date } from '../../utilities/ui_datetime.js'
@@ -241,11 +241,11 @@ class CollectionItemCard {
                                  ...this.#props
                               }
                               record_props.context.scroll_y = window.scrollY
-                              App.switch_to_component('Record',record_props)
+                              app.switch_to_component('Record',record_props)
                            }
                         }
                         else {
-                           App.switch_to_component('Error',{
+                           app.switch_to_component('Error',{
                               msg:'Sorry, we were unable to process an invalid response from the main process in CollectionItemCard.'
                            })
                         }
@@ -255,7 +255,7 @@ class CollectionItemCard {
                      }
                   }
                   catch(error) {
-                     App.switch_to_component('Error',{
+                     app.switch_to_component('Error',{
                         msg:'Sorry, we were unable to access the Records in the CollectionItemCard',
                         error:error
                      })
@@ -265,7 +265,7 @@ class CollectionItemCard {
                   let props = {
                      msg:'Sorry, no valid id was provided for the Collection Item in ColletionItemCard.'
                   }
-                  App.switch_to_component('Error',props)
+                  app.switch_to_component('Error',props)
                }
             })
          })

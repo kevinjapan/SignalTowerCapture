@@ -1,4 +1,4 @@
-import App from '../App/App.js'
+import { app } from '../../renderer.js'
 import CollectionItemFormRow from '../CollectionItemFormRow/CollectionItemFormRow.js'
 import TagsSelector from '../TagsSelector/TagsSelector.js'
 import FileTypeCheckBox from '../Forms/FileTypeCheckbox/FileTypeCheckbox.js'
@@ -44,7 +44,7 @@ class CollectionItemForm {
 
    render = async() =>  {
 
-      this.#root_folder = await App.get_root_folder()
+      this.#root_folder = await app.get_root_folder()
       if(this.#root_folder === '') return no_root_folder()
 
       this.#record_elem = create_section({
@@ -181,11 +181,11 @@ class CollectionItemForm {
                         const collection_item_obj = await window.collection_items_api.getCollectionItem(collection_item_id)
                         if (typeof collection_item_obj != "undefined" && collection_item_obj.outcome === 'success') {
                            this.#props.item = collection_item_obj.collection_item
-                           App.switch_to_component('Record',this.#props)
+                           app.switch_to_component('Record',this.#props)
                         }
                      }
                      catch(error) {
-                        App.switch_to_component('Error',{
+                        app.switch_to_component('Error',{
                            msg:'Sorry, we were unable to locate the Record.',
                            error:error
                         })
@@ -220,21 +220,21 @@ class CollectionItemForm {
                   try {
                      const collection_item_obj = await window.collection_items_api.getCollectionItem(cancel_btn.attributes['data-id'].value)
                      if (typeof collection_item_obj != "undefined" && collection_item_obj.outcome === 'success') {
-                        App.switch_to_component('Record',this.#props)
+                        app.switch_to_component('Record',this.#props)
                      }
                      else {
                         throw 'Sorry, we were unable to locate the Record.'
                      }
                   }
                   catch(error) {
-                     App.switch_to_component('Error',{
+                     app.switch_to_component('Error',{
                         msg:'Sorry, we were unable to locate the Record.',
                         error:error
                      })
                   }
                }
                else {
-                  App.switch_to_component('Error',{
+                  app.switch_to_component('Error',{
                      msg:'Sorry, we were unable to locate the Record.'
                   })
                }
@@ -322,7 +322,7 @@ class CollectionItemForm {
                         }
                      }
                      else {
-                        App.switch_to_component('Error',{
+                        app.switch_to_component('Error',{
                            msg:'Sorry, we were unable to process an invalid response from the main process in CollectionItemForm.'
                         })
                      }
@@ -332,7 +332,7 @@ class CollectionItemForm {
                   }
                }
                catch(error) {
-                  App.switch_to_component('Error',{
+                  app.switch_to_component('Error',{
                      msg:'Sorry, we were unable to access the Records.',
                      error:error
                   })

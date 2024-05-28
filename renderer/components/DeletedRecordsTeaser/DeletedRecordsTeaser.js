@@ -1,4 +1,4 @@
-import App from '../App/App.js'
+import { app } from '../../renderer.js'
 import { DESC } from '../../utilities/ui_descriptions.js'
 import { 
    create_div,
@@ -11,7 +11,6 @@ import {
 class DeletedRecordsTeaser {
 
    render = () => {
-
 
       const deleted_Records_component = create_div({
          attributes:[
@@ -51,7 +50,7 @@ class DeletedRecordsTeaser {
       const open_btn = document.getElementById('open_btn')
       if(open_btn) {
          open_btn.addEventListener('click',() => {
-            App.switch_to_component('DeletedRecords')
+            app.switch_to_component('DeletedRecords')
          })
       }
 

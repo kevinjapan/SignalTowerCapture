@@ -1,4 +1,4 @@
-import App from '../App/App.js'
+import { app } from '../../renderer.js'
 import { 
    create_div,
    create_h,
@@ -94,7 +94,7 @@ class TagsList {
       const open_btn = document.getElementById('open_btn')
       if(open_btn) {
          open_btn.addEventListener('click',() => {
-            App.switch_to_component('DeletedRecords')
+            app.switch_to_component('DeletedRecords')
          })
       }
 

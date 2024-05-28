@@ -1,4 +1,4 @@
-import App from '../App/App.js'
+import { app } from '../../renderer.js'
 import FileInjector from '../FileInjector/FileInjector.js'
 import BreadCrumbNav from '../BreadCrumbNav/BreadCrumbNav.js'
 import Notification from '../Notification/Notification.js'
@@ -55,7 +55,7 @@ class Files {
       })
       files_section.append(files_outcome)
 
-      this.#root_folder = await App.get_root_folder()
+      this.#root_folder = await app.get_root_folder()
       if(this.#root_folder === '') return no_root_folder()
       //this.#root_folder = temp.split(/\ /).join('\ ');
 

@@ -1,4 +1,4 @@
-import App from '../App/App.js'
+import { app } from '../../renderer.js'
 import { create_section,create_button,create_div } from '../../utilities/ui_elements.js'
 import { get_ext,is_img_ext,get_file_type_icon,file_exists,build_img_elem } from '../../utilities/ui_utilities.js'
 
@@ -108,7 +108,7 @@ class ImageViewer {
       if(x_btn) {
          x_btn.addEventListener('click',async(event) => {
             event.preventDefault()
-            App.switch_to_component('Record',this.#props)
+            app.switch_to_component('Record',this.#props)
          })
       }
    

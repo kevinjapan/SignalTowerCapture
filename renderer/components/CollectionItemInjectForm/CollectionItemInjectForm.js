@@ -1,4 +1,4 @@
-import App from '../App/App.js'
+import { app } from '../../renderer.js'
 import CollectionItemForm from '../CollectionItemForm/CollectionItemForm.js'
 import { create_section,create_h } from '../../utilities/ui_elements.js'
 import { get_title_from_filename } from '../../utilities/ui_strings.js'
@@ -25,7 +25,7 @@ class CollectionItemInjectForm {
 
    render = async() => {
 
-      this.#root_folder = await App.get_root_folder()
+      this.#root_folder = await app.get_root_folder()
       if(this.#root_folder === '') return no_root_folder()
             
       // component container
@@ -93,7 +93,7 @@ class CollectionItemInjectForm {
          }
       }
       catch(error) {
-         App.switch_to_component('Error',{
+         app.switch_to_component('Error',{
             msg:'Sorry, we were unable to access the Records.',
             error:error
          })
