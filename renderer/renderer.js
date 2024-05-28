@@ -115,11 +115,10 @@ if(back_btns){
 // Init App
 // App provides app-wide settings eg root_folder
 //
-const app = new App()
-
+export const app = new App()
 
 // load Home page on startup
-setTimeout(() => App.switch_to_component('Home'),100)
+setTimeout(() => app.switch_to_component('Home'),100)
 
 
 //
@@ -127,4 +126,4 @@ setTimeout(() => App.switch_to_component('Home'),100)
 //
 const nav = new Nav()
 nav.init()
-nav.activate(App.switch_to_component)
+nav.activate(app.switch_to_component)
