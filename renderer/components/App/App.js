@@ -31,11 +31,6 @@ import {trim_end_char} from '../../utilities/ui_strings.js'
 // or client components, allowing those secondary components to return the token on users clicking 'back' 
 // - thus allowing primary components to re-initialize their context (eg search term / current page)
 
-
-// to do : back button
-// support browser-like back btn
-// in app - keep list (array) of contexts
-// - this may conflict w/ current 'back' btn implementation - but reckon we can just simply replace that...
    
 // App-wide settings loaded once and accessible to renderer
 
@@ -163,7 +158,7 @@ class App {
                component = new About(props)
                component_container.replaceChildren(component.render())
                break
-            case 'BackupDatabase':
+            case 'BackupComponent':
                component = new BackupComponent(props)
                component_container.replaceChildren(component.render())
                break
@@ -182,7 +177,6 @@ class App {
 
          if(add_to_history) {
             if(props === undefined) {
-               console.log('assigning props to',component_name)
                this.#history.add_visited_page(component_name,component.get_default_context())
             } 
             else {
@@ -190,10 +184,6 @@ class App {
             }
             setTimeout(() => this.#history.activate(),100)
          }
-
-         // to do : update/render History component
-         //         disable buttons if at edges of history list
-         
 
          // delay to allow rendering to complete
          setTimeout(() => component.activate(),100)
