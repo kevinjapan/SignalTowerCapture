@@ -64,14 +64,14 @@ class History {
       if(this.#head <= 0) return false
       this.#head--
       const page = this.#visited_pages[this.#head]
-      if(page.key) this.#switch_to_component(page.key,page ? {context:page} : '',false)
+      if(page && page.key) this.#switch_to_component(page.key,page ? {context:page} : '',false)
    }
 
    forward = () => {
-      if(this.#head >= this.#max_pages - 1) return false
+      if(this.#head >= this.#visited_pages.length - 1) return false
       this.#head++
       const page = this.#visited_pages[this.#head]
-      if(page.key) this.#switch_to_component(page.key,page ? {context:page} : '',false)
+      if(page && page.key) this.#switch_to_component(page.key,page ? {context:page} : '',false)
    }
 
    add_visited_page = (component_name,props) => {
