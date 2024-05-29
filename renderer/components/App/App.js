@@ -43,6 +43,8 @@ class App {
 
    #root_folder = ''
 
+   #page_nav
+
    #history
 
    constructor() {
@@ -63,6 +65,10 @@ class App {
    // update if user modifes Config
    set_root_folder = (root_folder) => {
       this.#root_folder = root_folder
+   }
+
+   set_nav = (nav) => {
+      this.#page_nav = nav
    }
 
 
@@ -171,17 +177,23 @@ class App {
                break
          }
 
-         // ----------------------------------------------------------------
-         //
-         // to do : history : register the selected page in App.history
-         // to do : only add if different from current page! (click is still enabled)
+         this.#page_nav.highlight_selected(component_name)
+
+
          if(add_to_history) {
-            this.#history.add_visited_page(component_name,props)
+            if(props === undefined) {
+               console.log('assigning props to',component_name)
+               this.#history.add_visited_page(component_name,component.get_default_context())
+            } 
+            else {
+               this.#history.add_visited_page(component_name,props && props.context ? props.context : null)
+            }
             setTimeout(() => this.#history.activate(),100)
          }
+
          // to do : update/render History component
-         //
-         // ----------------------------------------------------------------
+         //         disable buttons if at edges of history list
+         
 
          // delay to allow rendering to complete
          setTimeout(() => component.activate(),100)
@@ -213,7 +225,6 @@ class App {
       switch(service.toUpperCase()) {
          case 'HISTORY':
             return this.#history
-            break
          default:
             console.log('to do : app service not recognized')
       }
