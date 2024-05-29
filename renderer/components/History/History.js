@@ -6,6 +6,9 @@ import { create_div,create_button } from '../../utilities/ui_elements.js'
 // to do : once this is working correctly (and we can step 'back' from Record to correct paginated list state)
 //         - then we can remove 'back' btn from all components themselves.
 
+// to do : CollectionItemRecord (etc) store 'context' for the opening Browse (etc) - so don't save themselves to History.
+//         solution: rely completely on History -
+//         so refactor:    CollectionItemRecord,... (?) may resolve all :-  RecentRecords/Tags/Search/
 
 class History {
 
@@ -16,7 +19,7 @@ class History {
    #head = -1
 
    // avoid proliferation, capture most use cases
-   #max_pages = 5 // to do : set to, say, 20 (will cover 90% of use cases)
+   #max_pages = 20
 
    // app API to switch component page
    #switch_to_component
@@ -33,18 +36,17 @@ class History {
          classlist:['flex','align_items_center','text_white']
       })
       
-      const back_btn = icon('history_back',[{key:'id',value:'back_btn'}],['cursor_pointer','tester'])
+      const back_btn = icon('history_back',[{key:'id',value:'back_btn'}],['cursor_pointer','disabled_icon'])
 
-      const clear_btn = create_button({
-         attributes:[{key:'id',value:'clear_btn'}],
-         classlist:[],
-         text:'clr'
-      })
+      // const clear_btn = create_button({
+      //    attributes:[{key:'id',value:'clear_btn'}],
+      //    classlist:[],
+      //    text:'clr'
+      // })
 
-      // future : can we programmatically change icon to white fill (currently we copied/modified svg file - see icon())
-      const forward_btn = icon('history_forward',[{key:'id',value:'forward_btn'}],['cursor_pointer'])
+      const forward_btn = icon('history_forward',[{key:'id',value:'forward_btn'}],['cursor_pointer','disabled_icon'])
 
-      history_component.append(back_btn,clear_btn,forward_btn)
+      history_component.append(back_btn,forward_btn)
       return history_component
    }
    
@@ -60,65 +62,79 @@ class History {
       if(clear_btn) clear_btn.addEventListener('click',this.clear)
    }
 
+   set_head = (new_index) => {
+      this.#head = new_index 
+   }
+
    back = () => {
       if(this.#head <= 0) return false
-      this.#head--
+      this.set_head(this.#head - 1)
+
+      if(this.#head === 0) this.toggle_btn('back_btn',false)
+      if(this.#head < this.#visited_pages.length - 1) this.toggle_btn('forward_btn',true)
+
       const page = this.#visited_pages[this.#head]
+
       if(page && page.key) this.#switch_to_component(page.key,page ? {context:page} : '',false)
    }
 
    forward = () => {
       if(this.#head >= this.#visited_pages.length - 1) return false
-      this.#head++
+      this.set_head(this.#head + 1)
+
+      if(this.#head > 0) this.toggle_btn('back_btn',true)
+      if(this.#head === this.#visited_pages.length - 1) this.toggle_btn('forward_btn',false)
+
       const page = this.#visited_pages[this.#head]
       if(page && page.key) this.#switch_to_component(page.key,page ? {context:page} : '',false)
    }
 
+   toggle_btn = (btn_id,enabled) => {
+      const btn = document.getElementById(btn_id)
+      if(btn) enabled ? btn.classList.remove('disabled_icon') : btn.classList.add('disabled_icon')
+   }
+
    add_visited_page = (component_name,props) => {
+
+      // to do : props or context? - naming - check all pages are using which..?
+      console.log('add page',component_name,props)
 
       if(component_name === '') return false
 
-      // to do : don't add if same page clicked (except if pagination?) - better disable click on nav? (but native navigation?)
-      // to do : only add if different from current page! (click is still enabled)
+      // to do : don't add if same page clicked - disable click on nav? (but native navigation?)
+      
+      // to do : exclude pagination links from History - ensure they are not adding
 
-      // shift history if max pages reached
-      if(this.#visited_pages.length > this.#max_pages - 1) this.#visited_pages.shift()
+      // increment head (up to max_pages)
+      this.#head < this.#max_pages - 1 ? this.set_head(this.#head + 1) : this.set_head(this.#max_pages - 1)
 
-      // to do : we may need to add pagination navigation links, 'next page' etc, to history
-      //         try add to Pagination component (will carry to Browse/Search/Recent etc)
+      // if a opened a new page while traversing history, discard history after the head
+      if(this.#head < this.#visited_pages.length - 1) {
+         this.#visited_pages.splice(this.#head)
+      }
+      else {
+         // else, discard first page if max_pages reached
+         if(this.#visited_pages.length > this.#max_pages - 1) this.#visited_pages.shift()
+      }
 
-      // if no props, we register page w/ no context
-      if(!props || props === 'undefined' || props.context === 'undefined') {
+      // register page
+      if(!props || props === 'undefined') {
          this.#visited_pages.push({key:component_name})
       }
       else {
          this.#visited_pages.push(props)
       }
 
-      // 'tape' head may not be at last index
-      this.#head < this.#max_pages - 1 ? this.#head++ : this.#head = this.#max_pages - 1
+      // update ctrls
+      this.#head === 0 ? this.toggle_btn('back_btn',false) :  this.toggle_btn('back_btn',true)
+      this.#head < this.#visited_pages.length - 1 ? this.toggle_btn('forward_btn',true) : this.toggle_btn('forward_btn',false)
 
-      // console.log(`head [${this.#head}]`,this.#visited_pages) // to do : verify working correctly
-   }
-
-   //
-   // purge all later pages in history
-   // user has clicked back through history, then clicked a new page - all 'newer' pages are discarded
-   //
-   remove_visited_page = (new_length) => {
-      //         
-      //         
-      // this.#visited_pages
-      
-      // 'tape' head may not be at last index
-      // this.#head++
+      // console.log('this.#visited_pages',this.#visited_pages)
    }
 
    clear = () => {
       this.#visited_pages = []
-      this.#head = -1
-
-      // to do : consider for this (and other operations) we have to update UI (render func)
+      this.set_head(-1)
    }
 
 }
