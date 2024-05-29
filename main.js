@@ -128,7 +128,7 @@ const createWindow = async() => {
             submenu: [
                {
                   label: 'Backup Database',
-                  click: () => load_client_component('BackupDatabase')
+                  click: () => load_client_component('BackupComponent')
                },
                {
                   type:'separator'
