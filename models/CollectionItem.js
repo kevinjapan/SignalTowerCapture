@@ -131,6 +131,8 @@ class CollectionItem {
                return field.key
             })
 
+            // to do : review - why use  this.#limit_read_all_records  here - surely limit read() only by this.#items_per_page is desirable
+
             sql = `SELECT ${fields.toString()} 
                      FROM collection_items 
                      WHERE ${status} ${filter_by_char} ${field_filters_sql} 
