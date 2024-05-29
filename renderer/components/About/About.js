@@ -6,6 +6,10 @@ class About {
 
    #props
 
+   #context = {
+      key:'About'
+   }
+
    constructor(props) {
       this.#props = props
    }
@@ -47,7 +51,10 @@ class About {
 
    // enable buttons/links displayed in the render
    activate = () => {}
-
+   
+   get_default_context = () => {
+      return this.#context
+   }
 }
 
 
