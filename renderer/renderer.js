@@ -68,7 +68,7 @@ const init_folder_items = () => {
    if(folder_item_elements) {
       folder_item_elements.forEach((folder_item_element) => {
          folder_item_element.addEventListener('click', (event) => {
-            //console.log(event.target.attributes['data-path'].value)
+            //console.log(event.target.attributes['data-path'].value)   // to do : review
          })
       })
    }
@@ -126,4 +126,7 @@ setTimeout(() => app.switch_to_component('Home'),100)
 //
 const nav = new Nav()
 nav.init()
-nav.activate(app.switch_to_component)
+nav.activate()
+
+// register nav w/ app
+app.set_nav(nav)
