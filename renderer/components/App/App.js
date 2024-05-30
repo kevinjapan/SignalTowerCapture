@@ -78,12 +78,80 @@ class App {
          let component
 
          switch(component_name) {
-            case 'Home':
-               component = new Home()
+            case 'About':
+               component = new About(props)
+               component_container.replaceChildren(component.render())
+               break
+            case 'Actions':
+               component = new Actions()
+               component_container.replaceChildren(await component.render())
+               break
+            case 'AddCollectionItem':
+               component = new AddCollectionItem(props)
+               component_container.replaceChildren(component.render())
+               break
+            case 'AppConfigForm':
+               component = new AppConfigForm()
+               component_container.replaceChildren(await component.render())
+               break
+            case 'BackupComponent':
+               component = new BackupComponent(props)
                component_container.replaceChildren(component.render())
                break
             case 'Browse':
                component = new Browse(props)
+               component_container.replaceChildren(await component.render())
+               break
+            case 'Config':
+               component = new Config()
+               component_container.replaceChildren(await component.render())
+               break
+            case 'DeletedRecords':
+               component = new DeletedRecords(props)
+               component_container.replaceChildren(await component.render())
+               break
+            case 'Error':
+               component = new Error(props)
+               component_container.replaceChildren(component.render())
+               break
+            case 'ExportCSVComponent':
+               component = new ExportCSVComponent()
+               component_container.replaceChildren(await component.render())
+               break
+            case 'ExportJSONComponent':
+               component = new ExportJSONComponent()
+               component_container.replaceChildren(await component.render())
+               break
+            case 'Files':
+               component = new Files(props)
+               component_container.replaceChildren(await component.render())
+               break
+            case 'Form':
+               component = new CollectionItemForm(props)
+               component_container.replaceChildren(await component.render())
+               break
+            case 'Home':
+               component = new Home()
+               component_container.replaceChildren(component.render())
+               break
+            case 'ImageViewer':
+               component = new ImageViewer(props)
+               component_container.replaceChildren(await component.render())
+               break
+            case 'ImportCSVComponent':
+               component = new ImportCSVComponent()
+               component_container.replaceChildren(await component.render())
+               break
+            case 'ImportJSONComponent':
+               component = new ImportJSONComponent()
+               component_container.replaceChildren(await component.render())
+               break
+            case 'RecentRecords':
+               component = new RecentRecords(props)
+               component_container.replaceChildren(await component.render())
+               break
+            case 'Record':
+               component = new CollectionItemRecord(props)
                component_container.replaceChildren(await component.render())
                break
             case 'Search':
@@ -94,76 +162,8 @@ class App {
                component = new Tags(props)
                component_container.replaceChildren(await component.render())
                break
-            case 'AddCollectionItem':
-               component = new AddCollectionItem(props)
-               component_container.replaceChildren(component.render())
-               break
-            case 'Record':
-               component = new CollectionItemRecord(props)
-               component_container.replaceChildren(await component.render())
-               break
-            case 'ImageViewer':
-               component = new ImageViewer(props)
-               component_container.replaceChildren(await component.render())
-               break
-            case 'Form':
-               component = new CollectionItemForm(props)
-               component_container.replaceChildren(await component.render())
-               break
-            case 'Actions':
-               component = new Actions()
-               component_container.replaceChildren(await component.render())
-               break
-            case 'ExportCSVComponent':
-               component = new ExportCSVComponent()
-               component_container.replaceChildren(await component.render())
-               break
-            case 'ImportCSVComponent':
-               component = new ImportCSVComponent()
-               component_container.replaceChildren(await component.render())
-               break
-            case 'ExportJSONComponent':
-               component = new ExportJSONComponent()
-               component_container.replaceChildren(await component.render())
-               break
-            case 'ImportJSONComponent':
-               component = new ImportJSONComponent()
-               component_container.replaceChildren(await component.render())
-               break
-            case 'DeletedRecords':
-               component = new DeletedRecords(props)
-               component_container.replaceChildren(await component.render())
-               break
-            case 'Config':
-               component = new Config()
-               component_container.replaceChildren(await component.render())
-               break
-            case 'AppConfigForm':
-               component = new AppConfigForm()
-               component_container.replaceChildren(await component.render())
-               break
             case 'TagsConfig':
                component = new TagsConfig()
-               component_container.replaceChildren(await component.render())
-               break
-            case 'Files':
-               component = new Files(props)
-               component_container.replaceChildren(await component.render())
-               break
-            case 'Error':
-               component = new Error(props)
-               component_container.replaceChildren(component.render())
-               break
-            case 'About':
-               component = new About(props)
-               component_container.replaceChildren(component.render())
-               break
-            case 'BackupComponent':
-               component = new BackupComponent(props)
-               component_container.replaceChildren(component.render())
-               break
-            case 'RecentRecords':
-               component = new RecentRecords(props)
                component_container.replaceChildren(await component.render())
                break
             default:
