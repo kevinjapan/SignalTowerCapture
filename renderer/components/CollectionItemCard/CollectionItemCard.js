@@ -7,6 +7,7 @@ import { trim_char,trim_end_char,truncate } from '../../utilities/ui_strings.js'
 import { get_ext,is_img_ext,get_file_type_img,get_file_type_icon,file_exists,build_img_elem } from '../../utilities/ui_utilities.js'
 
 
+
 class CollectionItemCard {
 
    #props
@@ -240,7 +241,9 @@ class CollectionItemCard {
                                  item:collection_item,
                                  ...this.#props
                               }
-                              record_props.context.scroll_y = window.scrollY
+                              // we hydrate context for target CollectionItemRecord here since we need to inject 'id' into History context
+                              record_props.context = {key:'Record',id:collection_item.id}
+                              // record_props.context.scroll_y = window.scrollY
                               app.switch_to_component('Record',record_props)
                            }
                         }

@@ -16,15 +16,31 @@ class CollectionItemRecord {
 
    #record
 
+   #context = {
+      key:'Record',
+      id:null
+   }
 
    constructor(props) {
       this.#props = props
+      if(props.item) {
+         if(props.item.id) this.#context.id = props.item.id // to do : validate props exist
+      }
+      else {
+         if(props.context) this.#context.id = props.context.id
+      }
    }
 
    render = async() => {
 
       this.#props.root_folder = await app.get_root_folder()
       if(this.#props.root_folder === '') return no_root_folder()
+
+      // we arrived via History - hydrate item
+      if(!this.#props.item) {
+         this.#props.item = await this.get_record(this.#props.context.id)
+         this.#props.fields = await this.get_fields()
+      }
       
       // update Recent records
       const app_config_obj = await window.config_api.getAppConfig()
@@ -35,7 +51,7 @@ class CollectionItemRecord {
          let ints_queue = ints_array(recent_records.split(','))
          let app_config_recent = {
             id:app_config.id,
-            recent_records: add_to_int_queue(ints_queue,20,this.#props.item.id).join()
+            recent_records: add_to_int_queue(ints_queue,20,this.#context.id).join()
          }
          await window.config_api.updateAppConfig(app_config_recent)
       }
@@ -60,12 +76,14 @@ class CollectionItemRecord {
       })
 
       // mark/highlight if record has been soft-deleted
-      if(this.#props.item['deleted_at']) {
-         const notify_deleted = create_p({
-            classlist:['bg_yellow_100','grid_span_2','rounded','p_1'],
-            text:'This record has previously been deleted and will soon be permanently auto-deleted from the system.'
-         })
-         this.#record.append(notify_deleted)
+      if(this.#props.item) {
+         if(this.#props.item['deleted_at']) {
+            const notify_deleted = create_p({
+               classlist:['bg_yellow_100','grid_span_2','rounded','p_1'],
+               text:'This record has previously been deleted and will soon be permanently auto-deleted from the system.'
+            })
+            this.#record.append(notify_deleted)
+         }
       }
 
       // 'form' layout inside text_col
@@ -75,7 +93,7 @@ class CollectionItemRecord {
       })
       text_col.append(form_layout)
 
-      form_layout.append(RecordBtns.render(this.#props.item.id,this.#props.context ? true : false))
+      form_layout.append(RecordBtns.render(this.#context.id,this.#props.context ? true : false))
 
       const record_content = create_div({
          classlist:['record_content','bg_white','p_.5','pl_1','pr_1','rounded']
@@ -162,7 +180,7 @@ class CollectionItemRecord {
          })
       }      
       form_layout.append(record_content)
-      form_layout.append(RecordBtns.render(this.#props.item.id,this.#props.context ? true : false))
+      form_layout.append(RecordBtns.render(this.#context.id,this.#props.context ? true : false))
       const record_admin = new RecordAdmin(this.#props)
       setTimeout(() => record_admin.activate(),300)
 
@@ -258,6 +276,44 @@ class CollectionItemRecord {
       }
    }
 
+   get_record = async(id) => {
+      // to do : id is valid?
+      // to do : complete all handling etc.
+      try {
+         const collection_item_obj = await window.collection_items_api.getCollectionItem(id)
+      
+         if (typeof collection_item_obj != "undefined" && collection_item_obj.outcome === 'success') {
+            // console.log('got record obj',collection_item_obj)
+            return collection_item_obj.collection_item
+         }
+         else {
+            // console.log('failed to get record obj'.collection_item_obj) // to do : handle (see eg browse get_items())
+         }
+      }
+      catch(error) {
+         app.switch_to_component('Error',{
+            msg:'Sorry, we were unable to access the Record.',
+            error:error
+         })
+      }
+   }
+
+   get_fields = async() => {
+      try {
+         const fields_obj = await window.collection_items_api.getCollectionItemFields()
+
+         if (typeof fields_obj != "undefined" && fields_obj.outcome === 'success') {
+            return fields_obj.fields
+         }
+         else {
+            // console.log('failed to get record obj'.fields_obj) // to do : handle (see eg browse get_items())
+         }
+      }
+      catch(error) {
+         // to do :
+      }
+   }
+
    display_tags = (tags_csv) => {
       if(tags_csv) {
          const tags = tags_csv.split('*')
@@ -274,6 +330,10 @@ class CollectionItemRecord {
          return tags_elem
       }
       return ''
+   }
+
+   get_default_context = () => {
+      return this.#context
    }
 }
 
