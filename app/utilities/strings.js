@@ -86,7 +86,7 @@ const trim_start_char = (str,delim) => {
 
 //
 // Split string on ',' exluding ',' within double-quotes
-// 
+//
 const split_csv_ignore_quoted = (str) => {
 
    // we inject a temp unique placeholder
@@ -95,21 +95,24 @@ const split_csv_ignore_quoted = (str) => {
    const replace_comma = s => s.replace(',',placeholder)
    const replace_placeholder = s => s.replace(placeholder,',')
 
-   // select any text within double-quotes
+   // select quoted token
    const double_quote_regex = /\".*\"/gi
 
-   // future : verify - what does double_quote_regext contain here?
-
-   // replace all commas within double quotes
+   // replace commas w/in double quoted tokens
+   // future - review - code from stackoverflow - works but not sure of use of replace_comma
+   //          replace() second parameter can be a function, called for every match
    const clean_str = str.replace(double_quote_regex,replace_comma)
-
    const tokens = clean_str.split(',')
+   const clean_tokens = tokens.map(replace_placeholder)   
 
-   const clean_tokens = tokens.map(replace_placeholder)
-   
-
-   return clean_tokens
+   // remove any enclosing double-quotes - packaging for ',' containing strings - trips str handling later if left
+   let dequoted_clean_tokens = []
+   clean_tokens.forEach(token => {
+      dequoted_clean_tokens.push(token.replaceAll('\"',''))
+   })
+   return dequoted_clean_tokens
 }
+
 
 
 module.exports = {
