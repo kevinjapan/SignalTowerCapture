@@ -164,7 +164,7 @@ class ImportCSVComponent {
                      }
                      
                      // prepend for Notification display
-                     if(failed_lines.length > 0) failed_lines = ['Some lines were not valid [max of 10 shown] :',...failed_lines]
+                     if(failed_lines.length > 0) failed_lines = ['First 10 invalid lines:',...failed_lines]
 
                      if(import_results_obj.outcome === 'success') {
                         wait_dlg_component.close()
