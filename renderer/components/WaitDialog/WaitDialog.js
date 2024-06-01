@@ -1,4 +1,4 @@
-import App from '../../components/App/App.js'
+import { app } from '../../renderer.js'
 import { create_section,create_h,create_p,create_div } from '../../utilities/ui_elements.js'
 
 
@@ -14,7 +14,7 @@ class WaitDialog {
 
    render = () => {
 
-      App.enable_nav(false)
+      app.enable_nav(false)
 
       let dimmer = create_section({
          attributes:[
@@ -71,7 +71,7 @@ class WaitDialog {
 
    remove = () => {
       
-      App.enable_nav(true)
+      app.enable_nav(true)
 
       const dimmer = document.getElementById('dimmer')
       if(dimmer) {
