@@ -132,6 +132,7 @@ class CollectionItem {
             })
 
             // to do : review - why use  this.#limit_read_all_records  here - surely limit read() only by this.#items_per_page is desirable
+            //         see this.filter_out_duplicates()
 
             sql = `SELECT ${fields.toString()} 
                      FROM collection_items 
@@ -228,7 +229,8 @@ class CollectionItem {
 
       const fields = exportable_fields.map((field) => {
          return {
-            key:field.key
+            key:field.key,
+            test:field.test
          }
       })
 
@@ -1218,6 +1220,7 @@ class CollectionItem {
                {field:'file_name',value:item.file_name}
             ]
          })
+         console.log(item.title,attempt_read_existing)
          if(attempt_read_existing.outcome === 'success') {
             if(attempt_read_existing.collection_items.length === 0) {
                // ok to proceed - we will create a record for this item
