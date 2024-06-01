@@ -29,8 +29,13 @@ class ExportCSVFile {
             let build_strings = []
             if(Array.isArray(results.collection_item_fields)) {
                results.collection_item_fields.forEach((field) => {
-                  if(collection_item[field.key] === null) collection_item[field.key] = 'null'
-                  build_strings.push(collection_item[field.key])
+                  if(collection_item[field.key] === null) collection_item[field.key] = 'null'                  
+                  if(field.test.type === 'string') {
+                     build_strings.push(`"${collection_item[field.key]}"`)
+                  }
+                  else {
+                     build_strings.push(collection_item[field.key])
+                  }
                })
             }
             return build_strings
