@@ -1,7 +1,7 @@
 const CollectionItem = require('./CollectionItem')
 const { is_valid_collection_item_csv } = require('../app/utilities/validation')
 const { assoc_arr_obj,chunk_array } = require('../app/utilities/utilities')
-
+const { split_csv_ignore_quoted } = require('../app/utilities/strings')
 
 
 
@@ -37,7 +37,9 @@ class ImportCSVFile {
   
             // we check first line and only proceed if it matches expected fields and data validation
             let first_line = true
-            let count = 1
+            let total_line_count = 0
+            let valid_line_count = 0
+            let invalid_line_count = 0
             let failed_lines = []
 
             // we will build arr of collection_items from lines
@@ -46,6 +48,9 @@ class ImportCSVFile {
             let values
 
             for await (const line of rl) {
+
+               // ensure we have no lingering " chars
+               line.replaceAll('\"','')
 
                // Validate file format from first line (if auto-generated CSV file, we assume consistent throughout - bar errors in values)
                if(first_line) {
@@ -85,41 +90,46 @@ class ImportCSVFile {
                const valid_item_obj = is_valid_collection_item_csv(CollectionItem.get_full_fields_list(),line)               
                if(valid_item_obj) {
                   if(valid_item_obj.outcome === 'fail') {
-                     valid_item_obj.line = count
-                     // we don't show all line errors to avoid proliferation
-                     if(failed_lines.length < 11) failed_lines.push(valid_item_obj)
-                     // but we do exclude them from insertion
-                     count++
+                     valid_item_obj.line = total_line_count
+                     if(failed_lines.length < 11) failed_lines.push(valid_item_obj)  // we don't show all line errors to avoid proliferation
+                     total_line_count++
+                     invalid_line_count++
                      continue
                   }
                }
-               count++
+               total_line_count++
+               valid_line_count++
 
-               // to do :  we just need to enforce output of csv - either enclose in "" or exclude ',' chars
-               // support legacy file_names with ',' - see split_csv_ignore_quoted() in string.js
-               // requires that we provide quoted strings in our own CSV exports as well as handling here
-               // note: clearly, ImportJSON has no problem with this - so we can import existing dataset ok 
+               // our csv tokens are double-quoted and may contain ','s
+               values = split_csv_ignore_quoted(line)
 
-               values = line.split(',')
+               // remove double-quotes
+               values = values.map(value => {
+                  return value.replaceAll('"','')
+               })
+               
                collection_items.push(assoc_arr_obj(field_keys,values))
             }
 
-            const num_rcvd_items = count - 1
+            // remove duplicate records
             const no_duplicate_collection_items = await this.remove_duplicate_records(collection_items)
             const num_non_duplicate_items = no_duplicate_collection_items.length
 
+            // no records to add
             if(num_non_duplicate_items < 1) {
                return {
                   query:'import_csv_file',
                   outcome:'success',
                   message_arr:[
-                     `${num_non_duplicate_items} records were added from the ${num_rcvd_items} lines read.`,
-                     `${num_rcvd_items - num_non_duplicate_items} records were duplicates.`
+                     `${num_non_duplicate_items} records were added from the ${total_line_count} lines read.`,
+                     `${total_line_count - (num_non_duplicate_items + invalid_line_count)} records were duplicates.`,
+                     `${invalid_line_count} records were invalid.`
                   ],
                   failed_lines:failed_lines
                }
             }
-               
+
+            // process any valid records               
             const result = await this.process_records(no_duplicate_collection_items)
          
             if(result) {
@@ -127,8 +137,9 @@ class ImportCSVFile {
                   query:'import_csv_file',
                   outcome:'success',
                   message_arr:[
-                     `${num_non_duplicate_items} records were added from the ${num_rcvd_items} lines read.`,
-                     `${num_rcvd_items - num_non_duplicate_items} records were duplicates.`
+                     `${num_non_duplicate_items} records were added from the ${total_line_count} lines read.`,
+                     `${total_line_count - (num_non_duplicate_items + invalid_line_count)} records were duplicates.`,
+                     `${invalid_line_count} records were invalid.`
                   ],
                   failed_lines:failed_lines
                }
@@ -139,9 +150,9 @@ class ImportCSVFile {
                   outcome:'fail',
                   message_arr:[
                      `There was an error attempting to import the CSV file. [ImportCSVFile.import]`,
-                     // this.#last_error.message,
-                     `${num_non_duplicate_items} records were added from the ${num_rcvd_items} lines read.`,
-                     `${num_rcvd_items - num_non_duplicate_items} records were duplicates.`
+                     `${num_non_duplicate_items} records were added from the ${total_line_count} lines read.`,
+                     `${total_line_count - (num_non_duplicate_items + invalid_line_count)} records were duplicates.`,
+                     `${invalid_line_count} records were invalid.`
                   ]
                }
                this.clear_last_error()
@@ -157,7 +168,7 @@ class ImportCSVFile {
          return {
             query:'import_csv_file',
             outcome:'fail',
-            message_arr:['There was an error attempting to import the records. [ImportCSVFile.import]  ' + error]
+            message_arr:['There was an error attempting to import the records. [ImportCSVFile.import]',error]
          }
       }
    }
