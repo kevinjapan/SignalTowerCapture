@@ -85,7 +85,9 @@ const trim_start_char = (str,delim) => {
 }
 
 //
-// Split string on ',' exluding ',' within double-quotes
+// Extracts tokens from within double-quotes in csv str
+// Splits string on ',' exluding ',' within double-quotes
+// Removes enclosing double-quotes
 //
 const split_csv_ignore_quoted = (str) => {
 
