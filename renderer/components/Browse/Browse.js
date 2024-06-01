@@ -35,12 +35,8 @@ class Browse {
 
 
    constructor(props) {
-
-      console.log('Browse props:',props)
-
       // 'back' to list from Records will return the passed 'context token'
-      if(props) {         
-         console.log('going in')
+      if(props) {
          this.#context = props.context
          // retain 'filter_char' if 'back' from list item (CollectionItemRecord)
          if(props.context && props.context.filters) {
@@ -138,7 +134,7 @@ class Browse {
             
                      let props = {
                         root_folder: this.#root_folder,
-                        context: this.#context
+                        // context: this.#context
                      }
                      const collection_item_card = new CollectionItemCard(props) 
                      if(Array.isArray(collection_items_obj.collection_items)) {
@@ -184,10 +180,6 @@ class Browse {
       }
    }
 
-   get_default_context = () => {
-      return this.#context
-   }
-
    // callback for PageNavigation
    go_to_page = (page) => {
       if(this.#context) {
@@ -225,6 +217,10 @@ class Browse {
             classlist:['p_.5','pt_1','text_center']
          })) 
       }     
+   }
+
+   get_default_context = () => {
+      return this.#context
    }
 }
 
