@@ -149,10 +149,11 @@ export const icon = (icon_name,attributes = [],classes = []) => {
 // Only noticable on quick scrolling - provides immediate access to text.
 //
 export const init_card_img_loads = () => {
+   // return // to do : re-enable
    const cards = document.querySelectorAll('.record_card_image')
    const appearOptions = {
       threshold: 0,
-      rootMargin: "0px 0px 300px 0px"
+      rootMargin: "0px 0px 400px 0px"
    }
    return create_card_img_observers(cards,'',appearOptions)
 }
@@ -165,7 +166,7 @@ const create_card_img_observers = (elements,active_class,options) => {
             if(!entry.isIntersecting) return
             // entry.target.classList.add(active_class)
             entry.target.src = entry.target.getAttribute('data-src')
-            appearOnScroll.unobserve(entry.target)
+            // appearOnScroll.unobserve(entry.target)
          })
    },options)
    if(elements) {
