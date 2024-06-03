@@ -315,3 +315,13 @@ export const has_valid_field_filter = (filter_name,context) => {
    if(target_filter && target_filter.value && target_filter.value !== '') return true
    return false
 }
+
+
+export const is_valid_int = (value, min = 0, max = 10000) => {
+   if(Number.isInteger(parseInt(value)) && (parseInt(value) >= min) && (parseInt(value) <= max))  {
+      return true
+   }
+   else {
+      throw `This value is not a valid number.`
+   }
+}
