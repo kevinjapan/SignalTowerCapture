@@ -216,7 +216,7 @@ class App {
          case 'HISTORY':
             return this.#history
          default:
-            console.log('to do : app service not recognized')
+            return false
       }
    }
 }
