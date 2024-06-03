@@ -78,7 +78,7 @@ class CollectionItemCard {
                else if(field.key === 'file_name') {               
                   // Bootstrap icons are 'filetype-xxx.svg' - so 'filetype' here refers to eg 'PDF' | 'TXT' | ...
                   let file_ext_type_block = create_div({
-                     classlist:['flex','align_items_center','gap_.5','fit_content','p_0.5','break_words','no_wrap','w_full']
+                     classlist:['flex','align_items_center','gap_.5','fit_content','p_0.5','break_words','no_wrap']
                   })
                   field_element = create_div({
                      classlist:['pt_0.3'],
@@ -101,7 +101,7 @@ class CollectionItemCard {
                   const file_part = item.file_name
                   const file_path = `${root_part}\\${relative_folder_part}${file_part}`
 
-                  // we inject placeholder and load img jit w/ intersection observer
+                  // we inject placeholder and load img JIT w/ intersection observer (init_card_img_loads() in ui_utilities.js)
                   const placeholder_file_path = `imgs\\card_img_placeholder.jpg`
 
                   // wrapper to permit full width while cropping tall images
@@ -109,46 +109,52 @@ class CollectionItemCard {
                      classlist:['record_card_image_wrap']
                   })
 
-                  if(await file_exists(file_path)) {
-                     if(is_img_ext(file_part)) {
-                        // process img file
-                        let img = build_img_elem(placeholder_file_path,item.img_desc,
-                           [
-                              {key:'data-id',value:item.id},
-                              {key:'data-src',value:file_path}
-                           ],
-                           ['record_card_image','card_title_link','cursor_pointer']
-                        )
-                        if(img) {
-                           record_card_image_wrap.append(img)
-                           img_block.replaceChildren(record_card_image_wrap)
-                        }
+                  // we populate placeholder to generate layout in good time (avoiding patchy rendering)
+                  // does mean we may 'overwrite' w/ 'no matching file..' but payoff in UX is worth it.
+
+                     // to do : we wait on checking file_exists *before* we create the html!
+                     //         issue: we can see blank blocks before images load
+                     //         replicate - start anew - load pages in Browse - delays are visible
+
+                  if(is_img_ext(file_part)) {
+                     // process img file
+                     let img = build_img_elem(placeholder_file_path,item.img_desc,
+                        [
+                           {key:'data-id',value:item.id},
+                           {key:'data-src',value:file_path}
+                        ],
+                        ['record_card_image','card_title_link','cursor_pointer']
+                     )
+                     if(img) {
+                        record_card_image_wrap.append(img)
+                        img_block.replaceChildren(record_card_image_wrap)     // to do : currently tied to file_exists() check above
                      }
-                     else {
-                        // process non-img file
-                        const icon_img_file_path = get_file_type_img(file_part)
-                        const ext = get_ext(file_path)
-                        let img = build_img_elem(icon_img_file_path,`${ext} file icon`,
-                           [
-                              {key:'data-id',value:item.id},
-                              {key:'data-src',value:icon_img_file_path},
-                              {key:'height',value:'30px'}
-                           ],
-                           ['record_card_image','card_title_link','cursor_pointer','pt_1']
-                        )
-                        if(img) {
-                           record_card_image_wrap.append(img)
-                           img_block.replaceChildren(record_card_image_wrap)
-                        }
-                     }                  
                   }
                   else {
+                     // process non-img file
+                     const icon_img_file_path = get_file_type_img(file_part)
+                     const ext = get_ext(file_path)
+                     let img = build_img_elem(icon_img_file_path,`${ext} file icon`,
+                        [
+                           {key:'data-id',value:item.id},
+                           {key:'data-src',value:icon_img_file_path},
+                           {key:'height',value:'30px'}
+                        ],
+                        ['record_card_icon','card_title_link','cursor_pointer','pt_1']
+                     )
+                     if(img) {
+                        record_card_image_wrap.append(img)
+                        img_block.replaceChildren(record_card_image_wrap)
+                     }
+                  }
+
+                  if(!await file_exists(file_path)) {
                      const no_file_icon_img = build_img_elem('imgs\\icons\\exclamation-square.svg',`item date`,[{key:'height',value:'24px'}],['bg_yellow_100','mt_5','opacity_.6'])
                      let msg = create_div({
                         classlist:['text_sm','text_lightgrey','text_italic','','fit_content','mx_auto'],
                         text:'No matching file was found.'
                      })
-                     img_block.append(no_file_icon_img,msg)
+                     img_block.replaceChildren(no_file_icon_img,msg)
                   }
                   if(field_value) {
                      field_element = create_div({
