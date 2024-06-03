@@ -11,19 +11,11 @@ const LENS = {
 // String
 //
 const is_valid_string = (value,min_len = 0,max_len = 255) => {
-
-
    if((typeof value  === 'string') && (value.length >= min_len) && (value.length <= max_len)) {   
-      
       if(has_invalid_chars(value)) 
          {throw `This value is not a valid string, it may contain special characters not permitted in this field [eg " ]`
       }
       return true
-
-      // to do : move to UI form side
-      // crude but effective, strip any unwanted special chars (shouldn't get here anyhow)
-      // value.replaceAll('"','')
-
    }
    else {
       throw `This value is not a valid string.`
@@ -134,8 +126,6 @@ const is_valid_collection_item_csv = (fields_list,csv) => {
    // get 1-d arr of raw data for keys and values
    const field_keys = fields_list.map(field => field.key)
    const values = split_csv_ignore_quoted(csv)
-
-   console.log('got values',values)
    
    if(field_keys.length !== values.length) {
       return {
