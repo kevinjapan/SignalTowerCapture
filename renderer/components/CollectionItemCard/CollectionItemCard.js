@@ -20,25 +20,29 @@ class CollectionItemCard {
       
       // 'fields' is an array including keys of properties in the 'item' and preserves the display order
       // card is row flex to align minor fields at foot while primary fields occupy flex_100 (width 100%)
+
       let card = create_section({
          classlist:['collection_item_card']
       })
 
+      // primary layout
       let img_block = create_div({
-         classlist:['image_block','text_center','m_auto']
+         classlist:['card_image_block','text_center','m_0']
       })
+      let text_block = create_div({
+         classlist:['card_text_block','pl_0.5','pr_0.5']
+      })
+
       let tags_block = create_div({classlist:['flex','no_wrap']})
       let folder_path_block = create_div()
       
       let field_element
       let tags_list_elem
 
+      // process each field (row)
       if(typeof item !== 'undefined') {
-
-         if(Array.isArray(fields)) {
-            
+         if(Array.isArray(fields)) {            
             fields.forEach(async(field) => {
-
                // field value
                let field_value = item[field.key]
                if(field.test.type === 'date') {
@@ -46,22 +50,20 @@ class CollectionItemCard {
                }
 
                if(field.key === 'title') {
-
                   // title as link
                   if(field_value === '') field_value = 'no title'
                   field_element = create_h({
                      level:'h3',
                      attributes: [{key:'data-id',value:item.id}],
-                     classlist:['text_blue','card_title_link','flex_100','m_0','mt_0.5','mb_0.5','font_w_400','cursor_pointer','hover_line','break_words'],
+                     classlist:['text_blue','card_title_link','flex_100','m_0','font_w_400','cursor_pointer','hover_line','break_words'],
                      text:field_value
                   })
-                  card.append(field_element)
+                  text_block.append(field_element)
                }
                else if(field.key === 'file_type') {
-
                   // CollectionItem.file_type is 'file' | 'folder'
                   let file_type_block = create_div({
-                     classlist:['flex','align_items_center','gap_.5','mt_0.25','p_0.5','break_words']
+                     classlist:['flex','align_items_center','gap_.5','p_0.5','break_words']
                   })
                   field_element = create_div({
                      classlist:['pt_0.3'],
@@ -71,26 +73,22 @@ class CollectionItemCard {
                   const ext = get_ext(field_value)
                   const file_type = build_img_elem(icon,`${ext} filetype`,[{key:'height',value:'24px'}],[]) 
                   file_type_block.append(file_type,field_element)
-                  card.append(file_type_block)
+                  text_block.append(file_type_block)
                }
-               else if(field.key === 'file_name') {
-               
+               else if(field.key === 'file_name') {               
                   // Bootstrap icons are 'filetype-xxx.svg' - so 'filetype' here refers to eg 'PDF' | 'TXT' | ...
-                  //
-
                   let file_ext_type_block = create_div({
-                     classlist:['flex','align_items_center','gap_.5','mt_0.25','fit_content','p_0.5','break_words','no_wrap','w_full']
+                     classlist:['flex','align_items_center','gap_.5','fit_content','p_0.5','break_words','no_wrap','w_full']
                   })
                   field_element = create_div({
                      classlist:['pt_0.3'],
                      text:field_value
                   })
-
                   const icon = get_file_type_icon(field_value)
                   const ext = get_ext(field_value)
                   const filetype_icon = build_img_elem(icon,`${ext} filetype`,[{key:'height',value:'24px'}],[])
                   file_ext_type_block.append(filetype_icon,field_element)
-                  card.append(file_ext_type_block)
+                  text_block.append(file_ext_type_block)
                }         
                else if(field.key === 'folder_path') {
                   // Card image
@@ -112,11 +110,13 @@ class CollectionItemCard {
                   })
 
                   if(await file_exists(file_path)) {
-
                      if(is_img_ext(file_part)) {
                         // process img file
                         let img = build_img_elem(placeholder_file_path,item.img_desc,
-                           [{key:'data-id',value:item.id},{key:'data-src',value:file_path}],
+                           [
+                              {key:'data-id',value:item.id},
+                              {key:'data-src',value:file_path}
+                           ],
                            ['record_card_image','card_title_link','cursor_pointer']
                         )
                         if(img) {
@@ -129,7 +129,11 @@ class CollectionItemCard {
                         const icon_img_file_path = get_file_type_img(file_part)
                         const ext = get_ext(file_path)
                         let img = build_img_elem(icon_img_file_path,`${ext} file icon`,
-                           [{key:'data-id',value:item.id},{key:'data-src',value:icon_img_file_path},{key:'height',value:'40px'}],
+                           [
+                              {key:'data-id',value:item.id},
+                              {key:'data-src',value:icon_img_file_path},
+                              {key:'height',value:'30px'}
+                           ],
                            ['record_card_image','card_title_link','cursor_pointer','pt_1']
                         )
                         if(img) {
@@ -139,18 +143,16 @@ class CollectionItemCard {
                      }                  
                   }
                   else {
-                     const no_file_icon_img = build_img_elem('imgs\\icons\\exclamation-square.svg',`item date`,[{key:'height',value:'24px'}],['bg_yellow_100','mt_1','opacity_.6'])
-                     img_block.append(no_file_icon_img)
+                     const no_file_icon_img = build_img_elem('imgs\\icons\\exclamation-square.svg',`item date`,[{key:'height',value:'24px'}],['bg_yellow_100','mt_5','opacity_.6'])
                      let msg = create_div({
-                        classlist:['text_sm','text_grey','text_italic'],
+                        classlist:['text_sm','text_lightgrey','text_italic','','fit_content','mx_auto'],
                         text:'No matching file was found.'
                      })
-                     img_block.append(msg)
-                  }    
-
+                     img_block.append(no_file_icon_img,msg)
+                  }
                   if(field_value) {
                      field_element = create_div({
-                        classlist:['break_words','mt_0.5','mr_2','pl_1','text_grey'],
+                        classlist:['break_words','mr_2','pl_1','text_grey'],
                         text:truncate(field_value,300)
                      })
                      // we don't add immediately to Card, to preserve desired order
@@ -158,9 +160,8 @@ class CollectionItemCard {
                   }
                }
                else if(field.key === 'tags') {
-                  // Tags
                   const tags_label = create_div({
-                     classlist:['mt_1','p_0.5','pt_0.75','text_grey'],
+                     classlist:['p_0.5','pt_0.75','text_grey'],
                      text:'Tags'
                   })
                   tags_list_elem = create_div({
@@ -179,11 +180,9 @@ class CollectionItemCard {
                   tags_block.append(tags_label,tags_list_elem)
                }
                else if(field.key === 'item_date') {
-                  
-                  // item date
                   if(field_value) {
                      let item_date_block = create_div({
-                        classlist:['flex','align_items_center','gap_.5','mt_0.25','fit_content','p_0.5','break_words','w_full']
+                        classlist:['flex','align_items_center','gap_.5','fit_content','p_0.5','break_words','w_full']
                      })
                      field_element = create_div({
                         classlist:['pt_0.3','break_words'],
@@ -191,7 +190,7 @@ class CollectionItemCard {
                      })
                      const filetype_icon = build_img_elem('imgs\\icons\\calendar.svg',`item date`,[{key:'height',value:'24px'}],[])
                      item_date_block.append(filetype_icon,field_element)
-                     card.append(item_date_block)
+                     text_block.append(item_date_block)
                   }
                }
                else {
@@ -199,9 +198,9 @@ class CollectionItemCard {
                   if(field_value) {
                      field_element = create_div({
                         classlist:['break_words','w_full'],
-                        text:truncate(field_value,300)
+                        text:truncate(field_value,180)
                      })
-                     card.append(field_element)
+                     text_block.append(field_element)
                   }
                }
             })
@@ -210,7 +209,8 @@ class CollectionItemCard {
       
       // assemble
       card.prepend(img_block)
-      card.append(folder_path_block,tags_block)
+      text_block.append(folder_path_block,tags_block)
+      card.append(text_block)
       return card
    }
 
