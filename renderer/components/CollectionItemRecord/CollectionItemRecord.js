@@ -3,7 +3,7 @@ import RecordBtns from '../RecordBtns/RecordBtns.js'
 import RecordAdmin from '../RecordAdmin/RecordAdmin.js'
 import { is_valid_response_obj } from '../../utilities/ui_response.js'
 import { ui_friendly_text,trim_char,trim_end_char } from '../../utilities/ui_strings.js'
-import { get_ext,is_img_ext,get_file_type_icon,file_exists,build_img_elem,add_to_int_queue,ints_array,no_root_folder } from '../../utilities/ui_utilities.js'
+import { get_ext,is_img_ext,get_file_type_icon,file_exists,build_img_elem,add_to_int_queue,ints_array,no_root_folder,is_valid_int } from '../../utilities/ui_utilities.js'
 import { create_section,create_div,create_p } from '../../utilities/ui_elements.js'
 
 
@@ -23,11 +23,13 @@ class CollectionItemRecord {
 
    constructor(props) {
       this.#props = props
-      if(props.item) {
-         if(props.item.id) this.#context.id = props.item.id // to do : validate props exist
-      }
-      else {
-         if(props.context) this.#context.id = props.context.id
+      if(props) {
+         if(props.item) {
+            if(props.item.id) this.#context.id = props.item.id
+         }
+         else {
+            if(props.context) this.#context.id = props.context.id
+         }
       }
    }
 
@@ -277,13 +279,13 @@ class CollectionItemRecord {
    }
 
    get_record = async(id) => {
-      // to do : id is valid?
-      // to do : complete all handling etc.
+
+      if(!is_valid_int(id)) return ''
+
       try {
          const collection_item_obj = await window.collection_items_api.getCollectionItem(id)
       
          if (typeof collection_item_obj != "undefined" && collection_item_obj.outcome === 'success') {
-            // console.log('got record obj',collection_item_obj)
             return collection_item_obj.collection_item
          }
          else {
