@@ -19,7 +19,8 @@ class CollectionItem {
 
    #last_error
 
-   #items_per_page = 21
+   // we are balancing the large image size downloads w/ UX
+   #items_per_page = 20
 
    // every read-all needs an absolute upper limit!
    #limit_read_all_records = 20000
@@ -43,7 +44,7 @@ class CollectionItem {
       {key:'author_creator',data_type:'TEXT',editable:true,in_card:false,export:true,test:{type:'string',min:0,max:60}},
       {key:'people',data_type:'TEXT',editable:true,in_card:false,export:true,test:{type:'string',min:0,max:100}},
       {key:'source',data_type:'TEXT',editable:true,in_card:false,export:true,test:{type:'string',min:0,max:100}},
-      {key:'tags',data_type:'TEXT',editable:true,in_card:true,hidden:true,export:true,test:{type:'string',min:0,max:200}},
+      {key:'tags',data_type:'TEXT',editable:true,in_card:false,hidden:true,export:true,test:{type:'string',min:0,max:200}},
       {key:'id',data_type:'INTEGER PRIMARY KEY',editable:false,in_card:false,export:true,test:{type:'int',min:1,max:9999999999}},
       {key:'created_at',data_type:'TEXT NOT NULL',editable:false,in_card:false,export:true,test:{type:'date',min:10,max:24}},
       {key:'updated_at',data_type:'TEXT NOT NULL',editable:false,in_card:false,export:true,test:{type:'date',min:10,max:24}},
@@ -1220,7 +1221,7 @@ class CollectionItem {
                {field:'file_name',value:item.file_name}
             ]
          })
-         console.log(item.title,attempt_read_existing)
+
          if(attempt_read_existing.outcome === 'success') {
             if(attempt_read_existing.collection_items.length === 0) {
                // ok to proceed - we will create a record for this item
