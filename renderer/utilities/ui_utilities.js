@@ -1,5 +1,5 @@
 import { create_img } from '../utilities/ui_elements.js'
-import { truncate,ui_friendly_text } from '../utilities/ui_strings.js'
+import { truncate,ui_friendly_text,trim_char,trim_end_char } from '../utilities/ui_strings.js'
 import { create_div } from '../utilities/ui_elements.js'
 
 
@@ -147,13 +147,23 @@ export const icon = (icon_name,attributes = [],classes = []) => {
 // Compromise is we load images as they enter the viewport - allowing Card lists to space
 // layout instaneously and display text while loading images just-in-time.
 // Only noticable on quick scrolling - provides immediate access to text.
-//
+// 
+
 export const init_card_img_loads = () => {
-   // return // to do : re-enable
+   card_img_loads()
+}
+
+const card_img_loads = () => {
    const cards = document.querySelectorAll('.record_card_image')
+
+   // to reduce reflow issues, we only load images once they are fully in-view
+   // we lose the pre-load w/ a top rootMargin, but benefit from better grid rendering 
+   // allowing user to scroll and view text while images are loading
+   // future : still not perfect - some delay in rendering
+   // Users will scan text and images, so delay is acceptable but can be improved
    const appearOptions = {
       threshold: 0,
-      rootMargin: "0px 0px 400px 0px"
+      rootMargin: "0px 0px 100px 0px"
    }
    return create_card_img_observers(cards,'',appearOptions)
 }
@@ -166,7 +176,7 @@ const create_card_img_observers = (elements,active_class,options) => {
             if(!entry.isIntersecting) return
             // entry.target.classList.add(active_class)
             entry.target.src = entry.target.getAttribute('data-src')
-            // appearOnScroll.unobserve(entry.target)
+            appearOnScroll.unobserve(entry.target)
          })
    },options)
    if(elements) {
@@ -325,4 +335,16 @@ export const is_valid_int = (value, min = 0, max = 10000) => {
    else {
       throw `This value is not a valid number.`
    }
+}
+
+export const build_file_path = (root_folder_path,relative_folder_path,file_name) => {
+   
+   const root_part = trim_end_char(root_folder_path,'\\')
+   let relative_folder_part = trim_char(relative_folder_path,'\\')
+   
+   // allow for empty folder_path (files in root_folder)
+   if(relative_folder_part !== '') relative_folder_part += '\\'
+
+   const file_path = `${root_part}\\${relative_folder_part}${file_name}`
+   return file_path
 }
