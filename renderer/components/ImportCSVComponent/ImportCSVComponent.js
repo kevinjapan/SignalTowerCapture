@@ -1,4 +1,5 @@
 import ActionsLogComponent from '../ActionsLogComponent/ActionsLogComponent.js'
+import PageBanner from '../PageBanner/PageBanner.js'
 import WaitDialog from '../WaitDialog/WaitDialog.js'
 import Notification from '../../components/Notification/Notification.js'
 import { get_ui_ready_date,get_ui_ready_time } from '../../utilities/ui_datetime.js'
@@ -31,22 +32,29 @@ class ImportCSVComponent {
 
       // layout
       let import_csv_section = create_section({
-         attributes:[{key:'id',value:'import_csv_section'}],
-         classlist:['fade_in','bg_white','box_shadow','rounded','m_2','mt_2','mb_4','pb_2']
+         attributes:[{key:'id',value:'import_csv_section'}]
       })   
+
+      const page_banner = new PageBanner({
+         icon_name:'csv',
+         title:'CSV Files : Import',
+         lead:'Comma-Separated-Value (CSV) files are a common file format for tranfering data between applications.'
+      })
+      import_csv_section.append(page_banner.render())
+
       const csv_header = create_div({
          classlist:['flex','align_items_center','mb_0']
       })
-      const import_csv_section_h = create_h({
-         level:'h2',
-         classlist:['mt_2','mb_0','pt_0','pb_0'],
-         text:'CSV Files : Import'
-      })
-      csv_header.append(icon('csv'),import_csv_section_h)
-      const csv_section_desc = create_p({
-         classlist:['m_0','mb_2','pt_0','pb_0'],
-         text:'Comma-Separated-Value (CSV) files are a common file format for tranfering data between applications.'
-      })
+      // const import_csv_section_h = create_h({
+      //    level:'h2',
+      //    classlist:['mt_2','mb_0','pt_0','pb_0'],
+      //    text:'CSV Files : Import'
+      // })
+      // csv_header.append(icon('csv'),import_csv_section_h)
+      // const csv_section_desc = create_p({
+      //    classlist:['m_0','mb_2','pt_0','pb_0'],
+      //    text:'Comma-Separated-Value (CSV) files are a common file format for tranfering data between applications.'
+      // })
 
       const action_section = create_section({
          classlist:['flex','align_items_center','no_wrap']
@@ -65,7 +73,7 @@ class ImportCSVComponent {
       const import_csv_outcome = create_div({
          attributes:[{key:'id',value:'import_csv_outcome'}]
       })
-      import_csv_section.append(csv_header,csv_section_desc,action_section,import_csv_outcome)
+      import_csv_section.append(action_section,import_csv_outcome)
 
       // display fields info
       const fields = create_div({

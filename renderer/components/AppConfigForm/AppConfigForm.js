@@ -1,10 +1,10 @@
-import App from '../App/App.js'
+import { app } from '../../renderer.js'
+import PageBanner from '../PageBanner/PageBanner.js'
 import SelectFolderComponent from '../SelectFolderComponent/SelectFolderComponent.js'
 import FormBtns from '../FormBtns/FormBtns.js'
 import Notification from '../../components/Notification/Notification.js'
-import { icon } from '../../utilities/ui_utilities.js'
 import { ui_friendly_text } from '../../utilities/ui_strings.js'
-import { create_section,create_h,create_div,create_p,create_form,create_label,create_input,create_textarea } from '../../utilities/ui_elements.js'
+import { create_section,create_div,create_p,create_form,create_label,create_input,create_textarea } from '../../utilities/ui_elements.js'
 
 
 
@@ -34,35 +34,20 @@ class AppConfigForm {
 
       
       let app_settings_section = create_section({
-         attributes:[
-            {key:'id',value:'app_settings_section'}
-         ],
-         classlist:['fade_in','bg_white','box_shadow','rounded','m_2','mb_2','pb_2']
+         attributes:[{key:'id',value:'app_settings_section'}]
       })
+
+      const page_banner = new PageBanner({
+         icon_name:'settings',
+         title:'Settings',
+         lead:'Update your application settings here.'
+      })
+      app_settings_section.append(page_banner.render())
 
       let form = create_form({
-         attributes:[
-            {key:'id',value:'item_form'}
-         ],
+         attributes:[{key:'id',value:'item_form'}],
          classlist:['config_form','border','mt_0']
       })
-      
-      const app_settings_header = create_div({
-         classlist:['flex','align_items_center']
-      })
-      const app_settings_section_h = create_h({
-         level:'h2',
-         classlist:['mt_2','mb_0','pt_0','pb_0'],
-         text:'App Settings'
-      })
-      app_settings_header.append(icon('settings'),app_settings_section_h)
-      const app_settings_section_desc = create_p({
-         classlist:['mt_0','mb_0','pt_0','pb_0'],
-         text:`Update your application settings here.`
-
-      })
-      app_settings_section.append(app_settings_header,app_settings_section_desc)
-
 
 
       const text_col = create_div({
@@ -236,7 +221,7 @@ class AppConfigForm {
                      Notification.notify('#submit_outcome',`${action} successfully applied.`,['bg_inform'])
 
                      // future : make scaleable (if we incrse no. of settings)
-                     App.set_root_folder(form_data.get('root_folder'))
+                     app.set_root_folder(form_data.get('root_folder'))
                   }
                   else {
                      if(Array.isArray(response.errors)) {

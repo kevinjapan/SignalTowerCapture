@@ -1,3 +1,4 @@
+import PageBanner from '../PageBanner/PageBanner.js'
 import { create_section,create_h, create_p } from '../../utilities/ui_elements.js'
 
 
@@ -17,6 +18,14 @@ class About {
    render = () => {
 
       let about_section = create_section({classlist:['fade_in']})
+
+
+      const page_banner = new PageBanner({
+         icon_name:'',
+         title:'About',
+         lead:''
+      })
+      about_section.append(page_banner.render())
 
       const heading = create_h({
          level:'h1',

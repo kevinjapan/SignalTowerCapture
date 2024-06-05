@@ -1,8 +1,8 @@
-import { create_section,create_h,create_p,create_div,create_button } from '../../utilities/ui_elements.js'
+import PageBanner from '../PageBanner/PageBanner.js'
+import Notification from '../../components/Notification/Notification.js'
+import { create_section,create_div,create_button } from '../../utilities/ui_elements.js'
 import { get_sqlready_datetime } from '../../utilities/ui_datetime.js'
 import { extract_file_name } from '../../utilities/ui_strings.js'
-import Notification from '../../components/Notification/Notification.js'
-import { icon } from '../../utilities/ui_utilities.js'
 
 
 
@@ -19,23 +19,15 @@ class BackupComponent {
       
       // Backup Section
       let backup_section = create_section({
-         attributes:[{key:'id',value:'backup_section'}],
-         classlist:['fade_in','bg_white','box_shadow','rounded','m_2','mt_2','mb_4','pb_2']
+         attributes:[{key:'id',value:'backup_section'}]
       })
-      const backup_header = create_div({
-         classlist:['flex','align_items_center','mb_0']
+      
+      const page_banner = new PageBanner({
+         icon_name:'database',
+         title:'Database Backup',
+         lead:'Create a backup of the database.'
       })
-      const backup_section_h = create_h({
-         level:'h2',
-         classlist:['mt_2','mb_0','pt_0','pb_0'],
-         text:'Database Backups'
-      })
-      backup_header.append(icon('database',[]),backup_section_h)
-      const backup_section_desc = create_p({
-         classlist:['m_0','mb_2','pt_0','pb_0'],
-         text:'Create a backup of the database.'
-      })
-      backup_section.append(backup_header,backup_section_desc)
+      backup_section.append(page_banner.render())
 
       let backup_database_btn = create_button({
          attributes:[{key:'id',value:'backup_database_btn'}],

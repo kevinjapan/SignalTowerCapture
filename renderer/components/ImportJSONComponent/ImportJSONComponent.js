@@ -1,9 +1,10 @@
 import ActionsLogComponent from '../ActionsLogComponent/ActionsLogComponent.js'
+import PageBanner from '../PageBanner/PageBanner.js'
 import WaitDialog from '../WaitDialog/WaitDialog.js'
 import Notification from '../../components/Notification/Notification.js'
-import { get_ui_ready_date,get_ui_ready_time,get_sqlready_datetime } from '../../utilities/ui_datetime.js'
+import { get_ui_ready_date,get_ui_ready_time } from '../../utilities/ui_datetime.js'
 import { create_section,create_h,create_p,create_div,create_button } from '../../utilities/ui_elements.js'
-import { icon } from '../../utilities/ui_utilities.js'
+
 
 
 class ImportJSONComponent {
@@ -33,24 +34,16 @@ class ImportJSONComponent {
       }
 
       let import_json_section = create_section({
-         attributes:[{key:'id',value:'import_json_section'}],
-         classlist:['fade_in','bg_white','box_shadow','rounded','m_2','mt_2','mb_4','pb_2']
+         attributes:[{key:'id',value:'import_json_section'}]
       })
-      const json_header = create_div({
-         classlist:['flex','align_items_center','mb_0']
+
+      const page_banner = new PageBanner({
+         icon_name:'json',
+         title:'JSON Files : Import',
+         lead:`JavaScript Object Notation (JSON) files are a human-readable file format for tranfering data between applications.
+               They are better suited for moving small sets of data where some manual manipulation is needed.`
       })
-      const json_section_h = create_h({
-         level:'h2',
-         classlist:['mt_2','mb_0','pt_0','pb_0'],
-         text:'JSON Files : Import'
-      })
-      json_header.append(icon('json'),json_section_h)
-      const json_section_desc = create_p({
-         classlist:['m_0','mb_2','pt_0','pb_0'],
-         text:`JavaScript Object Notation (JSON) files are a human-readable file format for tranfering data between applications.
-         They are better suited for moving small sets of data where some manual manipulation is needed.`
-      })
-      import_json_section.append(json_header,json_section_desc)
+      import_json_section.append(page_banner.render())
 
       const action_section = create_section({
          classlist:['flex','align_items_center','no_wrap']
