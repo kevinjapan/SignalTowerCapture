@@ -48,8 +48,7 @@ class DeletedRecordsTeaser {
       if(this.#root_folder === '') return no_root_folder()
 
       this.#deleted_records_section = create_section({
-         attributes:[{key:'id',value:'deleted_records_section'}],
-         classlist:['fade_in','ui_component']
+         attributes:[{key:'id',value:'deleted_records_section'}]
       })
 
       const page_banner = new PageBanner({
@@ -89,7 +88,7 @@ class DeletedRecordsTeaser {
                   // this.add_heading()
                   // this.add_desc()
 
-                  // to do : duplicating code above..
+                  // future : duplicating code above..
                   const page_banner = new PageBanner({
                      icon_name:'deleted',
                      title:'Deleted Records',

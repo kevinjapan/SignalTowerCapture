@@ -8,6 +8,12 @@ import { get_ext,is_img_ext,get_file_type_img,get_file_type_icon,file_exists,bui
 
 
 
+// future : there is issue w/ page rendering/reflow because of large imgs (we don't have scope to generate thumbnails)
+//          for example, some card row blocks re-render on scrolling the page - but most of the time, not noticeable
+//          we have specified img and container dimensions, better but still a little awkward.
+
+
+
 class CollectionItemCard {
 
    #props
@@ -30,7 +36,7 @@ class CollectionItemCard {
          classlist:['card_image_block','text_center','m_0']
       })
       let text_block = create_div({
-         classlist:['card_text_block','pl_0.5','pr_0.5']
+         classlist:['card_text_block','grid_card_text_layout','pl_0.5','pr_0.5','flex','flex_col','align_items_start','no_wrap','justify_end']
       })
 
       let tags_block = create_div({classlist:['flex','no_wrap']})
@@ -39,7 +45,9 @@ class CollectionItemCard {
       let field_element
       let tags_list_elem
 
-      // process each field (row)
+      //
+      // process each Card row (field)
+      //
       if(typeof item !== 'undefined') {
          if(Array.isArray(fields)) {            
             fields.forEach(async(field) => {
@@ -63,7 +71,7 @@ class CollectionItemCard {
                else if(field.key === 'file_type') {
                   // CollectionItem.file_type is 'file' | 'folder'
                   let file_type_block = create_div({
-                     classlist:['flex','align_items_center','gap_.5','p_0.5','break_words']
+                     classlist:['flex','align_items_center','gap_.5','p_0.5','pl_0','break_words']
                   })
                   field_element = create_div({
                      classlist:['pt_0.3'],
@@ -73,12 +81,12 @@ class CollectionItemCard {
                   const ext = get_ext(field_value)
                   const file_type = build_img_elem(icon,`${ext} filetype`,[{key:'height',value:'24px'}],[]) 
                   file_type_block.append(file_type,field_element)
-                  text_block.append(file_type_block)
+                  // text_block.append(file_type_block)
                }
                else if(field.key === 'file_name') {               
                   // Bootstrap icons are 'filetype-xxx.svg' - so 'filetype' here refers to eg 'PDF' | 'TXT' | ...
                   let file_ext_type_block = create_div({
-                     classlist:['flex','align_items_center','gap_.5','fit_content','p_0.5','break_words','no_wrap']
+                     classlist:['flex','align_items_center','gap_.5','fit_content','p_0.5','pl_0','break_words','no_wrap']
                   })
                   field_element = create_div({
                      classlist:['pt_0.3'],
@@ -120,8 +128,11 @@ class CollectionItemCard {
                      // process img file
                      let img = build_img_elem(placeholder_file_path,item.img_desc,
                         [
+                           {key:'id',value:`card_${this.#props.card_index}`},
                            {key:'data-id',value:item.id},
-                           {key:'data-src',value:file_path}
+                           {key:'data-src',value:file_path},
+                           {key:'width',value:'100%'},
+                           {key:'height',value:'200px'}
                         ],
                         ['record_card_image','card_title_link','cursor_pointer']
                      )
@@ -158,7 +169,7 @@ class CollectionItemCard {
                   }
                   if(field_value) {
                      field_element = create_div({
-                        classlist:['break_words','mr_2','pl_1','text_grey'],
+                        classlist:['break_words','text_grey','align_self_end','mt_auto'],
                         text:truncate(field_value,300)
                      })
                      // we don't add immediately to Card, to preserve desired order
@@ -196,7 +207,7 @@ class CollectionItemCard {
                      })
                      const filetype_icon = build_img_elem('imgs\\icons\\calendar.svg',`item date`,[{key:'height',value:'24px'}],[])
                      item_date_block.append(filetype_icon,field_element)
-                     text_block.append(item_date_block)
+                     // text_block.append(item_date_block)
                   }
                }
                else {
@@ -204,7 +215,7 @@ class CollectionItemCard {
                   if(field_value) {
                      field_element = create_div({
                         classlist:['break_words','w_full'],
-                        text:truncate(field_value,180)
+                        text:truncate(field_value,150)
                      })
                      text_block.append(field_element)
                   }
