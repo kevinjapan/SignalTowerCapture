@@ -1,8 +1,8 @@
 import { app } from '../../renderer.js'
+import PageBanner from '../PageBanner/PageBanner.js'
 import TagsList from '../TagsList/TagsList.js'
 import Notification from '../../components/Notification/Notification.js'
-import { icon } from '../../utilities/ui_utilities.js'
-import { create_section,create_input,create_h,create_p,create_div,create_button } from '../../utilities/ui_elements.js'
+import { create_section,create_input,create_div,create_button } from '../../utilities/ui_elements.js'
 import { is_valid_tag } from '../../utilities/ui_strings.js'
 
 class TagsConfig {
@@ -23,37 +23,24 @@ class TagsConfig {
 
    #tags
 
+
    render = async() => {
 
-      
       let tags_section = create_section({
-         attributes:[
-            {key:'id',value:'tags_section'}
-         ],
-         classlist:['fade_in','bg_white','box_shadow','rounded','m_2','mb_2','pb_2']
+         attributes:[{key:'id',value:'tags_section'}]
       })
-      const tags_header = create_div({
-         classlist:['flex','align_items_center']
-      })
-      const tags_section_h = create_h({
-         level:'h2',
-         classlist:['mt_2','mb_0','pt_0','pb_0'],
-         text:'Tags'
-      })
-      tags_header.append(icon('tag'),tags_section_h)
-      const tags_section_desc = create_p({
-         classlist:['mt_0','mb_0','pt_0','pb_0'],
-         text:`You can 'tag' records with keywords or categories, and then upon searching for a 
-         given tag, all the matching 'tagged' records will be found.
-         This can be useful for grouping records which are physically
-         separate in your Collections folder. For example, the tag
-         'education' might pertain to individual files across multiple folders.`
 
+      const page_banner = new PageBanner({
+         icon_name:'tag',
+         title:'Tags',
+         lead:`You can 'tag' records with keywords or categories, and then upon searching for a 
+               given tag, all the matching 'tagged' records will be found.
+               This can be useful for grouping records which are physically
+               separate in your Collections folder. For example, the tag
+               'education' might pertain to individual files across multiple folders.`
       })
-      tags_section.append(tags_header,tags_section_desc)
+      tags_section.append(page_banner.render())
 
-
-   
       this.#tags_list_elem = create_div({
          attributes:[
             {key:'id',value:'tags_list_elem'}
