@@ -25,9 +25,7 @@ class Files {
    // we retain state by passing a 'context token'
    #context = {
       key:'Files',
-      field_filters:[
-         {field:'folder_path',value:''}
-      ],
+      field_filters:[{field:'folder_path',value:''}],
       page:-1, // marks as no pagination 
       scroll_y:0
    }
@@ -36,22 +34,26 @@ class Files {
 
 
    constructor(props) {
-      if(props) this.#props = props
+      console.log('Files props',props)
+      if(props) {
+         this.#props = props
+      }
+      else {
+         this.#props = {
+            context:this.#context
+         }
+      }
    }
 
    render = async() => {
 
       // container
       const files_section = create_section({
-         attributes:[
-            {key:'id',value:'files_section'}
-         ],
+         attributes:[{key:'id',value:'files_section'}],
          classlist:['fade_in','h_85vh','mt_0','fit_content_height','pb_2']
       })      
       const files_outcome = create_div({
-         attributes:[
-            {key:'id',value:'files_outcome'}
-         ]
+         attributes:[{key:'id',value:'files_outcome'}]
       })
       files_section.append(files_outcome)
 
