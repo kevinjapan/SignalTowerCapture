@@ -35,6 +35,7 @@ class Browse {
 
 
    constructor(props) {
+
       // 'back' to list from Records will return the passed 'context token'
       if(props) {
          this.#context = props.context
@@ -65,12 +66,13 @@ class Browse {
       })
 
       let alphabet_ctrl_props = {
-         selected_char:null,
+         selected_char:this.#filter_char ? this.#filter_char : null,
          submit_alpha_filter:this.submit_alpha_filter,
          reset_alpha_filter:this.reset_alpha_filter
       }      
       this.#alphabet_ctrl = new AlphabetCtrl(alphabet_ctrl_props)
       setTimeout(() => this.#alphabet_ctrl.activate(),100)
+      
       this.#browse.append(this.#alphabet_ctrl.render())
 
       this.add_number_results()
@@ -103,10 +105,6 @@ class Browse {
          else {
             this.#context.filters = null
          }
-
-
-         // this.#context.page = 1         // to do : remove
-
 
          try {
             const collection_items_obj = await window.collection_items_api.getItems(this.#context)
