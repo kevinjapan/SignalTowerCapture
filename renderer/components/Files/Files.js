@@ -34,7 +34,6 @@ class Files {
 
 
    constructor(props) {
-      console.log('Files props',props)
       if(props) {
          this.#props = props
       }
