@@ -20,6 +20,7 @@ class Search {
    // we retain search state (search_term,page,etc) by passing a 'search_context'
    #context = {
       key:'Search',
+      search_term:'',
       page:1,
       scroll_y:0
    }
@@ -68,7 +69,7 @@ class Search {
 
       // required for re-instating search_context on 'back' to list actions
       if(this.#context) {
-         if(this.#context.search_term !== undefined)
+         if(this.#context.search_term !== undefined && this.#context.search_term !== '')
             this.#search_results_container.append(this.get_items())
       }
 
@@ -186,10 +187,17 @@ class Search {
 
    // callback for SearchForm
    submit_search_term = (search_context) => {
+      this.add_to_history(search_context)
       this.#context = search_context
       this.#context.scroll_y = 0
       this.get_items()
       setTimeout(() => this.activate(),200)
+   }
+
+   // Add current search to History - we simply add a Search page w/ new context
+   add_to_history = (context) => {
+      const history = app.get_service('history')
+      if(history) history.add_visited_page('search',context)
    }
 
    // callback for PageNavigation
