@@ -5,7 +5,7 @@ import AlphabetCtrl from '../AlphabetCtrl/AlphabetCtrl.js'
 import { is_valid_response_obj } from '../../utilities/ui_response.js'
 import { ui_display_number_as_str } from '../../utilities/ui_strings.js'
 import { create_section,create_div } from '../../utilities/ui_elements.js'
-import { init_card_img_loads,no_root_folder } from '../../utilities/ui_utilities.js'
+import { init_card_img_loads,no_root_folder,build_file_path } from '../../utilities/ui_utilities.js'
 
 
 
@@ -111,7 +111,7 @@ class Browse {
          try {
             const collection_items_obj = await window.collection_items_api.getItems(this.#context)
          
-            if (typeof collection_items_obj != "undefined" && collection_items_obj.outcome === 'success') {
+            if(typeof collection_items_obj != "undefined" && collection_items_obj.outcome === 'success') {
                if(await is_valid_response_obj('read_collection_items',collection_items_obj)) {
 
                   // re-assemble
@@ -136,17 +136,23 @@ class Browse {
                         root_folder: this.#root_folder,
                         // context: this.#context
                      }
-                     const collection_item_card = new CollectionItemCard(props) 
-                     if(Array.isArray(collection_items_obj.collection_items)) {
-                        collection_items_obj.collection_items.forEach((item) => {        
-                           this.#browse_results_container.appendChild(collection_item_card.render(collection_items_obj.collection_item_fields,item))
+
+                     const { collection_items,collection_item_fields } = collection_items_obj
+
+                     if(Array.isArray(collection_items)) {
+                        collection_items.forEach((item,index) => {
+                           const collection_item_card = new CollectionItemCard({
+                              root_folder:this.#root_folder,
+                              card_index:index
+                           }) 
+                           this.#browse_results_container.appendChild(collection_item_card.render(collection_item_fields,item))
+                           setTimeout(() => collection_item_card.activate(),200)
                         })
                      }
          
                      // retain some spacing on short lists
                      this.#browse_results_container.style.minHeight = '70vh' 
          
-                     setTimeout(() => collection_item_card.activate(),200)
 
                      this.#browse_section.append(this.#browse_results_container)
 
@@ -179,6 +185,7 @@ class Browse {
          }
       }
    }
+
 
    // callback for PageNavigation
    go_to_page = (page) => {
