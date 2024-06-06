@@ -95,7 +95,7 @@ class CollectionItemRecord {
       })
       text_col.append(form_layout)
 
-      form_layout.append(RecordBtns.render(this.#context.id,this.#props.context ? true : false))
+      form_layout.append(RecordBtns.render(this.#context.id))
 
       const record_content = create_div({
          classlist:['record_content','bg_white','p_.5','pl_1','pr_1','rounded']
@@ -182,7 +182,7 @@ class CollectionItemRecord {
          })
       }      
       form_layout.append(record_content)
-      form_layout.append(RecordBtns.render(this.#context.id,this.#props.context ? true : false))
+      form_layout.append(RecordBtns.render(this.#context.id))
       const record_admin = new RecordAdmin(this.#props)
       setTimeout(() => record_admin.activate(),300)
 
@@ -261,19 +261,6 @@ class CollectionItemRecord {
          record_img.addEventListener('click',() => {
             // we pass 'props.context' as a token for info and to enable returning to this Record
             app.switch_to_component('ImageViewer',this.#props)
-         })
-      }
-
-      // 'back' btn
-      let back_btns = document.querySelectorAll('.back_btn')
-      if(back_btns){
-         back_btns.forEach(back_btn => {
-            back_btn.addEventListener('click',async(event) => {
-               // the context token identifies the current user context inc. component
-               if(this.#props.context) {
-                  app.switch_to_component(this.#props.context.key,this.#props)
-               }             
-            })
          })
       }
    }
