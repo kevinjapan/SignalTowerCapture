@@ -28,7 +28,8 @@ class CollectionItemCard {
       // card is row flex to align minor fields at foot while primary fields occupy flex_100 (width 100%)
 
       let card = create_section({
-         classlist:['collection_item_card']
+         attributes:[{key:'data-id',value:item.id}],
+         classlist:['collection_item_card','cursor_pointer']
       })
 
       // primary layout
@@ -134,7 +135,7 @@ class CollectionItemCard {
                            {key:'width',value:'100%'},
                            {key:'height',value:'200px'}
                         ],
-                        ['record_card_image','card_title_link','cursor_pointer']
+                        ['record_card_image','cursor_pointer']
                      )
                      if(img) {
                         record_card_image_wrap.append(img)
@@ -151,7 +152,7 @@ class CollectionItemCard {
                            {key:'data-src',value:icon_img_file_path},
                            {key:'height',value:'30px'}
                         ],
-                        ['record_card_icon','card_title_link','cursor_pointer','pt_1']
+                        ['record_card_icon','cursor_pointer','pt_1']
                      )
                      if(img) {
                         record_card_image_wrap.append(img)
@@ -177,14 +178,14 @@ class CollectionItemCard {
                   }
                }
                else if(field.key === 'tags') {
+
+                  // to do : remove tags (or disable) - currently working (overhead) but no UI!
                   const tags_label = create_div({
                      classlist:['p_0.5','pt_0.75','text_grey'],
                      text:'Tags'
                   })
                   tags_list_elem = create_div({
-                     attributes:[
-                        {key:'id',value:'tags_list_elem'}
-                     ],
+                     attributes:[{key:'id',value:'tags_list_elem'}],
                      classlist:['flex','align_items_center','m_0','pl_0.5','pt_.25','gap_1']
                   }) 
                   if(item.tags) {
@@ -233,64 +234,8 @@ class CollectionItemCard {
 
    
    // enable buttons/links displayed in the render
-   activate = async() => {
-
-      // Card Title link to record         
-      const card_title_links = document.querySelectorAll('.card_title_link')   
-      if(card_title_links) {
-   
-         card_title_links.forEach(card_title_link => {
-
-            card_title_link.addEventListener('click', async(event) => {
-               if(typeof card_title_link.attributes['data-id'] !== 'undefined') {
-                  try {
-                     const collection_item_obj = await window.collection_items_api.getCollectionItem(card_title_link.attributes['data-id'].value)
-
-                     if (typeof collection_item_obj != "undefined" && collection_item_obj.outcome === 'success') {
-                        if(await is_valid_response_obj('read_single_collection_item',collection_item_obj)) {
-                           
-                           let { collection_item_fields,collection_item } = collection_item_obj
-                        
-                           let component_container = document.getElementById('component_container')
-                           if(component_container) {
-                              let record_props = {
-                                 fields:collection_item_fields,
-                                 item:collection_item,
-                                 ...this.#props
-                              }
-                              // we hydrate context for target CollectionItemRecord here since we need to inject 'id' into History context
-                              record_props.context = {key:'Record',id:collection_item.id}
-                              // record_props.context.scroll_y = window.scrollY
-                              app.switch_to_component('Record',record_props)
-                           }
-                        }
-                        else {
-                           app.switch_to_component('Error',{
-                              msg:'Sorry, we were unable to process an invalid response from the main process in CollectionItemCard.'
-                           })
-                        }
-                     }
-                     else {
-                        throw 'No records were returned in CollectionItemCard.'
-                     }
-                  }
-                  catch(error) {
-                     app.switch_to_component('Error',{
-                        msg:'Sorry, we were unable to access the Records in the CollectionItemCard',
-                        error:error
-                     })
-                  }
-               }
-               else {
-                  let props = {
-                     msg:'Sorry, no valid id was provided for the Collection Item in ColletionItemCard.'
-                  }
-                  app.switch_to_component('Error',props)
-               }
-            })
-         })
-      }
-   }
+   // to avoid proliferation of EventListeners, parent components handle Card events
+   // activate = async() => {}
 
    actions = async(key,id) => {}
 
