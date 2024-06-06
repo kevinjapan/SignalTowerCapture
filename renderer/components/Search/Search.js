@@ -131,7 +131,6 @@ class Search {
                      this.#search_results_container.style.minHeight = '70vh' 
          
                      this.#search_section.append(this.#search_results_container)
-                     setTimeout(() => collection_item_card.activate(),200)
 
                      const bottom_pagination_nav = new PaginationNav('bottom',this.go_to_page,page_count,this.#context.page)  //this.go_to_page,page_count,this.#browse_context.page
                      this.#search_section.append(bottom_pagination_nav.render())

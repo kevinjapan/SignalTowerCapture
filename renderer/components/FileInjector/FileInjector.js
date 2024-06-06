@@ -47,13 +47,11 @@ class FileInjector {
 
          const collection_item_card = new CollectionItemCard(this.#props)
          file_injector.appendChild(collection_item_card.render(record_fields,matching_folder_record))
-         setTimeout(() => collection_item_card.activate(),200)
       }
       else if(matching_file_record) {
          // a matching record for this file was found
          const collection_item_card = new CollectionItemCard(this.#props)
-         file_injector.appendChild(collection_item_card.render(record_fields,matching_file_record))
-         setTimeout(() => collection_item_card.activate(),200)         
+         file_injector.appendChild(collection_item_card.render(record_fields,matching_file_record))       
       }
       else {
          // no matching record was found for this file

@@ -147,7 +147,6 @@ class Tags {
                      this.#tags_results_container.style.minHeight = '70vh' 
          
                      this.#tags_section.append(this.#tags_results_container)
-                     setTimeout(() => collection_item_card.activate(),200)
 
                      const bottom_pagination_nav = new PaginationNav('bottom',this.go_to_page,page_count,this.#context.page)  //this.go_to_page,page_count,this.#browse_context.page
                      this.#tags_section.append(bottom_pagination_nav.render())

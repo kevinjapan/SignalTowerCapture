@@ -123,8 +123,7 @@ class DeletedRecordsTeaser {
                      }
          
                      // retain some spacing on short lists
-                     this.#results_container.style.minHeight = '70vh'         
-                     setTimeout(() => collection_item_card.activate(),200)
+                     this.#results_container.style.minHeight = '70vh'
                   }
                   else {
                      this.#results_container.innerText = 'No records were found. '
