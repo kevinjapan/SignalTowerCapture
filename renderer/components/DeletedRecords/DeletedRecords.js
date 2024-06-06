@@ -1,4 +1,5 @@
 import { app } from '../../renderer.js'
+import CardGrid from '../CardGrid/CardGrid.js'
 import CollectionItemCard from '../CollectionItemCard/CollectionItemCard.js'
 import PaginationNav from '../PaginationNav/PaginationNav.js'
 import PageBanner from '../PageBanner/PageBanner.js'
@@ -16,6 +17,9 @@ class DeletedRecordsTeaser {
    #deleted_records_section
 
    #results_container
+
+   // wrapper for grid element and click handler
+   #card_grid_obj
 
    // we retain browse state (page,scroll_y,etc) by passing a 'context token'
    #context = {
@@ -60,10 +64,9 @@ class DeletedRecordsTeaser {
 
       this.add_number_results()
 
-      this.#results_container = create_div({
-         attributes:[{key:'id',value:'results_container'}],
-         classlist:['deleted_records','grid','grid_cards_layout','']
-      })
+      // grid wrapper
+      this.#card_grid_obj = new CardGrid('results_container')
+      this.#results_container = this.#card_grid_obj.render()
 
       // required for re-instating search_context on 'back' to list actions
       if(this.#context) this.#results_container.append(this.get_items())
@@ -166,6 +169,7 @@ class DeletedRecordsTeaser {
    // enable buttons/links displayed in the render
    activate = () => {
       init_card_img_loads()
+      this.#card_grid_obj.activate()
    }
    
    add_number_results = () => {

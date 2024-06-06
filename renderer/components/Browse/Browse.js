@@ -1,11 +1,12 @@
 import { app } from '../../renderer.js'
+import CardGrid from '../CardGrid/CardGrid.js'
 import CollectionItemCard from '../CollectionItemCard/CollectionItemCard.js'
 import PaginationNav from '../PaginationNav/PaginationNav.js'
 import AlphabetCtrl from '../AlphabetCtrl/AlphabetCtrl.js'
 import { is_valid_response_obj } from '../../utilities/ui_response.js'
 import { ui_display_number_as_str } from '../../utilities/ui_strings.js'
 import { create_section,create_div } from '../../utilities/ui_elements.js'
-import { init_card_img_loads,no_root_folder,build_file_path } from '../../utilities/ui_utilities.js'
+import { init_card_img_loads,no_root_folder } from '../../utilities/ui_utilities.js'
 
 
 
@@ -18,6 +19,9 @@ class Browse {
    #alphabet_ctrl
 
    #browse_section
+
+   // wrapper for grid element and click handler
+   #card_grid_obj
 
    #browse_results_container
 
@@ -77,10 +81,10 @@ class Browse {
 
       this.add_number_results()
       
-      this.#browse_results_container = create_div({
-         attributes:[{key:'id',value:'browse_results_container'}],
-         classlist:['grid','grid_cards_layout']
-      })
+      // grid wrapper
+      this.#card_grid_obj = new CardGrid('browse_results_container')
+      this.#browse_results_container = this.#card_grid_obj.render()
+
 
       // required for re-instating search_context on 'back' to list actions
       if(this.#context) this.get_items()
@@ -92,8 +96,8 @@ class Browse {
    // enable buttons/links displayed in the render
    activate = () => {
       init_card_img_loads()
+      this.#card_grid_obj.activate()
    }
-
 
    // retrieve the paginated items results 
    get_items = async () => {
@@ -108,8 +112,10 @@ class Browse {
 
          try {
             const collection_items_obj = await window.collection_items_api.getItems(this.#context)
+
+            const { outcome,count,per_page,collection_items,collection_item_fields } = collection_items_obj
          
-            if(typeof collection_items_obj != "undefined" && collection_items_obj.outcome === 'success') {
+            if(typeof collection_items_obj != "undefined" && outcome === 'success') {
                if(await is_valid_response_obj('read_collection_items',collection_items_obj)) {
 
                   // re-assemble
@@ -117,25 +123,17 @@ class Browse {
                   this.#browse_results_container.replaceChildren()
 
                   this.add_number_results()
-                  let page_count = Math.ceil(collection_items_obj.count / collection_items_obj.per_page)
+                  let page_count = Math.ceil(count / per_page)
 
-                  if(collection_items_obj.collection_items.length > 0) {                  
+                  if(collection_items.length > 0) {                  
                      const top_pagination_nav = new PaginationNav('top',this.go_to_page,page_count,this.#context.page)
                      this.#browse_section.append(top_pagination_nav.render())
                      top_pagination_nav.activate()
 
                      let number_records = document.getElementById('number_records')
                      if(number_records) {
-                        let {count} = collection_items_obj
                         number_records.innerText = `${ui_display_number_as_str(count)} matching record${count === 1 ? '' : 's'} ${count === 1 ? 'was found' : 'were found'}.`
                      }
-            
-                     let props = {
-                        root_folder: this.#root_folder,
-                        // context: this.#context
-                     }
-
-                     const { collection_items,collection_item_fields } = collection_items_obj
 
                      if(Array.isArray(collection_items)) {
                         collection_items.forEach((item,index) => {
@@ -143,14 +141,9 @@ class Browse {
                               root_folder:this.#root_folder,
                               card_index:index
                            }) 
-                           this.#browse_results_container.appendChild(collection_item_card.render(collection_item_fields,item))
-                           setTimeout(() => collection_item_card.activate(),200)
+                           this.#browse_results_container.append(collection_item_card.render(collection_item_fields,item))
                         })
                      }
-         
-                     // retain some spacing on short lists
-                     this.#browse_results_container.style.minHeight = '70vh' 
-         
 
                      this.#browse_section.append(this.#browse_results_container)
 

@@ -1,5 +1,6 @@
 import { app } from '../../renderer.js'
 import SearchForm from '../SearchForm/SearchForm.js'
+import CardGrid from '../CardGrid/CardGrid.js'
 import CollectionItemCard from '../CollectionItemCard/CollectionItemCard.js'
 import PaginationNav from '../PaginationNav/PaginationNav.js'
 import { ui_display_number_as_str } from '../../utilities/ui_strings.js'
@@ -16,6 +17,9 @@ class Search {
 
    // layout container
    #search_results_container
+
+   // wrapper for grid element and click handler
+   #card_grid_obj
 
    // we retain search state (search_term,page,etc) by passing a 'search_context'
    #context = {
@@ -52,10 +56,11 @@ class Search {
          attributes:[{key:'id',value:'search_status'}],
          classlist:['p_0','bg_warning']
       })
-      this.#search_results_container = create_div({
-         attributes:[{key:'id',value:'search_results_container'}],
-         classlist:['grid','grid_cards_layout']
-      })
+      
+      // grid wrapper
+      this.#card_grid_obj = new CardGrid('search_results_container')
+      this.#search_results_container = this.#card_grid_obj.render()
+
 
       try {
          this.#search_term_max_len = await window.app_api.maxSearchTermLen()
@@ -83,6 +88,7 @@ class Search {
    // enable buttons/links displayed in the render
    activate = () => {
       init_card_img_loads()
+      this.#card_grid_obj.activate()
    }
 
    // retrieve the paginated search results 

@@ -1,4 +1,5 @@
 import { app } from '../../renderer.js'
+import CardGrid from '../CardGrid/CardGrid.js'
 import CollectionItemCard from '../CollectionItemCard/CollectionItemCard.js'
 import PageBanner from '../PageBanner/PageBanner.js'
 import { is_valid_response_obj } from '../../utilities/ui_response.js'
@@ -23,6 +24,9 @@ class RecentRecords {
 
    #results_container
 
+   // wrapper for grid element and click handler
+   #card_grid_obj
+
    #root_folder
 
    
@@ -43,8 +47,7 @@ class RecentRecords {
 
       let recent_section = create_section({
          attributes:[{key:'id',value:'recent_section'}]
-      })  
-
+      })
       
       const page_banner = new PageBanner({
          icon_name:'files',
@@ -52,11 +55,9 @@ class RecentRecords {
          lead:'Revisit the most recently viewed records here.'
       })
 
-
-      this.#results_container = create_div({
-         attributes:[{key:'id',value:'results_container'}],
-         classlist:['grid','grid_cards_layout']
-      })
+      // grid wrapper
+      this.#card_grid_obj = new CardGrid('results_container')
+      this.#results_container = this.#card_grid_obj.render()
 
       this.get_items()
       window.scroll(0,0)
@@ -69,6 +70,7 @@ class RecentRecords {
    // enable buttons/links displayed in the render
    activate = () => {
       init_card_img_loads()
+      this.#card_grid_obj.activate()
    }
 
    async get_app_config_record() {

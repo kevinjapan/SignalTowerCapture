@@ -1,5 +1,6 @@
 import { app } from '../../renderer.js'
 import PageBanner from '../PageBanner/PageBanner.js'
+import CardGrid from '../CardGrid/CardGrid.js'
 import CollectionItemCard from '../CollectionItemCard/CollectionItemCard.js'
 import TagsNavList from '../TagsNavList/TagsNavList.js'
 import PaginationNav from '../PaginationNav/PaginationNav.js'
@@ -16,6 +17,9 @@ class Tags {
    #tags_section
 
    #tags_results_container
+
+   // wrapper for grid element and click handler
+   #card_grid_obj
 
    #context = {
       key:'Tags',
@@ -63,10 +67,10 @@ class Tags {
          classlist:['p_0','bg_warning']
       })
 
-      this.#tags_results_container = create_div({
-         attributes:[{key:'id',value:'tags_results_container'}],
-         classlist:['grid','grid_cards_layout']
-      })
+      // grid wrapper
+      this.#card_grid_obj = new CardGrid('tags_results_container')
+      this.#tags_results_container = this.#card_grid_obj.render()
+
       
       this.#tags_section.append(page_banner.render())
 
@@ -89,6 +93,7 @@ class Tags {
    // enable buttons/links displayed in the render
    activate = () => {
       init_card_img_loads()
+      this.#card_grid_obj.activate()
    }
 
 
