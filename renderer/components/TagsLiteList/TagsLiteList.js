@@ -1,9 +1,5 @@
 import { app } from '../../renderer.js'
-import { 
-   create_div,
-   create_h,
-   create_button
-} from '../../utilities/ui_elements.js'
+import { create_div } from '../../utilities/ui_elements.js'
 
 
 class TagsLiteList {
