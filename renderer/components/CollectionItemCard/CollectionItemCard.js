@@ -1,6 +1,3 @@
-import { app } from '../../renderer.js'
-import TagsLiteList from '../TagsLiteList/TagsLiteList.js'
-import { is_valid_response_obj } from '../../utilities/ui_response.js'
 import { get_ui_ready_date } from '../../utilities/ui_datetime.js'
 import { create_section,create_div,create_h } from '../../utilities/ui_elements.js'
 import { trim_char,trim_end_char,truncate } from '../../utilities/ui_strings.js'
@@ -44,14 +41,16 @@ class CollectionItemCard {
       let folder_path_block = create_div()
       
       let field_element
-      let tags_list_elem
+      // let tags_list_elem
 
       //
       // process each Card row (field)
       //
       if(typeof item !== 'undefined') {
-         if(Array.isArray(fields)) {            
+         if(Array.isArray(fields)) {    
+
             fields.forEach(async(field) => {
+
                // field value
                let field_value = item[field.key]
                if(field.test.type === 'date') {
@@ -84,6 +83,7 @@ class CollectionItemCard {
                   file_type_block.append(file_type,field_element)
                   // text_block.append(file_type_block)
                }
+
                else if(field.key === 'file_name') {               
                   // Bootstrap icons are 'filetype-xxx.svg' - so 'filetype' here refers to eg 'PDF' | 'TXT' | ...
                   let file_ext_type_block = create_div({
@@ -98,7 +98,8 @@ class CollectionItemCard {
                   const filetype_icon = build_img_elem(icon,`${ext} filetype`,[{key:'height',value:'24px'}],[])
                   file_ext_type_block.append(filetype_icon,field_element)
                   text_block.append(file_ext_type_block)
-               }         
+               }
+
                else if(field.key === 'folder_path') {
                   // Card image
                   const root_part = trim_end_char(this.#props.root_folder,'\\')
@@ -118,16 +119,17 @@ class CollectionItemCard {
                      classlist:['record_card_image_wrap']
                   })
 
-                  // we populate placeholder to generate layout in good time (avoiding patchy rendering)
-                  // does mean we may 'overwrite' w/ 'no matching file..' but payoff in UX is worth it.
-
-                     // to do : we wait on checking file_exists *before* we create the html!
-                     //         issue: we can see blank blocks before images load
-                     //         replicate - start anew - load pages in Browse - delays are visible
+                  // we load first row (4 images) immediately to force grid to start assuming footprint on first render
+                  // while further rows' images are loaded using Intersection Observer - init_card_img_loads()
+                  // we use placeholders to generate layout in good time (avoiding patchy rendering) below the fold
+                  // - allowing user to view and read Card text while still waiting for images to load
+                  // - we may 'overwrite' placeholder w/ 'no matching file..', but UX payoff is worth it
+                  // - placeholder blur won't appear on first row - but layout is good and as quick as we can make it
+                  const img_file_path = this.#props.card_index < 4 ? file_path : placeholder_file_path
 
                   if(is_img_ext(file_part)) {
                      // process img file
-                     let img = build_img_elem(placeholder_file_path,item.img_desc,
+                     let img = build_img_elem(img_file_path,item.img_desc,
                         [
                            {key:'id',value:`card_${this.#props.card_index}`},
                            {key:'data-id',value:item.id},
@@ -177,39 +179,41 @@ class CollectionItemCard {
                      folder_path_block.append(field_element)
                   }
                }
+
                else if(field.key === 'tags') {
 
-                  // to do : remove tags (or disable) - currently working (overhead) but no UI!
-                  const tags_label = create_div({
-                     classlist:['p_0.5','pt_0.75','text_grey'],
-                     text:'Tags'
-                  })
-                  tags_list_elem = create_div({
-                     attributes:[{key:'id',value:'tags_list_elem'}],
-                     classlist:['flex','align_items_center','m_0','pl_0.5','pt_.25','gap_1']
-                  }) 
-                  if(item.tags) {
-                     const tags_list = new TagsLiteList('tags_list')
-                     if(tags_list) {
-                        tags_list_elem.append(await tags_list.render(item.tags,this.actions))
-                        setTimeout(() => tags_list.activate(),100)
-                     }
-                  }
-                  tags_block.append(tags_label,tags_list_elem)
+                  // to do : remove tags (or disable) - currently working (overhead) but no UI
+                  // const tags_label = create_div({
+                  //    classlist:['p_0.5','pt_0.75','text_grey'],
+                  //    text:'Tags'
+                  // })
+                  // tags_list_elem = create_div({
+                  //    attributes:[{key:'id',value:'tags_list_elem'}],
+                  //    classlist:['flex','align_items_center','m_0','pl_0.5','pt_.25','gap_1']
+                  // }) 
+                  // if(item.tags) {
+                  //    const tags_list = new TagsLiteList('tags_list')
+                  //    if(tags_list) {
+                  //       tags_list_elem.append(await tags_list.render(item.tags,this.actions))
+                  //       setTimeout(() => tags_list.activate(),100)
+                  //    }
+                  // }
+                  // tags_block.append(tags_label,tags_list_elem)
                }
+
                else if(field.key === 'item_date') {
-                  if(field_value) {
-                     let item_date_block = create_div({
-                        classlist:['flex','align_items_center','gap_.5','fit_content','p_0.5','break_words','w_full']
-                     })
-                     field_element = create_div({
-                        classlist:['pt_0.3','break_words'],
-                        text:field_value
-                     })
-                     const filetype_icon = build_img_elem('imgs\\icons\\calendar.svg',`item date`,[{key:'height',value:'24px'}],[])
-                     item_date_block.append(filetype_icon,field_element)
-                     // text_block.append(item_date_block)
-                  }
+                  // if(field_value) {
+                  //    let item_date_block = create_div({
+                  //       classlist:['flex','align_items_center','gap_.5','fit_content','p_0.5','break_words','w_full']
+                  //    })
+                  //    field_element = create_div({
+                  //       classlist:['pt_0.3','break_words'],
+                  //       text:field_value
+                  //    })
+                  //    const filetype_icon = build_img_elem('imgs\\icons\\calendar.svg',`item date`,[{key:'height',value:'24px'}],[])
+                  //    item_date_block.append(filetype_icon,field_element)
+                  //    // text_block.append(item_date_block)
+                  // }
                }
                else {
                   // Default field display
