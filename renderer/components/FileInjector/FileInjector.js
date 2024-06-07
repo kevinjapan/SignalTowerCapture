@@ -23,7 +23,7 @@ class FileInjector {
       this.#props.root_folder = await app.get_root_folder()
       if(this.#props.root_folder === '') return no_root_folder()
 
-      let file_injector = create_section('fade_in')
+      let file_injector = create_section()
 
       const outcome_classes = ['bg_lightgrey','mt_1','pl_1','pr_1']
       const outcome_attrs = [{key:'id',value:'export_csv_outcome'}]
