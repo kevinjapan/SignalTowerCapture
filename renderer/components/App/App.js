@@ -82,10 +82,6 @@ class App {
                component = new About(props)
                component_container.replaceChildren(component.render())
                break
-            case 'Actions':
-               component = new Actions()
-               component_container.replaceChildren(await component.render())
-               break
             case 'AddCollectionItem':
                component = new AddCollectionItem(props)
                component_container.replaceChildren(component.render())
