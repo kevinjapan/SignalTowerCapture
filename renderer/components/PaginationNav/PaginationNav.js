@@ -39,36 +39,34 @@ class PaginationNav {
          ],
          classlist:['page_nav','max_w_full']
       })
-      
-      // prev page
-      const prev_link = create_div({
-         attributes:[
-            {key:'data-page',value:parseInt(this.#current_page) - 1}
-         ],
-         classlist:this.#current_page > 1 ? [`${this.#key}_page_selector`,'page_selector'] : ['text_lightgrey'],
-         text: '< prev page'
-      })
 
-      // page n of n
-      const now_link = create_div({
-         attributes:[
-            {key:'data-page',value:parseInt(this.#current_page)}
-         ],
-         classlist:['page_selector','text_grey'],
-         text: `page ${this.#page_count.length > 0 ? this.#current_page : '0'} of ${this.#page_count.length}`
-      })
+      if(parseInt(this.#page_count.length) > 0) {
 
-      // next page
-      const next_link = create_div({
-         attributes:[
-            {key:'data-page',value:parseInt(this.#current_page) + 1}
-         ],
-         classlist:this.#current_page < this.#page_count.length ? [`${this.#key}_page_selector`,'page_selector'] : ['text_lightgrey'],
-         text: 'next page >'
-      })
+         // prev page
+         const prev_link = create_div({
+            attributes:[{key:'data-page',value:parseInt(this.#current_page) - 1}],
+            classlist:this.#current_page > 1 ? [`${this.#key}_page_selector`,'page_selector'] : ['text_lightgrey'],
+            text: '< prev page'
+         })
 
-      // assemble
-      page_nav.append(prev_link,now_link,next_link)
+         // page n of n
+         const now_link = create_div({
+            attributes:[{key:'data-page',value:parseInt(this.#current_page)}],
+            classlist:['page_selector','text_grey'],
+            text: `page ${this.#page_count.length > 0 ? this.#current_page : '0'} of ${this.#page_count.length}`
+         })
+
+         // next page
+         const next_link = create_div({
+            attributes:[{key:'data-page',value:parseInt(this.#current_page) + 1}],
+            classlist:this.#current_page < this.#page_count.length ? [`${this.#key}_page_selector`,'page_selector'] : ['text_lightgrey'],
+            text: 'next page >'
+         })
+
+         // assemble
+         page_nav.append(prev_link,now_link,next_link)
+      }
+
       return page_nav
    }
 
