@@ -30,7 +30,7 @@ class CollectionItemInjectForm {
             
       // component container
       const inject_form_container = create_section({
-         classlist:['fade_in','inject_form_container']
+         classlist:['inject_form_container']
       })
 
       const heading = create_h({

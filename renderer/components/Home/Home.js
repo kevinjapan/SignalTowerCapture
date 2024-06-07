@@ -16,7 +16,7 @@ class Home {
       })
 
       const main_feature_block = create_section({
-         classlist:['feature_block','fade_in','my_2','p_0','bg_primary','rounded']
+         classlist:['feature_block','my_2','p_0','bg_primary','rounded']
       })
 
       const feature_text = create_div({

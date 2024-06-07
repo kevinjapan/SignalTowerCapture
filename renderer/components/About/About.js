@@ -17,7 +17,7 @@ class About {
 
    render = () => {
 
-      let about_section = create_section({classlist:['fade_in']})
+      let about_section = create_section()
 
 
       const page_banner = new PageBanner({

@@ -48,7 +48,7 @@ class CollectionItemForm {
       if(this.#root_folder === '') return no_root_folder()
 
       this.#record_elem = create_section({
-         classlist:['collection_item_record','fade_in']
+         classlist:['collection_item_record']
       })
       let text_col = create_div({
          classlist:['text_col','pl_1']

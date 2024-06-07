@@ -60,7 +60,7 @@ class CollectionItemRecord {
 
       // component container
       this.#record = create_section({
-         classlist:['collection_item_record','fade_in']
+         classlist:['collection_item_record']
       })
 
       // 2-col layout

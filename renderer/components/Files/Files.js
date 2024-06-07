@@ -49,7 +49,7 @@ class Files {
       // container
       const files_section = create_section({
          attributes:[{key:'id',value:'files_section'}],
-         classlist:['fade_in','h_85vh','mt_0','fit_content_height','pb_2']
+         classlist:['h_85vh','mt_0','fit_content_height','pb_2']
       })      
       const files_outcome = create_div({
          attributes:[{key:'id',value:'files_outcome'}]
