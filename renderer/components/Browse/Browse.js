@@ -72,7 +72,7 @@ class Browse {
          reset_alpha_filter:this.reset_alpha_filter
       }      
       this.#alphabet_ctrl = new AlphabetCtrl(alphabet_ctrl_props)
-      setTimeout(() => this.#alphabet_ctrl.activate(),100)
+      setTimeout(() => this.#alphabet_ctrl.activate(),50)
       
       this.#browse_section.append(this.#alphabet_ctrl.render())
 

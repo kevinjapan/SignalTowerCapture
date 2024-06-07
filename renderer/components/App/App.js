@@ -169,7 +169,6 @@ class App {
 
          this.#page_nav.highlight_selected(component_name)
 
-
          if(add_to_history) {
             if(props === undefined) {
                this.#history.add_visited_page(component_name,component.get_default_context())
@@ -177,15 +176,10 @@ class App {
             else {
                this.#history.add_visited_page(component_name,props && props.context ? props.context : null)
             }
-            setTimeout(() => this.#history.activate(),100)
+            setTimeout(() => this.#history.activate(),50)
          }
-
          // delay to allow rendering to complete
-         setTimeout(() => component.activate(),100)
-
-          /* temp disabled - proving problematic and low priority */
-         // setTimeout(() => init_fade_ins(),100)      
-         // setTimeout(() => init_fade_ins(),400)   // failsafe - harmless, guarantees fade_in
+         setTimeout(() => component.activate(),50)
       }
    }
 
