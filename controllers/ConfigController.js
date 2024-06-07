@@ -86,15 +86,6 @@ async function set_root_folder_path(event,app_config_record) {
    return result
 }
 
-async function add_test_records() {
-   if(!config_controller_database) return NOTIFY.DATABASE_UNAVAILABLE
-   if(is_dev) {
-      let test_record = new TestRecord(config_controller_database)
-      const results = await test_record.create(100)
-      return results
-   }
-}
-
 
 
 

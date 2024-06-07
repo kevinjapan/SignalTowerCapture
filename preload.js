@@ -75,9 +75,6 @@ contextBridge.exposeInMainWorld('files_api', {
    getFileSize: (file_path) => ipcRenderer.invoke('files:getFileSize',file_path)
 })
 
-contextBridge.exposeInMainWorld('dev_api_key', {
-   addTestRecords: () => ipcRenderer.invoke('dev:addTestRecords')
-})
 
 
 // Pattern 3: Main to renderer
