@@ -14,32 +14,34 @@ class Browse {
 
    #props
 
-   #browse
-
-   #alphabet_ctrl
-
+   // Component container element
    #browse_section
 
-   // wrapper for grid element and click handler
+   // alphabet navigation
+   #alphabet_ctrl
+
+   // pagination
+   #pagination_nav
+   
+   // CardGrid object
    #card_grid_obj
 
+   // Cards grid container element
    #browse_results_container
 
-   // we retain browse state (page,scroll_y,etc) by passing a 'context token'
-   // initialising here will display the list on opening this page
+   // Page Context (State)
    #context = {
       key:'Browse',
       page:1,
       scroll_y:0
    }
 
-   #filter_char = null  // future - just use browse_context directly?
+   #filter_char = null
 
    #root_folder
 
 
    constructor(props) {
-
       // 'back' to list from Records will return the passed 'context token'
       if(props) {
          this.#context = props.context
@@ -53,22 +55,17 @@ class Browse {
       }
    }
 
-
    render = async () => {
 
       this.#root_folder = await app.get_root_folder()
       if(this.#root_folder === '') return no_root_folder()
-
-      this.#browse = create_section({
-         attributes:[{key:'id',value:'browse'}],
-         classlist:['fade_in','max_w_full']
-      })
 
       this.#browse_section = create_section({
          attributes:[{key:'id',value:'browse_section'}],
          classlist:['max_w_full']
       })
 
+      // alpha ctrl
       let alphabet_ctrl_props = {
          selected_char:this.#filter_char ? this.#filter_char : null,
          submit_alpha_filter:this.submit_alpha_filter,
@@ -77,26 +74,32 @@ class Browse {
       this.#alphabet_ctrl = new AlphabetCtrl(alphabet_ctrl_props)
       setTimeout(() => this.#alphabet_ctrl.activate(),100)
       
-      this.#browse.append(this.#alphabet_ctrl.render())
+      this.#browse_section.append(this.#alphabet_ctrl.render())
 
       this.add_number_results()
       
+      this.#pagination_nav = new PaginationNav()
+      this.#browse_section.append(this.#pagination_nav.render())
+
       // grid wrapper
       this.#card_grid_obj = new CardGrid('browse_results_container')
       this.#browse_results_container = this.#card_grid_obj.render()
 
+      this.#browse_section.append(this.#browse_results_container)
 
       // required for re-instating search_context on 'back' to list actions
       if(this.#context) this.get_items()
+         
+      this.#browse_section.append(this.#pagination_nav.render())
 
-      this.#browse.append(this.#browse_section)
-      return this.#browse
+      return this.#browse_section
    }
 
    // enable buttons/links displayed in the render
    activate = () => {
       init_card_img_loads()
       this.#card_grid_obj.activate()
+      this.#pagination_nav.activate() 
    }
 
    // retrieve the paginated items results 
@@ -118,17 +121,12 @@ class Browse {
             if(typeof collection_items_obj != "undefined" && outcome === 'success') {
                if(await is_valid_response_obj('read_collection_items',collection_items_obj)) {
 
-                  // re-assemble
-                  this.#browse_section.replaceChildren()
                   this.#browse_results_container.replaceChildren()
 
                   this.add_number_results()
                   let page_count = Math.ceil(count / per_page)
 
-                  if(collection_items.length > 0) {                  
-                     const top_pagination_nav = new PaginationNav('top',this.go_to_page,page_count,this.#context.page)
-                     this.#browse_section.append(top_pagination_nav.render())
-                     top_pagination_nav.activate()
+                  if(collection_items.length > 0) {
 
                      let number_records = document.getElementById('number_records')
                      if(number_records) {
@@ -145,11 +143,17 @@ class Browse {
                         })
                      }
 
-                     this.#browse_section.append(this.#browse_results_container)
-
-                     const bottom_pagination_nav = new PaginationNav('bottom',this.go_to_page,page_count,this.#context.page)
-                     this.#browse_section.append(bottom_pagination_nav.render())
-                     bottom_pagination_nav.activate()
+                     const page_navs = document.querySelectorAll('.page_nav')
+                     if(page_navs) {
+                        page_navs.forEach(page_nav => {
+                           page_nav.replaceWith(this.#pagination_nav.render({
+                              key:'top',
+                              callback:this.go_to_page,
+                              page_count:page_count,
+                              current_page:this.#context.page
+                           }))
+                        })
+                     }
                   }
                   else {                     
                      let number_records = document.getElementById('number_records')
@@ -176,7 +180,6 @@ class Browse {
          }
       }
    }
-
 
    // callback for PageNavigation
    go_to_page = (page) => {

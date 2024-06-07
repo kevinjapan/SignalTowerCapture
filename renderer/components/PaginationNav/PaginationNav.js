@@ -4,6 +4,8 @@ import { create_section,create_div } from '../../utilities/ui_elements.js'
 
 class PaginationNav {
 
+   #props
+   
    // the key allows us to distinguish btwn multiple PaginationNav on same view
    #key
 
@@ -17,19 +19,18 @@ class PaginationNav {
    #callback
 
 
-   constructor(key,callback,page_count,current_page) {  
-      if(Number.isInteger(parseInt(page_count))) {
-         this.#page_count = Array(page_count).fill(0)
-      }     
-      if(Number.isInteger(parseInt(current_page))) {
-         this.#current_page = current_page
+   render = (props) => {
+
+      if(props) {
+         if(Number.isInteger(parseInt(props.page_count))) {
+            this.#page_count = Array(props.page_count).fill(0)
+         }     
+         if(Number.isInteger(parseInt(props.current_page))) {
+            this.#current_page = props.current_page
+         }
+         this.#key = props.key ? props.key : null
+         this.#callback = props.callback ? props.callback : null
       }
-      this.#key = key
-      this.#callback = callback
-   }
-
-
-   render = () => {
 
       // container
       let page_nav = create_section({

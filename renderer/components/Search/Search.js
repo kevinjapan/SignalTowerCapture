@@ -13,15 +13,19 @@ class Search {
 
    #props
 
+   // Component container element
    #search_section
 
-   // layout container
-   #search_results_container
+   // pagination
+   #pagination_nav
 
-   // wrapper for grid element and click handler
+   // CardGrid object
    #card_grid_obj
 
-   // we retain search state (search_term,page,etc) by passing a 'search_context'
+   // Cards grid container element
+   #search_results_container
+
+   // Page Context (State)
    #context = {
       key:'Search',
       search_term:'',
@@ -31,7 +35,6 @@ class Search {
 
    #search_term_max_len = 36
 
-   // advanced search is extended
    #show_advanced
 
    #root_folder
@@ -49,13 +52,19 @@ class Search {
       if(this.#root_folder === '') return no_root_folder()
 
       this.#search_section = create_section({
-         attributes:[{key:'id',value:'search_section'}],
-         classlist:['fade_in','max_w_full','pt_1']
+         attributes:[{key:'id',value:'search_section'}]
       })
+
       let search_status = create_section({
          attributes:[{key:'id',value:'search_status'}],
          classlist:['p_0','bg_warning']
       })
+
+      this.add_search_form()    
+      this.add_number_results()
+      
+      this.#pagination_nav = new PaginationNav()
+      this.#search_section.append(this.#pagination_nav.render())
       
       // grid wrapper
       this.#card_grid_obj = new CardGrid('search_results_container')
@@ -69,8 +78,6 @@ class Search {
          // use initially assigned
       }
       
-      this.add_search_form()    
-      this.add_number_results()
 
       // required for re-instating search_context on 'back' to list actions
       if(this.#context) {
@@ -82,6 +89,9 @@ class Search {
       
       // assemble
       this.#search_section.append(search_status,this.#search_results_container)
+      
+      this.#search_section.append(this.#pagination_nav.render())
+
       return this.#search_section
    }
 
@@ -89,6 +99,7 @@ class Search {
    activate = () => {
       init_card_img_loads()
       this.#card_grid_obj.activate()
+      this.#pagination_nav.activate() 
    }
 
    // retrieve the paginated search results 
@@ -103,18 +114,13 @@ class Search {
 
                   let { count,per_page,collection_item_fields,collection_items } = collection_items_obj
 
-                  // re-assemble
-                  this.#search_section.replaceChildren()
                   this.#search_results_container.replaceChildren()
                   
-                  this.add_search_form(this.#context.search_term)
-                  this.add_number_results()                  
+                  // this.add_search_form(this.#context.search_term)
+                  // this.add_number_results()                  
                   let page_count = Math.ceil(count / per_page)
 
                   if(collection_items && collection_items.length > 0) {                     
-                     const top_pagination_nav = new PaginationNav('top',this.go_to_page,page_count,this.#context.page)
-                     this.#search_section.append(top_pagination_nav.render())
-                     top_pagination_nav.activate()
 
                      let number_records = document.getElementById('number_records')
                      if(number_records) {      
@@ -134,13 +140,19 @@ class Search {
                      }
          
                      // retain some spacing on short lists
-                     this.#search_results_container.style.minHeight = '70vh' 
-         
-                     this.#search_section.append(this.#search_results_container)
-
-                     const bottom_pagination_nav = new PaginationNav('bottom',this.go_to_page,page_count,this.#context.page)  //this.go_to_page,page_count,this.#browse_context.page
-                     this.#search_section.append(bottom_pagination_nav.render())
-                     bottom_pagination_nav.activate()
+                     this.#search_results_container.style.minHeight = '70vh'         
+    
+                     const page_navs = document.querySelectorAll('.page_nav')
+                     if(page_navs) {
+                        page_navs.forEach(page_nav => {
+                           page_nav.replaceWith(this.#pagination_nav.render({
+                              key:'top',
+                              callback:this.go_to_page,
+                              page_count:page_count,
+                              current_page:this.#context.page
+                           }))
+                        })
+                     }
                   }
                   else {
                      let number_records = document.getElementById('number_records')

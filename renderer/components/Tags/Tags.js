@@ -14,22 +14,26 @@ class Tags {
 
    #props
 
+   // Component container element
    #tags_section
 
+   // pagination
+   #pagination_nav
+
+   // CardGrid object
+   #card_grid
+
+   // Cards grid container element
    #tags_results_container
 
-   // wrapper for grid element and click handler
-   #card_grid_obj
-
+   // Page Context (State)
    #context = {
       key:'Tags',
-      field_filters:[
-         {
-            field:'tags',
-            test:'LIKE',
-            value:''
-         }
-      ],
+      field_filters:[{
+         field:'tags',
+         test:'LIKE',
+         value:''
+      }],
       page:1,
       scroll_y:0
    }
@@ -48,44 +52,43 @@ class Tags {
       if(this.#root_folder === '') return no_root_folder()
 
       this.#tags_section = create_section({
-         attributes:[{key:'id',value:'tags_section'}],
-         classlist:['fade_in','max_w_full','pt_1']
+         attributes:[{key:'id',value:'tags_section'}]
       })
 
-      // to do : tags banner is appearing above results and pushing list too far down the page on 'next page' 
-      //         reduce height of banner?
-      
       const page_banner = new PageBanner({
          icon_name:'tag',
          title:'Tags',
-         lead:'to do : tags info here'
+         lead:'Find all the tagged Records.'
       })
-
-
-      let tags_status = create_section({
-         attributes:[{key:'id',value:'tags_status'}],
-         classlist:['p_0','bg_warning']
-      })
-
-      // grid wrapper
-      this.#card_grid_obj = new CardGrid('tags_results_container')
-      this.#tags_results_container = this.#card_grid_obj.render()
-
-      
       this.#tags_section.append(page_banner.render())
 
-      await this.add_tags_nav()    
+      await this.add_tags_nav()
+
+      this.#pagination_nav = new PaginationNav()
+      this.#tags_section.append(this.#pagination_nav.render())
+
       this.add_number_results()
+
+      // grid wrapper
+      this.#card_grid = new CardGrid('tags_results_container')
+      this.#tags_results_container = this.#card_grid.render()
+
+      this.#tags_section.append(this.#tags_results_container)
 
       // required for re-instating tags_context on 'back' to list actions
       if(this.#context && has_valid_field_filter('tags',this.#context)) {
          this.#tags_results_container.append(this.get_items())
       }
 
-      window.scroll(0,0)
-      
-      // assemble
+      this.#tags_section.append(this.#pagination_nav.render())
+
+      let tags_status = create_section({
+         attributes:[{key:'id',value:'tags_status'}],
+         classlist:['p_0','bg_warning']
+      })
       this.#tags_section.append(tags_status)
+
+      window.scroll(0,0)
 
       return this.#tags_section
    }
@@ -93,7 +96,8 @@ class Tags {
    // enable buttons/links displayed in the render
    activate = () => {
       init_card_img_loads()
-      this.#card_grid_obj.activate()
+      this.#card_grid.activate()
+      this.#pagination_nav.activate()
    }
 
 
@@ -108,28 +112,13 @@ class Tags {
             if (typeof collection_items_obj != "undefined") {
                if(collection_items_obj.outcome === 'success') {
 
-                  // re-assemble
-                  this.#tags_section.replaceChildren()
                   this.#tags_results_container.replaceChildren()
-
                   
-                  const page_banner = new PageBanner({
-                     icon_name:'tag',
-                     title:'Tags',
-                     lead:'to do : tags info here'
-                  })
-                  this.#tags_section.append(page_banner.render())
-                  
-                  await this.add_tags_nav(this.#context.field_filters[0].value)
                   this.add_number_results()
                   
                   let page_count = Math.ceil(collection_items_obj.count / collection_items_obj.per_page)
 
                   if(collection_items_obj.collection_items && collection_items_obj.collection_items.length > 0) {
-                     
-                     const top_pagination_nav = new PaginationNav('top',this.go_to_page,page_count,this.#context.page)
-                     this.#tags_section.append(top_pagination_nav.render())
-                     top_pagination_nav.activate()
 
                      let number_records = document.getElementById('number_records')
                      if(number_records) {          
@@ -137,6 +126,7 @@ class Tags {
                         number_records.innerText = `${ui_display_number_as_str(count)} matching record${count === 1 ? '' : 's'} ${count === 1 ? 'was found' : 'were found'}.`
                      }
 
+                     // Tags Results Cards grid
                      let props = {
                         root_folder: this.#root_folder,
                         context:this.#context
@@ -150,13 +140,18 @@ class Tags {
          
                      // retain some spacing on short lists
                      this.#tags_results_container.style.minHeight = '70vh' 
-         
-                     this.#tags_section.append(this.#tags_results_container)
 
-                     const bottom_pagination_nav = new PaginationNav('bottom',this.go_to_page,page_count,this.#context.page)  //this.go_to_page,page_count,this.#browse_context.page
-                     this.#tags_section.append(bottom_pagination_nav.render())
-                     bottom_pagination_nav.activate()
-
+                     const page_navs = document.querySelectorAll('.page_nav')
+                     if(page_navs) {
+                        page_navs.forEach(page_nav => {
+                           page_nav.replaceWith(this.#pagination_nav.render({
+                              key:'top',
+                              callback:this.go_to_page,
+                              page_count:page_count,
+                              current_page:this.#context.page
+                           }))
+                        })
+                     }
                   }
                   else {
                      let number_records = document.getElementById('number_records')
@@ -164,7 +159,6 @@ class Tags {
                         number_records.innerText = 'No matching records were found. '
                      }
                   }
-
                   // re-instate scroll position if user had scrolled list before opening a record
                   setTimeout(() => window.scroll(0,this.#context.scroll_y),100)
                }

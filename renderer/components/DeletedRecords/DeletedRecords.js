@@ -7,21 +7,25 @@ import { is_valid_response_obj } from '../../utilities/ui_response.js'
 import { ui_display_number_as_str } from '../../utilities/ui_strings.js'
 import { DESC } from '../../utilities/ui_descriptions.js'
 import { init_card_img_loads,no_root_folder } from '../../utilities/ui_utilities.js'
-import { create_section,create_div,create_h,create_p } from '../../utilities/ui_elements.js'
-
+import { create_section,create_div } from '../../utilities/ui_elements.js'
 
 
 
 class DeletedRecordsTeaser {
 
+   // Component container element
    #deleted_records_section
 
-   #results_container
+   // pagination
+   #pagination_nav
 
-   // wrapper for grid element and click handler
+   // CardGrid object
    #card_grid_obj
 
-   // we retain browse state (page,scroll_y,etc) by passing a 'context token'
+   // Cards grid container element
+   #results_container
+
+   // Page Context (State)
    #context = {
       key:'DeletedRecords',
       filters:{
@@ -62,14 +66,22 @@ class DeletedRecordsTeaser {
       })
       this.#deleted_records_section.append(page_banner.render())
 
+      this.#pagination_nav = new PaginationNav()
+      this.#deleted_records_section.append(this.#pagination_nav.render())
+
       this.add_number_results()
 
       // grid wrapper
       this.#card_grid_obj = new CardGrid('results_container')
       this.#results_container = this.#card_grid_obj.render()
 
+      this.#deleted_records_section.append(this.#results_container)
+
       // required for re-instating search_context on 'back' to list actions
       if(this.#context) this.#results_container.append(this.get_items())
+         
+      this.#deleted_records_section.append(this.#pagination_nav.render())
+
       return this.#deleted_records_section
    }
 
@@ -86,26 +98,11 @@ class DeletedRecordsTeaser {
 
                   let { count,per_page,collection_item_fields,collection_items } = collection_items_obj
 
-                  this.#deleted_records_section.replaceChildren()
                   this.#results_container.replaceChildren()          
-                  // this.add_heading()
-                  // this.add_desc()
-
-                  // future : duplicating code above..
-                  const page_banner = new PageBanner({
-                     icon_name:'deleted',
-                     title:'Deleted Records',
-                     lead:DESC.DELETED_RECORDS
-                  })
-                  this.#deleted_records_section.append(page_banner.render())
 
                   this.add_number_results()
                   let page_count = Math.ceil(count / per_page)
 
-                  const top_pagination_nav = new PaginationNav('top',this.go_to_page,page_count,this.#context.page)
-                  this.#deleted_records_section.append(top_pagination_nav.render())
-                  top_pagination_nav.activate()
-         
                   if(collection_items.length > 0) {
                   
                      let number_records = document.getElementById('number_records')
@@ -132,10 +129,17 @@ class DeletedRecordsTeaser {
                      this.#results_container.innerText = 'No records were found. '
                   }
                   
-                  this.#deleted_records_section.append(this.#results_container)
-                  const bottom_pagination_nav = new PaginationNav('bottom',this.go_to_page,page_count,this.#context.page)
-                  this.#deleted_records_section.append(bottom_pagination_nav.render())
-                  bottom_pagination_nav.activate()
+                  const page_navs = document.querySelectorAll('.page_nav')
+                  if(page_navs) {
+                     page_navs.forEach(page_nav => {
+                        page_nav.replaceWith(this.#pagination_nav.render({
+                           key:'top',
+                           callback:this.go_to_page,
+                           page_count:page_count,
+                           current_page:this.#context.page
+                        }))
+                     })
+                  }
                   
                   // re-instate scroll position if user had scrolled list before opening a record
                   window.scroll(0,this.#context.scroll_y)
@@ -164,12 +168,14 @@ class DeletedRecordsTeaser {
       this.#context.page = page
       this.#context.scroll_y = 0
       this.get_items()
+      setTimeout(() => this.activate(),200)
    }
    
    // enable buttons/links displayed in the render
    activate = () => {
       init_card_img_loads()
       this.#card_grid_obj.activate()
+      this.#pagination_nav.activate()
    }
    
    add_number_results = () => {
