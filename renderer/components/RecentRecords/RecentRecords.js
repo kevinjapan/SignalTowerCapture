@@ -3,9 +3,10 @@ import CardGrid from '../CardGrid/CardGrid.js'
 import CollectionItemCard from '../CollectionItemCard/CollectionItemCard.js'
 import PageBanner from '../PageBanner/PageBanner.js'
 import { is_valid_response_obj } from '../../utilities/ui_response.js'
-import { create_section,create_h,create_div,create_p } from '../../utilities/ui_elements.js'
+import { create_section } from '../../utilities/ui_elements.js'
 import { ui_display_number_as_str } from '../../utilities/ui_strings.js'
 import { init_card_img_loads,no_root_folder } from '../../utilities/ui_utilities.js'
+
 
 
 class RecentRecords {
@@ -14,7 +15,7 @@ class RecentRecords {
 
    #queue
 
-   // we retain browse state (page,scroll_y,etc) by passing a 'context token'
+   // Page Context (State)
    #context = {
       key:'RecentRecords',
       field_filters:[],
