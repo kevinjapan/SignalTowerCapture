@@ -19,7 +19,8 @@ class BackupComponent {
       
       // Backup Section
       let backup_section = create_section({
-         attributes:[{key:'id',value:'backup_section'}]
+         attributes:[{key:'id',value:'backup_section'}],
+         classlist:['px_1']
       })
       
       const page_banner = new PageBanner({

@@ -16,7 +16,8 @@ class ExportJSONComponent {
    render = () => {
 
       let export_json_section = create_section({
-         attributes:[{key:'id',value:'json_section'}]
+         attributes:[{key:'id',value:'json_section'}],
+         classlist:['px_1']
       })
 
       const page_banner = new PageBanner({

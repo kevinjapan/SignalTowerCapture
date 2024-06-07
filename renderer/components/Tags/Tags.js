@@ -52,7 +52,8 @@ class Tags {
       if(this.#root_folder === '') return no_root_folder()
 
       this.#tags_section = create_section({
-         attributes:[{key:'id',value:'tags_section'}]
+         attributes:[{key:'id',value:'tags_section'}],
+         classlist:['px_1']
       })
 
       const page_banner = new PageBanner({
@@ -75,7 +76,7 @@ class Tags {
 
       this.#tags_section.append(this.#tags_results_container)
 
-      // required for re-instating tags_context on 'back' to list actions
+      // re-instate tags_context on 'back'
       if(this.#context && has_valid_field_filter('tags',this.#context)) {
          this.#tags_results_container.append(this.get_items())
       }

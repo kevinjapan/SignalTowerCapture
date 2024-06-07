@@ -266,15 +266,12 @@ class CollectionItemForm {
                   }
                   else {
                      this.disable_submit()
+
+                     // future : find_file_outcome is defined in FileTypeCheckbox - should be in this class? rollout this file
                      Notification.notify('#find_file_outcome',`Invalid location - the folder you selected is not within the Collections Folders.`,[],false)
                      return
                   }
                }
-               
-               // Auto-gen candidate title from the file name if non-exists
-               // we always overwrite based on file_name - priority is convenience
-               let title = document.getElementById('title')
-               if(title) title.value = title_from_file_name(file_name_input.value)
 
                // display if new file is an img file
                let file_path = `${path}\\${file}`
@@ -297,6 +294,12 @@ class CollectionItemForm {
                            // There is no record for this file
                            this.enable_submit()
                            Notification.notify('#find_file_outcome',`This file is valid.`,['bg_inform'],false)
+
+                           // Auto-gen candidate title from the file name if non-exists
+                           // we always overwrite based on file_name - priority is convenience
+                           let title = document.getElementById('title')
+                           if(title && title.value === '') title.value = title_from_file_name(file_name_input.value)
+
                         }
                         else {
                            // There is an existing record for this file

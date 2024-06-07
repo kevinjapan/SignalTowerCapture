@@ -17,7 +17,7 @@ class PageBanner {
 
       const banner = create_div({
          attributes:[{key:'id',value:'banner'}],
-         classlist:['bg_white','box_shadow','rounded','m_2','mt_2','mb_4','pb_2','p_1']
+         classlist:['bg_white','box_shadow','rounded','m_2','mt_2','mb_1','p_0.5']
       })
 
       const banner_header = create_div({

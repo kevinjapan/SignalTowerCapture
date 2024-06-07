@@ -21,24 +21,22 @@ class TagsNavList {
       })
       const tags_list_div = create_div({
          attributes:[{key:'id',value:'tags_list_div'}],
-         classlist:['flex','align_items_start','gap_.5','m_0','mt_1','mb_1']
+         classlist:['flex','align_items_start','gap_.5','m_0','mb_1']
       })
       tags_list_div.append(header)
 
       let tag_elem
-      let tag_text
 
       if(tags) {
          tags.forEach(tag => {            
             tag_elem = create_div({
                attributes:[
-                  {key:'id',value:'tags_list_div'},
+                  {key:'id',value:`tag_${tag.tag}`},
                   {key:'data-tag',value:tag.tag}
                ],
-               classlist:['align_items_center','tag_nav_link','border','rounded_0.5','p_0.5','pt_0','pb_0.25','cursor_pointer']
+               classlist:['tag_nav_link','align_items_center','border','rounded_0.5','p_0.5','pt_0','pb_0.25','cursor_pointer'],
+               text:tag.tag
             })
-            tag_text = create_div({text:tag.tag})            
-            tag_elem.append(tag_text)
             tags_list_div.append(tag_elem)
          })
       }
@@ -53,6 +51,19 @@ class TagsNavList {
       if(tag_nav_links) {         
          tag_nav_links.forEach(tag_link => {
             tag_link.addEventListener('click',(event) => {
+
+               // deselect all
+               let links = document.querySelectorAll('.tag_nav_link')
+               if(links) {         
+                  links.forEach(link => {
+                     link.classList.remove('bg_positive')
+                  })
+               }
+               // selected
+               const selected_link = document.getElementById(event.target.getAttribute('id'))
+               if(selected_link) selected_link.classList.add('bg_positive')
+
+               // submit
                this.#props.submit_tag(tag_link.getAttribute('data-tag'))
             })
          })

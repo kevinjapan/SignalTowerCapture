@@ -56,7 +56,8 @@ class DeletedRecordsTeaser {
       if(this.#root_folder === '') return no_root_folder()
 
       this.#deleted_records_section = create_section({
-         attributes:[{key:'id',value:'deleted_records_section'}]
+         attributes:[{key:'id',value:'deleted_records_section'}],
+         classlist:['px_1']
       })
 
       const page_banner = new PageBanner({

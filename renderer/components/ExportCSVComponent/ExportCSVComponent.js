@@ -16,7 +16,8 @@ class ExportCSVComponent {
    render = () => {
 
       let export_csv_section = create_section({
-         attributes:[{key:'id',value:'export_csv_section'}]
+         attributes:[{key:'id',value:'export_csv_section'}],
+         classlist:['px_1']
       })
 
       const page_banner = new PageBanner({

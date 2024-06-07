@@ -34,7 +34,8 @@ class ImportJSONComponent {
       }
 
       let import_json_section = create_section({
-         attributes:[{key:'id',value:'import_json_section'}]
+         attributes:[{key:'id',value:'import_json_section'}],
+         classlist:['px_1']
       })
 
       const page_banner = new PageBanner({

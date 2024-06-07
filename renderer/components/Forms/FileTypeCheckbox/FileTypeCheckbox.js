@@ -3,6 +3,7 @@ import { ui_friendly_text } from '../../../utilities/ui_strings.js'
 import { DESC } from '../../../utilities/ui_descriptions.js'
 
 
+
 // we currently assume there will only ever be one FileTypeCheckbox per page (so, 'find_file_btn' is not duplicated)
 
 
@@ -36,9 +37,8 @@ class FileTypeCheckbox {
       file_type_checkbox.append(field_label,file_type_radio,create_div(),file_type_info)
 
       let find_file_outcome = create_div({
-         attributes:[
-            {key:'id',value:'find_file_outcome'}
-         ]
+         attributes:[{key:'id',value:'find_file_outcome'}],
+         classlist:['mb_1']
       })
 
       // btn to select file for 'file_name' field

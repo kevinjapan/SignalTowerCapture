@@ -32,7 +32,8 @@ class ImportCSVComponent {
 
       // layout
       let import_csv_section = create_section({
-         attributes:[{key:'id',value:'import_csv_section'}]
+         attributes:[{key:'id',value:'import_csv_section'}],
+         classlist:['px_1']
       })   
 
       const page_banner = new PageBanner({

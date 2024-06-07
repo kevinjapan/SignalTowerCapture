@@ -47,7 +47,8 @@ class RecentRecords {
       this.#queue = app_config_record.recent_records
 
       let recent_section = create_section({
-         attributes:[{key:'id',value:'recent_section'}]
+         attributes:[{key:'id',value:'recent_section'}],
+         classlist:['px_1']
       })
       
       const page_banner = new PageBanner({
