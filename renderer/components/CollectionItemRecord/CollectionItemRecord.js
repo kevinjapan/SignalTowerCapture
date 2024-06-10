@@ -214,13 +214,16 @@ class CollectionItemRecord {
                      if(await is_valid_response_obj('read_single_collection_item',collection_item_obj)) {
 
                         // display single CollectionItem for editing in CollectionItemForm
+                        // Forms are not added to history (although they are separate pages) - we treat as modes of the Record page
+                        // So any operations in 'edit mode' occur on the same node in the History chain
+                        // The passed context is for Form to return to the correct Record page on 'update' or 'cancel'
                         this.#props = {
                            fields:collection_item_obj.collection_item_fields,
                            item:collection_item_obj.collection_item,
                            context:this.#props.context ? this.#props.context : null,
                            action:'update'
                         }
-                        app.switch_to_component('Form',this.#props)
+                        app.switch_to_component('Form',this.#props,false)
                      }
                      else {
                         app.switch_to_component('Error',{
@@ -259,16 +262,17 @@ class CollectionItemRecord {
       let record_img = document.getElementById('record_img')
       if(record_img) {
          record_img.addEventListener('click',() => {
+
+            // to do : integrate return from ImageViewer to this Record into history mechanism
+
             // we pass 'props.context' as a token for info and to enable returning to this Record
-            app.switch_to_component('ImageViewer',this.#props)
+            app.switch_to_component('ImageViewer',this.#props,false)
          })
       }
    }
 
    get_record = async(id) => {
-
       if(!is_valid_int(id)) return ''
-
       try {
          const collection_item_obj = await window.collection_items_api.getCollectionItem(id)
       
@@ -324,6 +328,7 @@ class CollectionItemRecord {
    get_default_context = () => {
       return this.#context
    }
+
 }
 
 
