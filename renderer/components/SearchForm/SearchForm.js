@@ -163,7 +163,7 @@ class SearchForm {
             }
          })
       }
-      search_term_input.focus()
+      if(search_term_input) search_term_input.focus()
    }
 
    
