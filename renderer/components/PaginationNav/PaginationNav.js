@@ -34,9 +34,7 @@ class PaginationNav {
 
       // container
       let page_nav = create_section({
-         attributes:[
-            {key:'id',value:'page_nav'}
-         ],
+         attributes:[{key:'id',value:'page_nav'}],
          classlist:['page_nav','max_w_full']
       })
 
