@@ -18,11 +18,12 @@ class CardGrid {
       this.#element_id = element_id
    }
 
-   render = () => {
+   render = (initial_text = '') => {
 
       const grid = create_div({
          attributes:[{key:'id',value:this.#element_id}],
-         classlist:['grid','grid_cards_layout']
+         classlist:['grid','grid_cards_layout','text_center','text_grey'],
+         text: initial_text
       })
       
       // retain some spacing on short lists
@@ -58,8 +59,12 @@ class CardGrid {
                               }
                               // we hydrate context for target CollectionItemRecord here since we need to inject 'id' into History context
                               record_props.context = {key:'Record',id:collection_item.id}
+
+                              // add scroll pos to page's context (retains pos on 'back')
+                              const history = app.get_service('history')
+                              if(history) history.augment_current_context({scroll_y:window.scrollY})
                               
-                              // record_props.context.scroll_y = window.scrollY
+                              // record_props.context.scroll_y = window.scrollY  // to do : this needs to be written to Browse context now
                               app.switch_to_component('Record',record_props)
                            }
                         }

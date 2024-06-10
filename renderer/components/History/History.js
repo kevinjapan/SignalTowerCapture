@@ -1,14 +1,11 @@
 import { icon } from '../../utilities/ui_utilities.js'
-import { create_div,create_button } from '../../utilities/ui_elements.js'
+import { create_div } from '../../utilities/ui_elements.js'
 
 
 
 // to do : once this is working correctly (and we can step 'back' from Record to correct paginated list state)
 //         - then we can remove 'back' btn from all components themselves.
 
-// to do : CollectionItemRecord (etc) store 'context' for the opening Browse (etc) - so don't save themselves to History.
-//         solution: rely completely on History -
-//         so refactor:    CollectionItemRecord,... (?) may resolve all :-  RecentRecords/Tags/Search/
 
 class History {
 
@@ -33,7 +30,7 @@ class History {
 
       const history_component = create_div({
          attributes:[{key:'id',value:'history_component'}],
-         classlist:['flex','align_items_center','text_white']
+         classlist:['flex','align_items_center','text_white','no_wrap']
       })
       
       const back_btn = icon('history_back',[{key:'id',value:'back_btn'}],['cursor_pointer','disabled_icon'])
@@ -96,20 +93,17 @@ class History {
 
    add_visited_page = (component_name,props) => {
 
-      // to do : props or context? - naming - check all pages are using which..?
-      console.log('add page',component_name,props)
-
       if(component_name === '') return false
 
       // to do : don't add if same page clicked - disable click on nav? (but native navigation?)
-      
       // to do : exclude pagination links from History - ensure they are not adding
 
-      // increment head (up to max_pages)
+      // move head
       this.#head < this.#max_pages - 1 ? this.set_head(this.#head + 1) : this.set_head(this.#max_pages - 1)
 
+      // we trim history before adding
       // if a opened a new page while traversing history, discard history after the head
-      if(this.#head < this.#visited_pages.length - 1) {
+      if(this.#head < this.#visited_pages.length) {
          this.#visited_pages.splice(this.#head)
       }
       else {
@@ -117,7 +111,7 @@ class History {
          if(this.#visited_pages.length > this.#max_pages - 1) this.#visited_pages.shift()
       }
 
-      // register page
+      // add page
       if(!props || props === 'undefined') {
          this.#visited_pages.push({key:component_name})
       }
@@ -125,11 +119,26 @@ class History {
          this.#visited_pages.push(props)
       }
 
-      // update ctrls
+      // update ctrls // to do : do we want to farm out to separate 'state' method called by each client method in this class
       this.#head === 0 ? this.toggle_btn('back_btn',false) :  this.toggle_btn('back_btn',true)
       this.#head < this.#visited_pages.length - 1 ? this.toggle_btn('forward_btn',true) : this.toggle_btn('forward_btn',false)
 
-      // console.log('this.#visited_pages',this.#visited_pages)
+      // history node index
+      return this.#head
+   }
+
+   //
+   // Current page can add or change context properties in the history node
+   //
+   augment_current_context = (augment_context) => {
+
+      let keys = Object.keys(augment_context)
+      if(keys) {
+         let current_context = this.#visited_pages[this.#head]
+         keys.forEach(key => {
+            current_context[key] = augment_context[key]
+         })
+      }
    }
 
    clear = () => {
