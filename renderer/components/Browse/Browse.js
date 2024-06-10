@@ -40,16 +40,13 @@ class Browse {
 
    #root_folder
 
-
    constructor(props) {
       // 'back' to list from Records will return the passed 'context token'
       if(props) {
          this.#context = props.context
          // retain 'filter_char' if 'back' from list item (CollectionItemRecord)
          if(props.context && props.context.filters) {
-            if(props.context.filters.filter_char) {
-               this.#filter_char = props.context.filters.filter_char
-            }
+            if(props.context.filters.filter_char) this.#filter_char = props.context.filters.filter_char
          }
          this.#props = props
       }
@@ -83,7 +80,7 @@ class Browse {
 
       // grid wrapper
       this.#card_grid_obj = new CardGrid('browse_results_container')
-      this.#browse_results_container = this.#card_grid_obj.render()
+      this.#browse_results_container = this.#card_grid_obj.render('loading..')
 
       this.#browse_section.append(this.#browse_results_container)
 
@@ -223,6 +220,7 @@ class Browse {
    get_default_context = () => {
       return this.#context
    }
+
 }
 
 
