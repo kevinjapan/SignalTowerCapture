@@ -34,7 +34,7 @@ class PageBanner {
       banner_header.append(banner_icon,banner_h)
 
       const banner_desc = create_p({
-         classlist:['m_0','mb_2','pt_0','pb_0','ml_2'],
+         classlist:['m_0','mb_1','pt_0','pb_0','ml_2'],
          text:lead
       })
 
