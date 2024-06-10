@@ -48,13 +48,13 @@ class RecentRecords {
 
       let recent_section = create_section({
          attributes:[{key:'id',value:'recent_section'}],
-         classlist:['px_1']
+         classlist:['px_1','pb_1']
       })
       
       const page_banner = new PageBanner({
          icon_name:'files',
          title:'Recent Records',
-         lead:'Revisit the most recently viewed records here.'
+         lead:'Re-visit the most recently viewed records.'
       })
 
       // grid wrapper
