@@ -39,12 +39,12 @@ class ExportCSVComponent {
       })
 
       const export_csv_fields = create_div({
-         classlist:['break_words','bg_lightgrey','text_grey','italic','pl_1','pr_1'],
+         classlist:['break_words','bg_lightgrey','text_grey','italic','pl_1','pr_1','m_1'],
          attributes:[{key:'id',value:'export_csv_fields'}]
       })
       
       // assemble
-      export_csv_section.append(export_csv_btn,export_csv_fields)
+      export_csv_section.append(export_csv_btn,export_csv_fields,export_csv_outcome)
       
       return export_csv_section
    }
