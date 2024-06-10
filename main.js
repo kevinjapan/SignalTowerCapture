@@ -114,11 +114,11 @@ const createWindow = async() => {
                   type:'separator'
                },
                {
-                  label: 'View Recent Records',
+                  label: 'Recent Records',
                   click: () => load_client_component('RecentRecords')
                },
                {
-                  label: 'View Deleted Records',
+                  label: 'Deleted Records',
                   click: () => load_client_component('DeletedRecords')
                }
             ]
