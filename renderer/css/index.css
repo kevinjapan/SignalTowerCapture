@@ -292,6 +292,10 @@ button.action_btn {
    -ms-flex-direction: row-reverse;
    flex-direction: row-reverse;
 }
+.align_self_center {
+   -ms-flex-item-align:center;
+   align-self:center;
+}
 .align_self_end {
    -ms-flex-item-align:end;
    align-self:end;
@@ -387,6 +391,7 @@ button.action_btn {
 .min_w_8  {min-width: 8rem;}
 .min_w_10 {min-width: 10rem;}
 .min_w_12 {min-width: 12rem;}
+.min_w_full {min-width: 100%;}
 .w_2_percent {width:2%;}
 .w_5_percent {width:5%;}
 .w_10_percent {width:10%;}
@@ -412,6 +417,9 @@ button.action_btn {
 }
 .fit_content_height {
    height:fit-content;
+}
+.max_fit_content_height {
+   max-height:fit-content;
 }
 
 /* 
@@ -452,8 +460,9 @@ button.action_btn {
 .mr_3 {margin-right:3rem;}
 .mr_4 {margin-right:4rem;}
 .mr_5 {margin-right:5rem;}
-.m_auto  {margin-left:auto;margin-right:auto;margin-top:auto;margin-bottom:auto;}
+.m_auto {margin-left:auto;margin-right:auto;margin-top:auto;margin-bottom:auto;}
 .mx_auto {margin-left:auto;margin-right:auto;}
+.mx_2 {margin-left:2rem;margin-right:2rem;}
 .ml_auto {margin-left:auto;margin-right:0;}
 .mr_auto {margin-left:0;margin-right:auto;}
 
