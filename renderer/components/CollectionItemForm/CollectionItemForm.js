@@ -33,6 +33,11 @@ class CollectionItemForm {
 
    // Collection root folder
    #root_folder = ''
+   
+   #context = {
+      key:'Form',
+      id:null
+   }
 
    #submit_enabled = true
 
@@ -181,10 +186,11 @@ class CollectionItemForm {
                         const collection_item_obj = await window.collection_items_api.getCollectionItem(collection_item_id)
                         if (typeof collection_item_obj != "undefined" && collection_item_obj.outcome === 'success') {
                            this.#props.item = collection_item_obj.collection_item
-                           app.switch_to_component('Record',this.#props)
+                           app.switch_to_component('Record',this.#props,false)
                         }
                      }
                      catch(error) {
+                        // to do : integrate or exclude (easy) Error pages from History - rollout
                         app.switch_to_component('Error',{
                            msg:'Sorry, we were unable to locate the Record.',
                            error:error
@@ -220,7 +226,7 @@ class CollectionItemForm {
                   try {
                      const collection_item_obj = await window.collection_items_api.getCollectionItem(cancel_btn.attributes['data-id'].value)
                      if (typeof collection_item_obj != "undefined" && collection_item_obj.outcome === 'success') {
-                        app.switch_to_component('Record',this.#props)
+                        app.switch_to_component('Record',this.#props,false)
                      }
                      else {
                         throw 'Sorry, we were unable to locate the Record.'
