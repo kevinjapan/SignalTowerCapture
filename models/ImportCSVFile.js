@@ -29,6 +29,7 @@ class ImportCSVFile {
       try {
          if(fs.existsSync(file_path)) {
 
+            // get the import dataset
             const read_stream = fs.createReadStream(file_path)
             const rl = readline.createInterface({
                input:read_stream,
@@ -111,7 +112,7 @@ class ImportCSVFile {
                collection_items.push(assoc_arr_obj(field_keys,values))
             }
 
-            // remove duplicate records
+            // remove any duplicate records from import dataset
             const no_duplicate_collection_items = await this.remove_duplicate_records(collection_items)
             const num_non_duplicate_items = no_duplicate_collection_items.length
 
@@ -129,7 +130,7 @@ class ImportCSVFile {
                }
             }
 
-            // process any valid records               
+            // process the new valid records              
             const result = await this.process_records(no_duplicate_collection_items)
          
             if(result) {

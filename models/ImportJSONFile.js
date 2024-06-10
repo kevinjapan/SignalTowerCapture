@@ -26,8 +26,12 @@ class ImportJSONFile {
 
       try {
          if(fs.existsSync(file_path)) {
+
+            // get the import dataset
             const collection_items = await this.get_json_file_contents(file_path)
             const num_rcvd_items = collection_items.length
+
+            // remove any duplicate records from import dataset
             const no_duplicate_collection_items = await this.remove_duplicate_records(collection_items)
             const num_non_duplicate_items = no_duplicate_collection_items.length
             
@@ -41,7 +45,8 @@ class ImportJSONFile {
                   ]
                }
             }
-                        
+
+            // process the new valid records
             const result = await this.process_records(no_duplicate_collection_items)
 
             if(result) {

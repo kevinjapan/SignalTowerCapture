@@ -119,13 +119,16 @@ class CollectionItemCard {
                      classlist:['record_card_image_wrap']
                   })
 
+                  // to do : we get error if file doesn't exist on first row load?
+                  //         replicate and catch the error before preventing it!
+                  
                   // we load first row (4 images) immediately to force grid to start assuming footprint on first render
                   // while further rows' images are loaded using Intersection Observer - init_card_img_loads()
                   // we use placeholders to generate layout in good time (avoiding patchy rendering) below the fold
                   // - allowing user to view and read Card text while still waiting for images to load
                   // - we may 'overwrite' placeholder w/ 'no matching file..', but UX payoff is worth it
-                  // - placeholder blur won't appear on first row - but layout is good and as quick as we can make it
-                  const img_file_path = this.#props.card_index < 4 ? file_path : placeholder_file_path
+                  // - layout is good and as quick as we can make it
+                  const img_file_path =  this.#props.card_index < 4 ? file_path : placeholder_file_path
 
                   if(is_img_ext(file_part)) {
                      // process img file
@@ -182,7 +185,7 @@ class CollectionItemCard {
 
                else if(field.key === 'tags') {
 
-                  // to do : remove tags (or disable) - currently working (overhead) but no UI
+                  // disabled - currently working (overhead) but no UI
                   // const tags_label = create_div({
                   //    classlist:['p_0.5','pt_0.75','text_grey'],
                   //    text:'Tags'
@@ -202,6 +205,8 @@ class CollectionItemCard {
                }
 
                else if(field.key === 'item_date') {
+                  
+                  // disabled - currently working (overhead) but no UI
                   // if(field_value) {
                   //    let item_date_block = create_div({
                   //       classlist:['flex','align_items_center','gap_.5','fit_content','p_0.5','break_words','w_full']

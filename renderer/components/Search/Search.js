@@ -212,6 +212,7 @@ class Search {
    }
 
    // Add current search to History - we simply add a Search page w/ new context
+   // this gets 'search_term' into History chain
    add_to_history = (context) => {
       const history = app.get_service('history')
       if(history) history.add_visited_page('search',context)
