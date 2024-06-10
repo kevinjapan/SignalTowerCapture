@@ -16,8 +16,8 @@ class ExportJSONComponent {
    render = () => {
 
       let export_json_section = create_section({
-         attributes:[{key:'id',value:'json_section'}],
-         classlist:['px_1']
+         attributes:[{key:'id',value:'export_json_section'}],
+         classlist:['flex','flex_col','align_items_center','px_1']
       })
 
       const page_banner = new PageBanner({
@@ -28,24 +28,17 @@ class ExportJSONComponent {
       })
       export_json_section.append(page_banner.render())
 
-
-      const heading = create_h({
-         level:'h4',
-         text:'Export JSON File'
-      })
-
       let export_json_btn = create_button({
          attributes:[{key:'id',value:'export_json_btn'}],
-         classlist:['action_btn'],
+         classlist:['action_btn','align_self_center'],
          text:'Export JSON File'
-      })  
-
+      })
       const export_json_outcome = create_div({
          attributes:[{key:'id',value:'export_json_outcome'}]
-      })
- 
+      }) 
+
       // assemble
-      export_json_section.append(heading,export_json_btn,export_json_outcome)
+      export_json_section.append(export_json_btn,export_json_outcome)
       return export_json_section
    }
 
@@ -55,6 +48,7 @@ class ExportJSONComponent {
 
       // Export Folder and Export JSON File
       const export_json_btn = document.getElementById('export_json_btn')
+      const export_json_section = document.getElementById('export_json_section')
       const export_json_outcome = document.getElementById('export_json_outcome')
 
       if(export_json_btn) {         
@@ -84,11 +78,14 @@ class ExportJSONComponent {
                            {key:'data-folder-path',value:folder_path_only},
                            {key:'id',value:'export_json_folder_btn'},
                         ],
+                        classlist:['align_self_center'],
                         text:'Open Export Folder'
                      }) 
                      if(export_json_outcome) {
                         Notification.notify('#export_json_outcome',`The export was successful.`,['bg_inform'])
-                        export_json_outcome.append(export_json_folder_btn)
+                     }
+                     if(export_json_section) {
+                        export_json_section.append(export_json_folder_btn)
                      }
                      setTimeout(() => this.activate_folder_btn(),200)                     
                   }

@@ -35,7 +35,7 @@ class ImportJSONComponent {
 
       let import_json_section = create_section({
          attributes:[{key:'id',value:'import_json_section'}],
-         classlist:['px_1']
+         classlist:['flex','flex_col','align_items_center','px_1']
       })
 
       const page_banner = new PageBanner({
@@ -46,34 +46,34 @@ class ImportJSONComponent {
       })
       import_json_section.append(page_banner.render())
 
-      const action_section = create_section({
-         classlist:['flex','align_items_center','no_wrap']
-      })
       const warning = create_p({
-         classlist:['mt_0','mb_0','bg_yellow_200','p_1','rounded','w_50'],
+         classlist:['mx_2','mt_0','mb_0','bg_yellow_200','p_1','rounded'],
          text:'You are recommended to backup the database before any import actions to ensure you can recover if any issues arise.'
-      })      
+      })
+      import_json_section.append(warning)
+      
       let import_json_btn = create_button({
          attributes:[{key:'id',value:'import_json_btn'}],
-         classlist:['action_btn'],
+         classlist:['action_btn','align_self_center'],
          text:'Import JSON File'
-      })  
-      action_section.append(import_json_btn,warning)
+      })
+
+      import_json_section.append(import_json_btn)
 
       // display fields info
       const fields = create_div({
          classlist:['flex']
       })
       const fields_intro = create_p({
-         classlist:['mt_0','mb_0'],
+         classlist:['mt_0','mb_0','mx_2'],
          text:'The full list of available fields for a single record:'
       })
       const fields_list_elem = create_div({
-         classlist:['text_grey','border','rounded','p_1','m_0.5','mt_0','w_100'],
+         classlist:['text_grey','border','rounded','p_1','m_0.5','mt_0','mx_2'],
          text:fields_list.join(', ')
       })
       const fields_required = create_p({
-         classlist:['mt_0','mb_0','w_100'],
+         classlist:['mt_0','mb_0','mx_2'],
          text:'The following fields are the minimum required to create a record:'
       })
       const required_fields_elem = create_div({
@@ -88,6 +88,7 @@ class ImportJSONComponent {
 
       const heading = create_h({
          level:'h4',
+         classlist:['mx_2'],
          text:'Fields'
       })
       const import_json_outcome = create_div({
@@ -99,9 +100,8 @@ class ImportJSONComponent {
          attributes:[{key:'id',value:'import_json_fields'}]
       })      
       const json_history_section = create_div({
-         attributes:[
-            {key:'id',value:'json_history_section'}
-         ]
+         attributes:[{key:'id',value:'json_history_section'}],
+         classlist:['mx_2']
       })
       const json_actions_log_component = new ActionsLogComponent('import_json','JSON Import History')
       if(json_actions_log_component) {
@@ -110,7 +110,7 @@ class ImportJSONComponent {
       }
 
       // assemble
-      import_json_section.append(action_section,import_json_outcome,heading,fields,import_json_fields,json_history_section)
+      import_json_section.append(import_json_btn,import_json_outcome,heading,fields,import_json_fields,json_history_section)
    
       return import_json_section
    }

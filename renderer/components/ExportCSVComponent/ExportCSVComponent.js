@@ -17,7 +17,7 @@ class ExportCSVComponent {
 
       let export_csv_section = create_section({
          attributes:[{key:'id',value:'export_csv_section'}],
-         classlist:['px_1']
+         classlist:['flex','flex_col','align_items_center','px_1']
       })
 
       const page_banner = new PageBanner({
@@ -27,24 +27,22 @@ class ExportCSVComponent {
       })
       export_csv_section.append(page_banner.render())
 
-
       let export_csv_btn = create_button({
          attributes:[{key:'id',value:'export_csv_btn'}],
-         classlist:['action_btn'],
+         classlist:['action_btn','align_self_center'],
          text:'Export CSV File'
-      })  
-
+      })
       const export_csv_outcome = create_div({
          attributes:[{key:'id',value:'export_csv_outcome'}]
       })
 
       const export_csv_fields = create_div({
-         classlist:['break_words','bg_lightgrey','text_grey','italic','pl_1','pr_1','m_1'],
-         attributes:[{key:'id',value:'export_csv_fields'}]
+         attributes:[{key:'id',value:'export_csv_fields'}],
+         classlist:['break_words','','text_grey','italic','p_1','m_1','mx_2']
       })
-      
+
       // assemble
-      export_csv_section.append(export_csv_btn,export_csv_fields,export_csv_outcome)
+      export_csv_section.append(export_csv_btn,export_csv_outcome,export_csv_fields)
       
       return export_csv_section
    }
@@ -84,11 +82,14 @@ class ExportCSVComponent {
                            {key:'data-folder-path',value:folder_path_only},
                            {key:'id',value:'export_csv_folder_btn'},
                         ],
+                        classlist:['align_self_center'],
                         text:'Open Export Folder'
                      }) 
                      if(export_csv_outcome) {
                         Notification.notify('#export_csv_outcome','The export was successful.',['bg_inform'])
-                        export_csv_outcome.append(export_csv_folder_btn)
+                     }
+                     if(export_csv_section) {
+                        export_csv_section.append(export_csv_folder_btn)
                      }
 
                      setTimeout(() => this.activate_folder_btn(),200)

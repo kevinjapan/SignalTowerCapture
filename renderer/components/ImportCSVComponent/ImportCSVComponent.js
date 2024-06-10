@@ -4,7 +4,6 @@ import WaitDialog from '../WaitDialog/WaitDialog.js'
 import Notification from '../../components/Notification/Notification.js'
 import { get_ui_ready_date,get_ui_ready_time } from '../../utilities/ui_datetime.js'
 import { create_h,create_p,create_div,create_section,create_button } from '../../utilities/ui_elements.js'
-import { icon } from '../../utilities/ui_utilities.js'
 
 
 
@@ -33,7 +32,7 @@ class ImportCSVComponent {
       // layout
       let import_csv_section = create_section({
          attributes:[{key:'id',value:'import_csv_section'}],
-         classlist:['px_1']
+         classlist:['flex','flex_col','align_items_center','px_1']
       })   
 
       const page_banner = new PageBanner({
@@ -43,45 +42,29 @@ class ImportCSVComponent {
       })
       import_csv_section.append(page_banner.render())
 
-      const csv_header = create_div({
-         classlist:['flex','align_items_center','mb_0']
-      })
-      // const import_csv_section_h = create_h({
-      //    level:'h2',
-      //    classlist:['mt_2','mb_0','pt_0','pb_0'],
-      //    text:'CSV Files : Import'
-      // })
-      // csv_header.append(icon('csv'),import_csv_section_h)
-      // const csv_section_desc = create_p({
-      //    classlist:['m_0','mb_2','pt_0','pb_0'],
-      //    text:'Comma-Separated-Value (CSV) files are a common file format for tranfering data between applications.'
-      // })
-
-      const action_section = create_section({
-         classlist:['flex','align_items_center','no_wrap']
-      })
       const warning = create_p({
-         classlist:['mt_0','mb_0','bg_yellow_200','p_1','rounded','w_50'],
+         classlist:['mx_2','mt_0','mb_0','bg_yellow_200','p_1','rounded'],
          text:'You are recommended to backup the database before any import actions to ensure you can recover if any issues arise.'
-      })      
+      })
+      import_csv_section.append(warning)
+      
       let import_csv_btn = create_button({
          attributes:[{key:'id',value:'import_csv_btn'}],
-         classlist:['action_btn'],
+         classlist:['action_btn','align_self_center'],
          text:'Import CSV File'
-      })  
-      action_section.append(import_csv_btn,warning)
-
+      })
       const import_csv_outcome = create_div({
          attributes:[{key:'id',value:'import_csv_outcome'}]
       })
-      import_csv_section.append(action_section,import_csv_outcome)
+ 
+      import_csv_section.append(import_csv_btn,import_csv_outcome)
 
       // display fields info
       const fields = create_div({
          classlist:['flex']
       })
       const fields_intro = create_p({
-         classlist:['mt_0','mb_0'],
+         classlist:['mt_0','mb_0','mx_2'],
          text:'Any import CSV file must match the following fields list for each record:'
       })
       const fields_list_elem = create_div({
@@ -89,13 +72,14 @@ class ImportCSVComponent {
          text:fields_list.join(', ')
       })
       const fields_desc = create_p({
-         classlist:['mt_0','mb_0'],
+         classlist:['mt_0','mb_0','mx_2'],
          text:`Empty fields are permitted but must be included. For example 'fishing,,harbour' would be a valid 3-field csv list with an empty middle field.`
       })
       fields.append(fields_intro,fields_list_elem,fields_desc)
    
       const heading = create_h({
          level:'h4',
+         classlist:['mx_2'],
          text:'Fields'
       })
 
@@ -104,7 +88,8 @@ class ImportCSVComponent {
          attributes:[{key:'id',value:'import_csv_fields'}]
       })
       const csv_history_section = create_div({
-         attributes:[{key:'id',value:'csv_history_section'}]
+         attributes:[{key:'id',value:'csv_history_section'}],
+         classlist:['mx_2']
       })
       
       this.#csv_actions_log_component = new ActionsLogComponent('import_csv','CSV Import History')

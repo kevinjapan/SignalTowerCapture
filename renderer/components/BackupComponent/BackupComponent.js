@@ -20,7 +20,7 @@ class BackupComponent {
       // Backup Section
       let backup_section = create_section({
          attributes:[{key:'id',value:'backup_section'}],
-         classlist:['px_1']
+         classlist:['flex','flex_col','align_items_center','px_1']
       })
       
       const page_banner = new PageBanner({
@@ -32,8 +32,9 @@ class BackupComponent {
 
       let backup_database_btn = create_button({
          attributes:[{key:'id',value:'backup_database_btn'}],
+         classlist:['action_btn','align_self_center'],
          text:'Backup Database'
-      }) 
+      })
 
       const backup_outcome = create_div({
          attributes:[{key:'id',value:'backup_outcome'}]
@@ -50,6 +51,7 @@ class BackupComponent {
 
       // Backup the database
       const backup_database_btn = document.getElementById('backup_database_btn')
+      const backup_section = document.getElementById('backup_section')
       const backup_outcome = document.getElementById('backup_outcome')
       if(backup_database_btn) {
          backup_database_btn.addEventListener('click',async(event) => {
@@ -81,12 +83,15 @@ class BackupComponent {
                         {key:'data-folder-path',value:folder_path_only},
                         {key:'id',value:'open_backup_folder_btn'},
                      ],
+                     classlist:['align_self_center'],
                      text:'Open Backup Folder'
                   }) 
 
                   if(backup_outcome) {
                      Notification.notify('#backup_outcome','The backup was successful.',['bg_inform'])
-                     backup_outcome.append(backup_folder_btn)
+                  }
+                  if(backup_section) {
+                     backup_section.append(backup_folder_btn)
                   }                 
                   this.activate_folder_btn()
                }
