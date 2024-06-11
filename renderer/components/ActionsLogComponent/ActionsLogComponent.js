@@ -117,9 +117,7 @@ class ActionsLogComponent {
    // enable buttons/links displayed in the render
    activate = async () => {
 
-      //
       // toggle view history list
-      //
       const log = document.querySelector(`#actions_log_heading_${this.#key}`)
       if(log) {
          log.addEventListener('click',(event) => {

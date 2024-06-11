@@ -144,7 +144,7 @@ class CollectionItemCard {
                      )
                      if(img) {
                         record_card_image_wrap.append(img)
-                        img_block.replaceChildren(record_card_image_wrap)     // to do : currently tied to file_exists() check above
+                        img_block.replaceChildren(record_card_image_wrap)
                      }
                   }
                   else {

@@ -358,7 +358,6 @@ button.action_btn {
 .gap_2 {gap:2rem;}
 
 
-/* to do : group w/ other Files stuff */
 .files_layout {   
    display:-ms-grid;
    display:grid;

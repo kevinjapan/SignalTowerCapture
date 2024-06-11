@@ -190,7 +190,6 @@ class CollectionItemForm {
                         }
                      }
                      catch(error) {
-                        // to do : integrate or exclude (easy) Error pages from History - rollout
                         app.switch_to_component('Error',{
                            msg:'Sorry, we were unable to locate the Record.',
                            error:error

@@ -3,9 +3,6 @@ import { create_div } from '../../utilities/ui_elements.js'
 
 
 
-// to do : once this is working correctly (and we can step 'back' from Record to correct paginated list state)
-//         - then we can remove 'back' btn from all components themselves.
-
 
 class History {
 
@@ -95,8 +92,8 @@ class History {
 
       if(component_name === '') return false
 
-      // to do : don't add if same page clicked - disable click on nav? (but native navigation?)
-      // to do : exclude pagination links from History - ensure they are not adding
+      // we allow same page to be added again, since unlikely to happen and 
+      // if does happen, we want to retain eg scroll-y position of 2nd instance etc.
 
       // move head
       this.#head < this.#max_pages - 1 ? this.set_head(this.#head + 1) : this.set_head(this.#max_pages - 1)
@@ -119,7 +116,7 @@ class History {
          this.#visited_pages.push(props)
       }
 
-      // update ctrls // to do : do we want to farm out to separate 'state' method called by each client method in this class
+      // update ctrls
       this.#head === 0 ? this.toggle_btn('back_btn',false) :  this.toggle_btn('back_btn',true)
       this.#head < this.#visited_pages.length - 1 ? this.toggle_btn('forward_btn',true) : this.toggle_btn('forward_btn',false)
 

@@ -64,7 +64,6 @@ class CardGrid {
                               const history = app.get_service('history')
                               if(history) history.augment_current_context({scroll_y:window.scrollY})
                               
-                              // record_props.context.scroll_y = window.scrollY  // to do : this needs to be written to Browse context now
                               app.switch_to_component('Record',record_props)
                            }
                         }
