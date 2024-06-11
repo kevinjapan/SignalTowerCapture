@@ -12,8 +12,8 @@ const setButton = document.getElementById('btn')
 const titleInput = document.getElementById('title')
 if(setButton) {
    setButton.addEventListener('click', () => {
-   const title = titleInput.value
-   window.electronAPI.setTitle(title)
+      const title = titleInput.value
+      window.electronAPI.setTitle(title)
    })
 }
 
@@ -22,57 +22,9 @@ if(setButton) {
 //
 // Pattern 2: Renderer to main (two-way)
 //
-const open_folder_btn = document.getElementById('open_folder_btn')
-const current_folder = document.getElementById('current_folder')
-const folder_path_elem = document.getElementById('folder_path')
-if(open_folder_btn) {
-   open_folder_btn.addEventListener('click', async() => {
-      const folder_path = await window.files_api.openFile()
-      const filenames = folder_path  
-
-      if(filenames) {
-         
-         let list = create_ul()
-         let list_item
-
-         if(Array.isArray(filenames)) {
-            filenames.forEach(file => {
-
-               list_item = create_li({
-                  attributes:[
-                     {key:'data-path',value:file.path}
-                  ],
-                  classlist:['folder_item'],
-                  text:file.type + ' ' + file.filename
-               })
-
-               list.append(list_item)
-
-            })
-         }
-         
-         // assemble
-         folder_path_elem.appendChild(list)
-         current_folder.innerText = filenames[0].filename
-         init_folder_items()
-      }
-   })
-}
 
 
-//
-// Click on folder/file in current file list
-//
-const init_folder_items = () => {
-   const folder_item_elements = document.querySelectorAll('.folder_item')
-   if(folder_item_elements) {
-      folder_item_elements.forEach((folder_item_element) => {
-         folder_item_element.addEventListener('click', (event) => {
-            //console.log(event.target.attributes['data-path'].value)   // to do : review
-         })
-      })
-   }
-}
+
 
 
 
