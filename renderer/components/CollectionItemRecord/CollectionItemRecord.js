@@ -262,9 +262,6 @@ class CollectionItemRecord {
       let record_img = document.getElementById('record_img')
       if(record_img) {
          record_img.addEventListener('click',() => {
-
-            // to do : integrate return from ImageViewer to this Record into history mechanism
-
             // we pass 'props.context' as a token for info and to enable returning to this Record
             app.switch_to_component('ImageViewer',this.#props,false)
          })
@@ -280,7 +277,10 @@ class CollectionItemRecord {
             return collection_item_obj.collection_item
          }
          else {
-            // console.log('failed to get record obj'.collection_item_obj) // to do : handle (see eg browse get_items())
+            app.switch_to_component('Error',{
+               msg:'Sorry, we were unable to access the Record.',
+               error:error
+            })
          }
       }
       catch(error) {
@@ -299,11 +299,17 @@ class CollectionItemRecord {
             return fields_obj.fields
          }
          else {
-            // console.log('failed to get record obj'.fields_obj) // to do : handle (see eg browse get_items())
+            app.switch_to_component('Error',{
+               msg:'Sorry, we were unable to access the Record.',
+               error:error
+            })
          }
       }
       catch(error) {
-         // to do :
+         app.switch_to_component('Error',{
+            msg:'Sorry, we were unable to access the Record.',
+            error:error
+         })
       }
    }
 
