@@ -26,6 +26,9 @@ class Tags {
    // Cards grid container element
    #tags_results_container
 
+   // TagsNavList object
+   #tags_nav
+
    // Page Context (State)
    #context = {
       key:'Tags',
@@ -78,6 +81,12 @@ class Tags {
 
       // re-instate tags_context on 'back'
       if(this.#context && has_valid_field_filter('tags',this.#context)) {
+         const tags_filter = this.#context.field_filters.find(elem => {
+            return elem.field === 'tags'
+         })
+
+         if(this.#tags_nav) this.#tags_nav.highlight_selected(tags_filter.value)
+         
          this.#tags_results_container.append(this.get_items())
       }
 
@@ -191,18 +200,18 @@ class Tags {
          submit_tag:this.submit_tag,
          clear_results:this.clear_results
       }
-      const tags_nav = new TagsNavList(props)
-      const tags_nav_elem = await tags_nav.render()
+      this.#tags_nav = new TagsNavList(props)
+      const tags_nav_elem = await this.#tags_nav.render()
       if(tags_nav_elem) {
          this.#tags_section.append(tags_nav_elem)
       }
       else {
          this.#tags_section.append(create_div({
-            classlist:['bg_inform','p_1','fit_content','rounded'],
+            classlist:['bg_inform','p_1','fit_content','rounded','mx_2'],
             text:'There are no Tags configured in the system. You can add Tags in the Config menu.'
          }))
       }
-      setTimeout(() => tags_nav.activate(),100)
+      setTimeout(() => this.#tags_nav.activate(),100)
    }
 
    add_number_results = () => {

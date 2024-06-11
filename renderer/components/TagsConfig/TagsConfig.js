@@ -42,10 +42,8 @@ class TagsConfig {
       tags_section.append(page_banner.render())
 
       this.#tags_list_elem = create_div({
-         attributes:[
-            {key:'id',value:'tags_list_elem'}
-         ],
-         classlist:['m_0']
+         attributes:[{key:'id',value:'tags_list_elem'}],
+         classlist:['m_0','mx_2']
       }) 
       
       this.#tags = await this.get_tags()
@@ -64,20 +62,16 @@ class TagsConfig {
             {key:'value',value:''},
             {key:'maxlength',value:24}
          ],
-         classlist:['input_field','m_1']
+         classlist:['input_field','m_1','mx_2']
       })
 
       let add_tag_btn = create_button({
-         attributes:[
-            {key:'id',value:'add_tag_btn'}
-         ],
+         attributes:[{key:'id',value:'add_tag_btn'}],
          text:'Add Tag'
       })  
 
       const outcome_div = create_div({
-         attributes:[
-            {key:'id',value:'outcome_div'}
-         ]
+         attributes:[{key:'id',value:'outcome_div'}]
       })
       
       // assemble
@@ -123,7 +117,6 @@ class TagsConfig {
 
 
       // clicked Add Tag btn
-
       const add_tag_btn = document.getElementById('add_tag_btn')
 
       if(add_tag_btn) {

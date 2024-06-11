@@ -42,10 +42,8 @@ class TagsList {
       })
 
       const tags_list_div = create_div({
-         attributes:[
-            {key:'id',value:this.#key}
-         ],
-         classlist:['flex','gap_.5','m_0','mt_0.5','mb_1']
+         attributes:[{key:'id',value:this.#key}],
+         classlist:['flex','gap_.5','m_0','mt_0.5','mb_1','mx_2']
       })
       header.append(heading,count)
       tags_list_div.append(header)
@@ -58,9 +56,7 @@ class TagsList {
             tags.forEach(tag => {
                
                tag_elem = create_div({
-                  attributes:[
-                     {key:'id',value:'tags_list_div'}
-                  ],
+                  attributes:[{key:'id',value:'tags_list_div'}],
                   classlist:['flex','gap_1','align_items_center','tag','border','rounded','pl_1','pr_1','pt_0','pb_0.25']
                })
                tag_text = create_div({
@@ -68,9 +64,7 @@ class TagsList {
                   text:tag.tag
                })
                del_elem = create_button({
-                  attributes:[
-                     {key:'id',value:tag.id}
-                  ],
+                  attributes:[{key:'id',value:tag.id}],
                   classlist:['del_tag_btn','bg_white','text_grey','p_0','pb_0.25','pl_0.25','pr_0.25'],
                   text:'x'
                })

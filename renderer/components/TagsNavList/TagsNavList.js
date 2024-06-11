@@ -1,6 +1,7 @@
 import { create_div } from '../../utilities/ui_elements.js'
 
 
+// Tags Nav
 
 class TagsNavList {
 
@@ -21,7 +22,7 @@ class TagsNavList {
       })
       const tags_list_div = create_div({
          attributes:[{key:'id',value:'tags_list_div'}],
-         classlist:['flex','align_items_start','gap_.5','m_0','mb_1']
+         classlist:['flex','align_items_start','gap_.5','m_0','mb_1','mx_2']
       })
       tags_list_div.append(header)
 
@@ -68,6 +69,14 @@ class TagsNavList {
             })
          })
       }
+   }
+
+   highlight_selected = (selected_tag) => {
+      // sm delay to allow elements to render
+      setTimeout(() => {
+         const tag = document.getElementById(`tag_${selected_tag}`)
+         if(tag) tag.classList.add('bg_positive')
+      },100)
    }
 }
 
