@@ -108,7 +108,7 @@ class ImageViewer {
       if(x_btn) {
          x_btn.addEventListener('click',async(event) => {
             event.preventDefault()
-            app.switch_to_component('Record',this.#props)
+            app.switch_to_component('Record',this.#props,false)
          })
       }
    
