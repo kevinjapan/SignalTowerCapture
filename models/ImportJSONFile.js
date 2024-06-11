@@ -33,15 +33,16 @@ class ImportJSONFile {
 
             // remove any duplicate records from import dataset
             const no_duplicate_collection_items = await this.remove_duplicate_records(collection_items)
-            const num_non_duplicate_items = no_duplicate_collection_items.length
-            
+            const num_non_duplicate_items = no_duplicate_collection_items.length            
+            const duplicates_count = parseInt(num_rcvd_items - num_non_duplicate_items)
+
             if(num_non_duplicate_items < 1) {
                return {
                   query:'import_json_file',
                   outcome:'success',
                   message_arr:[
-                     `${num_non_duplicate_items} records were added from the ${num_rcvd_items} records read.`,
-                     `${num_rcvd_items - num_non_duplicate_items} records were duplicates.`
+                     `${num_non_duplicate_items} record${num_non_duplicate_items !== 1 ?'s were' : ' was'} added from the ${num_rcvd_items} records read.`,
+                     `${duplicates_count} record${duplicates_count !== 1 ? 's were' : ' was'} duplicate${duplicates_count !== 1 ? 's' : ''}.`
                   ]
                }
             }
@@ -49,13 +50,14 @@ class ImportJSONFile {
             // process the new valid records
             const result = await this.process_records(no_duplicate_collection_items)
 
+
             if(result) {
                return {
                   query:'import_csv_file',
                   outcome:'success',
                   message_arr:[
-                     `${num_non_duplicate_items} records were added from the ${num_rcvd_items} records read.`,
-                     `${num_rcvd_items - num_non_duplicate_items} records were duplicates.`
+                     `${num_non_duplicate_items} record${num_non_duplicate_items !== 1 ?'s were' : ' was'} added from the ${num_rcvd_items} records read.`,
+                     `${duplicates_count} record${duplicates_count !== 1 ? 's were' : ' was'} duplicate${duplicates_count !== 1 ? 's' : ''}.`
                   ]
                }
             }
@@ -67,7 +69,7 @@ class ImportJSONFile {
                      `There was an error attempting to import the CSV file. [ImportCSVFile.import]`,
                      // this.#last_error.message,
                      `${num_non_duplicate_items} records were added from the ${num_rcvd_items} lines read.`,
-                     `${num_rcvd_items - num_non_duplicate_items} records were duplicates.`
+                     `${duplicates_count} record${duplicates_count !== 1 ? 's were' : ' was'} duplicate${duplicates_count !== 1 ? 's' : ''}.`
                   ]
                }
                this.clear_last_error()

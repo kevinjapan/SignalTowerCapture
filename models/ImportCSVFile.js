@@ -115,16 +115,19 @@ class ImportCSVFile {
             // remove any duplicate records from import dataset
             const no_duplicate_collection_items = await this.remove_duplicate_records(collection_items)
             const num_non_duplicate_items = no_duplicate_collection_items.length
+            const duplicates_count = parseInt(total_line_count - (num_non_duplicate_items + invalid_line_count))
 
             // no records to add
             if(num_non_duplicate_items < 1) {
+
+
                return {
                   query:'import_csv_file',
                   outcome:'success',
                   message_arr:[
-                     `${num_non_duplicate_items} records were added from the ${total_line_count} lines read.`,
-                     `${total_line_count - (num_non_duplicate_items + invalid_line_count)} records were duplicates.`,
-                     `${invalid_line_count} records were invalid.`
+                     `${num_non_duplicate_items} record${num_non_duplicate_items !== 1 ?'s were' : ' was'} added from the ${total_line_count} line${total_line_count > 1 ? 's' : ''}  read.`,
+                     `${duplicates_count} record${duplicates_count !== 1 ? 's were' : ' was'} duplicate${duplicates_count !== 1 ? 's' : ''}.`,
+                     `${invalid_line_count} record${invalid_line_count !== 1 ? 's were' : ' was'} invalid.`
                   ],
                   failed_lines:failed_lines
                }
@@ -138,9 +141,9 @@ class ImportCSVFile {
                   query:'import_csv_file',
                   outcome:'success',
                   message_arr:[
-                     `${num_non_duplicate_items} records were added from the ${total_line_count} lines read.`,
-                     `${total_line_count - (num_non_duplicate_items + invalid_line_count)} records were duplicates.`,
-                     `${invalid_line_count} records were invalid.`
+                     `${num_non_duplicate_items} record${num_non_duplicate_items !== 1 ?'s were' : ' was'}  added from the ${total_line_count} lines read.`,
+                     `${duplicates_count} record${duplicates_count !== 1 ? 's were' : ' was'} duplicate${duplicates_count !== 1 ? 's' : ''}.`,
+                     `${invalid_line_count} record${invalid_line_count !== 1 ? 's were' : ' was'} invalid.`
                   ],
                   failed_lines:failed_lines
                }
@@ -151,9 +154,9 @@ class ImportCSVFile {
                   outcome:'fail',
                   message_arr:[
                      `There was an error attempting to import the CSV file. [ImportCSVFile.import]`,
-                     `${num_non_duplicate_items} records were added from the ${total_line_count} lines read.`,
-                     `${total_line_count - (num_non_duplicate_items + invalid_line_count)} records were duplicates.`,
-                     `${invalid_line_count} records were invalid.`
+                     `${num_non_duplicate_items} record${num_non_duplicate_items !== 1 ?'s were' : ' was'}  added from the ${total_line_count} lines read.`,
+                     `${duplicates_count} record${duplicates_count !== 1 ? 's were' : ' was'} duplicate${duplicates_count !== 1 ? 's' : ''}.`,
+                     `${invalid_line_count} record${invalid_line_count !== 1 ? 's were' : ' was'} invalid.`
                   ]
                }
                this.clear_last_error()
