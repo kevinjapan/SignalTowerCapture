@@ -29,12 +29,16 @@ class WaitDialog {
          ],
          classlist:['dlg','pb_2']
       })
-      const dlg_h = create_h({
+      
+      const dlg_title = create_h({
          level:'h3',
+         text:this.#props.title
       })
       const dlg_text = create_p({
-         text:`Please wait while we process the import file:`
+         text:this.#props.text
       })
+
+      // if client provides a file_name, display accordingly
       const dlg_file_name = create_p({
          classlist:['bg_inform'],
          text:`${this.#props.file_name.substring(this.#props.file_name.lastIndexOf('\\') + 1)}`
@@ -50,7 +54,7 @@ class WaitDialog {
       spinner_wrap.append(spinner)
 
       // assemble
-      dlg.append(dlg_h,dlg_text,dlg_file_name,spinner_wrap)
+      dlg.append(dlg_title,dlg_text,dlg_file_name,spinner_wrap)
       dimmer.append(dlg)
       
       // this.set_top()

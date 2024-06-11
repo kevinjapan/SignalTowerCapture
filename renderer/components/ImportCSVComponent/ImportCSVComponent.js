@@ -128,7 +128,12 @@ class ImportCSVComponent {
                   let file_path = result.files[0]
 
                   // open 'please wait..' dlg
-                  const wait_dlg_component = new WaitDialog({file_name:file_path})
+                  const dlg_props = {
+                     title:'Importing CSV File',
+                     file_name:file_path,
+                     text:'Please wait while we process the import file'
+                  }
+                  const wait_dlg_component = new WaitDialog(dlg_props)
                   let import_csv_section = document.getElementById('import_csv_section')
                   if(import_csv_section) {
                      import_csv_section.append(wait_dlg_component.render())
