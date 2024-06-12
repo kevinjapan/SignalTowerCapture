@@ -1,4 +1,5 @@
 import { app } from '../../renderer.js'
+import PageBanner from '../PageBanner/PageBanner.js'
 import CollectionItemForm from '../CollectionItemForm/CollectionItemForm.js'
 import { create_section } from '../../utilities/ui_elements.js'
 
@@ -19,6 +20,12 @@ class AddCollectionItem {
          attributes:[{key:'id',value:'record'}],
          classlist:['mt_2']
       })
+      
+      const page_banner = new PageBanner({
+         icon_name:'csv',
+         title:'Add A New Record',
+         lead:'Add a file to the system.'
+      })
 
       const item_form_wrap = create_section({
          attributes:[{key:'id',value:'item_form_wrap'}],
@@ -27,7 +34,7 @@ class AddCollectionItem {
 
       // assemble
       this.build_form(item_form_wrap)
-      this.#record.append(item_form_wrap)
+      this.#record.append(page_banner.render(),item_form_wrap)
       
       return this.#record
    }
