@@ -57,7 +57,8 @@ class ImportCSVComponent {
       import_btn_panel.append(import_csv_btn,warning)
 
       const import_csv_outcome = create_div({
-         attributes:[{key:'id',value:'import_csv_outcome'}]
+         attributes:[{key:'id',value:'import_csv_outcome'}],
+         classlist:['mt_0.5']
       })
  
       import_csv_section.append(import_btn_panel,import_csv_outcome)

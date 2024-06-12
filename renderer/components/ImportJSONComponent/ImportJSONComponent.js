@@ -99,7 +99,8 @@ class ImportJSONComponent {
       fields.append(import_info_panel)
 
       const import_json_outcome = create_div({
-         attributes:[{key:'id',value:'import_json_outcome'}]
+         attributes:[{key:'id',value:'import_json_outcome'}],
+         classlist:['mt_0.5']
       })
 
       const import_json_fields = create_div({
