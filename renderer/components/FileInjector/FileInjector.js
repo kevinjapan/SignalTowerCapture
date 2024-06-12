@@ -6,13 +6,13 @@ import { create_section,create_div } from '../../utilities/ui_elements.js'
 
 
 
-// displays either Add Record Form or single Card if matching record found
+// FileInjector
+// Displays either Add Record Form if a new item, or an existing Card if a matching record is found
 
 
 class FileInjector {
 
    #props
-
 
    constructor(props) {
       this.#props = props
