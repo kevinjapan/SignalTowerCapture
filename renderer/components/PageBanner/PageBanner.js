@@ -25,11 +25,11 @@ class PageBanner {
       })
       const banner_h = create_h({
          level:'h2',
-         classlist:['','mb_0','pt_0','pb_0','w_90'],
+         classlist:['mt_0.25','mb_0.5','pt_0','pb_0','w_90'],
          text:title
       })
       const banner_icon = icon(
-         icon_name,[],['mt_1.5','mr_1']
+         icon_name,[],['mt_0','mr_1']
       )
       banner_header.append(banner_icon,banner_h)
 

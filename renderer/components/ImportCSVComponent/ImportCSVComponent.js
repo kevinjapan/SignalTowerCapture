@@ -42,46 +42,47 @@ class ImportCSVComponent {
       })
       import_csv_section.append(page_banner.render())
 
-      const warning = create_p({
-         classlist:['mx_2','mt_0','mb_0','bg_yellow_200','p_1','rounded'],
-         text:'You are recommended to backup the database before any import actions to ensure you can recover if any issues arise.'
-      })
-      import_csv_section.append(warning)
-      
+      const import_btn_panel = create_div({
+         classlist:['flex','justify_center']
+      })    
       let import_csv_btn = create_button({
          attributes:[{key:'id',value:'import_csv_btn'}],
-         classlist:['action_btn','align_self_center'],
+         classlist:['action_btn'],
          text:'Import CSV File'
       })
+      const warning = create_p({
+         classlist:['mx_2','mt_0','mb_0','bg_yellow_100','p_1','pt_1.5','rounded_sm','w_50','text_italic','text_grey'],
+         text:'You are recommended to backup the database before proceeding to ensure you can recover if any issues arise.'
+      })  
+      import_btn_panel.append(import_csv_btn,warning)
+
       const import_csv_outcome = create_div({
          attributes:[{key:'id',value:'import_csv_outcome'}]
       })
  
-      import_csv_section.append(import_csv_btn,import_csv_outcome)
+      import_csv_section.append(import_btn_panel,import_csv_outcome)
 
+      
+      const import_info_panel = create_div({
+         classlist:['flex','border','rounded','bg_white','mt_1','mx_2','p_0.5','pb_1']
+      })
       // display fields info
       const fields = create_div({
-         classlist:['flex']
+         classlist:['flex','gap_0']
       })
       const fields_intro = create_p({
-         classlist:['mt_0','mb_0','mx_2'],
+         classlist:['m_0','mx_2','p_0.5','w_full'],
          text:'Any import CSV file must match the following fields list for each record:'
       })
       const fields_list_elem = create_div({
-         classlist:['text_grey','border','rounded','p_1','m_0.5','mt_0'],
+         classlist:['text_grey','border','rounded_sm','m_0','mx_2','p_0.5'],
          text:fields_list.join(', ')
       })
       const fields_desc = create_p({
-         classlist:['mt_0','mb_0','mx_2'],
-         text:`Empty fields are permitted but must be included. For example 'fishing,,harbour' would be a valid 3-field csv list with an empty middle field.`
+         classlist:['m_0','mx_2','p_0.5','w_full'],
+         text:`Empty fields are permitted but must be included. For example 'fishing,,harbour' would be valid.`
       })
-      fields.append(fields_intro,fields_list_elem,fields_desc)
-   
-      const heading = create_h({
-         level:'h4',
-         classlist:['mx_2'],
-         text:'Fields'
-      })
+      import_info_panel.append(fields_intro,fields_list_elem,fields_desc)
 
       const import_csv_fields = create_div({
          classlist:['break_words','bg_lightgrey','text_grey','italic','pl_1','pr_1'],
@@ -99,7 +100,7 @@ class ImportCSVComponent {
       }
 
       // assemble
-      import_csv_section.append(heading,fields,import_csv_fields,csv_history_section)
+      import_csv_section.append(import_info_panel,import_csv_fields,csv_history_section)
    
       return import_csv_section
    }

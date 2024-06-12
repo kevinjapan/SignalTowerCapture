@@ -202,7 +202,7 @@ button.action_btn {
    font-size:1.5rem;
    margin-left:1rem;
    margin-right:1rem;
-   max-width:150px;
+   max-width:140px;
 }
 
 /* 
@@ -431,6 +431,7 @@ button.action_btn {
 .m_2 {margin:2rem;}
 .m_3 {margin:3rem;}
 .m_4 {margin:4rem;}
+.mt_0 {margin-top:0;}
 .mt_0\.25,mt_\.25 {margin-top:.25rem;}
 .mt_0\.5,mt_\.5 {margin-top:.5rem;}
 .mt_0\.75,mt_\.75 {margin-top:.75rem;}
@@ -445,6 +446,7 @@ button.action_btn {
 .ml_3 {margin-left:3rem;}
 .ml_4 {margin-left:4rem;}
 .ml_5 {margin-left:5rem;}
+.mb_0 {margin-bottom:0;}
 .mb_0\.5,mb_\.5 {margin-bottom:.5rem;}
 .mb_1 {margin-bottom:1rem;}
 .mb_2 {margin-bottom:2rem;}
@@ -481,6 +483,7 @@ button.action_btn {
 .pt_\.5,.pt_0\.5 {padding-top:.5rem;}
 .pt_\.75,.pt_0\.75 {padding-top:.75rem;}
 .pt_1 {padding-top:1rem;}
+.pt_1\.5 {padding-top:1.5rem;}
 .pt_2 {padding-top:2rem;}
 .pt_3 {padding-top:3rem;}
 .pt_4 {padding-top:4rem;}
@@ -548,7 +551,7 @@ h3.logo_heading {
 .rounded {
    border-radius:1rem;
 }
-.rounded_0\.5, .rounded_\.5 {
+.rounded_0\.5, .rounded_\.5,.rounded_sm {
    border-radius:0.5rem;
 }
 .overflow_auto {
@@ -1378,7 +1381,7 @@ section.feature_block.my_2 {margin-top:2rem;margin-bottom:2rem;}
    section.feature_block {
       -ms-grid-columns:1fr 1fr;
       grid-template-columns:1fr 1fr;
-      max-height:400px;
+      max-height:600px;
       overflow-y:hidden;
    }
    section.feature_block.reverse_order {
