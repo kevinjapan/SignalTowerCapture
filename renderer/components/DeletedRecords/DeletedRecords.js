@@ -107,8 +107,8 @@ class DeletedRecordsTeaser {
                   if(collection_items.length > 0) {
                   
                      let number_records = document.getElementById('number_records')
-                     if(number_records) {             
-                        number_records.innerText = `There are ${ui_display_number_as_str(count)} deleted records.`
+                     if(number_records) {
+                        number_records.innerText = `There ${parseInt(count) === 1 ? 'is' : 'are'} ${ui_display_number_as_str(count)} deleted record${parseInt(count) === 1 ? '' : 's'}.`
                      }
             
                      let props = {

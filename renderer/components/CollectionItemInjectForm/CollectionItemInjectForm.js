@@ -6,9 +6,9 @@ import { no_root_folder } from '../../utilities/ui_utilities.js'
 
 
 
-// Files - quick inject record into system
+// Files - quick inject (add) Record into system
 // honed-down alternative to CollectionItemForm for rapid multiple file injection 
-// only includes field marked as 'injectable'
+// only includes fields marked as 'injectable'
 
 
 class CollectionItemInjectForm {
@@ -83,7 +83,7 @@ class CollectionItemInjectForm {
                {field:'item_ref',value:'ASTM_ARCHIVE_'},
                {
                   field:'img',
-                  value:`${this.#root_folder}${this.#props.folder_path === '' ? '' : this.#props.folder_path + '\\'}${this.#props.file_name}`,
+                  value:`${this.#root_folder}${this.#props.folder_path === '\\' ? '' : this.#props.folder_path + '\\'}${this.#props.file_name}`,
                   alt:get_title_from_filename(this.#props.file_name)
                }
             ])
