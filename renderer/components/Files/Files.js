@@ -46,19 +46,21 @@ class Files {
 
    render = async() => {
 
+      this.#root_folder = await app.get_root_folder()
+      if(this.#root_folder === '') return no_root_folder()
+      //this.#root_folder = temp.split(/\ /).join('\ ');
+
       // container
       const files_section = create_section({
          attributes:[{key:'id',value:'files_section'}],
          classlist:['h_85vh','mt_0','fit_content_height','pb_2']
-      })      
+      })
+
+      // notifications
       const files_outcome = create_div({
          attributes:[{key:'id',value:'files_outcome'}]
       })
       files_section.append(files_outcome)
-
-      this.#root_folder = await app.get_root_folder()
-      if(this.#root_folder === '') return no_root_folder()
-      //this.#root_folder = temp.split(/\ /).join('\ ');
 
       // 2-col layout
       const files_layout = create_div({
@@ -84,14 +86,15 @@ class Files {
          files_section.append(this.#breadcrumb_nav.render())
          setTimeout(() => this.#breadcrumb_nav.activate(),100)
       }
+
+      // hydrate w/ any rcvd context
       if(this.#props && this.#props.context) {
          const folder_path_filter = this.#props ? this.#props.context.field_filters.find(filter => filter.field = 'folder_path' ) : ''
 
-         // if we are coming 'back' from a Record,, hydrate breadcrumb_nav
+         // if we are coming 'back' from a Record, hydrate breadcrumb_nav
          if(this.#props && this.#props.context) {
             this.#breadcrumb_nav.hydrate(this.#root_folder,folder_path_filter)
          }
-
          // if we are coming 'back' from a Record, open the appropriate folder
          if(this.#props) {
             if(this.#props.context) {
@@ -117,7 +120,6 @@ class Files {
 
       // User clicks on a file in file_list_elem
       // we display FileInjector for that file (either existing record or create new)
-      //
       const file_links = document.querySelectorAll('.file_item')
       if(file_links) {
          file_links.forEach((file_link) => {
@@ -147,7 +149,6 @@ class Files {
 
       // User clicks on a folder in file_list_elem
       // we load that folder and display it's contents (sub-folders and files)
-      //
       const folder_items = document.querySelectorAll('.folder_item')
       if(folder_items) {
          folder_items.forEach((folder_item) => {
