@@ -32,6 +32,8 @@ class BreadCrumbNav {
 
    hydrate = (root_folder,folder_path) => {
       this.#root_folder = root_folder
+
+      if(folder_path === undefined) folder_path = ''
       folder_path = folder_path.toString().replace(root_folder,'')
       const breadcrumb = document.getElementById('breadcrumb_nav')
       if(breadcrumb) {

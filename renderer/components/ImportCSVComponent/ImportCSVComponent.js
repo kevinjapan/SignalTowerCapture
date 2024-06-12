@@ -146,17 +146,6 @@ class ImportCSVComponent {
 
                   if (typeof import_results_obj != "undefined") { 
 
-                        // errors: [{
-                        //    name: 'file_name',
-                        //    message: 'This is not a valid filename.',
-                        //    value: 'coffee mug'
-                        // },
-                        // {
-                        //    name: 'item_date',
-                        //    message: 'This value is not a valid date (YYYY-MM-DD)',
-                        //    value: '\\Research_A-G\\bell-rock-lighthouse'
-                        // }]
-
                      let failed_lines = []
                      if(import_results_obj.failed_lines) {
                         failed_lines = import_results_obj.failed_lines.map(failed_line => {

@@ -115,7 +115,11 @@ class Files {
    // enable buttons/links displayed in the render
    activate = () => {}
 
+
+   //
    // enable buttons/links displayed in the render
+   //
+
    activate_file_links = () => {
 
       // User clicks on a file in file_list_elem
@@ -146,13 +150,38 @@ class Files {
             })
          })
       }
+   }
+
+   activate_folder_links = () => {
 
       // User clicks on a folder in file_list_elem
       // we load that folder and display it's contents (sub-folders and files)
       const folder_items = document.querySelectorAll('.folder_item')
       if(folder_items) {
          folder_items.forEach((folder_item) => {
+
+
             folder_item.addEventListener('click',async(event) => {
+               
+               // update page's context w/ selected folder (there are two props to consider)
+               const history = app.get_service('history')
+               if(history) {
+                  history.augment_current_context(
+                     {
+                        folder_path:event.target.getAttribute('data-file-path').replace(this.#root_folder,'')
+                     }
+                  )
+                  history.augment_current_context(
+                     {
+                        field_filters:[{field:'folder_path',value:event.target.getAttribute('data-file-path').replace(this.#root_folder,'')}]
+                     }
+                  )
+               }
+
+               // update filter
+               const folder_path_filter = this.#context.field_filters.find(filter => filter.field = 'folder_path' )
+               folder_path_filter.value = event.target.getAttribute('data-file-path').replace(this.#root_folder,'')               
+
                const path = event.target.getAttribute('data-file-path').replace(this.#root_folder,'')            
                this.open_folder(path)
             })
@@ -265,6 +294,7 @@ class Files {
             
             if(file_view) file_view.replaceChildren()
             setTimeout(() => this.activate_file_links(),100)
+            setTimeout(() => this.activate_folder_links(),100)
             
             await this.get_matching_records()
             
@@ -295,6 +325,7 @@ class Files {
 
          // activate
          this.activate_file_links()
+         this.activate_folder_links()
       }
    }
    
