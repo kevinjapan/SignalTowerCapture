@@ -29,10 +29,8 @@ class ActionsLogComponent {
       this.#context.filters.action = action
 
       const actions_log_component = create_section({
-         attributes:[
-            {key:'id',value:`actions_log_component_${this.#key}`}
-         ],
-         classlist:['actions_log_component','ui_component','border','fit_content_height']
+         attributes:[{key:'id',value:`actions_log_component_${this.#key}`}],
+         classlist:['actions_log_component','ui_component','border','fit_content_height','bg_white']
       })
    
       const heading = create_h({
