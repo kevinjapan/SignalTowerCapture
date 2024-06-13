@@ -22,7 +22,7 @@ class AddCollectionItem {
       })
       
       const page_banner = new PageBanner({
-         icon_name:'csv',
+         icon_name:'file',
          title:'Add A New Record',
          lead:'Add a file to the system.'
       })

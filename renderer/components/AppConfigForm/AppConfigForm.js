@@ -51,15 +51,20 @@ class AppConfigForm {
 
 
       const text_col = create_div({
-         classlist:['text_col']
+         classlist:['text_col','mx_2']
       })  
 
       form.append(text_col)
       
+      let panel = null
       let value = ''
 
       if(Array.isArray(fields)) {
          fields.forEach(async(field) => {
+
+            panel = create_div({
+               classlist:['bg_white','rounded_sm','mx_2','mb_1','p_1','w_full']
+            })
 
             if(typeof app_config_record !== 'undefined') {
                value = app_config_record[field.key]
@@ -73,7 +78,7 @@ class AppConfigForm {
                   {key:'for',value:field.key}
                ],
                classlist:['text_h4'],
-               text:ui_friendly_text(field.key)
+               text: ui_friendly_text(field.key)
             })
 
             // Build the input element
@@ -103,7 +108,7 @@ class AppConfigForm {
                      {key:'value',value:value},
                      {key:'readonly',value:field.readonly ? 'readonly' : false},
                   ],
-                  classlist:['input_field','w_full','m_1']
+                  classlist:['input_field','w_90','m_1']
                })
                if(!field.editable) field_input.disabled = 'disabled'
                if(field.placeholder) field_input.setAttribute('placeholder',field.placeholder)
@@ -114,30 +119,30 @@ class AppConfigForm {
                
                // stress impact of changing this to user
                warning = create_p({
-                  classlist:['ml_1','bg_yellow','w_full','border_radius_1','p_1'],
+                  classlist:['bg_yellow','fit_content','border_radius_1','p_1'],
                   text:`IMPORTANT: changing this setting will point the system at the new root folder 
                   - and it will no longer find files in the previous location. Only change this if you
                   have reason to move your files to a new root folder location.`
                })
             }
 
-            const desc_btn_row = create_div({classlist:['flex']})
-
+            const desc_btn_row = create_div({
+               classlist:['flex','align_items_center','pt_1']
+            })
             let field_desc = null
             if(typeof field.desc !== 'undefined') {
                field_desc = create_div({
-                  classlist:['mt_0','mb_0','p_1','pt_0','pb_0'],
+                  classlist:['mt_0.5','mb_0','p_1','pt_0','pb_0','w_50'],
                   text:field.desc
                })
             } 
             desc_btn_row.append(field_desc)
-
-            // user can select folder via native file selector / explorer 
+            // user can select folder via native file explorer 
             if(field.is_folder) {
                let folder_selector = new SelectFolderComponent()
                desc_btn_row.append(folder_selector.render(field.key))
                // delay to let form.append below take effect
-               setTimeout(() => folder_selector.activate(field.key),300)
+               setTimeout(() => folder_selector.activate(field.key),200)
             }
 
             let field_error = create_div({
@@ -148,10 +153,12 @@ class AppConfigForm {
                text:''
             })
 
-            text_col.append(field_label,field_input)
-            if(desc_btn_row)text_col.append(desc_btn_row)
-            if(warning)text_col.append(warning)
-            text_col.append(field_error)
+            panel.append(field_label)
+            if(desc_btn_row)panel.append(desc_btn_row)
+            panel.append(field_input)
+            if(warning)panel.append(warning)
+            panel.append(field_error)
+            text_col.append(panel)
 
 
          })
