@@ -128,6 +128,7 @@ export const icon = (icon_name,attributes = [],classes = []) => {
       'DEFAULT':'imgs\\icons\\person-raised-hand.svg',
       'DELETED':'imgs\\icons\\trash.svg',
       'FILE_TEXT':'imgs\\icons\\file-text.svg',
+      'FILE':'imgs\\icons\\file.svg',
       'FILES':'imgs\\icons\\files.svg',
       'HISTORY_BACK':'imgs\\icons\\arrow-left-short-white.svg',
       'HISTORY_FORWARD':'imgs\\icons\\arrow-right-short-white.svg',
@@ -347,4 +348,9 @@ export const build_file_path = (root_folder_path,relative_folder_path,file_name)
 
    const file_path = `${root_part}\\${relative_folder_part}${file_name}`
    return file_path
+}
+
+export const is_excluded_folder = async (folder_path) => {
+   const result = await window.config_api.isExcludedFolder(folder_path)
+   return result
 }

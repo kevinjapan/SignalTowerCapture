@@ -8,7 +8,7 @@ import Notification from '../../components/Notification/Notification.js'
 import { DESC } from '../../utilities/ui_descriptions.js'
 import { is_valid_response_obj } from '../../utilities/ui_response.js'
 import { ui_friendly_text } from '../../utilities/ui_strings.js'
-import {title_from_file_name,no_root_folder } from '../../utilities/ui_utilities.js'
+import {title_from_file_name,no_root_folder,is_excluded_folder } from '../../utilities/ui_utilities.js'
 import { create_section,create_div,create_form,create_label } from '../../utilities/ui_elements.js'
 
 
@@ -150,7 +150,7 @@ class CollectionItemForm {
    }
 
    // enable buttons/links displayed in the render
-   activate = () => {
+   activate = async() => {
 
       // On 'Apply' add or update CollectionItemForm
       const apply_btns = document.querySelectorAll('.apply_btn')
@@ -251,7 +251,8 @@ class CollectionItemForm {
       const find_file_btn = document.getElementById('find_file_btn')
       if(find_file_btn) {
          find_file_btn.addEventListener('click',async(event) => {            
-            event.preventDefault()    
+            event.preventDefault()
+            
             const sep = await window.files_api.filePathSep()            
             const result = await window.files_api.getFilePath()
       
@@ -266,7 +267,10 @@ class CollectionItemForm {
                
                let folder_path = document.getElementById('folder_path')
                if(folder_path) {
-                  if(path.indexOf(this.#root_folder) === 0) {                        
+
+                  const is_excluded = await is_excluded_folder(path)     // to do : move below to 'if' 
+                  // verify file is within root_folder and not in Settings.exluded_folders
+                  if(path.indexOf(this.#root_folder) === 0 && !is_excluded) {                        
                      folder_path.value = path.replace(this.#root_folder,'') // relative path
                   }
                   else {

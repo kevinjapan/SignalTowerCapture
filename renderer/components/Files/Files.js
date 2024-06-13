@@ -4,7 +4,7 @@ import BreadCrumbNav from '../BreadCrumbNav/BreadCrumbNav.js'
 import Notification from '../Notification/Notification.js'
 import { is_valid_response_obj } from '../../utilities/ui_response.js'
 import {trim_end_char} from '../../utilities/ui_strings.js'
-import {filetype_icon,no_root_folder} from '../../utilities/ui_utilities.js'
+import {filetype_icon,no_root_folder,is_excluded_folder} from '../../utilities/ui_utilities.js'
 import {create_section,create_div,create_ul,create_li} from '../../utilities/ui_elements.js'
 
 
@@ -234,6 +234,7 @@ class Files {
       const file_view = document.getElementById('file_view')
 
       if(folder_obj.files_list && folder_obj.files_list.length > 0) {
+
          let list = create_ul({classlist:['flex','no_wrap','flex_col','gap_0.5','m_0','p_0','pb_0.5']})
          let list2 = create_ul({classlist:['flex','no_wrap','flex_col','gap_0.5','m_0','p_0','pb_0.5']})
 
@@ -247,12 +248,16 @@ class Files {
                setTimeout(() => this.#breadcrumb_nav.activate(),100)
             }
 
-            // build list of filenames (incs folders)
-            folder_obj.files_list.forEach(file => {
+            // build list of filenames (incs folders)               
+            // use for..of to facilitate 'await' call in code block
+            for(const file of folder_obj.files_list) {
+
                let list_item
+               
                // assign folder_path to context remove the 'root_folder' part from path
                this.#context.field_filters[0].value = file.path.replace(this.#root_folder,'')
 
+               // Display Files List
                if(file.type === 'file') {
                   list_item = create_li({
                      attributes:[
@@ -265,20 +270,28 @@ class Files {
                   list_item.prepend(filetype_icon(file.filename,'file'))
                   list2.append(list_item)
                }
+               // Display Folders List
                else if(file.type === 'dir') {
-                  list_item = create_li({
-                     attributes:[
-                        {key:'data-file-path',value:file.path + '\\' + file.filename},
-                        {key:'data-file-name',value:file.filename}
-                     ],
-                     classlist:['flex','no_wrap','folder_item','cursor_pointer','m_0','p_0','text_lg','text_blue'],
-                     text:file.filename
-                  })
-                  list_item.prepend(filetype_icon(file.filename,'dir'))
-                  list.append(list_item)
+
+                  // don't add excluded sub_folders
+                  const is_excluded = await is_excluded_folder(file.path + '\\' + file.filename)
+
+                  if(!is_excluded) {
+                     list_item = create_li({
+                        attributes:[
+                           {key:'data-file-path',value:file.path + '\\' + file.filename},
+                           {key:'data-file-name',value:file.filename}
+                        ],
+                        classlist:['flex','no_wrap','folder_item','cursor_pointer','m_0','p_0','text_lg','text_blue'],
+                        text: file.filename
+                     })
+                     list_item.prepend(filetype_icon(file.filename,'dir'))
+                     list.append(list_item)
+                  }
                }
-            })
+            }
             file_list_elem.replaceChildren()
+
             // assemble
             if(list.hasChildNodes()) {
                if(file_list_elem) file_list_elem.append(list)
