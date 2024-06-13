@@ -11,7 +11,7 @@ class SelectFolderComponent {
             attributes:[
                {key:'id',value:`${input_id}_btn`}
             ],
-            classlist:['m_1'],
+            classlist:['m_1','mt_0.5'],
             text:`Select Folder`
          })
       }
