@@ -15,8 +15,9 @@ class AppConfig {
    //
    static #full_fields_list = [
       {key:'id',data_type:'INTEGER PRIMARY KEY',editable:false,in_card:true,test:{type:'int',min:1,max:9999999999}},
-      {key:'root_folder',data_type:'TEXT',editable:true,readonly:true,config_edit:true,in_card:true,desc:DESC.ROOT_FOLDER.body,is_folder:true,test:{type:'string',min:1,max:255}},
+      {key:'root_folder',data_type:'TEXT',editable:true,readonly:true,config_edit:true,in_card:true,desc:DESC.ROOT_FOLDER,is_folder:true,test:{type:'string',min:1,max:255}},
       {key:'recent_records',data_type:'TEXT',editable:true,in_card:false,test:{type:'string',min:1,max:500}},
+      {key:'excluded_sub_folders',data_type:'TEXT',editable:true,readonly:false,config_edit:true,in_card:true,desc:DESC.EXCLUDED_SUB_FOLDERS,test:{type:'string',min:0,max:500}},
       {key:'created_at',data_type:'TEXT NOT NULL',editable:false,in_card:false,test:{type:'date',min:10,max:24}},
       {key:'updated_at',data_type:'TEXT NOT NULL',editable:false,in_card:false,test:{type:'date',min:10,max:24}},
       {key:'deleted_at',data_type:'TEXT',editable:false,in_card:false,test:{type:'date',min:10,max:24}},

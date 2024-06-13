@@ -51,7 +51,8 @@ contextBridge.exposeInMainWorld('config_api', {
    getAppConfig: () => ipcRenderer.invoke('config:getAppConfig'),
    getAppConfigFields: () => ipcRenderer.invoke('config:getAppConfigFields'),
    updateAppConfig: (app_config) => ipcRenderer.invoke('config:updateAppConfig',app_config),
-   setRootFolderPath: (app_config) => ipcRenderer.invoke('config:setRootFolderPath',app_config)
+   setRootFolderPath: (app_config) => ipcRenderer.invoke('config:setRootFolderPath',app_config),
+   isExcludedFolder: (folder_path) => ipcRenderer.invoke('config:isExcludedFolder',folder_path)
 })
 
 contextBridge.exposeInMainWorld('actions_api', {

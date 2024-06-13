@@ -15,7 +15,7 @@ ipcMain.handle('config:getAppConfig',get_app_config)
 ipcMain.handle('config:getAppConfigFields',get_app_config_fields)
 ipcMain.handle('config:updateAppConfig',update_app_config)
 ipcMain.handle('config:setRootFolderPath',set_root_folder_path)
-
+ipcMain.handle('config:isExcludedFolder',is_excluded_folder)
 
 
 
@@ -86,6 +86,22 @@ async function set_root_folder_path(event,app_config_record) {
    return result
 }
 
+
+async function is_excluded_folder(event,folder_path) {
+
+   if(!config_controller_database) return NOTIFY.DATABASE_UNAVAILABLE
+
+   let app_config = new AppConfig(config_controller_database)
+   const app_config_record = await app_config.read_single()
+
+   const root_folder = app_config_record.app_config.root_folder
+   if(folder_path === root_folder) return false
+
+   const excluded_sub_folders = app_config_record.app_config.excluded_sub_folders.split(',')   // csv of sub-folder names
+
+   const folder_paths = excluded_sub_folders.map(folder => `${root_folder}\\${folder}`)
+   return folder_paths.some(path => path === folder_path)
+}
 
 
 
