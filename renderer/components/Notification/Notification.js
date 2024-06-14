@@ -49,7 +49,7 @@ class Notification {
          classlist:['flex','justify_center','p_1']
       })
       const remove_btn = create_button({
-         attributes:[{key:'id',value:'remove_notification_btn'}],
+         classlist:['remove_notification_btn'],
          text:'Remove Notification'
       })
       ctrls.append(remove_btn)
@@ -57,15 +57,17 @@ class Notification {
    }
 
    static activate_ctrls = (elem_selector) => {
-      const remove_notification_btn = document.getElementById('remove_notification_btn')
-      if(remove_notification_btn) {
-         remove_notification_btn.addEventListener('click', async(event) => {
-            const elem_selectors = document.querySelectorAll(elem_selector)
-            if(elem_selectors) {
-               elem_selectors.forEach(elem => {
-                  elem.innerText = ''
-               })
-            }
+      const remove_notification_btns = document.querySelectorAll('.remove_notification_btn')
+      if(remove_notification_btns) {
+         remove_notification_btns.forEach((remove_notification_btn) => {
+            remove_notification_btn.addEventListener('click', async(event) => {
+               const elem_selectors = document.querySelectorAll(elem_selector)
+               if(elem_selectors) {
+                  elem_selectors.forEach(elem => {
+                     elem.innerText = ''
+                  })
+               }
+            })
          })
       }
    }

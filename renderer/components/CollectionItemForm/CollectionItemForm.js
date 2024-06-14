@@ -277,7 +277,11 @@ class CollectionItemForm {
                      this.disable_submit()
 
                      // future : find_file_outcome is defined in FileTypeCheckbox - should be in this class? rollout this file
-                     Notification.notify('#find_file_outcome',`Invalid location - the folder you selected is not within the Collections Folders.`,[],false)
+                     Notification.notify(
+                        '#find_file_outcome',
+                        `Invalid location - the selected folder is not within the Collections Folders or is an excluded sub-folder.`,
+                        [],
+                        false)
                      return
                   }
                }
