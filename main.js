@@ -16,11 +16,13 @@ const path = require('node:path')
 const Database = require('./app/database/database')
 const AppConfig = require('./models/AppConfig')
 const CollectionItem = require('./models/CollectionItem')
+const DatabaseBackup = require('./models/DatabaseBackup')
 const { NOTIFY } = require('./app/utilities/notifications')
 const { notify_client_alert } = require('./app/utilities/client_utilities')
+const { is_valid_snapshot } = require('./app/utilities/database_utilities')
+const { get_sqlready_datetime,days_between } = require('./app/utilities/datetime')
 const is_dev = process.env.NODE_ENV !== 'production'
 const is_mac = process.platform === 'darwin'
-
 
 // the BrowserWindow object
 let main_window
@@ -42,6 +44,9 @@ app.whenReady().then(async() => {
    
    // connect to database, verify the db file exists and we can open it
    let result = await new Database().open_safely()
+
+   console.log('AFTER DATABASE.open_safely()') // to do : remove
+
    if(result.outcome === 'fail') {
       // we notify via alert in renderer, but we don't know if window is ready yet, 
       // so we delay message - inconsequential given infrequency and impact 
@@ -49,31 +54,42 @@ app.whenReady().then(async() => {
    }
    database = result.database
 
-   // workaround for initial setup, we delay house_keeping to allow table creation to complete
-   // future : wait on 'database.open_safely->create_tables' to finish (promisify create_tables sql actions)
-   setTimeout(() => house_keeping(),200)
+   // to do : on-going - not waiting for AppConfig is causing issues - let's clean it up and
+   //         definately wait for it to finish - remove all the setTimeouts below
 
    // AppConfig initialization
    // Requires timeout to wait on previous db initialization completing - tweaked to give plenty of time
-   setTimeout(async() => {
-      try {
-         await new AppConfig(database).initialize_config(database)
+   // setTimeout(async() => {
+   //    try {
+   const app_config= new AppConfig(database)
+   const app_config_result = await app_config.initialize_config(database)
+      // }
+      // catch(error) {
+      //    if(database) {
+      //       // we only notify if the database is valid to prevent multiple notifications if db also failed
+      //       notify_client_alert('AppConfig Initialization failed.\n' + error)
+      //    }
+      // }},500)
+
+      if(app_config_result) {
+         console.log('DDD app_config_result',app_config_result)
       }
-      catch(error) {
-         if(database) {
-            // we only notify if the database is valid to prevent multiple notifications if db also failed
-            notify_client_alert('AppConfig Initialization failed.\n' + error)
-         }
-      }},500)
 
+   console.log('AFTER APPCONFIG INIT') // to do : remove
 
-   // Post-db init, we can configure our Controllers
+   // workaround for initial setup, we delay house_keeping to allow table creation to complete
+   // future : wait on 'database.open_safely->create_tables' to finish (promisify create_tables sql actions)
+   setTimeout(() => house_keeping(),700)
+
+   console.log('AFTER HOUSE KEEPING') // to do : remove
+
+   // require Controllers files
    load_controllers(database)
 
    // Only load Renderer process ONCE the database has been initialized
    // since we will load App with eg root_folder from database -
    // on initial database creation, we need to ensure some delay
-   setTimeout(() => createWindow(),500)
+   setTimeout(() => createWindow(),800)
 })
 
 
@@ -207,14 +223,19 @@ function set_title (event, title) {
 // main process utility funcs
 //
 function house_keeping() {
+
+   // flush
    flush_deleted_items()
+
+   // database snapshot
+   take_database_snapshot()
 }
 
 async function flush_deleted_items() {
 
    if(!database) return NOTIFY.DATABASE_UNAVAILABLE
    
-   console.log(' Flushing Deleted Items')
+   console.log(' Flushing Deleted Items') // to do : formalize intentional console.log calls
 
    const today = new Date()
    const cut_off_date = new Date(new Date().setDate(today.getDate() - 31))
@@ -227,9 +248,43 @@ async function flush_deleted_items() {
 }
 
 
-//
-// house-keeping
-//
+// future : make snapshots folder configurable
+
+async function take_database_snapshot() {
+
+   if(!database) return NOTIFY.DATABASE_UNAVAILABLE
+
+   let app_config = new AppConfig(database)
+   const app_config_record = await app_config.read_single()
+
+   if(app_config_record && app_config_record.app_config) {
+
+      const { snapshot_at,created_at } = app_config_record.app_config// to do : verify obj is here..
+
+      // database just created today, bail
+      if(days_between(created_at) < 1) return false
+
+      if(snapshot_at === null || !is_valid_snapshot(snapshot_at)) {
+
+         const file_name = 'signal-tower-capture-db-backup.sqlite'
+         const file_path = `.\\database\\snapshots\\${file_name}`
+         let database_backup = new DatabaseBackup()
+         const results = await database_backup.create(file_name,file_path)
+
+         if(results && results.outcome === 'success') {
+            console.log('A snapshot database backup was saved.')
+            // register snapshot_at
+            const date_time_stamp = get_sqlready_datetime()
+            app_config.update({id:1,snapshot_at:date_time_stamp})
+         }
+         else {
+            console.log('Attempt to take a snapshot database backup failed')
+         }
+      }
+   }
+}
+
+
 function close_app() {
    if(main_window) {
       main_window.close()
