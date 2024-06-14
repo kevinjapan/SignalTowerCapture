@@ -166,7 +166,6 @@ class Files {
                // update page's context w/ selected folder (there are two props to consider)
                const history = app.get_service('history')
                if(history) {
-                  console.log(event.target)
                   history.augment_current_context(
                      {
                         folder_path:event.target.getAttribute('data-file-path').replace(this.#root_folder,'')
@@ -258,24 +257,10 @@ class Files {
                // assign folder_path to context remove the 'root_folder' part from path
                this.#context.field_filters[0].value = file.path.replace(this.#root_folder,'')
 
-               // Display Files List
-               if(file.type === 'file') {
-                  list_item = create_li({
-                     attributes:[
-                        {key:'data-file-path',value:file.path + '\\' + file.filename},
-                        {key:'data-file-name',value:file.filename}
-                     ],
-                     classlist:['flex','no_wrap','file_item','cursor_pointer','m_0','p_0','text_lg','text_blue'],
-                     text:file.filename
-                  })
-                  list_item.prepend(filetype_icon('file','',
-                     [{key:'data-file-path',value:file.path + '\\' + file.filename},{key:'data-file-name',value:file.filename}]))
-                  files_sub_list.append(list_item)
-               }
                // Display Folders List
-               else if(file.type === 'dir') {
+               if(file.type === 'dir') {
 
-                  // don't add excluded sub_folders
+                  // don't add excluded_sub_folders
                   const is_excluded = await is_excluded_folder(file.path + '\\' + file.filename)
 
                   if(!is_excluded) {
@@ -291,6 +276,20 @@ class Files {
                         [{key:'data-file-path',value:file.path + '\\' + file.filename},{key:'data-file-name',value:file.filename}]))
                      folders_sub_list.append(list_item)
                   }
+               }
+               // Display Files List
+               else if(file.type === 'file') {
+                  list_item = create_li({
+                     attributes:[
+                        {key:'data-file-path',value:file.path + '\\' + file.filename},
+                        {key:'data-file-name',value:file.filename}
+                     ],
+                     classlist:['flex','no_wrap','file_item','cursor_pointer','m_0','p_0','text_lg','text_blue'],
+                     text:file.filename
+                  })
+                  list_item.prepend(filetype_icon('file','',
+                     [{key:'data-file-path',value:file.path + '\\' + file.filename},{key:'data-file-name',value:file.filename}]))
+                  files_sub_list.append(list_item)
                }
             }
             file_list_elem.replaceChildren()
