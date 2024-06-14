@@ -132,14 +132,11 @@ class CollectionItem {
                return field.key
             })
 
-            // to do : review - why use  this.#limit_read_all_records  here - surely limit read() only by this.#items_per_page is desirable
-            //         see this.filter_out_duplicates()
-
             sql = `SELECT ${fields.toString()} 
                      FROM collection_items 
                      WHERE ${status} ${filter_by_char} ${field_filters_sql} 
                      ORDER BY ${order_by}                      
-                     LIMIT ${offset_clause === '' ? this.#limit_read_all_records : this.#items_per_page}
+                     LIMIT ${this.#items_per_page}
                      ${offset_clause}`
 
             this.#database.all(sql, (error, rows) => {
@@ -1208,6 +1205,7 @@ class CollectionItem {
    //
    // Removes duplicates of existing records in a given array list of items
    // the unique key is 'folder_path\\file_name'
+   // read() should only return a single record or none for each query
    //
    filter_out_duplicates = async(collection_items) => {
 
