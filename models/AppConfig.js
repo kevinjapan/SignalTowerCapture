@@ -18,6 +18,7 @@ class AppConfig {
       {key:'root_folder',data_type:'TEXT',editable:true,readonly:true,config_edit:true,in_card:true,desc:DESC.ROOT_FOLDER,is_folder:true,test:{type:'string',min:1,max:255}},
       {key:'recent_records',data_type:'TEXT',editable:true,in_card:false,test:{type:'string',min:1,max:500}},
       {key:'excluded_sub_folders',data_type:'TEXT',editable:true,readonly:false,config_edit:true,in_card:true,desc:DESC.EXCLUDED_SUB_FOLDERS,test:{type:'string',min:0,max:500}},
+      {key:'snapshot_at',data_type:'TEXT',editable:true,readonly:true,config_edit:false,in_card:false,desc:DESC.SNAPSHOT_AT,test:{type:'string',min:0,max:500}},
       {key:'created_at',data_type:'TEXT NOT NULL',editable:false,in_card:false,test:{type:'date',min:10,max:24}},
       {key:'updated_at',data_type:'TEXT NOT NULL',editable:false,in_card:false,test:{type:'date',min:10,max:24}},
       {key:'deleted_at',data_type:'TEXT',editable:false,in_card:false,test:{type:'date',min:10,max:24}},
@@ -39,6 +40,9 @@ class AppConfig {
    }
 
 
+   // future : review purpose and comments on this func
+   // Unlike 'collection_items', we need to seed the 'app_config' table w/ application settings on creation
+
    //
    // initialize the 'app_config' table if empty (we have a single record for config)
    // 
@@ -51,27 +55,25 @@ class AppConfig {
          db.serialize(() => {
             
             let sql = `SELECT COUNT(id) as count FROM app_config`
+
             db.get(sql, (error, rows) => {
                if(error) {
                   reject(error)
-                  return error
                }
                count = rows.count
-               if(count < 1) {
-                  
+
+               // we only seed if no existing record
+               if(count < 1) {                  
                   // AppConfig table
                   // we create a single record containing default App Config data
-                  // this will only run if no existing record (on setup)
-                  
+                  // this will only run if no existing record (on setup)                  
                   const no_id_list = AppConfig.get_full_fields_list().filter((field) => {
                      return field.key !== 'id'
                   })
                   const ac_full_fields_list = no_id_list.map((field) => {
                      return `${field.key}`
                   })
-                  const ac_inserts = ac_full_fields_list.map(() => {
-                     return '?'
-                  })
+                  const ac_inserts = ac_full_fields_list.map(() => '?')
                   const field_values = no_id_list.map((field) => {
                      switch(field.test.type) {
                         case 'date':
@@ -85,23 +87,25 @@ class AppConfig {
 
                   // run(sql [, param, ...] [, callback])
                   db.run(`INSERT INTO app_config (${ac_full_fields_list.toString()}) 
-                        VALUES (${ac_inserts})`,
-                        field_values,
-                        function(error) {
-                           // callback - not only errors!
-                           if(error) {
-                              return reject(error)
-                           }
-                           else {
-                              console.log('AppConfig Initialization')
-                              console.log(' > Successfully completed.')
-                           }
-                       }
+                           VALUES (${ac_inserts})`,
+                           field_values,
+                           function(error) {
+                              // callback - not only errors!
+                              if(error) {
+                                 return reject(error)
+                              }
+                              else {
+                                 console.log('AppConfig Initialization')
+                                 console.log(' > Successfully completed.')
+                                 resolve({outcome:'success'})
+                              }
+                        }
                   )
                }
                else {
                   console.log('AppConfig Initialization')
                   console.log(' > Already completed.')
+                  resolve({outcome:'success'})
                }
             })
          })
@@ -109,44 +113,35 @@ class AppConfig {
          this.set_last_error(error)
          throw error.message
       })
+      return result
    }
    
-
    static default_value(key) {
-
       // get app root folder
       let path = require('path');
       const app_parent_dir = dirname(process.cwd()) 
       const app_folder = path.join(app_parent_dir, '/signal-tower-capture')
 
       switch(key) {
-
          case 'root_folder':
             // root_folder is the Collection Root Folder - so likely outside of our app folders
             return `${app_folder}${path.sep}collection-dataset`
-
          case 'export_folder':
             return `${app_folder}${path.sep}exports`
-
          case 'backup_folder':
             return `${app_folder}${path.sep}backups`
-
          default:
             return ''
       }
    }
 
-
-
    //
    // Current model - we only ever have a single config record - this is a small app.
    //
    async read_single() {
-
       const fields = AppConfig.#full_fields_list.map((field) => {
          return field.key
       })
-
       // wrap in a promise to await result
       let result = await new Promise((resolve,reject) => {
          this.#database.all(
@@ -160,17 +155,10 @@ class AppConfig {
          )
       }).catch((error) => this.set_last_error(error))
 
-      // const in_card_fields = this.#full_fields_list.filter((field) => {
-      //    if(field.in_card === true) return field
-      // })
-      const field_names = AppConfig.#full_fields_list.map((field) => {
-         return field.key
-      })
+      const field_names = AppConfig.#full_fields_list.map((field) => field.key)
       
       // if no rows found, app_config hasn't been initialized
-      if(!result || result.length < 1) {
-         result = false
-      }
+      if(!result || result.length < 1) result = false
       
       if(result) {
          let response_obj = {
@@ -200,6 +188,8 @@ class AppConfig {
    //
    async update(app_config_record) {
 
+      console.log('app_config.update()',app_config_record)
+
       let designated_fields = []
 
       // get meta data (blueprints) for all editable fields
@@ -224,6 +214,8 @@ class AppConfig {
       let field_names = designated_fields.map((field) => {
          return field.key
       })
+
+      console.log('aye',field_names)
 
       if(field_names.length > 0) {      
 

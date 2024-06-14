@@ -11,7 +11,9 @@ const DESC = {
    EXCLUDED_SUB_FOLDERS: 
       `Exclude sub-folders of the root_folder from the Collection Data Set. 
        Files in these folders will be ignored by the system.
-       Enter a list of comma-separated values for names of the folders you wish to exclude from the system.`
+       Enter a list of comma-separated values for names of the folders you wish to exclude from the system.`,
+   SNAPSHOT_AT:
+      `Database snapshot backup.`
 }
 
 module.exports = {

@@ -3,6 +3,7 @@ const CollectionItemFTS = require('../../models/CollectionItemFTS')
 const Tag = require('../../models/Tag')
 const AppConfig = require('../../models/AppConfig')
 const ActionsLog = require('../../models/ActionsLog')
+const { get_sqlready_datetime,days_between } = require('./datetime')
 
 
 const get_full_fields = table_name => {
@@ -128,11 +129,22 @@ const get_table_insert_fields = (table_name) => {
 
 
 
+//
+// We consider db snapshots invalid after 'snapshot_valid_for' days, and hence replace
+//
+const is_valid_snapshot = (date_time_stamp) => {
+   if(!date_time_stamp || date_time_stamp === '') return false
+   const snapshot_valid_for = 2   // to do : move to 'app_config' db table  -  set to 7 (it's 2 for dev purposes)
+   const today = get_sqlready_datetime()
+   const days_btwn = days_between(date_time_stamp,today)
+   return days_btwn < snapshot_valid_for
+}
 
 
 
 module.exports = {
    get_full_fields,
    get_table_create_fields,
-   get_table_insert_fields
+   get_table_insert_fields,
+   is_valid_snapshot
 }
