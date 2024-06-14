@@ -185,7 +185,7 @@ class Tags {
             app.switch_to_component('Error',{
                msg:'Sorry, we were unable to access the Records.',
                error:error
-            })
+            },false)
          }
       }
       else {

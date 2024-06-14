@@ -162,7 +162,7 @@ class Browse {
                else {
                   app.switch_to_component('Error',{
                      msg:'Sorry, we were unable to process an invalid response from the main process in Browse.'
-                  })
+                  },false)
                }
             }
             else {
@@ -173,7 +173,7 @@ class Browse {
             app.switch_to_component('Error',{
                msg:'Sorry, we were unable to access the Records.',
                error:error
-            })
+            },false)
          }
       }
    }

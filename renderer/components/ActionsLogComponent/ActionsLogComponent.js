@@ -106,7 +106,7 @@ class ActionsLogComponent {
             msg:'Sorry, we were unable to access the Records.',
             error:error
          }
-         app.switch_to_component('Error',props)
+         app.switch_to_component('Error',props,false)
       }
 
    }

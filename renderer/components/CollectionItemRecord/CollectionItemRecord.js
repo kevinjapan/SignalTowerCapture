@@ -228,21 +228,21 @@ class CollectionItemRecord {
                      else {
                         app.switch_to_component('Error',{
                            msg:'Sorry, we were unable to process an invalid response from the main process in CollectionItemRecord.'
-                        })
+                        },false)
                      }
                   }
                   else {
                      app.switch_to_component('Error',{
                         msg:'Sorry, we were unable to locate the Record.',
                         error:error
-                     })
+                     },false)
                   }
                }
                catch(error) {
                   app.switch_to_component('Error',{
                      msg:'Sorry, we were unable to locate the Record.',
                      error:error
-                  })
+                  },false)
                }
             })
          })
@@ -280,14 +280,14 @@ class CollectionItemRecord {
             app.switch_to_component('Error',{
                msg:'Sorry, we were unable to access the Record.',
                error:error
-            })
+            },false)
          }
       }
       catch(error) {
          app.switch_to_component('Error',{
             msg:'Sorry, we were unable to access the Record.',
             error:error
-         })
+         },false)
       }
    }
 
@@ -302,14 +302,14 @@ class CollectionItemRecord {
             app.switch_to_component('Error',{
                msg:'Sorry, we were unable to access the Record.',
                error:error
-            })
+            },false)
          }
       }
       catch(error) {
          app.switch_to_component('Error',{
             msg:'Sorry, we were unable to access the Record.',
             error:error
-         })
+         },false)
       }
    }
 

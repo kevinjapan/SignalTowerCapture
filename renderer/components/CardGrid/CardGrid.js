@@ -70,7 +70,7 @@ class CardGrid {
                         else {
                            app.switch_to_component('Error',{
                               msg:'Sorry, we were unable to process an invalid response from the main process in CollectionItemCard.'
-                           })
+                           },false)
                         }
                      }
                      else {
@@ -81,12 +81,12 @@ class CardGrid {
                      app.switch_to_component('Error',{
                         msg:'Sorry, we were unable to access the Records from the CollectionItemCard',
                         error:error
-                     })
+                     },false)
                   }
                }
                else {
                   let props = {msg:'Sorry, no valid id was provided for the Collection Item in ColletionItemCard.'}
-                  app.switch_to_component('Error',props)
+                  app.switch_to_component('Error',props,false)
                }
             })
          })

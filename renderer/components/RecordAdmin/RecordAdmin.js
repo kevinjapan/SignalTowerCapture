@@ -85,7 +85,7 @@ class RecordAdmin {
                      msg:'Sorry, we were unable to delete the Record.',
                      error:error
                   }
-                  app.switch_to_component('Error',props)
+                  app.switch_to_component('Error',props,false)
                }
             }
          })
@@ -111,7 +111,7 @@ class RecordAdmin {
                app.switch_to_component('Error',{
                   msg:'Sorry, we were unable to delete the Record.',
                   error:error
-               })
+               },false)
             }
          })
       }

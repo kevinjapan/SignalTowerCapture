@@ -193,7 +193,7 @@ class CollectionItemForm {
                         app.switch_to_component('Error',{
                            msg:'Sorry, we were unable to locate the Record.',
                            error:error
-                        })
+                        },false)
                      }
                   }
                   else {
@@ -235,13 +235,13 @@ class CollectionItemForm {
                      app.switch_to_component('Error',{
                         msg:'Sorry, we were unable to locate the Record.',
                         error:error
-                     })
+                     },false)
                   }
                }
                else {
                   app.switch_to_component('Error',{
                      msg:'Sorry, we were unable to locate the Record.'
-                  })
+                  },false)
                }
             })
          })
@@ -342,7 +342,7 @@ class CollectionItemForm {
                      else {
                         app.switch_to_component('Error',{
                            msg:'Sorry, we were unable to process an invalid response from the main process in CollectionItemForm.'
-                        })
+                        },false)
                      }
                   }
                   else {
@@ -353,7 +353,7 @@ class CollectionItemForm {
                   app.switch_to_component('Error',{
                      msg:'Sorry, we were unable to access the Records.',
                      error:error
-                  })
+                  },false)
                }
             }
             else {
