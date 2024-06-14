@@ -21,9 +21,7 @@ class BreadCrumbNav {
    render = () => {
 
       const breadcrumb = create_div({
-         attributes:[
-            {key:'id',value:'breadcrumb_nav'},
-         ],
+         attributes:[{key:'id',value:'breadcrumb_nav'},],
          classlist:['p_1','text_lg'],
          text:'Please select a folder.'
       })

@@ -106,14 +106,18 @@ export const build_img_elem = (file_path,alt_text = 'image',attributes = [],clas
    return img
 }
 
-export const filetype_icon = (id,filetype,ext = 'unknown') => {
+export const filetype_icon = (filetype,ext = 'unknown',attributes = [],classlist = []) => {
    const icon = filetype.toUpperCase() === 'FILE' ? 'imgs\\filetypes\\file.svg' : 'imgs\\icons\\folder.svg'              
-   return build_img_elem(icon,`${filetype.toUpperCase() === 'DIR' ? 'Folder' : ext} filetype`,[{key:'height',value:'14px'}],['pr_0.25','pt_0.3']) 
+   return build_img_elem(icon,`${filetype.toUpperCase() === 'DIR' ? 'Folder' : ext} filetype`,
+      [{key:'height',value:'14px'},...attributes],
+      ['pr_0.25','pt_0.3',...classlist]) 
 }
 
-const folder_icon = (folder_icon_type) => {
+const folder_icon = (folder_icon_type,attributes = [],classlist = []) => {
    const icon = folder_icon_type.toUpperCase() === 'DIR' ? 'imgs\\icons\\folder.svg' : 'imgs\\icons\\folder2-open.svg'
-   return build_img_elem(icon,`${folder_icon_type.toUpperCase() === 'DIR' ? 'Folder' : 'Open Folder'}`,[{key:'height',value:'14px'}],['pr_0.25','pt_0.3']) 
+   return build_img_elem(icon,`${folder_icon_type.toUpperCase() === 'DIR' ? 'Folder' : 'Open Folder'}`,
+      [{key:'height',value:'14px'},...attributes],
+      ['pr_0.25','pt_0.3'],...classlist) 
 }
 
 export const icon = (icon_name,attributes = [],classes = []) => {
@@ -271,7 +275,7 @@ export const linked_path = (root_folder,path) => {
       classlist:['folder_path_link','cursor_pointer','pl_0.25','text_blue'],
       text:root_folder.substring(root_folder.lastIndexOf('\\') + 1)
    })   
-   display_path_elem.prepend(filetype_icon(root_folder_link,'dir'))
+   display_path_elem.prepend(filetype_icon('dir'))
    display_path_elem.append(root_folder_link,truncated_spacer)
 
    // folder link elements

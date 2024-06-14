@@ -166,6 +166,7 @@ class Files {
                // update page's context w/ selected folder (there are two props to consider)
                const history = app.get_service('history')
                if(history) {
+                  console.log(event.target)
                   history.augment_current_context(
                      {
                         folder_path:event.target.getAttribute('data-file-path').replace(this.#root_folder,'')
@@ -235,8 +236,8 @@ class Files {
 
       if(folder_obj.files_list && folder_obj.files_list.length > 0) {
 
-         let list = create_ul({classlist:['flex','no_wrap','flex_col','gap_0.5','m_0','p_0','pb_0.5']})
-         let list2 = create_ul({classlist:['flex','no_wrap','flex_col','gap_0.5','m_0','p_0','pb_0.5']})
+         let folders_sub_list = create_ul({classlist:['flex','no_wrap','flex_col','gap_0.5','m_0','p_0','pb_0.5']})
+         let files_sub_list = create_ul({classlist:['flex','no_wrap','flex_col','gap_0.5','m_0','p_0','pb_0.5']})
 
          // escape spaces in target 'folder_path'
          const escaped_folder_path = folder_obj.files_list[0].path.split(/\ /).join('\ ');
@@ -267,8 +268,9 @@ class Files {
                      classlist:['flex','no_wrap','file_item','cursor_pointer','m_0','p_0','text_lg','text_blue'],
                      text:file.filename
                   })
-                  list_item.prepend(filetype_icon(file.filename,'file'))
-                  list2.append(list_item)
+                  list_item.prepend(filetype_icon('file','',
+                     [{key:'data-file-path',value:file.path + '\\' + file.filename},{key:'data-file-name',value:file.filename}]))
+                  files_sub_list.append(list_item)
                }
                // Display Folders List
                else if(file.type === 'dir') {
@@ -285,21 +287,22 @@ class Files {
                         classlist:['flex','no_wrap','folder_item','cursor_pointer','m_0','p_0','text_lg','text_blue'],
                         text: file.filename
                      })
-                     list_item.prepend(filetype_icon(file.filename,'dir'))
-                     list.append(list_item)
+                     list_item.prepend(filetype_icon('dir','',
+                        [{key:'data-file-path',value:file.path + '\\' + file.filename},{key:'data-file-name',value:file.filename}]))
+                     folders_sub_list.append(list_item)
                   }
                }
             }
             file_list_elem.replaceChildren()
 
             // assemble
-            if(list.hasChildNodes()) {
-               if(file_list_elem) file_list_elem.append(list)
+            if(folders_sub_list.hasChildNodes()) {
+               if(file_list_elem) file_list_elem.append(folders_sub_list)
             }
-            if(list2.hasChildNodes()) {
-               if(file_list_elem) file_list_elem.append(list2)
+            if(files_sub_list.hasChildNodes()) {
+               if(file_list_elem) file_list_elem.append(files_sub_list)
             }
-            if(!list.hasChildNodes() && !list2.hasChildNodes()) {
+            if(!folders_sub_list.hasChildNodes() && !files_sub_list.hasChildNodes()) {
                let msg = create_div({text:'There are no files in this folder.'})
                if(file_list_elem) file_list_elem.replaceChildren(msg)
             }
