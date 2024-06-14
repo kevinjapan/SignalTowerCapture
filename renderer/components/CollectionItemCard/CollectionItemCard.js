@@ -118,9 +118,6 @@ class CollectionItemCard {
                   const record_card_image_wrap = create_div({
                      classlist:['record_card_image_wrap']
                   })
-
-                  // to do : we get error if file doesn't exist on first row load?
-                  //         replicate and catch the error before preventing it!
                   
                   // we load first row (4 images) immediately to force grid to start assuming footprint on first render
                   // while further rows' images are loaded using Intersection Observer - init_card_img_loads()
@@ -128,6 +125,7 @@ class CollectionItemCard {
                   // - allowing user to view and read Card text while still waiting for images to load
                   // - we may 'overwrite' placeholder w/ 'no matching file..', but UX payoff is worth it
                   // - layout is good and as quick as we can make it
+                  // so, is this Card on the first row..
                   const img_file_path =  this.#props.card_index < 4 ? file_path : placeholder_file_path
 
                   if(is_img_ext(file_part)) {

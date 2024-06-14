@@ -268,7 +268,8 @@ class CollectionItemForm {
                let folder_path = document.getElementById('folder_path')
                if(folder_path) {
 
-                  const is_excluded = await is_excluded_folder(path)     // to do : move below to 'if' 
+                  const is_excluded = await is_excluded_folder(path)
+                  
                   // verify file is within root_folder and not in Settings.exluded_folders
                   if(path.indexOf(this.#root_folder) === 0 && !is_excluded) {                        
                      folder_path.value = path.replace(this.#root_folder,'') // relative path
@@ -300,6 +301,7 @@ class CollectionItemForm {
 
                try {                
                   const collection_items_obj = await window.collection_items_api.getItems(context)
+                  
                   if (typeof collection_items_obj != "undefined" && collection_items_obj.outcome === 'success') {                        
                      if(await is_valid_response_obj('read_collection_items',collection_items_obj)) {
 
