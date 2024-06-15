@@ -105,13 +105,13 @@ class AppConfig {
                }
                else {
                   app_console_log('AppConfig Initialization')
-                  app_console_log(' > completed')
+                  app_console_log(' > already exists')
                   resolve({outcome:'success'})
                }
             })
          })
       }).catch((error) => {
-         this.set_last_error(error) // to do : verify - we are not try..catching this now - so change this here
+         this.set_last_error(error)
          throw error.message
       })
       return result
