@@ -55,11 +55,17 @@ const title_from_file_name = (file_name) => {
    return candidate_arr.join(' ')
 }
 
+// Display activation messages to console
+const app_console_log = (msg) => {
+   console.log(msg)
+}
+
 
 module.exports = {
    get_random_int,
    assoc_arr_obj,
    chunk_array,
    title_from_file_name,
-   file_name_from_path
+   file_name_from_path,
+   app_console_log
 }

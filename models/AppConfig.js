@@ -1,6 +1,7 @@
 const { dirname } = require('node:path')
 const { get_sqlready_datetime } = require('../app/utilities/datetime')
 const { get_random_int } = require('../app/utilities/utilities')
+const { app_console_log } = require('../app/utilities/utilities')
 const { DESC } = require('../app/utilities/descriptions')
 
 
@@ -63,7 +64,7 @@ class AppConfig {
                count = rows.count
 
                // we only seed if no existing record
-               if(count < 1) {                  
+               if(count > 1) {                  
                   // AppConfig table
                   // we create a single record containing default App Config data
                   // this will only run if no existing record (on setup)                  
@@ -95,22 +96,22 @@ class AppConfig {
                                  return reject(error)
                               }
                               else {
-                                 console.log('AppConfig Initialization')
-                                 console.log(' > Successfully completed.')
+                                 app_console_log('AppConfig Initialization')
+                                 app_console_log(' > completed')
                                  resolve({outcome:'success'})
                               }
                         }
                   )
                }
                else {
-                  console.log('AppConfig Initialization')
-                  console.log(' > Already completed.')
+                  app_console_log('AppConfig Initialization')
+                  app_console_log(' > completed')
                   resolve({outcome:'success'})
                }
             })
          })
       }).catch((error) => {
-         this.set_last_error(error)
+         this.set_last_error(error) // to do : verify - we are not try..catching this now - so change this here
          throw error.message
       })
       return result
@@ -188,8 +189,6 @@ class AppConfig {
    //
    async update(app_config_record) {
 
-      console.log('app_config.update()',app_config_record)
-
       let designated_fields = []
 
       // get meta data (blueprints) for all editable fields
@@ -214,8 +213,6 @@ class AppConfig {
       let field_names = designated_fields.map((field) => {
          return field.key
       })
-
-      console.log('aye',field_names)
 
       if(field_names.length > 0) {      
 

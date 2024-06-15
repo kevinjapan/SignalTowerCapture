@@ -1,5 +1,6 @@
 const { get_sqlready_datetime,get_sqlready_date_from_js_date } = require('../app/utilities/datetime')
 const { get_status_condition_sql,get_order_by_condition_sql } = require('../app/utilities/search_utilities')
+const { app_console_log } = require('../app/utilities/utilities')
 
 
 
@@ -567,7 +568,7 @@ class Tag {
    async flush_deleted(cut_off_date) {
 
       let str_date = get_sqlready_date_from_js_date(cut_off_date)
-      console.log(' > Permanently deleting all Tag records soft deleted before',str_date)
+      app_console_log(' > Permanently deleting Tag records before',str_date)
 
       // verify date
       try {
@@ -597,7 +598,7 @@ class Tag {
          return {
             query:'flush_deleted',
             outcome:'success',
-            message:'The records were successfully and permanently deleted.'
+            message:' > completed'
          }
       }
       else {
