@@ -10,8 +10,6 @@ import { is_valid_response_obj } from '../../utilities/ui_response.js'
 
 class CardGrid {
 
-   #props
-
    #element_id
 
    constructor(element_id) {
@@ -31,8 +29,6 @@ class CardGrid {
 
       return grid
    }
-
-   // t do : this.#props - what was Browse previously passing in?
 
    activate = () => {
          
@@ -54,8 +50,7 @@ class CardGrid {
                            if(component_container) {
                               let record_props = {
                                  fields:collection_item_fields,
-                                 item:collection_item,
-                                 ...this.#props
+                                 item:collection_item
                               }
                               // we hydrate context for target CollectionItemRecord here since we need to inject 'id' into History context
                               record_props.context = {key:'Record',id:collection_item.id}

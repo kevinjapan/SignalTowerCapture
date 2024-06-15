@@ -1,4 +1,5 @@
 import { app } from '../../renderer.js'
+import CardGrid from '../CardGrid/CardGrid.js'
 import CollectionItemCard from '../CollectionItemCard/CollectionItemCard.js'
 import CollectionItemInjectForm from '../CollectionItemInjectForm/CollectionItemInjectForm.js'
 import { init_card_img_loads,no_root_folder } from '../../utilities/ui_utilities.js'
@@ -13,6 +14,12 @@ import { create_section,create_div } from '../../utilities/ui_elements.js'
 class FileInjector {
 
    #props
+   
+   // CardGrid object
+   #card_grid_obj
+
+   // 
+   #card_wrapper_elem
 
    constructor(props) {
       this.#props = props
@@ -24,6 +31,11 @@ class FileInjector {
       if(this.#props.root_folder === '') return no_root_folder()
 
       let file_injector = create_section()
+
+      
+      // grid wrapper
+      this.#card_grid_obj = new CardGrid('card_wrapper')
+      this.#card_wrapper_elem = this.#card_grid_obj.render()
 
       const outcome_classes = ['bg_lightgrey','mt_1','pl_1','pr_1']
       const outcome_attrs = [{key:'id',value:'export_csv_outcome'}]
@@ -49,12 +61,16 @@ class FileInjector {
          file_injector.append(check_outcome)
 
          const collection_item_card = new CollectionItemCard(this.#props)
-         file_injector.appendChild(collection_item_card.render(record_fields,matching_folder_record))
+         // file_injector.appendChild(collection_item_card.render(record_fields,matching_folder_record))
+         this.#card_wrapper_elem.appendChild(collection_item_card.render(record_fields,matching_folder_record))
+         file_injector.append(this.#card_wrapper_elem) 
       }
       else if(matching_file_record) {
          // a matching record for this file was found
          const collection_item_card = new CollectionItemCard(this.#props)
-         file_injector.appendChild(collection_item_card.render(record_fields,matching_file_record))       
+         // file_injector.appendChild(collection_item_card.render(record_fields,matching_file_record))   
+         this.#card_wrapper_elem.appendChild(collection_item_card.render(record_fields,matching_file_record))
+         file_injector.append(this.#card_wrapper_elem) 
       }
       else {
          // no matching record was found for this file
@@ -67,6 +83,14 @@ class FileInjector {
    // enable buttons/links displayed in the render
    activate = () => {
       init_card_img_loads()
+      this.#card_grid_obj.activate()
+      
+      const collection_item_cards = document.querySelectorAll('.collection_item_card')   
+      if(collection_item_cards) {   
+         collection_item_cards.forEach(card => {
+            card.classList.add('box_shadow')
+         })
+      }
    }
 }
 
