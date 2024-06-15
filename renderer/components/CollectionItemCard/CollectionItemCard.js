@@ -50,6 +50,7 @@ class CollectionItemCard {
          if(Array.isArray(fields)) {    
 
             fields.forEach(async(field) => {
+            // for(const field of fields) {
 
                // field value
                let field_value = item[field.key]
@@ -119,14 +120,13 @@ class CollectionItemCard {
                      classlist:['record_card_image_wrap']
                   })
                   
-                  // we load first row (4 images) immediately to force grid to start assuming footprint on first render
-                  // while further rows' images are loaded using Intersection Observer - init_card_img_loads()
+                  // we load first row (4 imgs) immediately to make grid assume footprint on first render
+                  // (further rows' images are loaded using Intersection Observer - see init_card_img_loads)
                   // we use placeholders to generate layout in good time (avoiding patchy rendering) below the fold
-                  // - allowing user to view and read Card text while still waiting for images to load
-                  // - we may 'overwrite' placeholder w/ 'no matching file..', but UX payoff is worth it
-                  // - layout is good and as quick as we can make it
-                  // so, is this Card on the first row..
-                  const img_file_path =  this.#props.card_index < 4 ? file_path : placeholder_file_path
+                  // to do : temp disabled - review and see if we really need this improvement
+                  //         if yes, best to refactor this component
+                  // if 'file not found', throws error in console - but no impact on user and correctly notifies on UI
+                  const img_file_path =  placeholder_file_path //this.#props.card_index < 4 ? file_path : placeholder_file_path
 
                   if(is_img_ext(file_part)) {
                      // process img file
@@ -163,6 +163,7 @@ class CollectionItemCard {
                      }
                   }
 
+                  // since we are in a forEach loop, this check effectively runs as a background task, but does resolve
                   if(!await file_exists(file_path)) {
                      const no_file_icon_img = build_img_elem('imgs\\icons\\exclamation-square.svg',`item date`,[{key:'height',value:'24px'}],['bg_yellow_100','mt_5','opacity_.6'])
                      let msg = create_div({
@@ -171,6 +172,7 @@ class CollectionItemCard {
                      })
                      img_block.replaceChildren(no_file_icon_img,msg)
                   }
+
                   if(field_value) {
                      field_element = create_div({
                         classlist:['break_words','text_grey','align_self_end','mt_auto'],
