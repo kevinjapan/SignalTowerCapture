@@ -18,6 +18,7 @@ const AppConfig = require('./models/AppConfig')
 const CollectionItem = require('./models/CollectionItem')
 const DatabaseBackup = require('./models/DatabaseBackup')
 const { NOTIFY } = require('./app/utilities/notifications')
+const { app_console_log } = require('./app/utilities/utilities')
 const { notify_client_alert } = require('./app/utilities/client_utilities')
 const { is_valid_snapshot } = require('./app/utilities/database_utilities')
 const { get_sqlready_datetime,days_between } = require('./app/utilities/datetime')
@@ -36,6 +37,9 @@ let database
 //
 app.whenReady().then(async() => {
 
+   app_console_log('Starting Signal Tower Capture')
+   app_console_log('-----------------------------')
+
    ipcMain.on('set-title', set_title)
 
    if (process.platform === 'win32') {
@@ -45,43 +49,20 @@ app.whenReady().then(async() => {
    // connect to database, verify the db file exists and we can open it
    let result = await new Database().open_safely()
 
-   console.log('AFTER DATABASE.open_safely()') // to do : remove
-
    if(result.outcome === 'fail') {
       // we notify via alert in renderer, but we don't know if window is ready yet, 
       // so we delay message - inconsequential given infrequency and impact 
-      setTimeout(()=> notify_client_alert(result.message),2000)
+      setTimeout(()=> notify_client_alert(result.message),1500)
    }
    database = result.database
 
-   // to do : on-going - not waiting for AppConfig is causing issues - let's clean it up and
-   //         definately wait for it to finish - remove all the setTimeouts below
-
    // AppConfig initialization
-   // Requires timeout to wait on previous db initialization completing - tweaked to give plenty of time
-   // setTimeout(async() => {
-   //    try {
    const app_config= new AppConfig(database)
    const app_config_result = await app_config.initialize_config(database)
-      // }
-      // catch(error) {
-      //    if(database) {
-      //       // we only notify if the database is valid to prevent multiple notifications if db also failed
-      //       notify_client_alert('AppConfig Initialization failed.\n' + error)
-      //    }
-      // }},500)
 
-      if(app_config_result) {
-         console.log('DDD app_config_result',app_config_result)
-      }
+   if(app_config_result.outcome !== 'success') app_console_log('AppConfig initialization failed.')
 
-   console.log('AFTER APPCONFIG INIT') // to do : remove
-
-   // workaround for initial setup, we delay house_keeping to allow table creation to complete
-   // future : wait on 'database.open_safely->create_tables' to finish (promisify create_tables sql actions)
-   setTimeout(() => house_keeping(),700)
-
-   console.log('AFTER HOUSE KEEPING') // to do : remove
+   house_keeping()
 
    // require Controllers files
    load_controllers(database)
@@ -89,7 +70,7 @@ app.whenReady().then(async() => {
    // Only load Renderer process ONCE the database has been initialized
    // since we will load App with eg root_folder from database -
    // on initial database creation, we need to ensure some delay
-   setTimeout(() => createWindow(),800)
+   setTimeout(() => createWindow(),400)
 })
 
 
@@ -235,7 +216,7 @@ async function flush_deleted_items() {
 
    if(!database) return NOTIFY.DATABASE_UNAVAILABLE
    
-   console.log(' Flushing Deleted Items') // to do : formalize intentional console.log calls
+   app_console_log(' Flushing Deleted Items')
 
    const today = new Date()
    const cut_off_date = new Date(new Date().setDate(today.getDate() - 31))
@@ -243,7 +224,7 @@ async function flush_deleted_items() {
 
    const results = await collection_item.flush_deleted(cut_off_date)
 
-   console.log(' >',results.message)
+   app_console_log(` > ${results.message}`)
    return results
 }
 
@@ -259,9 +240,9 @@ async function take_database_snapshot() {
 
    if(app_config_record && app_config_record.app_config) {
 
-      const { snapshot_at,created_at } = app_config_record.app_config// to do : verify obj is here..
+      const { snapshot_at,created_at } = app_config_record.app_config
 
-      // database just created today, bail
+      // database was just created today!, so we bail
       if(days_between(created_at) < 1) return false
 
       if(snapshot_at === null || !is_valid_snapshot(snapshot_at)) {
@@ -272,13 +253,13 @@ async function take_database_snapshot() {
          const results = await database_backup.create(file_name,file_path)
 
          if(results && results.outcome === 'success') {
-            console.log('A snapshot database backup was saved.')
+            app_console_log('A snapshot database backup was saved')
             // register snapshot_at
             const date_time_stamp = get_sqlready_datetime()
             app_config.update({id:1,snapshot_at:date_time_stamp})
          }
          else {
-            console.log('Attempt to take a snapshot database backup failed')
+            app_console_log('Attempt to take a snapshot database backup failed')
          }
       }
    }
