@@ -143,9 +143,9 @@ class Tags {
                      }
                      const collection_item_card = new CollectionItemCard(props)
                      if(Array.isArray(collection_items_obj.collection_items)) {
-                        collection_items_obj.collection_items.forEach((item) => {        
+                        for(const item of collection_items_obj.collection_items) { 
                            this.#tags_results_container.appendChild(collection_item_card.render(collection_items_obj.collection_item_fields,item))
-                        })
+                        }
                      }
          
                      // retain some spacing on short lists

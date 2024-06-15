@@ -134,9 +134,9 @@ class Search {
                      const collection_item_card = new CollectionItemCard(props)
 
                      if(Array.isArray(collection_items)) {
-                        collection_items.forEach((item) => {        
+                        for(const item of collection_items) {         
                            this.#search_results_container.appendChild(collection_item_card.render(collection_item_fields,item))
-                        })
+                        }
                      }
          
                      // retain some spacing on short lists

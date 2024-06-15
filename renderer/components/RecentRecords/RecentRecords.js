@@ -116,10 +116,10 @@ class RecentRecords {
                         root_folder: this.#root_folder,
                         context: this.#context
                      }
-                     const collection_item_card = new CollectionItemCard(props) 
-                     ordered_items.forEach((item) => {  
+                     const collection_item_card = new CollectionItemCard(props)
+                     for(const item of ordered_items) { 
                         this.#results_container.appendChild(collection_item_card.render(collection_item_fields,item))
-                     })
+                     }
          
                      // retain some spacing on short lists
                      this.#results_container.style.minHeight = '70vh'

@@ -131,13 +131,17 @@ class Browse {
                      }
 
                      if(Array.isArray(collection_items)) {
-                        collection_items.forEach((item,index) => {
+                        let index = 0
+                        for(const item of collection_items) {
                            const collection_item_card = new CollectionItemCard({
                               root_folder:this.#root_folder,
-                              card_index:index
-                           }) 
+                              card_index:index++
+                           })
+                           // to do : copy pattern here for .render() to all client components/pages
+                           //         on-going review - do we need first row pre-loading of Cards?
+                           //                         - do we need that happening inside CollectionItemCard?
                            this.#browse_results_container.append(collection_item_card.render(collection_item_fields,item))
-                        })
+                        }
                      }
 
                      const page_navs = document.querySelectorAll('.page_nav')
