@@ -60,6 +60,27 @@ const app_console_log = (msg) => {
    console.log(msg)
 }
 
+// 
+// internal file_exists     
+// to do : on-going - verify - once settled, call this from FilesController.file_exists
+//
+const file_exists_ = async(file_path) => {
+
+   const fs = require('fs')
+   try {
+      await fs.promises.access(file_path.trim())
+      return {
+         outcome:'success'
+      }
+   }
+   catch(error) {
+      return {
+         outcome:'fail'
+      }
+   }
+}
+
+
 
 module.exports = {
    get_random_int,
@@ -67,5 +88,6 @@ module.exports = {
    chunk_array,
    title_from_file_name,
    file_name_from_path,
-   app_console_log
+   app_console_log,
+   file_exists_
 }
