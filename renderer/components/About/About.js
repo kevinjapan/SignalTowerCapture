@@ -27,10 +27,11 @@ class About {
       })
       about_section.append(page_banner.render())
 
-      const heading = create_h({
-         level:'h1',
-         text:'About'
+      const page_content = create_section({
+         classlist:['mx_2']
       })
+
+
       const section_heading = create_h({
          level:'h2',
          classlist:['logo_heading'],
@@ -42,7 +43,10 @@ class About {
       })
 
       const lead_text = create_p({
-         text:`Signal Tower Capture is a desktop digital collections solution for managing files and folders on your local machine and referencing these to your local on-site collection. It is ideally suited for smaller museums or archives where you need a simple solution with zero-overheads and simplicity of use.`
+         text:`Signal Tower Capture is a desktop digital collections solution for managing files and 
+               folders on your local machine and referencing these to your local on-site collection. 
+               It is ideally suited for smaller museums or archives where you need a simple solution 
+               with zero-overheads and simplicity of use.`
       })
       
       const tech_heading = create_h({
@@ -54,7 +58,8 @@ class About {
       })
       
       // assemble
-      about_section.append(heading,section_heading,tagline,lead_text,tech_heading,tech_text)
+      page_content.append(section_heading,tagline,lead_text,tech_heading,tech_text)
+      about_section.append(page_content)
       return about_section
    }
 
