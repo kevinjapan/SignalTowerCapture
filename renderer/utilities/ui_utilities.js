@@ -358,3 +358,10 @@ export const is_excluded_folder = async (folder_path) => {
    const result = await window.config_api.isExcludedFolder(folder_path)
    return result
 }
+
+export const build_full_path = (root_folder,folder_path,file_name) => {
+   const root_part = trim_end_char(root_folder,'\\')
+   let relative_folder_part = trim_char(folder_path,'\\')
+   if(relative_folder_part !== '') relative_folder_part += '\\' // files in root folder
+   return `${root_part}\\${relative_folder_part}${file_name}`
+}
