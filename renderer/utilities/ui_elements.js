@@ -56,19 +56,16 @@ export const create_a = (props) => {
 export const create_h = (props) => {
    let valid_headings = ['h1','h2','h3','h4','h5','h6']   
    let heading_elem
-   if(typeof props.level !== 'undefined') {
-      if(valid_headings.some(valid_heading => {
-         return props.level === valid_heading
-      })) {
-         heading_elem = document.createElement(props.level)
-      }
-      else {
-         heading_elem = document.createElement('h3')
-      }
-      hydrate_element(heading_elem,props)
-      return heading_elem
+   if(props.level && valid_headings.some(valid_heading => {
+      return props.level === valid_heading
+   })) {
+      heading_elem = document.createElement(props.level)
    }
-   return null
+   else {
+      heading_elem = document.createElement('h3')
+   }
+   hydrate_element(heading_elem,props)
+   return heading_elem
 }
 
 
