@@ -70,7 +70,7 @@ class Files {
       // folder/file panels
       const file_list_elem = create_div({
          attributes:[{key:'id',value:'file_list_elem'}],
-         classlist:['bg_white','box_shadow','rounded','m_0','p_0.5','overflow_auto','h_80','text_sm','text_grey']
+         classlist:['bg_white','box_shadow','rounded','m_0','p_1','overflow_auto','max_h_70','text_sm','text_grey']
       })
       const file_view = create_div({
          attributes:[{key:'id',value:'file_view'}],
@@ -131,7 +131,10 @@ class Files {
                const file_view = document.getElementById('file_view')
                const folder_path_filter = this.#context.field_filters.find(filter => filter.field = 'folder_path' )
 
-               // const path = event.target.getAttribute('data-file-path').replace(this.#root_folder,'')            
+               // const path = event.target.getAttribute('data-file-path').replace(this.#root_folder,'')
+               
+               this.deselect_list_items()
+               this.select_list_item(event.target)
                // this.open_folder(path)
                if(file_view) {
                   let props = {
@@ -269,7 +272,7 @@ class Files {
                            {key:'data-file-path',value:file.path + '\\' + file.filename},
                            {key:'data-file-name',value:file.filename}
                         ],
-                        classlist:['flex','no_wrap','folder_item','cursor_pointer','m_0','p_0','text_lg','text_blue'],
+                        classlist:['flex','no_wrap','folder_item','cursor_pointer','m_0','p_0','text_blue'],
                         text: file.filename
                      })
                      list_item.prepend(filetype_icon('dir','',
@@ -284,7 +287,7 @@ class Files {
                         {key:'data-file-path',value:file.path + '\\' + file.filename},
                         {key:'data-file-name',value:file.filename}
                      ],
-                     classlist:['flex','no_wrap','file_item','cursor_pointer','m_0','p_0','text_lg','text_blue'],
+                     classlist:['flex','no_wrap','file_item','cursor_pointer','m_0','p_0','text_blue'],
                      text:file.filename
                   })
                   list_item.prepend(filetype_icon('file','',
@@ -346,6 +349,20 @@ class Files {
    
    get_default_context = () => {
       return this.#context
+   }
+   
+   deselect_list_items = () => {
+      const file_links = document.querySelectorAll('.file_item')
+      if(file_links) {
+         file_links.forEach((file_link) => {
+            file_link.style.background = 'none'
+         })
+      }
+   }
+   select_list_item = (elem) => {
+      if(elem){
+         elem.style.background = '#EEEEEE'
+      }
    }
    
 }

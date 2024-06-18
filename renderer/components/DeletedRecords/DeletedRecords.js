@@ -67,10 +67,10 @@ class DeletedRecordsTeaser {
       })
       this.#deleted_records_section.append(page_banner.render())
 
+      this.add_number_results()
+
       this.#pagination_nav = new PaginationNav()
       this.#deleted_records_section.append(this.#pagination_nav.render())
-
-      this.add_number_results()
 
       // grid wrapper
       this.#card_grid_obj = new CardGrid('results_container')
@@ -182,7 +182,7 @@ class DeletedRecordsTeaser {
    add_number_results = () => {
       this.#deleted_records_section.append(create_div({
          attributes:[{key:'id',value:'number_records'}],
-         classlist:['p_2']
+         classlist:['text_center','p_2']
       }))
    }
    

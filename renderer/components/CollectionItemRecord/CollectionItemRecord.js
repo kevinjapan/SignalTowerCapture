@@ -164,7 +164,7 @@ class CollectionItemRecord {
                      const ext = get_ext(file_path)
                      let img = build_img_elem(icon_img_file_path,`${ext} file icon`,
                         [],
-                        ['record_card_image','card_title_link','cursor_pointer']
+                        ['record_card_image','no_bg','icon_img','card_title_link','cursor_pointer']
                      )
                      if(img) img_col.replaceChildren(create_div(),img)
                   }
@@ -221,6 +221,7 @@ class CollectionItemRecord {
                            fields:collection_item_obj.collection_item_fields,
                            item:collection_item_obj.collection_item,
                            context:this.#props.context ? this.#props.context : null,
+                           find_files:true,
                            action:'update'
                         }
                         app.switch_to_component('Form',this.#props,false)
