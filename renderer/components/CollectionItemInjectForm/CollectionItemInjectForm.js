@@ -66,6 +66,7 @@ class CollectionItemInjectForm {
                fields:create_required_fields,
                context:{
                   selected_folder:this.#props.folder_path,
+                  find_files:false,
                   ...this.#props.context
                },
                action:'add'

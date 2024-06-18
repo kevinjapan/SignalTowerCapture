@@ -53,6 +53,7 @@ class AddCollectionItem {
             })
             let props = {
                fields:create_required_fields,
+               find_files:true,
                action:'add'
             }
             
