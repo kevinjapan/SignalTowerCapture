@@ -9,7 +9,7 @@ import { DESC } from '../../utilities/ui_descriptions.js'
 import { is_valid_response_obj } from '../../utilities/ui_response.js'
 import { ui_friendly_text } from '../../utilities/ui_strings.js'
 import {title_from_file_name,no_root_folder,is_excluded_folder } from '../../utilities/ui_utilities.js'
-import { create_section,create_div,create_form,create_label } from '../../utilities/ui_elements.js'
+import { create_section,create_div,create_form,create_label,create_button } from '../../utilities/ui_elements.js'
 
 
 
@@ -111,7 +111,22 @@ class CollectionItemForm {
             }
             
             // file_type checkboxes
-            if(field.key === 'file_type') form_content.append(create_div(),FileTypeCheckBox.render(field.key,curr_field_value))             
+            if(field.key === 'file_type') {
+
+               form_content.append(create_div(),FileTypeCheckBox.render(field.key,curr_field_value))
+
+               if(this.#props.find_files) {
+                  // btn to select file for 'file_name' field
+                  let find_file_btn = create_button({
+                     attributes:[{key:'id',value:'find_file_btn'}],
+                     classlist:['form_btn','mb_2'],
+                     text:'Find File'
+                  })
+                  form_content.append(find_file_btn)
+               }
+            }            
+
+            
 
             // display img or icon
             if(field.key === 'file_name' && this.#props.item) {
@@ -186,7 +201,12 @@ class CollectionItemForm {
                         const collection_item_obj = await window.collection_items_api.getCollectionItem(collection_item_id)
                         if (typeof collection_item_obj != "undefined" && collection_item_obj.outcome === 'success') {
                            this.#props.item = collection_item_obj.collection_item
-                           app.switch_to_component('Record',this.#props,false)
+                           
+                           // hydrate context for history node
+                           this.#props.context = {key:'Record',id:this.#props.item.id}
+
+                           // add to history if we are adding a new Record / don't add if editing existing Record
+                           app.switch_to_component('Record',this.#props,this.#props.action === 'add' ? true : false)
                         }
                      }
                      catch(error) {
@@ -216,6 +236,7 @@ class CollectionItemForm {
       }
    
       // On 'Cancel' return to the CollectionItemRecord for same record
+      // Cancel btn only appears in 'edit' mode
       const cancel_btns = document.querySelectorAll('.cancel_btn')      
       if(cancel_btns) {
          cancel_btns.forEach((cancel_btn) => {
