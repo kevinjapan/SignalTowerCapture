@@ -50,7 +50,7 @@ class PaginationNav {
          // page n of n
          const now_link = create_div({
             attributes:[{key:'data-page',value:parseInt(this.#current_page)}],
-            classlist:['page_selector','text_grey'],
+            classlist:['page_selector'],
             text: `page ${this.#page_count.length > 0 ? this.#current_page : '0'} of ${this.#page_count.length}`
          })
 
