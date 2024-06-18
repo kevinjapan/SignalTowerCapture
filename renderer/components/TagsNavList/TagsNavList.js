@@ -35,7 +35,7 @@ class TagsNavList {
                   {key:'id',value:`tag_${tag.tag}`},
                   {key:'data-tag',value:tag.tag}
                ],
-               classlist:['tag_nav_link','align_items_center','border','rounded_0.5','p_0.5','pt_0','pb_0.25','cursor_pointer'],
+               classlist:['tag_nav_link','align_items_center','border','rounded_0.5','p_0.5','pt_0','pb_0.25','cursor_pointer','bg_white'],
                text:tag.tag
             })
             tags_list_div.append(tag_elem)
