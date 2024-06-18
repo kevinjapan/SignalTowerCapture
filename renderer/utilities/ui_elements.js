@@ -87,7 +87,7 @@ export const create_radio_fieldset = (props) => {
       
       const label_input = create_label({
          text:radio_button.label,
-         classlist:['flex','gap_1','text_grey','font_normal','mb_1']
+         classlist:['flex','gap_1','text_grey','font_normal','mb_1','cursor_pointer']
       })
       
       const radio_input = create_input({
@@ -97,7 +97,7 @@ export const create_radio_fieldset = (props) => {
             {key:'type',value:'radio'},
             {key:'value',value:radio_button.value},
          ],
-         classlist:['bg_yellow']
+         classlist:['bg_yellow','cursor_pointer']
       })
       if(radio_button.checked) radio_input.checked = true
       label_input.prepend(radio_input)
