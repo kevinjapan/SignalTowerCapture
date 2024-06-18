@@ -63,8 +63,10 @@ class AppConfig {
                }
                count = rows.count
 
+               console.log('rows',rows)
+
                // we only seed if no existing record
-               if(count > 1) {                  
+               if(count < 1) {                  
                   // AppConfig table
                   // we create a single record containing default App Config data
                   // this will only run if no existing record (on setup)                  
