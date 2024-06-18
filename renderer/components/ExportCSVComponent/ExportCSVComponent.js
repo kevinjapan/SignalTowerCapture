@@ -63,7 +63,7 @@ class ExportCSVComponent {
             const date_time_stamp = get_sqlready_datetime(false).replaceAll(':','-').replaceAll(' ','-')
          
             const options = {
-               defaultPath:`signal-tower-capture-export-${date_time_stamp}`,
+               defaultPath:`stc-export-${date_time_stamp}`,
                filters:[{ name: 'CSV', extensions: ['txt'] },]
             }            
             const result = await window.files_api.openSaveFileDlg(options)

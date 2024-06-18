@@ -14,7 +14,7 @@ class Database {
    #db
 
    // db location & filename
-   #database_path = './database/signal-tower-capture-db.sqlite'
+   #database_path = './database/stc-db.sqlite'
 
    #last_error
 

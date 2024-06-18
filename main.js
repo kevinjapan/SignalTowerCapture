@@ -247,7 +247,7 @@ async function take_database_snapshot() {
 
       if(snapshot_at === null || !is_valid_snapshot(snapshot_at)) {
 
-         const file_name = 'signal-tower-capture-db-backup.sqlite'
+         const file_name = 'stc-db-snapshot.sqlite'
          const file_path = `.\\database\\snapshots\\${file_name}`
          let database_backup = new DatabaseBackup()
          const results = await database_backup.create(file_name,file_path)

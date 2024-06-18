@@ -61,7 +61,7 @@ class BackupComponent {
             const date_time_stamp = get_sqlready_datetime(false).replaceAll(':','-').replaceAll(' ','-')
  
             const options = {
-               defaultPath:`signal-tower-capture-db-${date_time_stamp}`,
+               defaultPath:`stc-db-${date_time_stamp}`,
                filters:[{ name: 'Database', extensions: ['sqlite'] },]
             }
 
