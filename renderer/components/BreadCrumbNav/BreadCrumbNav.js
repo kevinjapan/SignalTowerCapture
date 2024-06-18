@@ -22,7 +22,7 @@ class BreadCrumbNav {
 
       const breadcrumb = create_div({
          attributes:[{key:'id',value:'breadcrumb_nav'},],
-         classlist:['p_1','text_lg'],
+         classlist:['mt_1.5','mb_1','rounded','p_1','text_lg','bg_white'],
          text:'Please select a folder.'
       })
       return breadcrumb
