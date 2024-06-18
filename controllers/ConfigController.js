@@ -97,9 +97,9 @@ async function is_excluded_folder(event,folder_path) {
    const root_folder = app_config_record.app_config.root_folder
    if(folder_path === root_folder) return false
 
-   const excluded_sub_folders = app_config_record.app_config.excluded_sub_folders.split(',')   // csv of sub-folder names
+   const excluded_sub_folders = app_config_record.app_config.excluded_sub_folders.split(',')
 
-   const folder_paths = excluded_sub_folders.map(folder => `${root_folder}\\${folder}`)
+   const folder_paths = excluded_sub_folders.map(folder => `${root_folder}\\${folder.trim()}`)
    return folder_paths.some(path => path === folder_path)
 }
 
