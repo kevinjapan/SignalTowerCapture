@@ -68,10 +68,10 @@ class Tags {
 
       await this.add_tags_nav()
 
+      this.add_number_results()
+
       this.#pagination_nav = new PaginationNav()
       this.#tags_section.append(this.#pagination_nav.render())
-
-      this.add_number_results()
 
       // grid wrapper
       this.#card_grid = new CardGrid('tags_results_container')

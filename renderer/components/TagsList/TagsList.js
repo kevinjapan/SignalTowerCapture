@@ -57,15 +57,18 @@ class TagsList {
                
                tag_elem = create_div({
                   attributes:[{key:'id',value:'tags_list_div'}],
-                  classlist:['flex','gap_1','align_items_center','tag','border','rounded','pl_1','pr_1','pt_0','pb_0.25']
+                  classlist:['flex','gap_1','justify_center','align_items_center','tag','border','rounded','bg_white','pl_1','pb_0.25']
                })
                tag_text = create_div({
-                  classlist:[],
+                  classlist:['align_self_center'],
                   text:tag.tag
                })
                del_elem = create_button({
-                  attributes:[{key:'id',value:tag.id}],
-                  classlist:['del_tag_btn','bg_white','text_grey','p_0','pb_0.25','pl_0.25','pr_0.25'],
+                  attributes:[
+                     {key:'id',value:tag.id},
+                     {key:'data-tag',value:tag.tag}
+                  ],
+                  classlist:['del_tag_btn','bg_white','text_grey','no_border','mt_0.75','mr_0.5','p_0','pb_0.25','pl_0.5','pr_0.5','pt_0'],
                   text:'x'
                })
                
@@ -95,7 +98,9 @@ class TagsList {
          
          del_tag_btns.forEach(del_tag_btn => {
             del_tag_btn.addEventListener('click',(event) => {
-               this.#actions_callback('delete',event.target.id)
+
+               const tag = event.target.getAttribute('data-tag')
+               this.#actions_callback('delete',event.target.id,tag)
             })
          })
       }

@@ -32,7 +32,7 @@ class TagsConfig {
 
       const page_banner = new PageBanner({
          icon_name:'tag',
-         title:'Tags',
+         title:'Configure Tags',
          lead:`You can 'tag' records with keywords or categories, and then upon searching for a 
                given tag, all the matching 'tagged' records will be found.
                This can be useful for grouping records which are physically
@@ -75,7 +75,11 @@ class TagsConfig {
       })
       
       // assemble
-      tags_section.append(this.#tags_list_elem,add_tag_input,add_tag_btn,outcome_div)
+      const input_section = create_div({
+         classlist:['fit_content','mx_auto','bg_white','rounded','mb_1','p_1','pr_1']
+      })
+      input_section.append(add_tag_input,add_tag_btn)
+      tags_section.append(this.#tags_list_elem,input_section,outcome_div)
 
       return tags_section
    }
@@ -222,9 +226,10 @@ class TagsConfig {
       }
    }
 
-   actions = async(key,id) => {
+   actions = async(key,id,tag) => {
       
       switch(key) {
+         
          case 'delete':
             
             const del_tag_results = await window.tags_api.deleteTag(id)  
@@ -233,7 +238,7 @@ class TagsConfig {
 
                if(del_tag_results.outcome === 'success') {
       
-                  Notification.notify('#outcome_div','The tag was successfully deleted',['bg_inform'])
+                  Notification.notify('#outcome_div',`The tag '${tag}' was successfully deleted`,['bg_inform'],false)
       
                   // update list of tags on this page..
                   this.#tags = await this.get_tags()
