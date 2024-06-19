@@ -61,8 +61,7 @@ const app_console_log = (msg) => {
 }
 
 // 
-// internal file_exists     
-// to do : on-going - verify - once settled, call this from FilesController.file_exists
+// internal file_exists
 //
 const file_exists_ = async(file_path) => {
 
