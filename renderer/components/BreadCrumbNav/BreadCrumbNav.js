@@ -47,8 +47,11 @@ class BreadCrumbNav {
       if(folder_path_links) {
          folder_path_links.forEach(folder_path_link => {
             folder_path_link.addEventListener('click',async(event) => {
-               const path = event.target.getAttribute('data-folder-link').replace(this.#root_folder,'')            
-               this.#open_folder(path)
+               let path = ''
+               if(event.target.getAttribute('data-folder-link')) {
+                  path = event.target.getAttribute('data-folder-link').replace(this.#root_folder,'')            
+                  this.#open_folder(path)
+               }
             })
          })
       }
