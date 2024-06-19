@@ -1,11 +1,12 @@
 import { app } from '../../renderer.js'
 import FileInjector from '../FileInjector/FileInjector.js'
 import BreadCrumbNav from '../BreadCrumbNav/BreadCrumbNav.js'
+import ParentLink from '../ParentLink/ParentLink.js'
 import Notification from '../Notification/Notification.js'
 import { is_valid_response_obj } from '../../utilities/ui_response.js'
-import {trim_end_char} from '../../utilities/ui_strings.js'
-import {filetype_icon,no_root_folder,is_excluded_folder} from '../../utilities/ui_utilities.js'
-import {create_section,create_div,create_ul,create_li} from '../../utilities/ui_elements.js'
+import { trim_end_char } from '../../utilities/ui_strings.js'
+import { filetype_icon,no_root_folder,is_excluded_folder,get_parent_folder_path } from '../../utilities/ui_utilities.js'
+import { create_section,create_div,create_ul,create_li } from '../../utilities/ui_elements.js'
 
 
 class Files {
@@ -113,7 +114,17 @@ class Files {
    }
 
    // enable buttons/links displayed in the render
-   activate = () => {}
+   activate = () => {
+      
+      const parent_link_elem = document.getElementById('parent_link_elem')
+      if(parent_link_elem) {
+         parent_link_elem.addEventListener('click', (event) => {
+            const link = event.target.getAttribute('data-parent-folder')
+            this.open_folder(link)
+         })
+      }
+
+   }
 
 
    //
@@ -225,27 +236,33 @@ class Files {
    }
 
    open_folder = async(folder_path) => {
-      if(folder_path === undefined) folder_path = ''
+
+      if(folder_path === undefined || folder_path === null) folder_path = ''
       const files_list_obj = await window.files_api.getFolderFilesList(`${this.#root_folder}${folder_path}`)
       this.hydrate(files_list_obj)
    }
 
+   //
    // Hydrate page components with new folder_obj : {folder_name,files_list}
+   //
    hydrate = async(folder_obj) => {
-              
+
       const file_list_elem = document.getElementById('file_list_elem')
       const file_view = document.getElementById('file_view')
+      const parent_link_obj = new ParentLink()
 
-      if(folder_obj.files_list && folder_obj.files_list.length > 0) {
+      if(folder_obj && folder_obj.files_list && folder_obj.files_list.length > 0) {
 
+         let parent_folder_path = get_parent_folder_path(folder_obj.folder_name)
          let folders_sub_list = create_ul({classlist:['flex','no_wrap','flex_col','gap_0.5','m_0','p_0','pb_0.5']})
          let files_sub_list = create_ul({classlist:['flex','no_wrap','flex_col','gap_0.5','m_0','p_0','pb_0.5']})
 
          // escape spaces in target 'folder_path'
-         const escaped_folder_path = folder_obj.files_list[0].path.split(/\ /).join('\ ');
+         const escaped_folder_path = folder_obj.files_list[0].path.split(/\ /).join('\ ')
 
          // verify we are in Collections folders
          if(escaped_folder_path.indexOf(this.#root_folder) === 0) {
+
             if(this.#breadcrumb_nav) {
                this.#breadcrumb_nav.hydrate(this.#root_folder,folder_obj.folder_name)
                setTimeout(() => this.#breadcrumb_nav.activate(),100)
@@ -260,9 +277,8 @@ class Files {
                // assign folder_path to context remove the 'root_folder' part from path
                this.#context.field_filters[0].value = file.path.replace(this.#root_folder,'')
 
-               // Display Folders List
+               // display Folders List
                if(file.type === 'dir') {
-
                   // don't add excluded_sub_folders
                   const is_excluded = await is_excluded_folder(file.path + '\\' + file.filename)
 
@@ -280,7 +296,7 @@ class Files {
                      folders_sub_list.append(list_item)
                   }
                }
-               // Display Files List
+               // display Files List
                else if(file.type === 'file') {
                   list_item = create_li({
                      attributes:[
@@ -297,16 +313,23 @@ class Files {
             }
             file_list_elem.replaceChildren()
 
+
             // assemble
-            if(folders_sub_list.hasChildNodes()) {
-               if(file_list_elem) file_list_elem.append(folders_sub_list)
+            if(file_list_elem) {               
+               if(parent_folder_path.indexOf(this.#root_folder) === -1) {
+                  // file_list_elem.append(parent_link_elem)
+                  file_list_elem.append(parent_link_obj.render(this.#root_folder,parent_folder_path,false))
+               }
+               else {
+                  file_list_elem.append(parent_link_obj.render(this.#root_folder,parent_folder_path))
+               }
+               if(folders_sub_list.hasChildNodes()) file_list_elem.append(folders_sub_list)               
+               if(files_sub_list.hasChildNodes()) file_list_elem.append(files_sub_list)               
             }
-            if(files_sub_list.hasChildNodes()) {
-               if(file_list_elem) file_list_elem.append(files_sub_list)
-            }
+
             if(!folders_sub_list.hasChildNodes() && !files_sub_list.hasChildNodes()) {
                let msg = create_div({text:'There are no files in this folder.'})
-               if(file_list_elem) file_list_elem.replaceChildren(msg)
+               if(file_list_elem) file_list_elem.replaceChildren(parent_link_obj.render(this.#root_folder,parent_folder_path,false),msg)
             }
             // file_list_elem.prepend(icon('arrow_up'))
             
@@ -332,11 +355,13 @@ class Files {
          }
       }
       else {
+
+         const folder_parent_path = get_parent_folder_path(folder_obj.folder_name)
          let msg = create_div({text:'There are no files in this folder.'})
-         if(file_list_elem) file_list_elem.replaceChildren(msg)
+         if(file_list_elem) file_list_elem.replaceChildren(parent_link_obj.render(this.#root_folder,folder_parent_path),msg)
          if(file_view) file_view.replaceChildren()
 
-         if(this.#breadcrumb_nav) {
+         if(this.#breadcrumb_nav && folder_obj) {
             this.#breadcrumb_nav.hydrate(this.#root_folder,folder_obj.folder_name)
             setTimeout(() => this.#breadcrumb_nav.activate(),100)
          }
@@ -344,6 +369,7 @@ class Files {
          // activate
          this.activate_file_links()
          this.activate_folder_links()
+         this.activate()
       }
    }
    
@@ -354,15 +380,11 @@ class Files {
    deselect_list_items = () => {
       const file_links = document.querySelectorAll('.file_item')
       if(file_links) {
-         file_links.forEach((file_link) => {
-            file_link.style.background = 'none'
-         })
+         file_links.forEach((file_link) => file_link.style.background = 'none')
       }
    }
    select_list_item = (elem) => {
-      if(elem){
-         elem.style.background = '#EEEEEE'
-      }
+      if(elem) elem.style.background = '#EEEEEE'
    }
    
 }
