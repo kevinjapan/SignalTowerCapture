@@ -384,7 +384,7 @@ class Files {
       }
    }
    select_list_item = (elem) => {
-      if(elem) elem.style.background = '#EEEEEE'
+      if(elem) elem.style.background = '#DDDDDD'
    }
    
 }
