@@ -403,6 +403,7 @@ button.action_btn {
 .h_80 {height:80%;}
 .h_100 {height:100%;}
 .min_h_80 {min-height:80%;}
+.max_h_70 {max-height:70vh;}
 .h_80vh {height:80vh;}
 .h_85vh {height:85vh;}
 
@@ -464,6 +465,7 @@ button.action_btn {
 .m_auto {margin-left:auto;margin-right:auto;margin-top:auto;margin-bottom:auto;}
 .mx_auto {margin-left:auto;margin-right:auto;}
 .mx_2 {margin-left:2rem;margin-right:2rem;}
+.my_1 {margin-top:1rem;margin-bottom:1rem;}
 .ml_auto {margin-left:auto;margin-right:0;}
 .mr_auto {margin-left:0;margin-right:auto;}
 
@@ -519,8 +521,6 @@ button.action_btn {
 .logo_heading {
    position:relative;
    font-size:4rem;
-   margin-bottom:0;
-   padding-bottom:0;
 }
 h2.logo_heading {
    font-size:2.5rem;
@@ -597,7 +597,7 @@ h3.logo_heading {
    font-size:.975rem;
 }
 .text_lg {
-   font-size:1.1rem;
+   font-size:1.2rem;
 }
 .text_h4 {
    font-size:1.25rem;font-weight:700;padding-left:1rem;
@@ -707,8 +707,8 @@ h3.logo_heading {
 */
 .page_selector {
    height:fit-content;
-   padding-left:.5rem;
-   padding-right:.5rem;
+   /* padding-left:.5rem;
+   padding-right:.5rem; */
    padding-bottom:.25rem;
    border-radius:.5rem;
    cursor:pointer;
@@ -956,6 +956,14 @@ label/[value|input] layout for Record and Form views
    /* margin-left:auto;
    margin-right:auto; */
 }
+.record_card_image.no_bg {
+   background-image:unset;
+   background-color:unset;
+}
+.record_card_image.icon_img {
+   width:48px;
+   height:48px;
+}
 .record_card_icon {
    margin-top:4rem;
 }
@@ -1081,6 +1089,7 @@ input[type='radio'] {
    padding-right:0rem;
    background:white;
    max-width:430px;
+   min-width:300px;
    width:100%;
 }
 @media screen and (max-width: 768px) {
@@ -1421,4 +1430,8 @@ section.feature_block.my_2 {margin-top:2rem;margin-bottom:2rem;}
 .disabled_icon {
    /* light grey */
    filter: invert(95%) sepia(61%) saturate(5216%) hue-rotate(180deg) brightness(227%) contrast(105%);
+}
+.disabled_arrow_icon {
+   /* light grey */
+   filter: invert(45%) sepia(61%) saturate(5216%) hue-rotate(180deg) brightness(227%) contrast(105%);
 }
