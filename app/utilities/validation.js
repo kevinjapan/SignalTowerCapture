@@ -285,8 +285,10 @@ const is_valid_file_name = (file_name) => {
    let ext_part = file_name.substring(file_name.lastIndexOf('.') + 1)
 
    // are component parts correct
-   if(name_part === '' || ext_part === '') return false   
-   if(ext_part.length < 3 || ext_part.length > 4) return false
+   if(name_part === '' || ext_part === '') return false
+
+   // we have to be flexible here since legacy files may have unknown exts.
+   if(ext_part.length < 2 || ext_part.length > 6) return false
 
    // are all chars valid
    return !/[^a-z0-9\'-_~&+ .@()-]/i.test(file_name)
