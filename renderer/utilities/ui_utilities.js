@@ -94,11 +94,9 @@ export const build_img_elem = (file_path,alt_text = 'image',attributes = [],clas
       {key:'alt',value:alt_text},
       ...attributes
    ]
-
    let classes = [
       ...classlist
    ]
-
    let img = create_img({
       attributes:attrs,
       classlist:classes
@@ -107,17 +105,19 @@ export const build_img_elem = (file_path,alt_text = 'image',attributes = [],clas
 }
 
 export const filetype_icon = (filetype,ext = 'unknown',attributes = [],classlist = []) => {
-   const icon = filetype.toUpperCase() === 'FILE' ? 'imgs\\filetypes\\file.svg' : 'imgs\\icons\\folder.svg'              
+   const icon = filetype.toUpperCase() === 'FILE' ? 'imgs\\filetypes\\file.svg' : 'imgs\\icons\\folder.svg'
+   
    return build_img_elem(icon,`${filetype.toUpperCase() === 'DIR' ? 'Folder' : ext} filetype`,
       [{key:'height',value:'14px'},...attributes],
       ['pr_0.25','pt_0.3',...classlist]) 
 }
 
 const folder_icon = (folder_icon_type,attributes = [],classlist = []) => {
+   const test = ['pr_0.25','pt_0.3',...classlist]
    const icon = folder_icon_type.toUpperCase() === 'DIR' ? 'imgs\\icons\\folder.svg' : 'imgs\\icons\\folder2-open.svg'
    return build_img_elem(icon,`${folder_icon_type.toUpperCase() === 'DIR' ? 'Folder' : 'Open Folder'}`,
       [{key:'height',value:'14px'},...attributes],
-      ['pr_0.25','pt_0.3'],...classlist) 
+      ['pr_0.25','pt_0.3',...classlist])
 }
 
 export const icon = (icon_name,attributes = [],classes = []) => {
@@ -143,7 +143,7 @@ export const icon = (icon_name,attributes = [],classes = []) => {
       'TRASH':'imgs\\icons\\trash.svg'
    }
    const icon_path = icons[icon_name.toUpperCase()] ? icons[icon_name.toUpperCase()] : icons['DEFAULT']
-   return build_img_elem(icon_path,`${ui_friendly_text(icon_name)} icon`,[...attributes,{key:'height',value:'35px'}],['pr_0.25','pt_0.5',...classes]) 
+   return build_img_elem(icon_path,`${ui_friendly_text(icon_name)} icon`,[{key:'height',value:'35px'},...attributes],['pr_0.25','pt_0.5',...classes]) 
 }
 
 // 
@@ -269,25 +269,21 @@ export const linked_path = (root_folder,path) => {
 
    // root is a separate element
    const root_folder_link = create_div({
-      attributes:[
-         {key:'data-folder-link',value:root_folder}
-      ],
+      attributes:[{key:'data-folder-link',value:root_folder}],
       classlist:['folder_path_link','cursor_pointer','pl_0.25','text_blue'],
       text:root_folder.substring(root_folder.lastIndexOf('\\') + 1)
    })   
-   display_path_elem.prepend(filetype_icon('dir'))
+   display_path_elem.prepend(folder_icon(path === '' ? 'open_folder' : 'dir',[],['align_self_center']))
    display_path_elem.append(root_folder_link,truncated_spacer)
 
    // folder link elements
    for(let i = 0; i < tokens.length; i++) {
       let link = create_div({
-         attributes:[
-            {key:'data-folder-link',value:tokens[i].path}
-         ],
+         attributes:[{key:'data-folder-link',value:tokens[i].path}],
          classlist:['flex','folder_path_link','cursor_pointer','pl_1',i < tokens.length - 1 ? 'text_blue' : ''],
          text:truncate(tokens[i].label,15)
       })
-      link.prepend(folder_icon(i === tokens.length - 1 ? 'open_folder' : 'dir'))
+      link.prepend(folder_icon(i === tokens.length - 1 ? 'open_folder' : 'dir',[],['align_self_center']))
       link.prepend(create_div({text:'\\',classlist:['pr_0.5']}))
       display_path_elem.append(link)
    }
@@ -314,7 +310,7 @@ export const title_from_file_name = (file_name) => {
 
 export const no_root_folder = () => {
    const elem = create_div({
-      classlist:['bg_yellow','p_2','border_radius_0.5'],
+      classlist:['bg_yellow_300','p_2','border_radius_0.5'],
       text:`Sorry, we couldn't locate or determine the root folder path.`
    })
    return elem
@@ -364,4 +360,8 @@ export const build_full_path = (root_folder,folder_path,file_name) => {
    let relative_folder_part = trim_char(folder_path,'\\')
    if(relative_folder_part !== '') relative_folder_part += '\\' // files in root folder
    return `${root_part}\\${relative_folder_part}${file_name}`
+}
+
+export const get_parent_folder_path = (folder_path) => {
+   return folder_path.substring(0,folder_path.lastIndexOf('\\'))
 }
