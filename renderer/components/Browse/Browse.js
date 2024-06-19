@@ -112,7 +112,6 @@ class Browse {
 
          try {
             const collection_items_obj = await window.collection_items_api.getItems(this.#context)
-
             const { outcome,count,per_page,collection_items,collection_item_fields } = collection_items_obj
          
             if(typeof collection_items_obj != "undefined" && outcome === 'success') {
@@ -137,9 +136,6 @@ class Browse {
                               root_folder:this.#root_folder,
                               card_index:index++
                            })
-                           // to do : copy pattern here for .render() to all client components/pages
-                           //         on-going review - do we need first row pre-loading of Cards?
-                           //                         - do we need that happening inside CollectionItemCard?
                            this.#browse_results_container.append(collection_item_card.render(collection_item_fields,item))
                         }
                      }
