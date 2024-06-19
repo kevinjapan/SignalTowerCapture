@@ -57,11 +57,7 @@ class ImageViewer {
 
       // build the file_path
       let root_folder = this.#props.root_folder
-      let relative_folder_path = this.#props.item['folder_path']
-
-      // allow for empty folder_path (files in root_folder)
-      if(relative_folder_path !== '') relative_folder_path += '\\'
-      
+      let relative_folder_path = this.#props.item['folder_path'] + '\\'     
       let file_path = `${root_folder}${relative_folder_path}${this.#props.item['file_name']}`
 
       if(await file_exists(file_path)) {
