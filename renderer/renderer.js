@@ -1,6 +1,15 @@
 import App from './components/App/App.js'
 import Nav from './components/Nav/Nav.js'
-import { create_ul,create_li } from './utilities/ui_elements.js'
+
+
+//
+// Init App
+// App provides app-wide settings eg root_folder
+//
+export const app = new App()
+
+// load Home page on startup
+setTimeout(() => app.switch_to_component('Home'),100)
 
 
 
@@ -17,15 +26,9 @@ if(setButton) {
    })
 }
 
-
-
 //
 // Pattern 2: Renderer to main (two-way)
 //
-
-
-
-
 
 
 //
@@ -43,16 +46,14 @@ window.notify_api.onNotification((event,value) => {
 // Handle native app menu item clicks
 //
 window.component_api.onSwitchComponent((event,value) => {
-
    // deselect all page nav items
    app.disable_page_nav()
-
    // switch component
    app.switch_to_component(value)
 })
 
 
-
+// to do : review - need this here?
 let back_btns = document.querySelectorAll('.back_btn')
 if(back_btns){
    back_btns.forEach(back_btn => {
@@ -61,16 +62,6 @@ if(back_btns){
       })
    })
 }
-
-
-//
-// Init App
-// App provides app-wide settings eg root_folder
-//
-export const app = new App()
-
-// load Home page on startup
-setTimeout(() => app.switch_to_component('Home'),100)
 
 
 //

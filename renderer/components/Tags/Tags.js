@@ -64,42 +64,43 @@ class Tags {
          title:'Tags',
          lead:'Find all the tagged Records.'
       })
-      this.#tags_section.append(page_banner.render())
 
-      await this.add_tags_nav()
+      const tags_nav = await this.add_tags_nav()
 
-      this.add_number_results()
+      const num_records = this.add_number_results()
 
       this.#pagination_nav = new PaginationNav()
-      this.#tags_section.append(this.#pagination_nav.render())
 
       // grid wrapper
       this.#card_grid = new CardGrid('tags_results_container')
       this.#tags_results_container = this.#card_grid.render()
-
-      this.#tags_section.append(this.#tags_results_container)
 
       // re-instate tags_context on 'back'
       if(this.#context && has_valid_field_filter('tags',this.#context)) {
          const tags_filter = this.#context.field_filters.find(elem => {
             return elem.field === 'tags'
          })
-
          if(this.#tags_nav) this.#tags_nav.highlight_selected(tags_filter.value)
-         
          this.#tags_results_container.append(this.get_items())
       }
 
-      this.#tags_section.append(this.#pagination_nav.render())
-
-      let tags_status = create_section({
+      const tags_status = create_div({
          attributes:[{key:'id',value:'tags_status'}],
          classlist:['p_0','bg_warning']
       })
-      this.#tags_section.append(tags_status)
 
       window.scroll(0,0)
 
+      // assemble
+      this.#tags_section.append(
+         page_banner.render(),
+         tags_nav,
+         num_records,
+         this.#pagination_nav.render(),
+         this.#tags_results_container,
+         this.#pagination_nav.render(),
+         tags_status
+      )
       return this.#tags_section
    }
 
@@ -123,8 +124,6 @@ class Tags {
                if(collection_items_obj.outcome === 'success') {
 
                   this.#tags_results_container.replaceChildren()
-                  
-                  this.add_number_results()
                   
                   let page_count = Math.ceil(collection_items_obj.count / collection_items_obj.per_page)
 
@@ -202,23 +201,23 @@ class Tags {
       }
       this.#tags_nav = new TagsNavList(props)
       const tags_nav_elem = await this.#tags_nav.render()
+      setTimeout(() => this.#tags_nav.activate(),50)
       if(tags_nav_elem) {
-         this.#tags_section.append(tags_nav_elem)
+         return tags_nav_elem
       }
       else {
-         this.#tags_section.append(create_div({
+         return create_div({
             classlist:['bg_inform','p_1','fit_content','rounded','mx_2'],
             text:'There are no Tags configured in the system. You can add Tags in the Config menu.'
-         }))
+         })
       }
-      setTimeout(() => this.#tags_nav.activate(),100)
    }
 
    add_number_results = () => {
-      this.#tags_section.append(create_div({
+      return create_div({
          attributes:[{key:'id',value:'number_records'}],
          classlist:['p_.5','pt_1','text_center']
-      }))
+      })
    }
 
    // callback for TagsNavList

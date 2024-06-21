@@ -41,12 +41,12 @@ class RecentRecords {
       this.#root_folder = await app.get_root_folder()
       if(this.#root_folder === '') return no_root_folder()
 
-      let record_result_obj = await this.get_app_config_record()
-      let app_config_record = record_result_obj.app_config
+      const record_result_obj = await this.get_app_config_record()
+      const app_config_record = record_result_obj.app_config
 
       this.#queue = app_config_record.recent_records
 
-      let recent_section = create_section({
+      const recent_section = create_section({
          attributes:[{key:'id',value:'recent_section'}],
          classlist:['px_1','pb_1']
       })
@@ -65,7 +65,10 @@ class RecentRecords {
       window.scroll(0,0)
 
       // assemble
-      recent_section.append(page_banner.render(),this.#results_container)
+      recent_section.append(
+         page_banner.render(),
+         this.#results_container
+      )
       return recent_section
    }
 

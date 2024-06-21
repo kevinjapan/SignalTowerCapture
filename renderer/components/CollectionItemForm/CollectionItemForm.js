@@ -55,23 +55,23 @@ class CollectionItemForm {
       this.#record_elem = create_section({
          classlist:['collection_item_record']
       })
-      let text_col = create_div({
+      const text_col = create_div({
          classlist:['text_col','pl_1']
       })
-      let img_col = create_div({
+      const img_col = create_div({
          attributes:[{key:'id',value:'img_col'}],
          classlist:['img_col']
       })
-      let form_layout = create_form({
+      const form_layout = create_form({
          attributes:[{key:'id',value:'item_form'}],
          classlist:['form_layout']
       })
-      let submit_outcome_top = create_section({classlist:['submit_outcome']})
+      const submit_outcome_top = create_section({classlist:['submit_outcome']})
 
       // we don't inc cancel btn in add 'new' record forms
       const inc_cancel_btn = this.#props.action === 'add' ? false : true
 
-      let btn_group_1 = FormBtns.render(this.#props.item,inc_cancel_btn)
+      const btn_group_1 = FormBtns.render(this.#props.item,inc_cancel_btn)
       form_layout.append(btn_group_1,submit_outcome_top)
       text_col.append(form_layout)
       
@@ -125,8 +125,6 @@ class CollectionItemForm {
                   form_content.append(find_file_btn)
                }
             }            
-
-            
 
             // display img or icon
             if(field.key === 'file_name' && this.#props.item) {

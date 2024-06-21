@@ -4,22 +4,17 @@ import {
    create_form,
    create_button,
    create_input,
-   create_h,
    create_div
-} from '../../utilities/ui_elements.js'
-
+} from '../../../utilities/ui_elements.js'
 
 
 
 class SearchForm {
 
-
    #props
-
 
    // advanced search changes register in filters obj
    #filters = {}
-
 
    constructor(props) {
       this.#props = props
@@ -58,7 +53,7 @@ class SearchForm {
          text:'Search'
       }) 
 
-      // magnifying glass btn icon
+      // magnifying glass btn icon // to do : align vertically - replace w/ .svg file
       let icon = document.createElementNS('http://www.w3.org/2000/svg','svg')
       icon.classList.add('pt_.5','ml_1','mt_0')
       const icon_path = document.createElementNS('http://www.w3.org/2000/svg','path')

@@ -48,7 +48,6 @@ class DeletedRecordsTeaser {
       if(props) this.#context = props.context
       this.#props = props
    }
-
    
    render = async() => {
 
@@ -65,23 +64,26 @@ class DeletedRecordsTeaser {
          title:'Deleted Records',
          lead:DESC.DELETED_RECORDS
       })
-      this.#deleted_records_section.append(page_banner.render())
 
-      this.add_number_results()
+      const num_records = this.add_number_results()
 
       this.#pagination_nav = new PaginationNav()
-      this.#deleted_records_section.append(this.#pagination_nav.render())
 
       // grid wrapper
       this.#card_grid_obj = new CardGrid('results_container')
       this.#results_container = this.#card_grid_obj.render()
 
-      this.#deleted_records_section.append(this.#results_container)
-
       // required for re-instating search_context on 'back' to list actions
       if(this.#context) this.#results_container.append(this.get_items())
          
-      this.#deleted_records_section.append(this.#pagination_nav.render())
+      // assemble
+      this.#deleted_records_section.append(
+         page_banner.render(),
+         num_records,
+         this.#pagination_nav.render(),
+         this.#results_container,
+         this.#pagination_nav.render()
+      )
 
       return this.#deleted_records_section
    }
@@ -101,7 +103,6 @@ class DeletedRecordsTeaser {
 
                   this.#results_container.replaceChildren()          
 
-                  this.add_number_results()
                   let page_count = Math.ceil(count / per_page)
 
                   if(collection_items.length > 0) {
@@ -180,10 +181,10 @@ class DeletedRecordsTeaser {
    }
    
    add_number_results = () => {
-      this.#deleted_records_section.append(create_div({
+      return create_div({
          attributes:[{key:'id',value:'number_records'}],
          classlist:['text_center','p_2']
-      }))
+      })
    }
    
    get_default_context = () => {

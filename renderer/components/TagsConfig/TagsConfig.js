@@ -39,7 +39,6 @@ class TagsConfig {
                separate in your Collections folder. For example, the tag
                'education' might pertain to individual files across multiple folders.`
       })
-      tags_section.append(page_banner.render())
 
       this.#tags_list_elem = create_div({
          attributes:[{key:'id',value:'tags_list_elem'}],
@@ -53,8 +52,11 @@ class TagsConfig {
          this.#tags_list_elem.append(await tags_list.render(this.#tags,this.actions))
          setTimeout(() => tags_list.activate(),100)
       }
-
-      let add_tag_input = create_input({
+    
+      const input_section = create_div({
+         classlist:['fit_content','mx_auto','bg_white','rounded','mb_1','p_1','pr_1']
+      })
+      const add_tag_input = create_input({
          attributes:[
             {key:'id',value:'add_tag_input'},
             {key:'name',value:'add_tag_input'},
@@ -64,22 +66,23 @@ class TagsConfig {
          ],
          classlist:['input_field','m_1','mx_2']
       })
-
-      let add_tag_btn = create_button({
+      const add_tag_btn = create_button({
          attributes:[{key:'id',value:'add_tag_btn'}],
          text:'Add Tag'
       })  
-
-      const outcome_div = create_div({
-         attributes:[{key:'id',value:'outcome_div'}]
-      })
-      
-      // assemble
-      const input_section = create_div({
-         classlist:['fit_content','mx_auto','bg_white','rounded','mb_1','p_1','pr_1']
-      })
       input_section.append(add_tag_input,add_tag_btn)
-      tags_section.append(this.#tags_list_elem,input_section,outcome_div)
+
+      const notifications = create_div({attributes:[{key:'id',value:'notifications'}]})
+
+      window.scroll(0,0)
+
+      // assemble
+      tags_section.append(
+         page_banner.render(),
+         this.#tags_list_elem,
+         input_section,
+         notifications
+      )
 
       return tags_section
    }
@@ -139,11 +142,11 @@ class TagsConfig {
                      add_tag_input.value = ''
                   }
                   else {
-                     Notification.notify('#outcome_div',`This tag already exists, please enter a unique tag.`)
+                     Notification.notify('#notifications',`This tag already exists, please enter a unique tag.`)
                   }
                }
                else {
-                  Notification.notify('#outcome_div',`Please enter a valid tag.`)
+                  Notification.notify('#notifications',`Please enter a valid tag.`)
                }
             }
          })
@@ -167,11 +170,11 @@ class TagsConfig {
                      add_tag_input.value = ''
                   }
                   else {
-                     Notification.notify('#outcome_div',`This tag already exists, please enter a unique tag.`)
+                     Notification.notify('#notifications',`This tag already exists, please enter a unique tag.`)
                   }
                }
                else {
-                  Notification.notify('#outcome_div',`Please enter a valid tag.`)
+                  Notification.notify('#notifications',`Please enter a valid tag.`)
                }      
             }
          })
@@ -204,7 +207,7 @@ class TagsConfig {
 
             if(add_tag_results.outcome === 'success') {
 
-               Notification.notify('#outcome_div',`The tag was successfully added.`,['bg_inform'])
+               Notification.notify('#notifications',`The tag was successfully added.`,['bg_inform'])
 
                // update list of tags on this page..
                this.#tags = await this.get_tags()
@@ -217,12 +220,12 @@ class TagsConfig {
                
             }
             else {
-               Notification.notify('#outcome_div',add_tag_results.message)
+               Notification.notify('#notifications',add_tag_results.message)
             }
          }
       }
       else {
-         Notification.notify('#outcome_div','Please enter a valid tag.')
+         Notification.notify('#notifications','Please enter a valid tag.')
       }
    }
 
@@ -238,7 +241,7 @@ class TagsConfig {
 
                if(del_tag_results.outcome === 'success') {
       
-                  Notification.notify('#outcome_div',`The tag '${tag}' was successfully deleted`,['bg_inform'],false)
+                  Notification.notify('#notifications',`The tag '${tag}' was successfully deleted`,['bg_inform'],false)
       
                   // update list of tags on this page..
                   this.#tags = await this.get_tags()
@@ -251,12 +254,12 @@ class TagsConfig {
                   
                }
                else {
-                  Notification.notify('#outcome_div',del_tag_results.message)
+                  Notification.notify('#notifications',del_tag_results.message)
                }
             }
             break
          default:
-            Notification.notify('#outcome_div','The action was not recognized.')
+            Notification.notify('#notifications','The action was not recognized.')
       }
       
    }

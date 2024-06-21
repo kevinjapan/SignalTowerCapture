@@ -11,7 +11,7 @@ class Home {
 
    render = () => {
 
-      let home = create_section({
+      const home = create_section({
          classlist:['home_section','mt_0','pt_0']
       })
 
@@ -45,10 +45,14 @@ class Home {
             {key:'id',value:'injects'}
          ]
       })
+      window.scroll(0,0)
 
       // assemble
       main_feature_block.append(feature_text,feature_img)
-      home.append(main_feature_block,home_form)
+      home.append(
+         main_feature_block,
+         home_form
+      )
 
       return home
    }

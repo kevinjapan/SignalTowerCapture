@@ -15,20 +15,17 @@ class ExportJSONComponent {
 
    render = () => {
 
-      let export_json_section = create_section({
+      const export_json_section = create_section({
          attributes:[{key:'id',value:'export_json_section'}],
          classlist:['flex','flex_col','align_items_center','px_1']
       })
-
       const page_banner = new PageBanner({
          icon_name:'json',
          title:'JSON Files : Export',
          lead:`JavaScript Object Notation (JSON) files are a human-readable file format for tranfering data between applications.
                They are better suited for moving small sets of data where some manual manipulation is needed.`
       })
-      export_json_section.append(page_banner.render())
-
-      let export_json_btn = create_button({
+      const export_json_btn = create_button({
          attributes:[{key:'id',value:'export_json_btn'}],
          classlist:['action_btn','align_self_center'],
          text:'Export JSON File'
@@ -36,9 +33,14 @@ class ExportJSONComponent {
       const export_json_outcome = create_div({
          attributes:[{key:'id',value:'export_json_outcome'}]
       }) 
+      window.scroll(0,0)
 
       // assemble
-      export_json_section.append(export_json_btn,export_json_outcome)
+      export_json_section.append(
+         page_banner.render(),
+         export_json_btn,
+         export_json_outcome
+      )
       return export_json_section
    }
 

@@ -75,7 +75,7 @@ class CollectionItem {
    async read(context) {
 
       let sql
-      let total_count = 0            
+      let total_count = 0
       let offset_clause = ''
 
       if(context.page && context.page > 0) {

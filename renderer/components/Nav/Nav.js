@@ -51,7 +51,6 @@ class Nav {
       const target = document.body.querySelector(`.select_page_btn[data-component="${component_name}"]`)
       if(target) target.classList.add('selected_page')
    }
-
    deselect_all = (event) => {
       const select_page_buttons = document.querySelectorAll('.select_page_btn')
       if(select_page_buttons) {

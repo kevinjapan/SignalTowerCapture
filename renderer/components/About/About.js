@@ -17,21 +17,16 @@ class About {
 
    render = () => {
 
-      let about_section = create_section()
-
+      const about_section = create_section()
 
       const page_banner = new PageBanner({
          icon_name:'',
          title:'About',
          lead:''
       })
-      about_section.append(page_banner.render())
-
       const page_content = create_section({
          classlist:['mx_2']
       })
-
-
       const section_heading = create_h({
          level:'h2',
          classlist:['logo_heading'],
@@ -41,14 +36,12 @@ class About {
          level:'h3',
          text:'Local Collections Management'
       })
-
       const lead_text = create_p({
          text:`Signal Tower Capture is a desktop digital collections solution for managing files and 
                folders on your local machine and referencing these to your local on-site collection. 
                It is ideally suited for smaller museums or archives where you need a simple solution 
                with zero-overheads and simplicity of use.`
-      })
-      
+      })      
       const tech_heading = create_h({
          level:'h3',
          text:'Technologies'
@@ -58,8 +51,17 @@ class About {
       })
       
       // assemble
-      page_content.append(section_heading,tagline,lead_text,tech_heading,tech_text)
-      about_section.append(page_content)
+      page_content.append(
+         section_heading,
+         tagline,
+         lead_text,
+         tech_heading,
+         tech_text
+      )
+      about_section.append(
+         page_banner.render(),
+         page_content
+      )
       return about_section
    }
 

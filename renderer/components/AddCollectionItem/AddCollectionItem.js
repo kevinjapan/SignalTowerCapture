@@ -12,30 +12,31 @@ class AddCollectionItem {
    #context = {
       key:'AddCollectionItem'
    }
-   
 
    render = () => {
       
       this.#record = create_section({
          attributes:[{key:'id',value:'record'}],
          classlist:['mt_2']
-      })
-      
+      })      
       const page_banner = new PageBanner({
          icon_name:'file',
          title:'Add A New Record',
          lead:'Add a file to the system.'
       })
-
       const item_form_wrap = create_section({
          attributes:[{key:'id',value:'item_form_wrap'}],
          level:'h1'
       })
 
       // assemble
-      this.build_form(item_form_wrap)
-      this.#record.append(page_banner.render(),item_form_wrap)
-      
+      this.build_form(
+         item_form_wrap
+      )
+      this.#record.append(
+         page_banner.render(),
+         item_form_wrap
+      )      
       return this.#record
    }
 
@@ -77,7 +78,6 @@ class AddCollectionItem {
    // enable buttons/links displayed in the render
    activate = () => {}
 
-   
    get_default_context = () => {
       return this.#context
    }

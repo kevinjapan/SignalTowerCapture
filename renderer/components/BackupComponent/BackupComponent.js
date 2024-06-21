@@ -6,18 +6,14 @@ import { extract_file_name } from '../../utilities/ui_strings.js'
 
 
 
-// Database Backup Component
-
 class BackupComponent {
 
    #context = {
       key:'BackupComponent'
    }
 
-
    render = () => {
-      
-      // Backup Section
+   
       let backup_section = create_section({
          attributes:[{key:'id',value:'backup_section'}],
          classlist:['flex','flex_col','align_items_center','px_1']
@@ -28,9 +24,8 @@ class BackupComponent {
          title:'Database Backup',
          lead:'Create a backup of the database.'
       })
-      backup_section.append(page_banner.render())
 
-      let backup_database_btn = create_button({
+      const backup_database_btn = create_button({
          attributes:[{key:'id',value:'backup_database_btn'}],
          classlist:['action_btn','align_self_center'],
          text:'Backup Database'
@@ -39,9 +34,14 @@ class BackupComponent {
       const backup_outcome = create_div({
          attributes:[{key:'id',value:'backup_outcome'}]
       })
+      window.scroll(0,0)
 
       // assemble
-      backup_section.append(backup_database_btn,backup_outcome)
+      backup_section.append(
+         page_banner.render(),
+         backup_database_btn,
+         backup_outcome
+      )
       return backup_section
    }
 

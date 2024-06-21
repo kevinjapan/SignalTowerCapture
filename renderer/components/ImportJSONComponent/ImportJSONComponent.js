@@ -44,8 +44,6 @@ class ImportJSONComponent {
          lead:`JavaScript Object Notation (JSON) files are a human-readable file format for tranfering data between applications.
                They are better suited for moving small sets of data where some manual manipulation is needed.`
       })
-      import_json_section.append(page_banner.render())
-
       
       const import_btn_panel = create_div({
          classlist:['flex','justify_center']
@@ -60,13 +58,11 @@ class ImportJSONComponent {
          text:'You are recommended to backup the database before proceeding to ensure you can recover if any issues arise.'
       })
       import_btn_panel.append(import_json_btn,warning)
-      import_json_section.append(import_btn_panel)
 
       // display fields info
       const fields = create_div({
          classlist:['flex','gap_0']
       })
-
       
       const import_info_panel = create_div({
          classlist:['flex','border','rounded','bg_white','mt_1','mx_2','p_0.5','pb_1']
@@ -116,9 +112,16 @@ class ImportJSONComponent {
          json_history_section.append(await json_actions_log_component.render('import_json'))
          setTimeout(() => json_actions_log_component.activate(),200)
       }
+      window.scroll(0,0)
 
       // assemble
-      import_json_section.append(import_json_outcome,fields,import_json_fields,json_history_section)
+      import_json_section.append(
+         page_banner.render(),
+         import_btn_panel,
+         import_json_outcome,
+         fields,import_json_fields,
+         json_history_section
+      )
    
       return import_json_section
    }

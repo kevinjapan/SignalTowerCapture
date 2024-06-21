@@ -21,40 +21,29 @@ class AppConfigForm {
 
    render = async() =>  {
 
-      let fields_result_obj = await this.get_app_config_fields()
-      let record_result_obj = await this.get_app_config_record()
+      const fields_result_obj = await this.get_app_config_fields()
+      const record_result_obj = await this.get_app_config_record()
 
       // 'fields' is primarily an array of key of properties in the 'app_config_record' and preserves the display order
       // all our input validation is carried out 'server-side'
-      let fields = fields_result_obj.fields.filter((field) => {
-         return field.config_edit
-      })
-
-      let app_config_record = record_result_obj.app_config
-
+      const fields = fields_result_obj.fields.filter((field) => field.config_edit)
+      const app_config_record = record_result_obj.app_config
       
-      let app_settings_section = create_section({
+      const app_settings_section = create_section({
          attributes:[{key:'id',value:'app_settings_section'}]
       })
-
       const page_banner = new PageBanner({
          icon_name:'settings',
-         title:'Settings',
+         title:'Settings 22',
          lead:'Update your application settings here.'
       })
-      app_settings_section.append(page_banner.render())
-
-      let form = create_form({
+      const form = create_form({
          attributes:[{key:'id',value:'item_form'}],
          classlist:['config_form','border','mt_0']
       })
-
-
       const text_col = create_div({
          classlist:['text_col','mx_2']
-      })  
-
-      form.append(text_col)
+      })
       
       let panel = null
       let value = ''
@@ -114,9 +103,8 @@ class AppConfigForm {
                if(field.placeholder) field_input.setAttribute('placeholder',field.placeholder)
             }
 
-            let warning = null
-            if(field.key === 'root_folder') {
-               
+            let warning
+            if(field.key === 'root_folder') {               
                // stress impact of changing this to user
                warning = create_p({
                   classlist:['bg_yellow','fit_content','border_radius_1','p_1'],
@@ -129,7 +117,7 @@ class AppConfigForm {
             const desc_btn_row = create_div({
                classlist:['flex','align_items_center','pt_1']
             })
-            let field_desc = null
+            let field_desc
             if(typeof field.desc !== 'undefined') {
                field_desc = create_div({
                   classlist:['mt_0.5','mb_0','p_1','pt_0','pb_0','w_50'],
@@ -146,9 +134,7 @@ class AppConfigForm {
             }
 
             let field_error = create_div({
-               attributes:[
-                  {key:'id',value:`${field.key}_error`}
-               ],
+               attributes:[{key:'id',value:`${field.key}_error`}],
                classlist:['error_bar','bg_yellow'],
                text:''
             })
@@ -159,26 +145,26 @@ class AppConfigForm {
             if(warning)panel.append(warning)
             panel.append(field_error)
             text_col.append(panel)
-
-
          })
       }
 
-      if(typeof app_config_record !== 'undefined') {
-         this.#id = app_config_record.id
-      }
+      if(typeof app_config_record !== 'undefined') this.#id = app_config_record.id
+      const form_btns = FormBtns.render(null,false)
+      const notifications = create_div({attributes:[{key:'id',value:'notifications'}]})
 
-      let form_btns = FormBtns.render(null,false)
-
-      let submit_outcome = create_section({
-         attributes:[
-            {key:'id',value:'submit_outcome'}
-         ]
-      })
+      window.scroll(0,0)
       
       // assemble
-      form.append(create_div(),form_btns,submit_outcome)
-      app_settings_section.append(form)
+      form.append(
+         text_col,
+         create_div(),
+         form_btns,
+         notifications
+      )
+      app_settings_section.append(
+         page_banner.render(),
+         form
+      )
    
       return app_settings_section
    }
@@ -202,7 +188,7 @@ class AppConfigForm {
                event.preventDefault()
                this.clear_errors()
 
-               Notification.notify('#submit_outcome',``)
+               Notification.notify('#notifications',``)
 
                const item_form = document.getElementById('item_form')
 
@@ -225,7 +211,7 @@ class AppConfigForm {
                   let response = await window.config_api.updateAppConfig(update_app_config)
                   
                   if(response.outcome === 'success') {
-                     Notification.notify('#submit_outcome',`${action} successfully applied.`,['bg_inform'])
+                     Notification.notify('#notifications',`${action} successfully applied.`,['bg_inform'])
 
                      // future : make scaleable (if we incrse no. of settings)
                      app.set_root_folder(form_data.get('root_folder'))
@@ -234,7 +220,7 @@ class AppConfigForm {
                      if(Array.isArray(response.errors)) {
                         this.highlight_errors(response.errors)
                      }
-                     Notification.notify('#submit_outcome',`${action} attempt failed. ${response.message}`)
+                     Notification.notify('#notifications',`${action} attempt failed. ${response.message}`)
                   }               
                }
             })
@@ -273,7 +259,7 @@ class AppConfigForm {
                } 
             }
             else {
-               Notification.notify('#submit_outcome',result.message)
+               Notification.notify('#notifications',result.message)
             }
          })
       }

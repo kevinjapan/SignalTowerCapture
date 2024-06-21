@@ -49,26 +49,20 @@ class Files {
 
       this.#root_folder = await app.get_root_folder()
       if(this.#root_folder === '') return no_root_folder()
-      //this.#root_folder = temp.split(/\ /).join('\ ');
 
-      // container
       const files_section = create_section({
          attributes:[{key:'id',value:'files_section'}],
          classlist:['h_85vh','mt_0','fit_content_height','pb_2']
       })
 
-      // notifications
-      const files_outcome = create_div({
-         attributes:[{key:'id',value:'files_outcome'}]
+      const notifications = create_div({
+         attributes:[{key:'id',value:'notifications'}]
       })
-      files_section.append(files_outcome)
 
       // 2-col layout
       const files_layout = create_div({
          classlist:['files_layout','m_0','p_0','h_100']
       })
-
-      // folder/file panels
       const file_list_elem = create_div({
          attributes:[{key:'id',value:'file_list_elem'}],
          classlist:['bg_white','box_shadow','rounded','m_0','p_1','overflow_auto','max_h_70','text_sm','text_grey']
@@ -78,15 +72,10 @@ class Files {
          classlist:['bg_white','box_shadow','rounded','fit_content'],
          text:''
       })
-
       files_layout.append(file_list_elem,file_view)
-
-      // assemble                  
+                 
       this.#breadcrumb_nav = new BreadCrumbNav(this.open_folder)
-      if(this.#breadcrumb_nav) {
-         files_section.append(this.#breadcrumb_nav.render())
-         setTimeout(() => this.#breadcrumb_nav.activate(),100)
-      }
+      if(this.#breadcrumb_nav) setTimeout(() => this.#breadcrumb_nav.activate(),100)
 
       // hydrate w/ any rcvd context
       if(this.#props && this.#props.context) {
@@ -98,9 +87,7 @@ class Files {
          }
          // if we are coming 'back' from a Record, open the appropriate folder
          if(this.#props) {
-            if(this.#props.context) {
-               setTimeout(() => this.open_folder(folder_path_filter.value),100)  
-            }
+            if(this.#props.context) setTimeout(() => this.open_folder(folder_path_filter.value),100)  
          }
          else {
             setTimeout(() => this.open_folder(),100) 
@@ -109,7 +96,12 @@ class Files {
 
       window.scroll(0,0)
       
-      files_section.append(files_layout)
+      // assemble
+      files_section.append(
+         notifications,
+         this.#breadcrumb_nav.render(),
+         files_layout
+      )
       return files_section
    }
 
@@ -126,15 +118,10 @@ class Files {
 
    }
 
-
-   //
    // enable buttons/links displayed in the render
-   //
 
    activate_file_links = () => {
-
-      // User clicks on a file in file_list_elem
-      // we display FileInjector for that file (either existing record or create new)
+      // we display FileInjector for selected file (either existing record or create new)
       const file_links = document.querySelectorAll('.file_item')
       if(file_links) {
          file_links.forEach((file_link) => {
@@ -167,29 +154,19 @@ class Files {
    }
 
    activate_folder_links = () => {
-
-      // User clicks on a folder in file_list_elem
-      // we load that folder and display it's contents (sub-folders and files)
       const folder_items = document.querySelectorAll('.folder_item')
       if(folder_items) {
          folder_items.forEach((folder_item) => {
-
-
-            folder_item.addEventListener('click',async(event) => {
-               
+            folder_item.addEventListener('click',async(event) => {               
                // update page's context w/ selected folder (there are two props to consider)
                const history = app.get_service('history')
                if(history) {
-                  history.augment_current_context(
-                     {
-                        folder_path:event.target.getAttribute('data-file-path').replace(this.#root_folder,'')
-                     }
-                  )
-                  history.augment_current_context(
-                     {
-                        field_filters:[{field:'folder_path',value:event.target.getAttribute('data-file-path').replace(this.#root_folder,'')}]
-                     }
-                  )
+                  history.augment_current_context({
+                     folder_path:event.target.getAttribute('data-file-path').replace(this.#root_folder,'')
+                  })
+                  history.augment_current_context({
+                     field_filters:[{field:'folder_path',value:event.target.getAttribute('data-file-path').replace(this.#root_folder,'')}]
+                  })
                }
 
                // update filter
@@ -227,7 +204,7 @@ class Files {
          }
       }
       catch(error) {
-         setTimeout(() => Notification.notify('#files_outcome','Sorry, we failed to retrieve the list of matching records, so matches may be missed. You might want to try again later.',[],false),200)
+         setTimeout(() => Notification.notify('#notifications','Sorry, we failed to retrieve the list of matching records, so matches may be missed. You might want to try again later.',[],false),200)
       }
    }
 
@@ -236,7 +213,6 @@ class Files {
    }
 
    open_folder = async(folder_path) => {
-
       if(folder_path === undefined || folder_path === null) folder_path = ''
       const files_list_obj = await window.files_api.getFolderFilesList(`${this.#root_folder}${folder_path}`)
       this.hydrate(files_list_obj)
@@ -313,11 +289,9 @@ class Files {
             }
             file_list_elem.replaceChildren()
 
-
             // assemble
             if(file_list_elem) {               
                if(parent_folder_path.indexOf(this.#root_folder) === -1) {
-                  // file_list_elem.append(parent_link_elem)
                   file_list_elem.append(parent_link_obj.render(this.#root_folder,parent_folder_path,false))
                }
                else {
@@ -331,7 +305,6 @@ class Files {
                let msg = create_div({text:'There are no files in this folder.'})
                if(file_list_elem) file_list_elem.replaceChildren(parent_link_obj.render(this.#root_folder,parent_folder_path,false),msg)
             }
-            // file_list_elem.prepend(icon('arrow_up'))
             
             if(file_view) file_view.replaceChildren()
             setTimeout(() => this.activate_file_links(),100)
@@ -350,7 +323,7 @@ class Files {
          }
          else {
             Notification.notify(
-               'files_outcome',
+               'notifications',
                `The folder you selected is not within the Collections Folders.`)
          }
       }
@@ -372,11 +345,7 @@ class Files {
          this.activate()
       }
    }
-   
-   get_default_context = () => {
-      return this.#context
-   }
-   
+
    deselect_list_items = () => {
       const file_links = document.querySelectorAll('.file_item')
       if(file_links) {
@@ -387,6 +356,9 @@ class Files {
       if(elem) elem.style.background = '#DDDDDD'
    }
    
+   get_default_context = () => {
+      return this.#context
+   }
 }
 
 

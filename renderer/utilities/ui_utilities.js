@@ -1,6 +1,5 @@
-import { create_img } from '../utilities/ui_elements.js'
 import { truncate,ui_friendly_text,trim_char,trim_end_char } from '../utilities/ui_strings.js'
-import { create_div } from '../utilities/ui_elements.js'
+import { create_div,create_img } from '../utilities/ui_elements.js'
 
 
 

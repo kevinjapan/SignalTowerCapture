@@ -1,5 +1,5 @@
 import { app } from '../../renderer.js'
-import SearchForm from '../SearchForm/SearchForm.js'
+import SearchForm from './SearchForm/SearchForm.js'
 import CardGrid from '../CardGrid/CardGrid.js'
 import CollectionItemCard from '../CollectionItemCard/CollectionItemCard.js'
 import PaginationNav from '../PaginationNav/PaginationNav.js'
@@ -33,7 +33,7 @@ class Search {
       scroll_y:0
    }
 
-   #search_term_max_len = 36
+   #search_term_max_len = 36  // to do : move to app - see 'to do : ' below
 
    #show_advanced
 
@@ -48,50 +48,60 @@ class Search {
 
    render = async () => {
 
+      // to do : we can't put in constructor (not async) - how about access from app - rollout
       this.#root_folder = await app.get_root_folder()
       if(this.#root_folder === '') return no_root_folder()
+
+      try {
+         this.#search_term_max_len = await window.app_api.maxSearchTermLen() // to do : access from app? 
+      }
+      catch(error) {
+         // use initially assigned
+      }
 
       this.#search_section = create_section({
          attributes:[{key:'id',value:'search_section'}]
       })
+  
+      const search_form = new SearchForm({
+         search_term:'',
+         search_term_max_len:this.#search_term_max_len,
+         submit_search_term:this.submit_search_term,
+         clear_search:this.clear_search
+      })
+      setTimeout(() => search_form.activate(),100)
+      
+      const num_records = create_div({
+         attributes:[{key:'id',value:'number_records'}],
+         classlist:['p_.5','pt_1','text_center']
+      })
+
+      this.#pagination_nav = new PaginationNav()
 
       let search_status = create_section({
          attributes:[{key:'id',value:'search_status'}],
          classlist:['p_0','bg_warning']
       })
 
-      this.add_search_form()    
-      this.add_number_results()
-      
-      this.#pagination_nav = new PaginationNav()
-      this.#search_section.append(this.#pagination_nav.render())
-      
       // grid wrapper
       this.#card_grid_obj = new CardGrid('search_results_container')
       this.#search_results_container = this.#card_grid_obj.render()
-
-
-      try {
-         this.#search_term_max_len = await window.app_api.maxSearchTermLen()
-      }
-      catch(error) {
-         // use initially assigned
-      }
-      
 
       // required for re-instating search_context on 'back' to list actions
       if(this.#context) {
          if(this.#context.search_term !== undefined && this.#context.search_term !== '')
             this.#search_results_container.append(this.get_items())
       }
-
-      window.scroll(0,0)
       
       // assemble
-      this.#search_section.append(search_status,this.#search_results_container)
-      
-      this.#search_section.append(this.#pagination_nav.render())
-
+      this.#search_section.append(
+         search_form.render(),
+         num_records,
+         this.#pagination_nav.render(),
+         search_status,
+         this.#search_results_container,
+         this.#pagination_nav.render()
+      )
       return this.#search_section
    }
 
@@ -115,17 +125,13 @@ class Search {
                   let { count,per_page,collection_item_fields,collection_items } = collection_items_obj
 
                   this.#search_results_container.replaceChildren()
-                  
-                  // this.add_search_form(this.#context.search_term)
-                  // this.add_number_results()                  
+                                   
                   let page_count = Math.ceil(count / per_page)
 
                   if(collection_items && collection_items.length > 0) {                     
 
                      let number_records = document.getElementById('number_records')
-                     if(number_records) {      
-                        number_records.innerText = `${ui_display_number_as_str(count)} matching records were found.`
-                     }
+                     if(number_records) number_records.innerText = `${ui_display_number_as_str(count)} matching records were found.`
                      
                      let props = {
                         root_folder: this.#root_folder,
@@ -139,7 +145,7 @@ class Search {
                         }
                      }
          
-                     // retain some spacing on short lists
+                     // retain spacing on short lists
                      this.#search_results_container.style.minHeight = '70vh'         
     
                      const page_navs = document.querySelectorAll('.page_nav')
@@ -159,7 +165,7 @@ class Search {
                      if(number_records) number_records.innerText = 'No matching records were found. '
                   }
                   // re-instate scroll position if user had scrolled list before opening a record
-                  setTimeout(() => window.scroll(0,this.#context.scroll_y),100)
+                  window.scroll(0,this.#context.scroll_y)
                }
                else {
                   let search_status = document.getElementById('search_status')
@@ -180,26 +186,6 @@ class Search {
       else {
          return null
       }
-   }
-
-   add_search_form = (search_term) => {
-  
-      const search_form = new SearchForm({
-         search_term:search_term,
-         search_term_max_len:this.#search_term_max_len,
-         submit_search_term:this.submit_search_term,
-         clear_search:this.clear_search
-      })
-
-      this.#search_section.append(search_form.render())
-      setTimeout(() => search_form.activate(),100)
-   }
-
-   add_number_results = () => {
-      this.#search_section.append(create_div({
-         attributes:[{key:'id',value:'number_records'}],
-         classlist:['p_.5','pt_1','text_center']
-      }))
    }
 
    // callback for SearchForm
@@ -235,7 +221,6 @@ class Search {
    get_default_context = () => {
       return this.#context
    }
-
 }
 
 

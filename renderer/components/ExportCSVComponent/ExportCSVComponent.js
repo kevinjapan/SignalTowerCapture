@@ -15,19 +15,16 @@ class ExportCSVComponent {
    
    render = () => {
 
-      let export_csv_section = create_section({
+      const export_csv_section = create_section({
          attributes:[{key:'id',value:'export_csv_section'}],
          classlist:['flex','flex_col','align_items_center','px_1']
       })
-
       const page_banner = new PageBanner({
          icon_name:'csv',
          title:'CSV Files : Export',
          lead:'Comma-Separated-Value (CSV) files are a common file format for tranfering data between applications.'
       })
-      export_csv_section.append(page_banner.render())
-
-      let export_csv_btn = create_button({
+      const export_csv_btn = create_button({
          attributes:[{key:'id',value:'export_csv_btn'}],
          classlist:['action_btn','align_self_center'],
          text:'Export CSV File'
@@ -35,14 +32,19 @@ class ExportCSVComponent {
       const export_csv_outcome = create_div({
          attributes:[{key:'id',value:'export_csv_outcome'}]
       })
-
       const export_csv_fields = create_div({
          attributes:[{key:'id',value:'export_csv_fields'}],
          classlist:['break_words','','text_grey','italic','p_1','m_1','mx_2']
       })
+      window.scroll(0,0)
 
       // assemble
-      export_csv_section.append(export_csv_btn,export_csv_outcome,export_csv_fields)
+      export_csv_section.append(
+         page_banner.render(),
+         export_csv_btn,
+         export_csv_outcome,
+         export_csv_fields
+      )
       
       return export_csv_section
    }

@@ -4,6 +4,8 @@ import { create_section,create_div,create_h,create_p } from '../../utilities/ui_
 import { icon } from '../../utilities/ui_utilities.js'
 
 
+// to do : this file depr?
+
 class Config {
 
    #context = {
@@ -87,9 +89,14 @@ class Config {
       app_settings_section.append(config_form_wrap)
 
       window.scroll(0,0)
+      console.log('to do : why isnt this scroll working?')
+
 
       // assemble
-      config_component.append(tags_section,app_settings_section)
+      config_component.append(
+         tags_section,
+         app_settings_section
+      )
       return config_component
 
    }

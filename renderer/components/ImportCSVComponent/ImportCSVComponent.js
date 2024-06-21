@@ -30,7 +30,7 @@ class ImportCSVComponent {
       }
 
       // layout
-      let import_csv_section = create_section({
+      const import_csv_section = create_section({
          attributes:[{key:'id',value:'import_csv_section'}],
          classlist:['flex','flex_col','align_items_center','px_1']
       })   
@@ -40,7 +40,7 @@ class ImportCSVComponent {
          title:'CSV Files : Import',
          lead:'Comma-Separated-Value (CSV) files are a common file format for tranfering data between applications.'
       })
-      import_csv_section.append(page_banner.render())
+      import_csv_section.append()
 
       const import_btn_panel = create_div({
          classlist:['flex','justify_center']
@@ -60,9 +60,6 @@ class ImportCSVComponent {
          attributes:[{key:'id',value:'import_csv_outcome'}],
          classlist:['mt_0.5']
       })
- 
-      import_csv_section.append(import_btn_panel,import_csv_outcome)
-
       
       const import_info_panel = create_div({
          classlist:['flex','border','rounded','bg_white','mt_1','mx_2','p_0.5','pb_1']
@@ -99,9 +96,17 @@ class ImportCSVComponent {
          csv_history_section.append(await this.#csv_actions_log_component.render('import_csv'))
          setTimeout(() => this.#csv_actions_log_component.activate(),200)
       }
+      window.scroll(0,0)
 
       // assemble
-      import_csv_section.append(import_info_panel,import_csv_fields,csv_history_section)
+      import_csv_section.append(
+         page_banner.render(),
+         import_btn_panel,
+         import_csv_outcome,
+         import_info_panel,
+         import_csv_fields,
+         csv_history_section
+      )
    
       return import_csv_section
    }

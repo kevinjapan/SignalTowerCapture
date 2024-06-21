@@ -18,7 +18,7 @@ class Browse {
    #browse_section
 
    // alphabet navigation
-   #alphabet_ctrl
+   #alpha_ctrl
 
    // pagination
    #pagination_nav
@@ -62,32 +62,37 @@ class Browse {
          classlist:['max_w_full']
       })
 
-      // alpha ctrl
-      let alphabet_ctrl_props = {
+      const alpha_ctrl_props = {
          selected_char:this.#filter_char ? this.#filter_char : null,
          submit_alpha_filter:this.submit_alpha_filter,
          reset_alpha_filter:this.reset_alpha_filter
       }      
-      this.#alphabet_ctrl = new AlphabetCtrl(alphabet_ctrl_props)
-      setTimeout(() => this.#alphabet_ctrl.activate(),50)
+      this.#alpha_ctrl = new AlphabetCtrl(alpha_ctrl_props)
+      setTimeout(() => this.#alpha_ctrl.activate(),50)
       
-      this.#browse_section.append(this.#alphabet_ctrl.render())
-
-      this.add_number_results()
+      const num_records = create_div({
+         attributes:[{key:'id',value:'number_records'}],
+         classlist:['p_.5','pt_1','text_center']
+      })
       
       this.#pagination_nav = new PaginationNav()
-      this.#browse_section.append(this.#pagination_nav.render())
 
-      // grid wrapper
       this.#card_grid_obj = new CardGrid('browse_results_container')
       this.#browse_results_container = this.#card_grid_obj.render('loading..')
-
-      this.#browse_section.append(this.#browse_results_container)
 
       // required for re-instating search_context on 'back' to list actions
       if(this.#context) this.get_items()
          
-      this.#browse_section.append(this.#pagination_nav.render())
+      window.scroll(0,0)
+
+      // assemble
+      this.#browse_section.append(
+         this.#alpha_ctrl.render(),
+         num_records,
+         this.#pagination_nav.render(),
+         this.#browse_results_container,
+         this.#pagination_nav.render()
+      )
 
       return this.#browse_section
    }
@@ -119,7 +124,6 @@ class Browse {
 
                   this.#browse_results_container.replaceChildren()
 
-                  this.add_number_results()
                   let page_count = Math.ceil(count / per_page)
 
                   if(collection_items.length > 0) {
@@ -184,7 +188,7 @@ class Browse {
          this.#context.page = page
          this.#context.scroll_y = 0
          this.get_items()
-         setTimeout(() => this.activate(),50)
+         setTimeout(() => this.activate(),100)
       }
    }
 
@@ -195,7 +199,7 @@ class Browse {
          this.#filter_char = char
          this.#context.scroll_y = 0
          this.get_items()
-         setTimeout(() => this.activate(),50)
+         setTimeout(() => this.activate(),100)
       }
    }
    reset_alpha_filter = () => {
@@ -204,25 +208,14 @@ class Browse {
          this.#filter_char = null
          this.#context.scroll_y = 0
          this.get_items()
-         setTimeout(() => this.activate(),50)
+         setTimeout(() => this.activate(),100)
       }
-   }
-
-   add_number_results = () => {
-      if(this.#browse_section) {
-         this.#browse_section.append(create_div({
-            attributes:[{key:'id',value:'number_records'}],
-            classlist:['p_.5','pt_1','text_center']
-         })) 
-      }     
    }
 
    get_default_context = () => {
       return this.#context
    }
-
 }
-
 
 
 export default Browse
