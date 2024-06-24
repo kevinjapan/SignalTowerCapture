@@ -74,32 +74,33 @@ const tokenize_search_term = (full_search_term) => {
    return [...tokens.filter(token => token.length >= MIN_SEARCH_TERM_LEN) ]
 }
 
-//
-//
-//
-const remove_stopwords = (search_term_tokens) => {
-   // exlude common words from our searches
-   let tokens = null
-   if(search_term_tokens.length > 1) {
-      tokens = search_term_tokens.filter(token => {
-         return !search_excluded_words.includes(token)
-      })
-   }
-   else {
-      tokens = search_term_tokens
-   }
-   return tokens
-}
 
+// Stopwords
+// we use closure to avoid repeatedly creating search_excluded_words
+const remove_stopwords = function() {
 
-// stopword list
-//
-const search_excluded_words = [
-   'also','and','are','been','but','for','from',
-   'has','have','not','our',
-   'than','that','the','their','them','then','there','these','this',
-   'was','were','with',
-]
+   const search_excluded_words = [
+      'also','and','are','been','but','for','from',
+      'has','have','not','our',
+      'than','that','the','their','them','then','there','these','this',
+      'was','were','with',
+   ]
+
+   return function(search_term_tokens) {
+      // exlude common words from our searches
+      let tokens = null
+      if(search_term_tokens.length > 1) {
+         tokens = search_term_tokens.filter(token => {
+            return !search_excluded_words.includes(token)
+         })
+      }
+      else {
+         tokens = search_term_tokens
+      }
+      return tokens
+   }
+} ();
+
 
 //
 // 2-char words we exclude from above since our search sets min 3-char search_terms
