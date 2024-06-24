@@ -37,34 +37,43 @@ export const is_img_ext = (file_name) => {
    })
 }
 
-// whitelist known filetypes
-// future : review - encapsulate this?
-const filetype_icons = {
-   'BMP':'imgs\\filetypes\\filetype-bmp.svg',
-   'CSV':'imgs\\filetypes\\filetype-csv.svg',
-   'DOC':'imgs\\filetypes\\filetype-doc.svg',
-   'DOCX':'imgs\\filetypes\\filetype-docx.svg',
-   'GIF':'imgs\\filetypes\\filetype-gif.svg',
-   'HTM':'imgs\\filetypes\\filetype-html.svg',
-   'HTML':'imgs\\filetypes\\filetype-html.svg',
-   'JPG':'imgs\\filetypes\\filetype-jpg.svg',
-   'JSON':'imgs\\filetypes\\filetype-json.svg',
-   'M4P':'imgs\\filetypes\\filetype-m4p.svg',
-   'MOV':'imgs\\filetypes\\filetype-mov.svg',
-   'MP3':'imgs\\filetypes\\filetype-mp3.svg',
-   'MP4':'imgs\\filetypes\\filetype-mp4.svg',
-   'PDF':'imgs\\filetypes\\filetype-pdf.svg',
-   'PNG':'imgs\\filetypes\\filetype-png.svg',
-   'PPT':'imgs\\filetypes\\filetype-ppt.svg',
-   'PPTX':'imgs\\filetypes\\filetype-pptx.svg',
-   'SVG':'imgs\\filetypes\\filetype-svg.svg',
-   'TIF':'imgs\\filetypes\\filetype-tiff.svg',
-   'TIFF':'imgs\\filetypes\\filetype-tiff.svg',
-   'TXT':'imgs\\filetypes\\filetype-txt.svg',
-   'WAV':'imgs\\filetypes\\filetype-wav.svg',
-   'XLS':'imgs\\filetypes\\filetype-xls.svg',
-   'XLSX':'imgs\\filetypes\\filetype-xlsx.svg'
-}
+
+// display filetype icon
+// we use closure to avoid repeatedly creating filetype_icons list
+export const get_file_type_icon = function() {
+
+   const filetype_icons = {
+      'BMP':'imgs\\filetypes\\filetype-bmp.svg',
+      'CSV':'imgs\\filetypes\\filetype-csv.svg',
+      'DOC':'imgs\\filetypes\\filetype-doc.svg',
+      'DOCX':'imgs\\filetypes\\filetype-docx.svg',
+      'GIF':'imgs\\filetypes\\filetype-gif.svg',
+      'HTM':'imgs\\filetypes\\filetype-html.svg',
+      'HTML':'imgs\\filetypes\\filetype-html.svg',
+      'JPG':'imgs\\filetypes\\filetype-jpg.svg',
+      'JSON':'imgs\\filetypes\\filetype-json.svg',
+      'M4P':'imgs\\filetypes\\filetype-m4p.svg',
+      'MOV':'imgs\\filetypes\\filetype-mov.svg',
+      'MP3':'imgs\\filetypes\\filetype-mp3.svg',
+      'MP4':'imgs\\filetypes\\filetype-mp4.svg',
+      'PDF':'imgs\\filetypes\\filetype-pdf.svg',
+      'PNG':'imgs\\filetypes\\filetype-png.svg',
+      'PPT':'imgs\\filetypes\\filetype-ppt.svg',
+      'PPTX':'imgs\\filetypes\\filetype-pptx.svg',
+      'SVG':'imgs\\filetypes\\filetype-svg.svg',
+      'TIF':'imgs\\filetypes\\filetype-tiff.svg',
+      'TIFF':'imgs\\filetypes\\filetype-tiff.svg',
+      'TXT':'imgs\\filetypes\\filetype-txt.svg',
+      'WAV':'imgs\\filetypes\\filetype-wav.svg',
+      'XLS':'imgs\\filetypes\\filetype-xls.svg',
+      'XLSX':'imgs\\filetypes\\filetype-xlsx.svg'
+   }
+   return function(file_name) {
+      let ext = get_ext(file_name).toUpperCase()
+      return filetype_icons[ext] ? filetype_icons[ext] : 'imgs\\filetypes\\file.svg' 
+   }
+} ();
+
 
 export const get_ext = (file_name) => {
    return file_name.substring(file_name.lastIndexOf('.') + 1)
@@ -74,16 +83,6 @@ export const remove_ext = (file_name) => {
    return file_name.replace(/\.[^/.]+$/, "")
 }
 
-// Display filetype img and icon
-// currently same, but we may distinguish btwn in future
-export const get_file_type_img = (file_name) => {
-   let ext = get_ext(file_name).toUpperCase()
-   return filetype_icons[ext] ? filetype_icons[ext] : 'imgs\\filetypes\\file.svg'
-}
-export const get_file_type_icon = (file_name) => {
-   let ext = get_ext(file_name).toUpperCase()
-   return filetype_icons[ext] ? filetype_icons[ext] : 'imgs\\filetypes\\file.svg' 
-}
 
 
 export const build_img_elem = (file_path,alt_text = 'image',attributes = [],classlist = []) => {
@@ -119,10 +118,12 @@ const folder_icon = (folder_icon_type,attributes = [],classlist = []) => {
       ['pr_0.25','pt_0.3',...classlist])
 }
 
-export const icon = (icon_name,attributes = [],classes = []) => {
+
+// display icon
+// we use closure to avoid repeatedly creating icons list
+export const icon = function (){
 
    // use semantic icon_names - they will be used as alt text in clickable ctrls
-
    const icons = {
       'ARROW_UP':'imgs\\icons\\arrow-up-left-square.svg',
       'CIRCLE':'imgs\\icons\\circle.svg',
@@ -136,14 +137,18 @@ export const icon = (icon_name,attributes = [],classes = []) => {
       'HISTORY_BACK':'imgs\\icons\\arrow-left-short-white.svg',
       'HISTORY_FORWARD':'imgs\\icons\\arrow-right-short-white.svg',
       'JSON':'imgs\\filetypes\\filetype-json.svg',
+      'MENU_UP':'imgs\\icons\\menu-up.svg',
       'OPEN_FOLDER':'imgs\\icons\\folder2-open.svg',
       'SETTINGS':'imgs\\icons\\gear.svg',
       'TAG':'imgs\\icons\\tag.svg',
       'TRASH':'imgs\\icons\\trash.svg'
+      
    }
-   const icon_path = icons[icon_name.toUpperCase()] ? icons[icon_name.toUpperCase()] : icons['DEFAULT']
-   return build_img_elem(icon_path,`${ui_friendly_text(icon_name)} icon`,[{key:'height',value:'35px'},...attributes],['pr_0.25','pt_0.5',...classes]) 
-}
+   return function(icon_name,attributes = [],classes = []) {
+      const icon_path = icons[icon_name.toUpperCase()] ? icons[icon_name.toUpperCase()] : icons['DEFAULT']
+      return build_img_elem(icon_path,`${ui_friendly_text(icon_name)} icon`,[{key:'height',value:'35px'},...attributes],['pr_0.25','pt_0.5',...classes]) 
+   }
+} ();
 
 // 
 // Load Card images as they enter viewport.
