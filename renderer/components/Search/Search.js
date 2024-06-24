@@ -216,6 +216,7 @@ class Search {
    
    // grid can request refresh
    refresh = () => {
+      this.#context.scroll_y = window.scrollY
       this.get_items()
       setTimeout(() => this.activate(),100)
    }

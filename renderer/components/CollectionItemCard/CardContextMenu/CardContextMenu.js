@@ -1,4 +1,3 @@
-import { app } from '../../../renderer.js'
 import { create_ul,create_li,create_a } from '../../../utilities/ui_elements.js'
 
 
@@ -6,6 +5,7 @@ import { create_ul,create_li,create_a } from '../../../utilities/ui_elements.js'
 // wrapper for grid (list) of Cards
 // returns container element for Cards and provides handler for click events
 
+// to do : highlight links on hover (eg 'Delete this record')
 
 class CardContextMenu {
 
@@ -13,7 +13,7 @@ class CardContextMenu {
 
    #menu_items = [
       {key:'delete',label:'Delete this record'},
-      {key:'tag',label:'Tag this record'}
+      // {key:'tag',label:'Tag this record'}  // future : enable 'tag' record in context_menu
    ]
 
    // to do : if Record is soft deleted, add 'Restore this record' link.
