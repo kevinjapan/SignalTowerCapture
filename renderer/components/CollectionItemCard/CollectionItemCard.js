@@ -1,7 +1,8 @@
+import CardContextMenu from './CardContextMenu/CardContextMenu.js'
 import { get_ui_ready_date } from '../../utilities/ui_datetime.js'
 import { create_section,create_div,create_h } from '../../utilities/ui_elements.js'
-import { trim_char,trim_end_char,truncate } from '../../utilities/ui_strings.js'
-import { get_ext,is_img_ext,get_file_type_img,get_file_type_icon,file_exists,build_img_elem,build_full_path } from '../../utilities/ui_utilities.js'
+import { truncate } from '../../utilities/ui_strings.js'
+import { icon,get_ext,is_img_ext,get_file_type_icon,file_exists,build_img_elem,build_full_path } from '../../utilities/ui_utilities.js'
 
 
 
@@ -15,17 +16,20 @@ class CollectionItemCard {
 
    render = (fields,item) => {
 
-      let card = create_section({
-         attributes:[{key:'data-id',value:item.id}],
+      const card = create_section({
+         attributes:[
+            {key:'data-id',value:item.id},
+            {key:'data-title',value:item.title}
+         ],
          classlist:['collection_item_card','cursor_pointer']
       })
-      let img_block = create_div({
+      const img_block = create_div({
          classlist:['card_image_block','text_center','m_0']
       })
-      let text_block = create_div({
-         classlist:['card_text_block','grid_card_text_layout','pl_0.5','pr_0.5','flex','flex_col','align_items_start','no_wrap','justify_end']
+      const text_block = create_div({
+         classlist:['card_text_block','grid_card_text_layout','relative','z_0','pl_0.5','pr_0.5','flex','flex_col','align_items_start','no_wrap','justify_end']
       })
-      let folder_path_block = create_div()
+      const folder_path_block = create_div()
       
 
 
@@ -64,7 +68,7 @@ class CollectionItemCard {
 
                   case 'file_name':
 
-                     let file_ext_type_block = create_div({
+                     const file_ext_type_block = create_div({
                         classlist:['flex','align_items_center','gap_.5','fit_content','p_0.5','pl_0','break_words','no_wrap']
                      })
                      field_element = create_div({
@@ -91,7 +95,7 @@ class CollectionItemCard {
                      const img_file_path =  placeholder_file_path
 
                      if(is_img_ext(item.file_name)) {
-                        let img = build_img_elem(img_file_path,item.img_desc,
+                        const img = build_img_elem(img_file_path,item.img_desc,
                            [
                               {key:'id',value:`card_${this.#props.card_index}`},
                               {key:'data-id',value:item.id},
@@ -107,8 +111,8 @@ class CollectionItemCard {
                         }
                      }
                      else {
-                        const icon_img_file_path = get_file_type_img(item.file_name)
-                        let img = build_img_elem(icon_img_file_path,`${get_ext(file_path)} file icon`,
+                        const icon_img_file_path = get_file_type_icon(item.file_name)
+                        const img = build_img_elem(icon_img_file_path,`${get_ext(file_path)} file icon`,
                            [
                               {key:'data-id',value:item.id},
                               {key:'data-src',value:icon_img_file_path},
@@ -125,7 +129,7 @@ class CollectionItemCard {
                      // since we are in a forEach loop, this check effectively runs as a background task, but does resolve
                      if(!await file_exists(file_path)) {
                         const no_file_icon_img = build_img_elem('imgs\\icons\\exclamation-square.svg',`item date`,[{key:'height',value:'24px'}],['bg_yellow_100','mt_5','opacity_.6'])
-                        let msg = create_div({
+                        const msg = create_div({
                            classlist:['text_sm','text_lightgrey','text_italic','','fit_content','mx_auto'],
                            text:'No matching file was found.'
                         })
@@ -157,20 +161,47 @@ class CollectionItemCard {
             })
          }
       }
+
+      // to do : complete and enable context menu for delete and tag
+      // to do : as sep. components:
+         const ctrls = create_div({
+            classlist:['flex','','justify_end','m_0','p_0.5','pb_0.75']
+         })
+
+         const context_menu_icon = icon(
+            'menu_up',
+            [{key:'data-id',value:item.id},{key:'width',value:'16px'},{key:'height',value:'16px'}],
+            ['context_menu_btn']
+         )
+         ctrls.append(context_menu_icon)
+
+         const context_menu = new CardContextMenu({
+            id:item.id,
+            title:item.title,
+            actions:this.actions
+         })
+         text_block.append(context_menu.render())
       
       // assemble
       card.prepend(img_block)
       text_block.append(folder_path_block)
-      card.append(text_block)
+      card.append(
+         text_block,
+         ctrls
+      )
       return card
    }
 
    
    // enable buttons/links displayed in the render
-   // to avoid proliferation of EventListeners, parent components handle Card events
-   // activate = async() => {}
+   actions = async() => {
+      // to avoid proliferation of EventListeners, parent components handle Card events
+   }
 
-   actions = async(key,id) => {}
+   actions = (action,props) => {
+
+      console.log(action,props)
+   }
 
 }
 
