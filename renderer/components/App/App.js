@@ -40,31 +40,41 @@ class App {
    #page_nav
 
    #history
+   
+   #search_term_max_len = 36
 
    constructor() {
       this.#history = new History(this.switch_to_component)
    }
 
-   get_root_folder = async() => {
-      if(this.#root_folder === '') {
-         // we initialize on first request
-         let app_config_obj = await window.config_api.getAppConfig()
-         if(app_config_obj.outcome === 'success') {
-            this.#root_folder = trim_end_char(app_config_obj.app_config.root_folder,'\\')
-         }
+   init = async() => {
+      // App configs
+      let app_config_obj = await window.config_api.getAppConfig()
+      if(app_config_obj.outcome === 'success') {
+         this.#root_folder = trim_end_char(app_config_obj.app_config.root_folder,'\\')
       }
-      return this.#root_folder
+      
+      
+      try {
+         this.#search_term_max_len = await window.app_api.maxSearchTermLen()
+      }
+      catch(error) {
+         // use initially assigned
+      }
    }
 
-   // update if user modifes Config
+   get_root_folder = () => {
+      return this.#root_folder
+   }
    set_root_folder = (root_folder) => {
       this.#root_folder = root_folder
    }
-
    set_nav = (nav) => {
       this.#page_nav = nav
    }
-
+   max_search_term_len = () => {
+      return this.#search_term_max_len
+   }
 
    //
    // Load component in to 'component_container'

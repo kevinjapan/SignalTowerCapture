@@ -7,6 +7,7 @@ import Nav from './components/Nav/Nav.js'
 // App provides app-wide settings eg root_folder
 //
 export const app = new App()
+await app.init()
 
 // load Home page on startup
 setTimeout(() => app.switch_to_component('Home'),100)
