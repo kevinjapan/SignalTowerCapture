@@ -402,6 +402,7 @@ button.action_btn {
 .h_20 {height:20%;}
 .h_80 {height:80%;}
 .h_100 {height:100%;}
+.h_full {min-height:100%;}
 .min_h_80 {min-height:80%;}
 .max_h_70 {max-height:70vh;}
 .h_80vh {height:80vh;}
@@ -564,10 +565,25 @@ h3.logo_heading {
 .relative {
    position:relative;
 }
+.absolute {
+   position:absolute;
+}
 .fixed {
    position:fixed;
    top:0;
    left:0;
+}
+.top_0 {
+   top:0;
+}
+.left_0 {
+   left:0;
+}
+.z_0 {
+   z-index:0;
+}
+.z_100 {
+   z-index:100;
 }
 /* prevent child elems (esp headings) blocking events on containers */
 .no_pointer_events {
@@ -1091,6 +1107,20 @@ input[type='radio'] {
    max-width:430px;
    min-width:300px;
    width:100%;
+   overflow:hidden;
+}
+.card_context_menu {
+   top:200%;
+   left:0;
+   width:100%;
+   height:100%;
+   margin:0;
+   background:white;
+   transition:.5s ease-in-out;
+}
+.card_context_menu.opened {
+   top:0;
+   transition:.5s ease-in-out;
 }
 @media screen and (max-width: 768px) {
    .page_nav {
