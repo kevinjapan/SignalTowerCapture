@@ -33,8 +33,8 @@ const has_invalid_chars = (str) => {
 
 //
 // Int
-//
-const is_valid_int = (value, min = 0, max = 10000) => {
+// future : max int needed?
+const is_valid_int = (value, min = 0, max = 999999999) => {
    if(Number.isInteger(parseInt(value)) && (parseInt(value) >= min) && (parseInt(value) <= max))  {
       return true
    }
