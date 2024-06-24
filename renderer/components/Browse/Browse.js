@@ -77,7 +77,10 @@ class Browse {
       
       this.#pagination_nav = new PaginationNav()
 
-      this.#card_grid_obj = new CardGrid('browse_results_container')
+      this.#card_grid_obj = new CardGrid({
+         container_id:'browse_results_container',
+         refresh:this.refresh
+      })
       this.#browse_results_container = this.#card_grid_obj.render('loading..')
 
       // required for re-instating search_context on 'back' to list actions
@@ -180,6 +183,12 @@ class Browse {
             },false)
          }
       }
+   }
+
+   // grid can request refresh
+   refresh = () => {
+      this.get_items()
+      setTimeout(() => this.activate(),100)
    }
 
    // callback for PageNavigation

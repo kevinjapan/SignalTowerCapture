@@ -33,8 +33,6 @@ class Search {
       scroll_y:0
    }
 
-   #search_term_max_len = 36  // to do : move to app - see 'to do : ' below
-
    #show_advanced
 
    #root_folder
@@ -42,22 +40,16 @@ class Search {
 
    constructor(props) {
       // returning 'back to list' from Records will return the passed 'search_context'
-      if(props) this.#context = props.context
+      if(props) {
+         this.#context = props.context
+      }
       this.#props = props
    }
 
    render = async () => {
 
-      // to do : we can't put in constructor (not async) - how about access from app - rollout
-      this.#root_folder = await app.get_root_folder()
+      this.#root_folder = app.get_root_folder()
       if(this.#root_folder === '') return no_root_folder()
-
-      try {
-         this.#search_term_max_len = await window.app_api.maxSearchTermLen() // to do : access from app? 
-      }
-      catch(error) {
-         // use initially assigned
-      }
 
       this.#search_section = create_section({
          attributes:[{key:'id',value:'search_section'}]
@@ -65,7 +57,7 @@ class Search {
   
       const search_form = new SearchForm({
          search_term:'',
-         search_term_max_len:this.#search_term_max_len,
+         search_term_max_len:app.max_search_term_len(),
          submit_search_term:this.submit_search_term,
          clear_search:this.clear_search
       })
@@ -84,7 +76,7 @@ class Search {
       })
 
       // grid wrapper
-      this.#card_grid_obj = new CardGrid('search_results_container')
+      this.#card_grid_obj = new CardGrid({container_id:'search_results_container'})
       this.#search_results_container = this.#card_grid_obj.render()
 
       // required for re-instating search_context on 'back' to list actions
@@ -92,6 +84,7 @@ class Search {
          if(this.#context.search_term !== undefined && this.#context.search_term !== '')
             this.#search_results_container.append(this.get_items())
       }
+      // window.scroll(0,0)
       
       // assemble
       this.#search_section.append(
@@ -165,7 +158,7 @@ class Search {
                      if(number_records) number_records.innerText = 'No matching records were found. '
                   }
                   // re-instate scroll position if user had scrolled list before opening a record
-                  window.scroll(0,this.#context.scroll_y)
+                  setTimeout(() => window.scroll(0,this.#context.scroll_y),50)
                }
                else {
                   let search_status = document.getElementById('search_status')

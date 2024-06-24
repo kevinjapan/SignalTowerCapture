@@ -70,7 +70,7 @@ class DeletedRecordsTeaser {
       this.#pagination_nav = new PaginationNav()
 
       // grid wrapper
-      this.#card_grid_obj = new CardGrid('results_container')
+      this.#card_grid_obj = new CardGrid({container_id:'results_container'})
       this.#results_container = this.#card_grid_obj.render()
 
       // required for re-instating search_context on 'back' to list actions

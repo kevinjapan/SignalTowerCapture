@@ -72,7 +72,7 @@ class Tags {
       this.#pagination_nav = new PaginationNav()
 
       // grid wrapper
-      this.#card_grid = new CardGrid('tags_results_container')
+      this.#card_grid = new CardGrid({container_id:'tags_results_container'})
       this.#tags_results_container = this.#card_grid.render()
 
       // re-instate tags_context on 'back'

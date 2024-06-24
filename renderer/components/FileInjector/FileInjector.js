@@ -34,7 +34,7 @@ class FileInjector {
 
       
       // grid wrapper
-      this.#card_grid_obj = new CardGrid('card_wrapper')
+      this.#card_grid_obj = new CardGrid({container_id:'card_wrapper'})
       this.#card_wrapper_elem = this.#card_grid_obj.render()
 
       const outcome_classes = ['bg_lightgrey','mt_1','pl_1','pr_1']
