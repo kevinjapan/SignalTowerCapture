@@ -72,7 +72,10 @@ class Tags {
       this.#pagination_nav = new PaginationNav()
 
       // grid wrapper
-      this.#card_grid = new CardGrid({container_id:'tags_results_container'})
+      this.#card_grid = new CardGrid({
+         container_id:'tags_results_container',
+         refresh:this.refresh
+      })
       this.#tags_results_container = this.#card_grid.render()
 
       // re-instate tags_context on 'back'
@@ -245,6 +248,12 @@ class Tags {
       }
       let number_records = document.getElementById('number_records')
       if(number_records) number_records.innerText = ''
+   }
+
+   // grid can request refresh
+   refresh = () => {
+      this.get_items()
+      setTimeout(() => this.activate(),100)
    }
 
    get_default_context = () => {

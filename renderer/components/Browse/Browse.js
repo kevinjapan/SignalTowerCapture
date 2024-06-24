@@ -185,12 +185,6 @@ class Browse {
       }
    }
 
-   // grid can request refresh
-   refresh = () => {
-      this.get_items()
-      setTimeout(() => this.activate(),100)
-   }
-
    // callback for PageNavigation
    go_to_page = (page) => {
       if(this.#context) {
@@ -219,6 +213,12 @@ class Browse {
          this.get_items()
          setTimeout(() => this.activate(),100)
       }
+   }
+
+   // grid can request refresh
+   refresh = () => {
+      this.get_items()
+      setTimeout(() => this.activate(),100)
    }
 
    get_default_context = () => {

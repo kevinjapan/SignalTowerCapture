@@ -76,7 +76,10 @@ class Search {
       })
 
       // grid wrapper
-      this.#card_grid_obj = new CardGrid({container_id:'search_results_container'})
+      this.#card_grid_obj = new CardGrid({
+         container_id:'search_results_container',
+         refresh:this.refresh
+      })
       this.#search_results_container = this.#card_grid_obj.render()
 
       // required for re-instating search_context on 'back' to list actions
@@ -211,6 +214,12 @@ class Search {
       if(number_records) number_records.innerText = ''
    }
    
+   // grid can request refresh
+   refresh = () => {
+      this.get_items()
+      setTimeout(() => this.activate(),100)
+   }
+
    get_default_context = () => {
       return this.#context
    }
