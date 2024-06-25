@@ -108,7 +108,7 @@ class CardGrid {
       }
 
       //
-      // Prevent click on Context Menu opening record
+      // Prevent click on Context Menu & Ctrls from opening a record
       //
       const card_context_menus = document.querySelectorAll('.card_context_menu')
       if(card_context_menus) {
@@ -118,6 +118,16 @@ class CardGrid {
             })
          })
       }
+      const card_ctrls = document.querySelectorAll('.card_ctrls')
+      if(card_ctrls) {
+         card_ctrls.forEach(card_ctrl=> {
+            card_ctrl.addEventListener('click',(event) => {
+               event.stopPropagation()
+            })
+         })
+      }
+
+      
 
       //
       // Card Context Menu links
@@ -134,8 +144,7 @@ class CardGrid {
                   case 'delete':
                      const result = await window.collection_items_api.deleteCollectionItem(record_id)
                      if(result.outcome === 'success'){                        
-                        AppStatus.notify(`Succesfully deleted Record ${record_id} : ${title}`)
-
+                        AppStatus.notify(`Successfully deleted Record - "${title}"`)
                         this.#props.refresh()
                      }
                      else {

@@ -26,7 +26,7 @@ class CardContextMenu {
 
       const menu = create_ul({
          attributes:[{key:'id',value:`context_menu_${this.#props.id}`}],
-         classlist:['card_context_menu','absolute','z_100','w_full','h_100','m_0','text_left','bg_yellow']
+         classlist:['card_context_menu','absolute','z_100','w_full','h_100','m_0','text_left','bg_white']
       })
 
 

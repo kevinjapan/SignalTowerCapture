@@ -165,13 +165,13 @@ class CollectionItemCard {
       // to do : complete and enable context menu for delete and tag
       // to do : as sep. components:
          const ctrls = create_div({
-            classlist:['flex','','justify_end','m_0','p_0.5','pb_0.75']
+            classlist:['card_ctrls','flex','justify_end','m_0','p_0.15','pb_0.5','pr_.5','cursor_auto','bg_lightgrey']
          })
 
          const context_menu_icon = icon(
             'menu_up',
             [{key:'data-id',value:item.id},{key:'width',value:'16px'},{key:'height',value:'16px'}],
-            ['context_menu_btn']
+            ['context_menu_btn','cursor_pointer']
          )
          ctrls.append(context_menu_icon)
 
@@ -198,10 +198,7 @@ class CollectionItemCard {
       // to avoid proliferation of EventListeners, parent components handle Card events
    }
 
-   actions = (action,props) => {
-
-      console.log(action,props)
-   }
+   actions = (action,props) => {}
 
 }
 
