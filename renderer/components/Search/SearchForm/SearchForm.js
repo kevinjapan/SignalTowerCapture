@@ -53,9 +53,9 @@ class SearchForm {
          text:'Search'
       }) 
 
-      // magnifying glass btn icon // to do : align vertically - replace w/ .svg file
+      // magnifying glass btn icon
       let icon = document.createElementNS('http://www.w3.org/2000/svg','svg')
-      icon.classList.add('pt_.5','ml_1','mt_0')
+      icon.classList.add('pt_.25','ml_1','mt_0')
       const icon_path = document.createElementNS('http://www.w3.org/2000/svg','path')
       icon.setAttribute('width','16')
       icon.setAttribute('height','16')               
