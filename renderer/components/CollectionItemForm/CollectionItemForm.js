@@ -1,4 +1,5 @@
 import { app } from '../../renderer.js'
+import AppStatus from '../AppStatus/AppStatus.js'
 import CollectionItemFormRow from '../CollectionItemFormRow/CollectionItemFormRow.js'
 import TagsSelector from '../TagsSelector/TagsSelector.js'
 import FileTypeCheckBox from '../Forms/FileTypeCheckbox/FileTypeCheckbox.js'
@@ -165,11 +166,13 @@ class CollectionItemForm {
    // enable buttons/links displayed in the render
    activate = async() => {
 
+      const { action } = this.#props
+
       // On 'Apply' add or update CollectionItemForm
       const apply_btns = document.querySelectorAll('.apply_btn')
       if(apply_btns) {
          apply_btns.forEach((apply_btn) => {
-            apply_btn.innerText = this.#props.action === 'add' ? 'Submit' : 'Update'
+            apply_btn.innerText = action === 'add' ? 'Submit' : 'Update'
 
             apply_btn.addEventListener('click',async(event) => {
                event.preventDefault()
@@ -184,7 +187,7 @@ class CollectionItemForm {
                   let updated_collection_item = {}
                   let response
                   for(const pair of form_data.entries()) updated_collection_item[pair[0]] = pair[1].trim()
-                  if(this.#props.action === 'add') {
+                  if(action === 'add') {
                      response = await window.collection_items_api.addCollectionItem(updated_collection_item)
                   }
                   else {
@@ -193,7 +196,10 @@ class CollectionItemForm {
                      response = await window.collection_items_api.updateCollectionItem(updated_collection_item)
                   }
 
-                  if(response.outcome === 'success') {                     
+                  if(response.outcome === 'success') {
+
+                     AppStatus.notify(`Successfully ${action === 'add' ? 'added' : 'updated'} record - "${response.collection_item.title}"`)
+
                      try {
                         let collection_item_id = response.collection_item.id
                         const collection_item_obj = await window.collection_items_api.getCollectionItem(collection_item_id)
@@ -204,7 +210,7 @@ class CollectionItemForm {
                            this.#props.context = {key:'Record',id:this.#props.item.id}
 
                            // add to history if we are adding a new Record / don't add if editing existing Record
-                           app.switch_to_component('Record',this.#props,this.#props.action === 'add' ? true : false)
+                           app.switch_to_component('Record',this.#props,action === 'add' ? true : false)
                         }
                      }
                      catch(error) {
@@ -337,7 +343,7 @@ class CollectionItemForm {
                         }
                         else {
                            // There is an existing record for this file
-                           if(this.#props.action === 'update') {
+                           if(action === 'update') {
                               // Is existing record the same record we are currently editing
                               const existing_record_id = collection_items_obj.collection_items[0].id
                               const current_record_id = this.#props.item.id
