@@ -54,17 +54,6 @@ window.component_api.onSwitchComponent((event,value) => {
 })
 
 
-// to do : review - need this here?
-let back_btns = document.querySelectorAll('.back_btn')
-if(back_btns){
-   back_btns.forEach(back_btn => {
-      back_btn.addEventListener('click',(event) => {
-         history.back()
-      })
-   })
-}
-
-
 //
 // Init main navigation
 //
