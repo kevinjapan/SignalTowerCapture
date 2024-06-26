@@ -21,6 +21,10 @@ class FileInjector {
    // 
    #card_wrapper_elem
 
+   // CollectionItems list
+   // to support context_menu on Card, we retain list of the single record we can show at a time
+   #items
+
    constructor(props) {
       this.#props = props
    }
@@ -34,7 +38,11 @@ class FileInjector {
 
       
       // grid wrapper
-      this.#card_grid_obj = new CardGrid({container_id:'card_wrapper'})
+      this.#card_grid_obj = new CardGrid({
+         container_id:'card_wrapper',
+         refresh:this.refresh,
+         get_item:this.get_item
+      })
       this.#card_wrapper_elem = this.#card_grid_obj.render()
 
       const outcome_classes = ['bg_lightgrey','mt_1','pl_1','pr_1']
@@ -91,6 +99,21 @@ class FileInjector {
             card.classList.add('box_shadow')
          })
       }
+   }
+
+
+   // grid can request refresh
+   refresh = () => {
+      // to do : complete for this component
+      // this.#context.scroll_y = window.scrollY
+      // this.get_items()
+      // setTimeout(() => this.activate(),100)
+   }
+
+   get_item = (id) => {
+      return this.#items.find(item => {
+         return item.id === parseInt(id)
+      })
    }
 }
 

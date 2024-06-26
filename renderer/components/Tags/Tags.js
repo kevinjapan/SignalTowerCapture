@@ -26,6 +26,9 @@ class Tags {
    // Cards grid container element
    #tags_results_container
 
+   // CollectionItems list
+   #items
+
    // TagsNavList object
    #tags_nav
 
@@ -74,7 +77,8 @@ class Tags {
       // grid wrapper
       this.#card_grid = new CardGrid({
          container_id:'tags_results_container',
-         refresh:this.refresh
+         refresh:this.refresh,
+         get_item:this.get_item
       })
       this.#tags_results_container = this.#card_grid.render()
 
@@ -125,6 +129,8 @@ class Tags {
 
             if (typeof collection_items_obj != "undefined") {
                if(collection_items_obj.outcome === 'success') {
+
+                  this.#items = collection_items_obj.collection_items
 
                   this.#tags_results_container.replaceChildren()
                   
@@ -255,6 +261,12 @@ class Tags {
       this.#context.scroll_y = window.scrollY
       this.get_items()
       setTimeout(() => this.activate(),100)
+   }
+
+   get_item = (id) => {
+      return this.#items.find(item => {
+         return item.id === parseInt(id)
+      })
    }
 
    get_default_context = () => {

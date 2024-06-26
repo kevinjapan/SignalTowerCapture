@@ -29,6 +29,9 @@ class Browse {
    // Cards grid container element
    #browse_results_container
 
+   // CollectionItems list
+   #items
+
    // Page Context (State)
    #context = {
       key:'Browse',
@@ -79,7 +82,8 @@ class Browse {
 
       this.#card_grid_obj = new CardGrid({
          container_id:'browse_results_container',
-         refresh:this.refresh
+         refresh:this.refresh,
+         get_item:this.get_item
       })
       this.#browse_results_container = this.#card_grid_obj.render('loading..')
 
@@ -120,10 +124,14 @@ class Browse {
 
          try {
             const collection_items_obj = await window.collection_items_api.getItems(this.#context)
+
+
             const { outcome,count,per_page,collection_items,collection_item_fields } = collection_items_obj
          
             if(typeof collection_items_obj != "undefined" && outcome === 'success') {
                if(await is_valid_response_obj('read_collection_items',collection_items_obj)) {
+
+                  this.#items = collection_items_obj.collection_items
 
                   this.#browse_results_container.replaceChildren()
 
@@ -220,6 +228,17 @@ class Browse {
       this.#context.scroll_y = window.scrollY
       this.get_items()
       setTimeout(() => this.activate(),100)
+   }
+
+   // to do : rollout all 'page_component' components
+   // opportunity here to make 'page_component' base class + other? -
+   // - 1. page_component - locks into history, so 'get_default_context'
+   // - 2. card_grid_container component - provide 'get_item' and this.#items list
+
+   get_item = (id) => {
+      return this.#items.find(item => {
+         return item.id === parseInt(id)
+      })
    }
 
    get_default_context = () => {

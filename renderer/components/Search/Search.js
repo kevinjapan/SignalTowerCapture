@@ -25,6 +25,9 @@ class Search {
    // Cards grid container element
    #search_results_container
 
+   // CollectionItems list
+   #items
+
    // Page Context (State)
    #context = {
       key:'Search',
@@ -78,7 +81,8 @@ class Search {
       // grid wrapper
       this.#card_grid_obj = new CardGrid({
          container_id:'search_results_container',
-         refresh:this.refresh
+         refresh:this.refresh,
+         get_item:this.get_item
       })
       this.#search_results_container = this.#card_grid_obj.render()
 
@@ -87,7 +91,7 @@ class Search {
          if(this.#context.search_term !== undefined && this.#context.search_term !== '')
             this.#search_results_container.append(this.get_items())
       }
-      // window.scroll(0,0)
+      window.scroll(0,0)
       
       // assemble
       this.#search_section.append(
@@ -117,6 +121,8 @@ class Search {
 
             if (typeof collection_items_obj != "undefined") {
                if(collection_items_obj.outcome === 'success') {
+
+                  this.#items = collection_items_obj.collection_items
 
                   let { count,per_page,collection_item_fields,collection_items } = collection_items_obj
 
@@ -219,6 +225,12 @@ class Search {
       this.#context.scroll_y = window.scrollY
       this.get_items()
       setTimeout(() => this.activate(),100)
+   }
+
+   get_item = (id) => {
+      return this.#items.find(item => {
+         return item.id === parseInt(id)
+      })
    }
 
    get_default_context = () => {

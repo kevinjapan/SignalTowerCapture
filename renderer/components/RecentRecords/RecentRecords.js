@@ -25,6 +25,9 @@ class RecentRecords {
 
    #results_container
 
+   // CollectionItems list
+   #items
+
    // wrapper for grid element and click handler
    #card_grid_obj
 
@@ -58,7 +61,11 @@ class RecentRecords {
       })
 
       // grid wrapper
-      this.#card_grid_obj = new CardGrid({container_id:'results_container'})
+      this.#card_grid_obj = new CardGrid({
+         container_id:'results_container',
+         refresh:this.refresh,
+         get_item:this.get_item
+      })
       this.#results_container = this.#card_grid_obj.render()
 
       this.get_items()
@@ -97,6 +104,8 @@ class RecentRecords {
          
             if (typeof collection_items_obj != "undefined" && collection_items_obj.outcome === 'success') {                  
                if(await is_valid_response_obj('read_collection_items',collection_items_obj)) {
+
+                  this.#items = collection_items_obj.collection_items
 
                   let { count,collection_item_fields,collection_items } = collection_items_obj
 
@@ -152,7 +161,20 @@ class RecentRecords {
          }
       }
    }
-   
+
+   // grid can request refresh
+   refresh = () => {
+      this.#context.scroll_y = window.scrollY
+      this.get_items()
+      setTimeout(() => this.activate(),100)
+   }
+
+   get_item = (id) => {
+      return this.#items.find(item => {
+         return item.id === parseInt(id)
+      })
+   }
+
    get_default_context = () => {
       return this.#context
    }
