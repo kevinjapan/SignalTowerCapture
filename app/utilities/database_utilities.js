@@ -134,7 +134,7 @@ const get_table_insert_fields = (table_name) => {
 //
 const is_valid_snapshot = (date_time_stamp) => {
    if(!date_time_stamp || date_time_stamp === '') return false
-   const snapshot_valid_for = 2   // to do : move to 'app_config' db table  -  set to 7 (it's 2 for dev purposes)
+   const snapshot_valid_for = 6  // future : configurable?
    const today = get_sqlready_datetime()
    const days_btwn = days_between(date_time_stamp,today)
    return days_btwn < snapshot_valid_for
