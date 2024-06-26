@@ -11,7 +11,6 @@ import ImportCSVComponent from '../ImportCSVComponent/ImportCSVComponent.js'
 import ExportJSONComponent from '../ExportJSONComponent/ExportJSONComponent.js'
 import ImportJSONComponent from '../ImportJSONComponent/ImportJSONComponent.js'
 import DeletedRecords from '../DeletedRecords/DeletedRecords.js'
-import Config from '../Config/Config.js'
 import AppConfigForm from '../AppConfigForm/AppConfigForm.js'
 import TagsConfig from '../TagsConfig/TagsConfig.js'
 import Files from '../Files/Files.js'
@@ -105,10 +104,6 @@ class App {
                break
             case 'Browse':
                component = new Browse(props)
-               component_container.replaceChildren(await component.render())
-               break
-            case 'Config':
-               component = new Config()
                component_container.replaceChildren(await component.render())
                break
             case 'DeletedRecords':
