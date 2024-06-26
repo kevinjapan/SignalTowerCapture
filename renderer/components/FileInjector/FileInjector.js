@@ -104,7 +104,7 @@ class FileInjector {
 
    // grid can request refresh
    refresh = () => {
-      // to do : complete for this component
+      // to do : complete for this component - reflect changed status - deleted | active(restored)
       // this.#context.scroll_y = window.scrollY
       // this.get_items()
       // setTimeout(() => this.activate(),100)

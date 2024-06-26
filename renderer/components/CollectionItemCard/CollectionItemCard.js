@@ -162,25 +162,24 @@ class CollectionItemCard {
          }
       }
 
-      // to do : complete and enable context menu for delete and tag
-      // to do : as sep. components:
-         const ctrls = create_div({
-            classlist:['card_ctrls','flex','justify_end','m_0','p_0.15','pb_0.5','pr_.5','cursor_auto','bg_lightgrey']
-         })
+      // future : sep. components?
+      const ctrls = create_div({
+         classlist:['card_ctrls','flex','justify_end','m_0','p_0.15','pb_0.5','pr_.5','cursor_auto','bg_lightgrey']
+      })
 
-         const context_menu_icon = icon(
-            'menu_up',
-            [{key:'data-id',value:item.id},{key:'width',value:'16px'},{key:'height',value:'16px'}],
-            ['context_menu_btn','cursor_pointer']
-         )
-         ctrls.append(context_menu_icon)
+      const context_menu_icon = icon(
+         'menu_up',
+         [{key:'data-id',value:item.id},{key:'width',value:'16px'},{key:'height',value:'16px'}],
+         ['context_menu_btn','cursor_pointer']
+      )
+      ctrls.append(context_menu_icon)
 
-         const context_menu = new CardContextMenu({
-            id:item.id,
-            title:item.title,
-            deleted_at:item.deleted_at
-         })
-         text_block.append(context_menu.render())
+      const context_menu = new CardContextMenu({
+         id:item.id,
+         title:item.title,
+         deleted_at:item.deleted_at
+      })
+      text_block.append(context_menu.render())
       
       // assemble
       card.prepend(img_block)

@@ -230,7 +230,7 @@ class Browse {
       setTimeout(() => this.activate(),100)
    }
 
-   // to do : rollout all 'page_component' components
+   // future : rollout all 'page_component' components
    // opportunity here to make 'page_component' base class + other? -
    // - 1. page_component - locks into history, so 'get_default_context'
    // - 2. card_grid_container component - provide 'get_item' and this.#items list

@@ -10,8 +10,6 @@ import { init_card_img_loads,no_root_folder } from '../../utilities/ui_utilities
 import { create_section,create_div } from '../../utilities/ui_elements.js'
 
 
-// to do : handle 'delete this record' context_menu link on Card if already a Deleted Record
-
 
 class DeletedRecordsTeaser {
 

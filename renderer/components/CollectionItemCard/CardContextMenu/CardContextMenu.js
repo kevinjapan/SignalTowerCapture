@@ -14,8 +14,6 @@ class CardContextMenu {
       // {key:'tag',label:'Tag this record',status:'all'}  // future : 'tag record' in context_menu
    ]
 
-   // to do : if Record is soft deleted, switch 'Delete..' to  'Restore this record' link.
-
    constructor(props) {
       this.#props = props
    }
@@ -50,17 +48,6 @@ class CardContextMenu {
          menu.append(li)
       })
       return menu
-   }
-
-   activate = () => {         
-      const menu_items = document.querySelectorAll('.context_menu_item')   
-      if(menu_items) {   
-         menu_items.forEach(menu_item => {
-            menu_item.addEventListener('click', async(event) => {
-               console.log('you clicked context menu item') // to do :            
-            })
-         })
-      }
    }
 
    close = () => {

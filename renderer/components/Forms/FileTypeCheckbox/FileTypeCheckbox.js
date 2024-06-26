@@ -3,10 +3,9 @@ import { ui_friendly_text } from '../../../utilities/ui_strings.js'
 import { DESC } from '../../../utilities/ui_descriptions.js'
 
 
-// to do : if this contains Find File - rename this component -> File 
 
-
-// we currently assume there will only ever be one FileTypeCheckbox per page (so, 'find_file_btn' is not duplicated)
+// we currently assume there will only ever be one FileTypeCheckbox per page 
+// (so, 'find_file_btn' is not duplicated)
 
 
 class FileTypeCheckbox {

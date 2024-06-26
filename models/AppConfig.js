@@ -63,8 +63,6 @@ class AppConfig {
                }
                count = rows.count
 
-               console.log('rows',rows)
-
                // we only seed if no existing record
                if(count < 1) {                  
                   // AppConfig table
