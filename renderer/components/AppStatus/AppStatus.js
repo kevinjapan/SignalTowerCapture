@@ -5,7 +5,7 @@
 
 class AppStatus {
 
-   static notify = (msg) => {
+   static notify = (msg,duration = 3000) => {
       const app_status_elem = document.getElementById('app_status')
       if(app_status_elem) {
 
@@ -14,7 +14,7 @@ class AppStatus {
 
          setTimeout(() => {
             app_status_elem.classList.remove('app_status_active')
-         },3000)
+         },duration)
 
          AppStatus.activate(app_status_elem)
       }
