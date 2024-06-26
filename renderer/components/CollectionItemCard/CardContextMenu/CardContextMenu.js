@@ -2,21 +2,19 @@ import { create_ul,create_li,create_a } from '../../../utilities/ui_elements.js'
 
 
 
-// wrapper for grid (list) of Cards
-// returns container element for Cards and provides handler for click events
-
-// to do : highlight links on hover (eg 'Delete this record')
 
 class CardContextMenu {
 
    #props
 
+   // menu_items appear in all|active|deleted record states
    #menu_items = [
-      {key:'delete',label:'Delete this record'},
-      // {key:'tag',label:'Tag this record'}  // future : enable 'tag' record in context_menu
+      {key:'delete',label:'Delete this record',status:'active'},
+      {key:'restore',label:'Restore this record',status:'deleted'}
+      // {key:'tag',label:'Tag this record',status:'all'}  // future : 'tag record' in context_menu
    ]
 
-   // to do : if Record is soft deleted, add 'Restore this record' link.
+   // to do : if Record is soft deleted, switch 'Delete..' to  'Restore this record' link.
 
    constructor(props) {
       this.#props = props
@@ -24,13 +22,19 @@ class CardContextMenu {
 
    render = () => {
 
+      let filtered_menu_items = []
+
+      // filter menu_items on current Card status
+      const card_status = this.#props.deleted_at === null ? 'active' : 'deleted'      
+      filtered_menu_items = this.#menu_items.filter(item => {
+         return item.status === card_status || item.status === 'all'
+      })
+
       const menu = create_ul({
          attributes:[{key:'id',value:`context_menu_${this.#props.id}`}],
          classlist:['card_context_menu','absolute','z_100','w_full','h_100','m_0','text_left','bg_white']
       })
-
-
-      this.#menu_items.forEach(item => {
+      filtered_menu_items.forEach(menu_item => {
          let li = create_li({
             classlist:['align_self_left','m_0','mt_1']            
          })
@@ -38,14 +42,13 @@ class CardContextMenu {
             attributes:[
                {key:'id',value:this.#props.id},
                {key:'data-title',value:this.#props.title},
-               {key:'data-action',value:item.key}
+               {key:'data-action',value:menu_item.key}
             ],
             classlist:['card_context_menu_link'],
-            text:item.label
+            text:menu_item.label
          }))
          menu.append(li)
       })
-
       return menu
    }
 
@@ -61,9 +64,7 @@ class CardContextMenu {
    }
 
    close = () => {
-      
-      // to do : ensure we cleanly remove elements and associated listeners from DOM
-
+      // future : ensure we cleanly remove elements and associated listeners from DOM
    }
 }
 

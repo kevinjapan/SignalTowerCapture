@@ -178,7 +178,7 @@ class CollectionItemCard {
          const context_menu = new CardContextMenu({
             id:item.id,
             title:item.title,
-            actions:this.actions
+            deleted_at:item.deleted_at
          })
          text_block.append(context_menu.render())
       
@@ -192,13 +192,10 @@ class CollectionItemCard {
       return card
    }
 
-   
    // enable buttons/links displayed in the render
    actions = async() => {
       // to avoid proliferation of EventListeners, parent components handle Card events
    }
-
-   actions = (action,props) => {}
 
 }
 

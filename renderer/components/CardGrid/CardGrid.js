@@ -127,7 +127,6 @@ class CardGrid {
          })
       }
 
-      
 
       //
       // Card Context Menu links
@@ -140,23 +139,35 @@ class CardGrid {
                const record_id = event.target.getAttribute('id')
                const title = event.target.getAttribute('data-title')
                const action = event.target.getAttribute('data-action')
+               let result
+
                switch(action) {
+
                   case 'delete':
-                     const result = await window.collection_items_api.deleteCollectionItem(record_id)
-                     if(result.outcome === 'success'){                        
-                        AppStatus.notify(`Successfully deleted Record - "${title}"`)
+                     result = await window.collection_items_api.deleteCollectionItem(record_id)
+                     if(result.outcome === 'success'){
+                        AppStatus.notify(`Successfully deleted record - "${title}"`)
                         this.#props.refresh()
                      }
                      else {
-
+                        AppStatus.notify(`The attempt to delete the record was unsuccessful - "${title}"`)
                      }
+                     break
 
-
+                  case 'restore':
+                     result = await window.collection_items_api.restoreCollectionItem(record_id,this.#props.get_item(record_id))
+                     if(result.outcome === 'success'){
+                        AppStatus.notify(`Successfully restored record - "${title}"`)
+                        this.#props.refresh()
+                     }
+                     else {
+                        AppStatus.notify(`The attempt was unsuccessful - "${title}". ${result.message}`,11000)
+                     }
                      break
 
                   case 'tag':
 
-                     // to do : provide in-situ list of tags w/ checkboxes
+                     // future : provide in-situ list of tags w/ checkboxes
 
                      break
                }
