@@ -1,6 +1,6 @@
 import { app } from '../../renderer.js'
 import CollectionItemForm from '../CollectionItemForm/CollectionItemForm.js'
-import { create_section,create_h } from '../../utilities/ui_elements.js'
+import { create_section,create_h,create_p } from '../../utilities/ui_elements.js'
 import { get_title_from_filename } from '../../utilities/ui_strings.js'
 import { no_root_folder } from '../../utilities/ui_utilities.js'
 
@@ -37,6 +37,9 @@ class CollectionItemInjectForm {
          level:'h3',
          text:'Add Collection Item record'
       })
+      const text = create_p({
+         text:'You can proceed to add a record for this file.'
+      })
 
       const item_form_wrap = create_section({
          attributes:[{key:'id',value:'item_form_wrap'}],
@@ -45,7 +48,7 @@ class CollectionItemInjectForm {
       
       // assemble
       this.build_form(item_form_wrap)
-      inject_form_container.append(heading,item_form_wrap)
+      inject_form_container.append(heading,text,item_form_wrap)
       return inject_form_container
    }
 

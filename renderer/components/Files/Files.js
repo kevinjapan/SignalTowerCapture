@@ -126,14 +126,11 @@ class Files {
       if(file_links) {
          file_links.forEach((file_link) => {
             file_link.addEventListener('click',async(event) => {
+
                const file_view = document.getElementById('file_view')
                const folder_path_filter = this.#context.field_filters.find(filter => filter.field = 'folder_path' )
-
-               // const path = event.target.getAttribute('data-file-path').replace(this.#root_folder,'')
-               
                this.deselect_list_items()
                this.select_list_item(event.target)
-               // this.open_folder(path)
                if(file_view) {
                   let props = {
                      context:this.#context,
@@ -142,7 +139,8 @@ class Files {
                      folder_path:trim_end_char(folder_path_filter.value,'\\'),
                      find_matching_file_record:this.find_matching_file_record,
                      find_matching_folder_record:this.find_matching_folder_record,
-                     get_record_fields:this.get_record_fields
+                     get_record_fields:this.get_record_fields,
+                     refresh:this.refresh
                   }
                   const file_injector = new FileInjector(props)
                   file_view.replaceChildren(await file_injector.render())
@@ -216,6 +214,10 @@ class Files {
       if(folder_path === undefined || folder_path === null) folder_path = ''
       const files_list_obj = await window.files_api.getFolderFilesList(`${this.#root_folder}${folder_path}`)
       this.hydrate(files_list_obj)
+   }
+
+   refresh = async() => {
+      await this.get_matching_records()
    }
 
    //

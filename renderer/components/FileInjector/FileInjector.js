@@ -34,9 +34,8 @@ class FileInjector {
       this.#props.root_folder = await app.get_root_folder()
       if(this.#props.root_folder === '') return no_root_folder()
 
-      let file_injector = create_section()
+      let file_injector = create_section({attributes:[{key:'id',value:'file_injector'}]})
 
-      
       // grid wrapper
       this.#card_grid_obj = new CardGrid({
          container_id:'card_wrapper',
@@ -45,47 +44,54 @@ class FileInjector {
       })
       this.#card_wrapper_elem = this.#card_grid_obj.render()
 
-      const outcome_classes = ['bg_lightgrey','mt_1','pl_1','pr_1']
-      const outcome_attrs = [{key:'id',value:'export_csv_outcome'}]
+      await this.hydrate(file_injector)
 
-      // do we have a matching existing 'file' type record?
-      const matching_file_record = this.#props.find_matching_file_record(this.#props.file_name)
-
-      // do we have a matching existing 'folder' type record?
-      const matching_folder_record = this.#props.find_matching_folder_record(this.#props.file_name)
-       
-      // get list of fields in record
-      const record_fields = this.#props.get_record_fields()
-
-      if(matching_folder_record) {
-         const check_outcome = create_div({
-            classlist:outcome_classes,
-            attributes:outcome_attrs,
-            text:`There is an existing record for this folder. 
-                  For a Folder type record, you only need to nominate a single record.
-                  If you wish to have a separate record for any specific file, please
-                  move that file out of this folder.`
-         })
-         file_injector.append(check_outcome)
-
-         const collection_item_card = new CollectionItemCard(this.#props)
-         // file_injector.appendChild(collection_item_card.render(record_fields,matching_folder_record))
-         this.#card_wrapper_elem.appendChild(collection_item_card.render(record_fields,matching_folder_record))
-         file_injector.append(this.#card_wrapper_elem) 
-      }
-      else if(matching_file_record) {
-         // a matching record for this file was found
-         const collection_item_card = new CollectionItemCard(this.#props)
-         // file_injector.appendChild(collection_item_card.render(record_fields,matching_file_record))   
-         this.#card_wrapper_elem.appendChild(collection_item_card.render(record_fields,matching_file_record))
-         file_injector.append(this.#card_wrapper_elem) 
-      }
-      else {
-         // no matching record was found for this file
-         const inject_form = new CollectionItemInjectForm(this.#props)
-         file_injector.appendChild(await inject_form.render())
-      }
       return file_injector
+   }
+
+
+   hydrate = async(container) => {
+
+      if(container) {
+
+         container.replaceChildren()
+
+         // do we have a matching existing 'file' type record?
+         const matching_file_record = this.#props.find_matching_file_record(this.#props.file_name)
+
+         // do we have a matching existing 'folder' type record?
+         const matching_folder_record = this.#props.find_matching_folder_record(this.#props.file_name)
+         
+         // get list of fields in record
+         const record_fields = this.#props.get_record_fields()
+
+         if(matching_folder_record) {
+            const check_outcome = create_div({
+               classlist:['bg_lightgrey','mt_1','pl_1','pr_1'],
+               attributes:[{key:'id',value:'export_csv_outcome'}],
+               text:`There is an existing record for this folder. 
+                     For a Folder type record, you only need to nominate a single record.
+                     If you wish to have a separate record for any specific file, please
+                     move that file out of this folder.`
+            })
+            container.append(check_outcome)
+
+            const collection_item_card = new CollectionItemCard(this.#props)
+            this.#card_wrapper_elem.appendChild(collection_item_card.render(record_fields,matching_folder_record))
+            container.append(this.#card_wrapper_elem) 
+         }
+         else if(matching_file_record) {
+            // a matching record for this file was found
+            const collection_item_card = new CollectionItemCard(this.#props) 
+            this.#card_wrapper_elem.appendChild(collection_item_card.render(record_fields,matching_file_record))
+            container.append(this.#card_wrapper_elem) 
+         }
+         else {
+            // no matching record was found for this file
+            const inject_form = new CollectionItemInjectForm(this.#props)
+            container.appendChild(await inject_form.render())
+         }
+      }
    }
 
    // enable buttons/links displayed in the render
@@ -103,11 +109,15 @@ class FileInjector {
 
 
    // grid can request refresh
-   refresh = () => {
-      // to do : complete for this component - reflect changed status - deleted | active(restored)
-      // this.#context.scroll_y = window.scrollY
-      // this.get_items()
-      // setTimeout(() => this.activate(),100)
+   refresh = async() => {
+
+      // update matching_records lookup in Files component (we likely have changed status of a record)
+      await this.#props.refresh()
+    
+      const file_injector = document.getElementById('file_injector')
+      if(file_injector) {
+         this.hydrate(file_injector)
+      }
    }
 
    get_item = (id) => {
