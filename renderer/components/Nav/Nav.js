@@ -6,10 +6,10 @@ class Nav {
 
    nav_items = [
       {component:'Home',label:'Home'},
-      {component:'Browse',label:'Browse'},
-      {component:'Search',label:'Search'},
-      {component:'Tags',label:'Tags'},
       {component:'Files',label:'Files'},
+      {component:'Search',label:'Search'},
+      {component:'Browse',label:'Browse'},
+      {component:'Tags',label:'Tags'},
    ]
 
    init = () => {
