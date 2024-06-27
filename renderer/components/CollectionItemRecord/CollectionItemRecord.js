@@ -131,7 +131,7 @@ class CollectionItemRecord {
             else {
                field_value = create_div({        
                   classlist:['break_words',`ci_form_${field.key}`],
-                  text:this.#props.item[field.key]
+                  text:this.#props.item[field.key] ? this.#props.item[field.key] : ''
                })
             }
             
