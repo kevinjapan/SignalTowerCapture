@@ -76,6 +76,7 @@ export const get_file_type_icon = function() {
 
 
 export const get_ext = (file_name) => {
+   if(!file_name || file_name === '') return ''
    return file_name.substring(file_name.lastIndexOf('.') + 1)
 }
 

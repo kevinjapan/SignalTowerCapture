@@ -371,6 +371,17 @@ button.action_btn {
    grid-gap:.7rem;
 }
 
+.new_file::after {
+   content:'new';
+   font-size:.9rem;
+   background:hsl(60, 100%, 60%);
+   border-radius:.5rem;
+   max-height:1rem;
+   margin-left:.15rem;
+   padding:.25rem;
+   padding-top:0;
+   padding-bottom:0.5rem;
+}
 
 
 /* 

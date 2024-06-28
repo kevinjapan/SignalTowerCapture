@@ -97,8 +97,7 @@ class FileInjector {
    // enable buttons/links displayed in the render
    activate = () => {
       init_card_img_loads()
-      this.#card_grid_obj.activate()
-      
+      this.#card_grid_obj.activate()      
       const collection_item_cards = document.querySelectorAll('.collection_item_card')   
       if(collection_item_cards) {   
          collection_item_cards.forEach(card => {

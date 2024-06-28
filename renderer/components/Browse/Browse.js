@@ -45,10 +45,10 @@ class Browse {
 
    constructor(props) {
       // 'back' to list from Records will return the passed 'context token'
-      if(props) {
+      if(props && props.context) {
          this.#context = props.context
          // retain 'filter_char' if 'back' from list item (CollectionItemRecord)
-         if(props.context && props.context.filters) {
+         if(props.context.filters) {
             if(props.context.filters.filter_char) this.#filter_char = props.context.filters.filter_char
          }
          this.#props = props

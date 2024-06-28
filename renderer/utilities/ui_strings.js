@@ -66,6 +66,7 @@ export const is_valid_tag = (tag) => {
 //
 export const trim_char = (str,delim) => {
    let temp = trim_end_char(str,delim)
+   if(!temp || temp === '') return ''
    return temp.startsWith(delim) ? temp.slice(1) : temp
 }
 

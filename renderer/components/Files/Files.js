@@ -20,9 +20,6 @@ class Files {
    // list of fields inside a record
    #record_fields
 
-   // context and other props
-   #props
-
    // we retain state by passing a 'context token'
    #context = {
       key:'Files',
@@ -35,14 +32,7 @@ class Files {
 
 
    constructor(props) {
-      if(props) {
-         this.#props = props
-      }
-      else {
-         this.#props = {
-            context:this.#context
-         }
-      }
+      if(props && props.context) this.#context = props.context
    }
 
    render = async() => {
@@ -78,20 +68,12 @@ class Files {
       if(this.#breadcrumb_nav) setTimeout(() => this.#breadcrumb_nav.activate(),100)
 
       // hydrate w/ any rcvd context
-      if(this.#props && this.#props.context) {
-         const folder_path_filter = this.#props ? this.#props.context.field_filters.find(filter => filter.field = 'folder_path' ) : ''
+      if(this.#context) {
+         const folder_path_filter = this.#context ? this.#context.field_filters.find(filter => filter.field = 'folder_path' ) : ''
 
-         // if we are coming 'back' from a Record, hydrate breadcrumb_nav
-         if(this.#props && this.#props.context) {
+         // if we are coming 'back' from a Record, hydrate breadcrumb_nav, open the appropriate folder         
             this.#breadcrumb_nav.hydrate(this.#root_folder,folder_path_filter)
-         }
-         // if we are coming 'back' from a Record, open the appropriate folder
-         if(this.#props) {
-            if(this.#props.context) setTimeout(() => this.open_folder(folder_path_filter.value),100)  
-         }
-         else {
-            setTimeout(() => this.open_folder(),100) 
-         }
+            if(this.#context) setTimeout(() => this.open_folder(folder_path_filter.value),100)    
       }
 
       window.scroll(0,0)
@@ -106,8 +88,7 @@ class Files {
    }
 
    // enable buttons/links displayed in the render
-   activate = () => {
-      
+   activate = () => {      
       const parent_link_elem = document.getElementById('parent_link_elem')
       if(parent_link_elem) {
          parent_link_elem.addEventListener('click', (event) => {
@@ -115,7 +96,6 @@ class Files {
             this.open_folder(link)
          })
       }
-
    }
 
    // enable buttons/links displayed in the render
@@ -132,7 +112,7 @@ class Files {
                this.deselect_list_items()
                this.select_list_item(event.target)
                if(file_view) {
-                  let props = {
+                  let injector_props = {
                      context:this.#context,
                      file_name:event.target.getAttribute('data-file-name'),
                      file_path:event.target.getAttribute('data-file-path'),
@@ -142,7 +122,7 @@ class Files {
                      get_record_fields:this.get_record_fields,
                      refresh:this.refresh
                   }
-                  const file_injector = new FileInjector(props)
+                  const file_injector = new FileInjector(injector_props)
                   file_view.replaceChildren(await file_injector.render())
                   setTimeout(() => file_injector.activate(),100)
                }
@@ -159,9 +139,6 @@ class Files {
                // update page's context w/ selected folder (there are two props to consider)
                const history = app.get_service('history')
                if(history) {
-                  history.augment_current_context({
-                     folder_path:event.target.getAttribute('data-file-path').replace(this.#root_folder,'')
-                  })
                   history.augment_current_context({
                      field_filters:[{field:'folder_path',value:event.target.getAttribute('data-file-path').replace(this.#root_folder,'')}]
                   })
@@ -193,9 +170,10 @@ class Files {
    // Do we have an existing record for the selected file?
    // we perform a single db call and reference off of this list rather than querying each time
    get_matching_records = async() => {
+   
       try {
-         // this.#context.page is -1 - disabling pagination
-         const result = await window.collection_items_api.getItems(this.#context) 
+         // this.#context.page === -1, disabling pagination
+         const result = await window.collection_items_api.getItems(this.#context)
          if(await is_valid_response_obj('read_collection_items',result)) {
             this.#matching_records = result.collection_items
             this.#record_fields = result.collection_item_fields
@@ -213,18 +191,23 @@ class Files {
    open_folder = async(folder_path) => {
       if(folder_path === undefined || folder_path === null) folder_path = ''
       const files_list_obj = await window.files_api.getFolderFilesList(`${this.#root_folder}${folder_path}`)
-      this.hydrate(files_list_obj)
+      await this.hydrate(files_list_obj)
+   }
+
+   get_context_folder_path = () => {
+      const folder_path_filter = this.#context.field_filters.find(filter => filter.field === 'folder_path')
+      return folder_path_filter.value
    }
 
    refresh = async() => {
       await this.get_matching_records()
+      this.open_folder(this.get_context_folder_path())
    }
 
    //
    // Hydrate page components with new folder_obj : {folder_name,files_list}
    //
    hydrate = async(folder_obj) => {
-
       const file_list_elem = document.getElementById('file_list_elem')
       const file_view = document.getElementById('file_view')
       const parent_link_obj = new ParentLink()
@@ -241,6 +224,8 @@ class Files {
          // verify we are in Collections folders
          if(escaped_folder_path.indexOf(this.#root_folder) === 0) {
 
+            await this.get_matching_records()
+            
             if(this.#breadcrumb_nav) {
                this.#breadcrumb_nav.hydrate(this.#root_folder,folder_obj.folder_name)
                setTimeout(() => this.#breadcrumb_nav.activate(),100)
@@ -252,7 +237,8 @@ class Files {
 
                let list_item
                
-               // assign folder_path to context remove the 'root_folder' part from path
+               
+               // assign folder_path to context, remove the 'root_folder' part from path
                this.#context.field_filters[0].value = file.path.replace(this.#root_folder,'')
 
                // display Folders List
@@ -276,12 +262,16 @@ class Files {
                }
                // display Files List
                else if(file.type === 'file') {
+                  
+                  const new_file_icon = this.find_matching_file_record(file.filename)
+                                          ?  ''
+                                          :  'new_file'
                   list_item = create_li({
                      attributes:[
                         {key:'data-file-path',value:file.path + '\\' + file.filename},
                         {key:'data-file-name',value:file.filename}
                      ],
-                     classlist:['flex','no_wrap','file_item','cursor_pointer','m_0','p_0','text_blue'],
+                     classlist:['flex','no_wrap','file_item','cursor_pointer','m_0','p_0','text_blue',new_file_icon],
                      text:file.filename
                   })
                   list_item.prepend(filetype_icon('file','',
@@ -312,7 +302,6 @@ class Files {
             setTimeout(() => this.activate_file_links(),100)
             setTimeout(() => this.activate_folder_links(),100)
             
-            await this.get_matching_records()
             
             // remove all event listeners
             // to prevent proliferation of dynamically assigned path links, then re-activate base element btns etc
