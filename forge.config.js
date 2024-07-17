@@ -5,13 +5,20 @@ module.exports = {
       'database',
       'backups',
       'exports'
-    ]
+    ],
+   "version-string":{
+      "ProductName": "Signal Tower Capture",
+      "CompanyName": "signal_tower"
+   }
   },
   rebuildConfig: {},
   makers: [
     {
       name: '@electron-forge/maker-squirrel',
-      config: {},
+      config: {
+         authors: 'kev hastie',
+         description: 'desktop digital collections solution'
+      },
     },
     {
       name: '@electron-forge/maker-zip',
