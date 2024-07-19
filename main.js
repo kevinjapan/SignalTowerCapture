@@ -32,7 +32,7 @@ let main_window
 let database
 
 
-// stop app launching multiple times as Squirrel.Windows inits // to do : check this causes no issues w/ other ops.
+// stop app launching multiple times as Squirrel.Windows inits
 // run this as early in the main process as possible
 if (require('electron-squirrel-startup')) app.quit();
 
