@@ -27,6 +27,10 @@ Download the project and run the following npm command to create a distributable
 
 https://www.electronjs.org/docs/latest/tutorial/tutorial-packaging
 
+The build may take several minutes; you can follow the steps in the console.
+The build uses Squirrel install and updating toolset for Windows distributables.
+
+https://github.com/Squirrel/Squirrel.Windows
 
 After the script runs, you should see an 'out' folder containing two sub-folders:
 
