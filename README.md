@@ -20,7 +20,8 @@ Signal Tower Capture is built on the open-source Electron application framework
 and public domain SQLite database.
 
 
-### Deployment (Windows)
+
+## Deployment (Windows)
 Download the project and run the following npm command to create a distributable:
 
 `npm run make`
@@ -43,7 +44,9 @@ After the script runs, you should see an 'out' folder containing two sub-folders
 #### Packaged Application Code
   `out/my-electron-app-name/`
 
-### Installation (Windows)
+
+
+## Installation (Windows)
 Run the `Signal Tower Capture-0.0.1 Setup.exe` file to install your program.
 The installation will deploy the application to the following windows folder:
 
