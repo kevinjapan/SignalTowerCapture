@@ -28,7 +28,7 @@ Download the project and run the following npm command to create a distributable
 https://www.electronjs.org/docs/latest/tutorial/tutorial-packaging
 
 
-![alt text](relative%20path/electron-install.jpg)
+![electron install dialog](electron-install.jpg)
 
 ### Development
 'npx electronmon .'
