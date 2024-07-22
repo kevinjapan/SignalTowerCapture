@@ -28,20 +28,20 @@ Download the project and run the following npm command to create a distributable
 https://www.electronjs.org/docs/latest/tutorial/tutorial-packaging
 
 
-After the scrip runs, you should see an 'out' folder containing two sub-folders:
+After the script runs, you should see an 'out' folder containing two sub-folders:
 
-##### distributable
+#### Distributable
   out/make/squirrel.windows/x64/
    3 files - the 'Signal Tower Capture-0.0.1 Setup.exe' file is ready to launch to install your application
    the other two files are for auto-updating which is not supported for this app, so you can ignore.
 
-##### packaged application code
+#### Packaged Application Code
   out/my-electron-app-name/
 
 The installation will deploy the application to the following windows folder:
 C:\Users\<username>\AppData\Local\signal_tower_capture\
 
-###### Install Dialog
+#### Installation Dialog
 The install process is not a native standard Windows install process, the install dialog will look 
 like this:
 
