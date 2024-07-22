@@ -58,6 +58,8 @@ like this:
 
 ![electron install dialog](electron-install.jpg)
 
-### Development
+
+
+## Development
 'npx electronmon .'
 
