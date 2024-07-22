@@ -43,6 +43,8 @@ After the script runs, you should see an 'out' folder containing two sub-folders
 #### Packaged Application Code
   `out/my-electron-app-name/`
 
+### Installation (Windows)
+Run the `Signal Tower Capture-0.0.1 Setup.exe` file to install your program.
 The installation will deploy the application to the following windows folder:
 
 `C:\Users\<username>\AppData\Local\signal_tower_capture\`
