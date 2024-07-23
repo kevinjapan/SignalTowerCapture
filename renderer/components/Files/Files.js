@@ -320,20 +320,22 @@ class Files {
       }
       else {
 
-         const folder_parent_path = get_parent_folder_path(folder_obj.folder_name)
-         let msg = create_div({text:'There are no files in this folder.'})
-         if(file_list_elem) file_list_elem.replaceChildren(parent_link_obj.render(this.#root_folder,folder_parent_path),msg)
-         if(file_view) file_view.replaceChildren()
+         if(folder_obj) {
+            const folder_parent_path = get_parent_folder_path(folder_obj.folder_name)
+            let msg = create_div({text:'There are no files in this folder.'})
+            if(file_list_elem) file_list_elem.replaceChildren(parent_link_obj.render(this.#root_folder,folder_parent_path),msg)
+            if(file_view) file_view.replaceChildren()
 
-         if(this.#breadcrumb_nav && folder_obj) {
-            this.#breadcrumb_nav.hydrate(this.#root_folder,folder_obj.folder_name)
-            setTimeout(() => this.#breadcrumb_nav.activate(),100)
+            if(this.#breadcrumb_nav && folder_obj) {
+               this.#breadcrumb_nav.hydrate(this.#root_folder,folder_obj.folder_name)
+               setTimeout(() => this.#breadcrumb_nav.activate(),100)
+            }
+
+            // activate
+            this.activate_file_links()
+            this.activate_folder_links()
+            this.activate()
          }
-
-         // activate
-         this.activate_file_links()
-         this.activate_folder_links()
-         this.activate()
       }
    }
 

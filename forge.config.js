@@ -4,7 +4,8 @@ module.exports = {
     extraResource:[
       'database',
       'backups',
-      'exports'
+      'exports',
+      'example-collection'
     ],
    "version-string":{
       "ProductName": "Signal Tower Capture",

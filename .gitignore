@@ -50,6 +50,7 @@ out/
 /backups/
 /collection-dataset/
 /out/
+/example-collection/
 
 # Snowpack dependency directory (https://snowpack.dev/)
 web_modules/
