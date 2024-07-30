@@ -185,8 +185,8 @@ class DeletedRecordsTeaser {
    // enable buttons/links displayed in the render
    activate = () => {
       init_card_img_loads()
-      this.#card_grid_obj.activate()
-      this.#pagination_nav.activate()
+      if(this.#card_grid_obj) this.#card_grid_obj.activate()
+      if(this.#pagination_nav) this.#pagination_nav.activate() 
    }
    
    add_number_results = () => {

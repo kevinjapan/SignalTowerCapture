@@ -82,7 +82,7 @@ class RecentRecords {
    // enable buttons/links displayed in the render
    activate = () => {
       init_card_img_loads()
-      this.#card_grid_obj.activate()
+      if(this.#card_grid_obj) this.#card_grid_obj.activate()
    }
 
    async get_app_config_record() {
