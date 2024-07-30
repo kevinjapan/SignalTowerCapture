@@ -315,8 +315,9 @@ export const title_from_file_name = (file_name) => {
 
 export const no_root_folder = () => {
    const elem = create_div({
-      classlist:['bg_yellow_300','p_2','border_radius_0.5'],
-      text:`Sorry, we couldn't locate or determine the root folder path.`
+      classlist:['bg_yellow_300','m_2','p_1','border_radius_0.5'],
+      text:`Sorry, we can't find the Root Folder.
+            You can set this in the Config > App Settings menu.`
    })
    return elem
 }
