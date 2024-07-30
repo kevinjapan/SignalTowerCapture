@@ -58,7 +58,10 @@ class Browse {
    render = async () => {
 
       this.#root_folder = await app.get_root_folder()
-      if(this.#root_folder === '') return no_root_folder()
+      if(this.#root_folder === '') {
+         window.scroll(0,0)
+         return no_root_folder()
+      }
 
       this.#browse_section = create_section({
          attributes:[{key:'id',value:'browse_section'}],
@@ -107,8 +110,8 @@ class Browse {
    // enable buttons/links displayed in the render
    activate = () => {
       init_card_img_loads()
-      this.#card_grid_obj.activate()
-      this.#pagination_nav.activate() 
+      if(this.#card_grid_obj) this.#card_grid_obj.activate()
+      if(this.#pagination_nav) this.#pagination_nav.activate() 
    }
 
    // retrieve the paginated items results 

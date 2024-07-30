@@ -38,7 +38,10 @@ class Files {
    render = async() => {
 
       this.#root_folder = await app.get_root_folder()
-      if(this.#root_folder === '') return no_root_folder()
+      if(this.#root_folder === '') {
+         window.scroll(0,0)
+         return no_root_folder()
+      }
 
       const files_section = create_section({
          attributes:[{key:'id',value:'files_section'}],
