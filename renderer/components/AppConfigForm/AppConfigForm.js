@@ -34,7 +34,7 @@ class AppConfigForm {
       })
       const page_banner = new PageBanner({
          icon_name:'settings',
-         title:'Settings 22',
+         title:'App Settings',
          lead:'Update your application settings here.'
       })
       const form = create_form({
