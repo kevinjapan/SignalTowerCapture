@@ -80,7 +80,13 @@ class AppConfig {
                         case 'date':
                            return field.key === 'deleted_at' ? `""` : `${get_sqlready_datetime(Date())}`
                         case 'string':
-                           return `${AppConfig.default_value(field.key)}`
+                           // future : differences w/ resolving paths and resources etc
+                           // btwn dev and production are non-trivial -
+                           // for now we just default everything to empty strings
+                           // and let user choose paths as they go
+                           // (predominantly outside of the app folder anyhow)
+                           // return `${AppConfig.default_value(field.key)}`
+                           return ''
                         case 'int':
                            return get_random_int()         
                      }
