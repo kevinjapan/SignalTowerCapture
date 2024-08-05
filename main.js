@@ -88,7 +88,8 @@ const createWindow = async() => {
       height:600,
       webPreferences: {
          // attach preload script to the main process 
-         preload: path.join(__dirname,'preload.js')
+         preload: path.join(__dirname,'preload.js'),
+         devTools: !app.isPackaged,
       }
    })
 
