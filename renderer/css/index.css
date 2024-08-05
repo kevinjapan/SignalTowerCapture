@@ -1488,3 +1488,21 @@ section.feature_block.my_2 {margin-top:2rem;margin-bottom:2rem;}
    /* light grey */
    filter: invert(45%) sepia(61%) saturate(5216%) hue-rotate(180deg) brightness(227%) contrast(105%);
 }
+
+button.apply_btn.form_btn {
+   position:relative;
+}
+button.apply_btn.form_btn.dimmer {
+   pointer-events:none;
+}
+button.apply_btn.form_btn.dimmer::before {
+   content:'';
+   position:absolute;
+   top:0;
+   left:0;
+   z-index:999;
+   width:100%;
+   height:100%;
+   background:white;
+   opacity:.7;
+}

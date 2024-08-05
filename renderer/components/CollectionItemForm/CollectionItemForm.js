@@ -71,7 +71,6 @@ class CollectionItemForm {
 
       // we don't inc cancel btn in add 'new' record forms
       const inc_cancel_btn = this.#props.action === 'add' ? false : true
-
       const btn_group_1 = FormBtns.render(this.#props.item,inc_cancel_btn)
       form_layout.append(btn_group_1,submit_outcome_top)
       text_col.append(form_layout)
@@ -93,10 +92,13 @@ class CollectionItemForm {
 
             form_content.append(CollectionItemFormRow.render(field,curr_field_value))
 
+            // listen for changes so we can enable apply btn
+            if(!field.is_folder) setTimeout(() => this.register_input_listener(field.key),100)
+
             if(field.key === 'tags') {
                let field_label = create_label({
                   attributes:[{key:'for',value:field.key}],
-                  text:ui_friendly_text(field.key)
+                  text:ui_friendly_text(field.key + 'HEY')
                })
                const current_tags = (this.#props.item) 
                   ?  this.#props.item[field.key] ? this.#props.item[field.key].split('*') : []
@@ -424,11 +426,32 @@ class CollectionItemForm {
       }
    }
 
+   // capture any change to input fields
+   // input_changed = () => {
+   //    this.enable_apply_btn()
+   // }
+   register_input_listener = (elem_id) => {      
+      const elem = document.getElementById(elem_id)
+      if(elem) {
+         elem.addEventListener('input', () => {
+            this.enable_submit()
+         })
+      }
+   }
+   
+   // enabled form btns since inputs have changed
+   // we disable by covering w/ opaque ::before
+
+
    enable_submit = (enabled = true) => {
       const apply_btns = document.querySelectorAll('.apply_btn')
       if(apply_btns) {
          apply_btns.forEach((apply_btn) => {
+            // future : integrate/single method here : w/ AppConfigForm
+            // original method for this component
             apply_btn.classList.remove('disabled')
+            // method deployed by AppConfigForm in  FormBtns
+            apply_btn.classList.remove('dimmer')
          })
       }      
       this.#submit_enabled = enabled

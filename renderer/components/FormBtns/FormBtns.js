@@ -18,7 +18,7 @@ class FormBtns {
          attributes:[
             {key:'data-id',value:item && typeof item !== 'undefined' ? item.id : null}
          ],
-         classlist:['apply_btn','form_btn'],
+         classlist:['apply_btn','form_btn','dimmer'],
          text:'Apply'
       })
       btn_group.append(apply_btn)

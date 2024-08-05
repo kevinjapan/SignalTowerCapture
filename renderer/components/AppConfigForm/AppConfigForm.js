@@ -15,17 +15,18 @@ class AppConfigForm {
 
    #id
 
-   #context = {
-      key:'AppConfigForm'
-   }
+   #context = {key:'AppConfigForm'}
+
+   #update_required = false
 
    render = async() =>  {
 
       const fields_result_obj = await this.get_app_config_fields()
       const record_result_obj = await this.get_app_config_record()
 
+      // App Config Settings
       // 'fields' is primarily an array of key of properties in the 'app_config_record' and preserves the display order
-      // all our input validation is carried out 'server-side'
+      //  all our input validation is carried out 'server-side'
       const fields = fields_result_obj.fields.filter((field) => field.config_edit)
       const app_config_record = record_result_obj.app_config
       
@@ -45,12 +46,20 @@ class AppConfigForm {
          classlist:['text_col','mx_2']
       })
       
+
+      
+      //
+      // display edit for each App Config Setting
+      //
+
       let panel = null
       let value = ''
-
+      
       if(Array.isArray(fields)) {
+
          fields.forEach(async(field) => {
 
+            // each App Config Setting form field is displayed on white panel
             panel = create_div({
                classlist:['bg_white','rounded_sm','mx_2','mb_1','p_1','w_full']
             })
@@ -59,13 +68,11 @@ class AppConfigForm {
                value = app_config_record[field.key]
             }
 
-            // all types we can set null to empty string
+            // for all types we can set null to empty string
             if(value === null) value = ''        
             
             let field_label = create_label({
-               attributes:[
-                  {key:'for',value:field.key}
-               ],
+               attributes:[{key:'for',value:field.key}],
                classlist:['text_h4'],
                text: ui_friendly_text(field.key)
             })
@@ -87,6 +94,9 @@ class AppConfigForm {
                field_input.value = value
                if(!field.editable) field_input.disabled = 'disabled'
                if(field.placeholder) field_input.setAttribute('placeholder',field.placeholder)
+
+               // listen for changes so we can enable apply btn
+               if(!field.is_folder) setTimeout(() => this.register_input_listener(field.key),100)
             }
             else {
                field_input = create_input({
@@ -101,8 +111,12 @@ class AppConfigForm {
                })
                if(!field.editable) field_input.disabled = 'disabled'
                if(field.placeholder) field_input.setAttribute('placeholder',field.placeholder)
+
+               // listen for changes so we can enable apply btn
+               if(!field.is_folder) setTimeout(() => this.register_input_listener(field.key),100)
             }
 
+            // for root_folder, we include warning
             let warning
             if(field.key === 'root_folder') {               
                // stress impact of changing this to user
@@ -114,6 +128,7 @@ class AppConfigForm {
                })
             }
 
+            // for btn, side-by-side w/ description text
             const desc_btn_row = create_div({
                classlist:['flex','align_items_center','pt_1']
             })
@@ -128,7 +143,7 @@ class AppConfigForm {
             // user can select folder via native file explorer 
             if(field.is_folder) {
                let folder_selector = new SelectFolderComponent()
-               desc_btn_row.append(folder_selector.render(field.key))
+               desc_btn_row.append(folder_selector.render(field.key,this.input_changed))
                // delay to let form.append below take effect
                setTimeout(() => folder_selector.activate(field.key),200)
             }
@@ -149,6 +164,7 @@ class AppConfigForm {
       }
 
       if(typeof app_config_record !== 'undefined') this.#id = app_config_record.id
+      const form_btns_top = FormBtns.render(null,false)
       const form_btns = FormBtns.render(null,false)
       const notifications = create_div({attributes:[{key:'id',value:'notifications'}]})
 
@@ -156,6 +172,8 @@ class AppConfigForm {
       
       // assemble
       form.append(
+         create_div(),
+         form_btns_top,
          text_col,
          create_div(),
          form_btns,
@@ -173,6 +191,7 @@ class AppConfigForm {
    // enable buttons/links displayed in the render
    //
    activate = (action = 'update') => {
+
 
       // On 'Apply' add or update AppConfigForm
 
@@ -257,10 +276,35 @@ class AppConfigForm {
                if(folder_path) {
                   folder_path.value = path
                } 
+
             }
             else {
                Notification.notify('#notifications',result.message)
             }
+         })
+      }
+   }
+
+   // capture any change to input fields
+   input_changed = () => {
+      this.enable_apply_btn()
+   }
+   register_input_listener = (elem_id) => {      
+      const elem = document.getElementById(elem_id)
+      if(elem) {
+         elem.addEventListener('input', () => {
+            this.enable_apply_btn()
+         })
+      }
+   }
+
+   // enabled form btns since inputs have changed
+   // we disable by covering w/ opaque ::before
+   enable_apply_btn = () => {
+      const apply_btns = document.querySelectorAll('.apply_btn')
+      if(apply_btns) {   
+         apply_btns.forEach((apply_btn) => {
+            apply_btn.classList.remove('dimmer')
          })
       }
    }
