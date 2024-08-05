@@ -4,8 +4,12 @@ import { create_button } from '../../utilities/ui_elements.js'
 
 class SelectFolderComponent {
 
-   render = (input_id) => {
+   // notify client when action successful
+   #callback
 
+   render = (input_id,callback) => {
+
+      if(callback) this.#callback = callback
       if(input_id) {
          return create_button({
             attributes:[
@@ -29,6 +33,7 @@ class SelectFolderComponent {
             let folder_path = await window.files_api.getFolderPath()
             if(folder_path && folder_path !== '') {
                target_input.value = folder_path
+               this.#callback()
             }
          })
       }
