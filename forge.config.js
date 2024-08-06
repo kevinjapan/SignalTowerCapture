@@ -1,12 +1,7 @@
 module.exports = {
   packagerConfig: {
     asar: true,
-    extraResource:[
-      'database',
-      'backups',
-      'exports',
-      'example-collection'
-    ],
+    extraResource:[],
    "version-string":{
       "ProductName": "Signal Tower Capture",
       "CompanyName": "signal_tower"
