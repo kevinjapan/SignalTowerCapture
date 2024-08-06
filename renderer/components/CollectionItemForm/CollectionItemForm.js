@@ -71,7 +71,7 @@ class CollectionItemForm {
 
       // we don't inc cancel btn in add 'new' record forms
       const inc_cancel_btn = this.#props.action === 'add' ? false : true
-      const btn_group_1 = FormBtns.render(this.#props.item,inc_cancel_btn)
+      const btn_group_1 = FormBtns.render(this.#props.item,[],inc_cancel_btn)
       form_layout.append(btn_group_1,submit_outcome_top)
       text_col.append(form_layout)
       
@@ -138,7 +138,7 @@ class CollectionItemForm {
             }
          })
       }
-      let btn_group_2 = FormBtns.render(this.#props.item,inc_cancel_btn)
+      let btn_group_2 = FormBtns.render(this.#props.item,[],inc_cancel_btn)
       let submit_outcome_bottom = create_section({classlist:['submit_outcome']})
 
       // assemble

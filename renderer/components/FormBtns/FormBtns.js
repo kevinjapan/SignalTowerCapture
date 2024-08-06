@@ -5,13 +5,13 @@ import { create_div,create_button } from '../../utilities/ui_elements.js'
 class FormBtns {
 
    
-   static render = (item = null,inc_cancel = true) => {
+   static render = (item = null,classes = [],inc_cancel = true) => {
       
       const btn_group = create_div({
          attributes:[
             {key:'id',value:'btn_group'}
          ],
-         classlist:['btn_grp']
+         classlist:['btn_grp',...classes]
       }) 
 
       const apply_btn = create_button({

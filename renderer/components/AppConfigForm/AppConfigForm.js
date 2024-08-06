@@ -40,10 +40,10 @@ class AppConfigForm {
       })
       const form = create_form({
          attributes:[{key:'id',value:'item_form'}],
-         classlist:['config_form','border','mt_0']
+         classlist:['config_form','mt_0']
       })
       const text_col = create_div({
-         classlist:['text_col','mx_2']
+         classlist:['text_col','ml_2','mr_0']
       })
       
 
@@ -163,16 +163,17 @@ class AppConfigForm {
          })
       }
 
+      // future : align 'apply' btn better
+      
       if(typeof app_config_record !== 'undefined') this.#id = app_config_record.id
-      const form_btns_top = FormBtns.render(null,false)
-      const form_btns = FormBtns.render(null,false)
+      const form_btns_top = FormBtns.render(null,[],false)
+      const form_btns = FormBtns.render(null,[],false)
       const notifications = create_div({attributes:[{key:'id',value:'notifications'}]})
 
       window.scroll(0,0)
       
       // assemble
       form.append(
-         create_div(),
          form_btns_top,
          text_col,
          create_div(),
