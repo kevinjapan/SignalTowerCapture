@@ -55,9 +55,9 @@ class Browse {
       }
    }
 
-   render = async () => {
+   render = () => {
 
-      this.#root_folder = await app.get_root_folder()
+      this.#root_folder = app.get_root_folder()
       if(this.#root_folder === '') {
          window.scroll(0,0)
          return no_root_folder()

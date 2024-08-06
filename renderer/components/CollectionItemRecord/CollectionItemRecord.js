@@ -35,7 +35,7 @@ class CollectionItemRecord {
 
    render = async() => {
 
-      this.#props.root_folder = await app.get_root_folder()
+      this.#props.root_folder = app.get_root_folder()
       if(this.#props.root_folder === '') return no_root_folder()
 
       // we arrived via History - hydrate item

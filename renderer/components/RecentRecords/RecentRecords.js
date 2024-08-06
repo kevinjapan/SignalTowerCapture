@@ -41,7 +41,7 @@ class RecentRecords {
 
    render = async() => {
 
-      this.#root_folder = await app.get_root_folder()
+      this.#root_folder = app.get_root_folder()
       if(this.#root_folder === '') return no_root_folder()
 
       const record_result_obj = await this.get_app_config_record()

@@ -37,7 +37,7 @@ class Files {
 
    render = async() => {
 
-      this.#root_folder = await app.get_root_folder()
+      this.#root_folder = app.get_root_folder()
       if(this.#root_folder === '') {
          window.scroll(0,0)
          return no_root_folder()
