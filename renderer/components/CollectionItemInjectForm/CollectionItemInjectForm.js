@@ -105,7 +105,14 @@ class CollectionItemInjectForm {
    }
 
    // enable buttons/links displayed in the render
-   activate = () => {}
+   activate = () => {
+      const apply_btns = document.querySelectorAll('.apply_btn')
+      if(apply_btns) {
+         apply_btns.forEach((apply_btn) => {
+            apply_btn.classList.remove('dimmer')
+         })
+      }
+   }
 
 }
 

@@ -90,6 +90,9 @@ class FileInjector {
             // no matching record was found for this file
             const inject_form = new CollectionItemInjectForm(this.#props)
             container.appendChild(await inject_form.render())
+
+            // initialize form - we enable apply btns since we have a known file (default is disabled w/ '.dimmer')
+            setTimeout(() => inject_form.activate(),300)
          }
       }
    }
