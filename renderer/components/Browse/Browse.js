@@ -1,4 +1,5 @@
 import { app } from '../../renderer.js'
+import PageBanner from '../PageBanner/PageBanner.js'
 import CardGrid from '../CardGrid/CardGrid.js'
 import CollectionItemCard from '../CollectionItemCard/CollectionItemCard.js'
 import PaginationNav from '../PaginationNav/PaginationNav.js'
@@ -68,6 +69,12 @@ class Browse {
          classlist:['max_w_full']
       })
 
+      const page_banner = new PageBanner({
+         icon_name:'tag',
+         title:'Browse',
+         lead:'Browse all the Records.'
+      })
+
       const alpha_ctrl_props = {
          selected_char:this.#filter_char ? this.#filter_char : null,
          submit_alpha_filter:this.submit_alpha_filter,
@@ -97,6 +104,7 @@ class Browse {
 
       // assemble
       this.#browse_section.append(
+         page_banner.render(),
          this.#alpha_ctrl.render(),
          num_records,
          this.#pagination_nav.render(),

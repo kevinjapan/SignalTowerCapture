@@ -1,4 +1,5 @@
 import { app } from '../../renderer.js'
+import PageBanner from '../PageBanner/PageBanner.js'
 import FileInjector from '../FileInjector/FileInjector.js'
 import BreadCrumbNav from '../BreadCrumbNav/BreadCrumbNav.js'
 import ParentLink from '../ParentLink/ParentLink.js'
@@ -48,6 +49,12 @@ class Files {
          classlist:['h_85vh','mt_0','fit_content_height','pb_2']
       })
 
+      const page_banner = new PageBanner({
+         icon_name:'tag',
+         title:'Files',
+         lead:'Browse all the files in the Collection Dataset folders.'
+      })
+
       const notifications = create_div({
          attributes:[{key:'id',value:'notifications'}]
       })
@@ -83,6 +90,7 @@ class Files {
       
       // assemble
       files_section.append(
+         page_banner.render(),
          notifications,
          this.#breadcrumb_nav.render(),
          files_layout

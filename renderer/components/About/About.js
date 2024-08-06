@@ -22,7 +22,7 @@ class About {
       const page_banner = new PageBanner({
          icon_name:'',
          title:'About',
-         lead:''
+         lead:'About Signal Tower Capture'
       })
       const page_content = create_section({
          classlist:['mx_2']

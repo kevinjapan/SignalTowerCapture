@@ -1,4 +1,5 @@
 import { app } from '../../renderer.js'
+import PageBanner from '../PageBanner/PageBanner.js'
 import SearchForm from './SearchForm/SearchForm.js'
 import CardGrid from '../CardGrid/CardGrid.js'
 import CollectionItemCard from '../CollectionItemCard/CollectionItemCard.js'
@@ -61,6 +62,12 @@ class Search {
          attributes:[{key:'id',value:'search_section'}]
       })
   
+      const page_banner = new PageBanner({
+         icon_name:'tag',
+         title:'Search',
+         lead:'Search all the Records.'
+      })
+
       const search_form = new SearchForm({
          search_term:'',
          search_term_max_len:app.max_search_term_len(),
@@ -98,6 +105,7 @@ class Search {
       
       // assemble
       this.#search_section.append(
+         page_banner.render(),
          search_form.render(),
          num_records,
          this.#pagination_nav.render(),
