@@ -155,13 +155,14 @@ ul {
    list-style:none;
 }
 button {
-   background:hsl(0, 0%, 93%);
-   color: inherit;
+
+   background:blue;
+   color:white;
+
    font: inherit;
    cursor: pointer;
    outline: none;
 
-   color:grey;
    font-size:1.1rem;
    font-weight:600;
    margin:.5rem;
