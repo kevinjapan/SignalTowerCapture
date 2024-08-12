@@ -50,7 +50,7 @@ class Files {
       })
 
       const page_banner = new PageBanner({
-         icon_name:'tag',
+         icon_name:'file_text',
          title:'Files',
          lead:'Browse all the files in the Collection Dataset folders.'
       })

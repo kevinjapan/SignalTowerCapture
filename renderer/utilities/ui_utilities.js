@@ -127,6 +127,7 @@ export const icon = function (){
    // use semantic icon_names - they will be used as alt text in clickable ctrls
    const icons = {
       'ARROW_UP':'imgs\\icons\\arrow-up-left-square.svg',
+      'CARD_TEXT':'imgs\\icons\\card-text.svg',
       'CIRCLE':'imgs\\icons\\circle.svg',
       'CSV':'imgs\\filetypes\\filetype-csv.svg',
       'DATABASE':'imgs\\icons\\database.svg',
@@ -140,6 +141,7 @@ export const icon = function (){
       'JSON':'imgs\\filetypes\\filetype-json.svg',
       'MENU_UP':'imgs\\icons\\menu-up.svg',
       'OPEN_FOLDER':'imgs\\icons\\folder2-open.svg',
+      'SEARCH':'imgs\\icons\\search.svg',
       'SETTINGS':'imgs\\icons\\gear.svg',
       'TAG':'imgs\\icons\\tag.svg',
       'TRASH':'imgs\\icons\\trash.svg'

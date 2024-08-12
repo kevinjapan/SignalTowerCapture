@@ -4,6 +4,7 @@ import SearchForm from './SearchForm/SearchForm.js'
 import CardGrid from '../CardGrid/CardGrid.js'
 import CollectionItemCard from '../CollectionItemCard/CollectionItemCard.js'
 import PaginationNav from '../PaginationNav/PaginationNav.js'
+import Notification from '../Notification/Notification.js'
 import { ui_display_number_as_str } from '../../utilities/ui_strings.js'
 import { create_section,create_div } from '../../utilities/ui_elements.js'
 import { init_card_img_loads,no_root_folder } from '../../utilities/ui_utilities.js'
@@ -63,7 +64,7 @@ class Search {
       })
   
       const page_banner = new PageBanner({
-         icon_name:'tag',
+         icon_name:'search',
          title:'Search',
          lead:'Search all the Records.'
       })
@@ -181,8 +182,7 @@ class Search {
                   setTimeout(() => window.scroll(0,this.#context.scroll_y),50)
                }
                else {
-                  let search_status = document.getElementById('search_status')
-                  if(search_status) search_status.innerText = collection_items_obj.message
+                  Notification.notify('#search_status',collection_items_obj.message)
                }
             }
             else {

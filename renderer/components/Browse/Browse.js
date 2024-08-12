@@ -70,7 +70,7 @@ class Browse {
       })
 
       const page_banner = new PageBanner({
-         icon_name:'tag',
+         icon_name:'card_text',
          title:'Browse',
          lead:'Browse all the Records.'
       })

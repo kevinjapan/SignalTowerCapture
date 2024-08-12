@@ -20,7 +20,7 @@ class AddCollectionItem {
          classlist:['mt_2']
       })      
       const page_banner = new PageBanner({
-         icon_name:'file',
+         icon_name:'card_text',
          title:'Add A New Record',
          lead:'Add a file to the system.'
       })
