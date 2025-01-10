@@ -1,17 +1,15 @@
 import { app } from '../../renderer.js'
 import AppStatus from '../AppStatus/AppStatus.js'
 import CollectionItemFormRow from '../CollectionItemFormRow/CollectionItemFormRow.js'
-import TagsSelector from '../TagsSelector/TagsSelector.js'
 import FileTypeCheckBox from '../Forms/FileTypeCheckbox/FileTypeCheckbox.js'
 import DisplayImgOrIcon from '../Utilities/DisplayImgOrIcon/DisplayImgOrIcon.js'
 import FormBtns from '../FormBtns/FormBtns.js'
 import Notification from '../../components/Notification/Notification.js'
 import { DESC } from '../../utilities/ui_descriptions.js'
 import { is_valid_response_obj } from '../../utilities/ui_response.js'
-import { ui_friendly_text } from '../../utilities/ui_strings.js'
-import {title_from_file_name,no_root_folder,is_excluded_folder, no_root_elem } from '../../utilities/ui_utilities.js'
-import { create_section,create_div,create_form,create_label,create_button } from '../../utilities/ui_elements.js'
-
+import {title_from_file_name, is_excluded_folder, no_root_elem, no_form_fields } from '../../utilities/ui_utilities.js'
+import { create_section, create_div, create_form, create_button } from '../../utilities/ui_elements.js'
+import TagsFormCtrl from '../Tags/TagsFormCtrl/TagsFormCtrl.js'
 
 
 // all our input validation is carried out in the main process in window.collection_items_api.updateCollectionItem()
@@ -50,100 +48,78 @@ class CollectionItemForm {
 
    render = async() =>  {
 
+      // bail if no root_folder      // to do : review : do we want this in all components? eg maybe only in 'views'
       this.#root_folder = app.get_root_folder()
       if(this.#root_folder === '') return no_root_elem()
 
+      // bail if no fields 
+      if(!Array.isArray(this.#props.fields)) return no_form_fields()
+
+      // distinguish edit/add - we don't inc cancel btn in add 'new' record forms
+      const inc_cancel_btn = this.#props.action === 'add' ? false : true
+
+
+      // Section Container
       this.#record_elem = create_section({
          classlist:['collection_item_record']
       })
-      const text_col = create_div({
-         classlist:['text_col','pl_1']
-      })
+
+      // 2-col layout
       const img_col = create_div({
          attributes:[{key:'id',value:'img_col'}],
          classlist:['img_col']
       })
+      const text_col = create_div({
+         classlist:['text_col','pl_1']
+      })
+
+      // Form (in text_col)
       const form_layout = create_form({
          attributes:[{key:'id',value:'item_form'}],
-         classlist:['form_layout']
+         classlist:['form_layout','user_select']
       })
-      const submit_outcome_top = create_section({classlist:['submit_outcome']})
-
-      // we don't inc cancel btn in add 'new' record forms
-      const inc_cancel_btn = this.#props.action === 'add' ? false : true
-      const btn_group_1 = FormBtns.render(this.#props.item,[],inc_cancel_btn)
-      form_layout.append(btn_group_1,submit_outcome_top)
       text_col.append(form_layout)
-      
-      // each row is itself a grid      
-      const form_content = create_div({
-         classlist:['bg_white','p_.5','pl_1','pr_1','rounded']
-      })
+      form_layout.append(FormBtns.render(this.#props.item,[],inc_cancel_btn))
 
-      if(Array.isArray(this.#props.fields)) {
+      // Form Content : row grids  
+      const form_content = create_div({classlist:['form_content','bg_white','p_.5','pl_1','pr_1','rounded','bg_yellow']})
 
-         // build the row for the current field
-         this.#props.fields.forEach( async(field) => {
+      // build each row
+      this.#props.fields.forEach( async(field) => {
 
-            let curr_field_value = ''
-            if(curr_field_value === null) curr_field_value = ''
-            if(typeof this.#props.item !== 'undefined') curr_field_value = this.#props.item[field.key]
-            if(field.key === 'file_type' && curr_field_value === '') curr_field_value = 'File'
+         // default : form row : label and input 
+         let curr_field_value = ''
+         if(curr_field_value === null) curr_field_value = ''
+         if(typeof this.#props.item !== 'undefined') curr_field_value = this.#props.item[field.key]
+         if(field.key === 'file_type' && curr_field_value === '') curr_field_value = 'File'
 
-            form_content.append(CollectionItemFormRow.render(field,curr_field_value))
+         // add 'collection_item_form_row'
+         form_content.append(CollectionItemFormRow.render(field,curr_field_value))
 
-            // listen for changes so we can enable apply btn
-            if(!field.is_folder) setTimeout(() => this.register_input_listener(field.key),100)
+         // listen for changes so we can enable apply btn
+         if(!field.is_folder) setTimeout(() => this.register_input_listener(field.key),100)
 
-            if(field.key === 'tags') {
-               let field_label = create_label({
-                  attributes:[{key:'for',value:field.key}],
-                  text:ui_friendly_text(field.key + 'HEY')
-               })
-               const current_tags = (this.#props.item) 
-                  ?  this.#props.item[field.key] ? this.#props.item[field.key].split('*') : []
-                  :  []
-
-               // placeholder - we inject once promise is resolved..
-               const tags_placeholder = create_div({attributes:[{key:'id',value:'tags_placeholder'}]})
-               form_content.append(field_label,tags_placeholder)
-
-               const tag_selector = new TagsSelector(this.#tags_obj,current_tags)
-               tags_placeholder.append(await tag_selector.render(this.#props.context ? this.#props.context : {}))
-               setTimeout(() => tag_selector.activate(),200)
-            }
+         // inject Tags ctrl 
+         if(field.key === 'tags') {
+            // this.inject_tags_ctrl(form_content,field)
+            form_content.append(await TagsFormCtrl.render(field,this.#props.item,this.#tags_obj,this.#props.context))
+         }
             
-            // file_type checkboxes
-            if(field.key === 'file_type') {
+         // inject file_type ctrls
+         if(field.key === 'file_type') this.inject_file_type_ctrls(form_content,field,curr_field_value)
 
-               form_content.append(create_div(),FileTypeCheckBox.render(field.key,curr_field_value))
-
-               if(this.#props.find_files) {
-                  // btn to select file for 'file_name' field
-                  let find_file_btn = create_button({
-                     attributes:[{key:'id',value:'find_file_btn'}],
-                     classlist:['form_btn','mb_2'],
-                     text:'Find File'
-                  })
-                  form_content.append(find_file_btn)
-               }
-            }            
-
-            // display img or icon
-            if(field.key === 'file_name' && this.#props.item) {
-               let relative_folder_path = this.#props.item['folder_path']              
-               if(relative_folder_path !== '') relative_folder_path += '\\'   // allow for empty folder_path (if file is in root_folder)
-               let file_path = `${this.#root_folder}\\${relative_folder_path}\\${this.#props.item[field.key]}`
-               await DisplayImgOrIcon.render(img_col,file_path,this.#props.item['img_desc'])
-            }
-         })
-      }
-      let btn_group_2 = FormBtns.render(this.#props.item,[],inc_cancel_btn)
-      let submit_outcome_bottom = create_section({classlist:['submit_outcome']})
+         // display feature img
+         if(field.key === 'file_name' && this.#props.item) {
+            let relative_folder_path = this.#props.item['folder_path']              
+            if(relative_folder_path !== '') relative_folder_path += '\\'   // allow for empty folder_path (if file is in root_folder)
+            let file_path = `${this.#root_folder}\\${relative_folder_path}\\${this.#props.item[field.key]}`
+            await DisplayImgOrIcon.render(img_col,file_path,this.#props.item['img_desc'])
+         }
+      })
 
       // assemble
       form_layout.append(form_content)
-      form_layout.append(submit_outcome_bottom,create_div(),btn_group_2)
+      form_layout.append(create_div(), FormBtns.render(this.#props.item ,[] ,inc_cancel_btn))
       this.#record_elem.append(img_col,text_col)
 
       window.scroll(0,0)
@@ -165,6 +141,22 @@ class CollectionItemForm {
       }
    }
 
+   // to do : following func as separate component
+   inject_file_type_ctrls(form_content,field,curr_field_value) {
+
+      form_content.append(create_div(),FileTypeCheckBox.render(field.key,curr_field_value))
+      if(this.#props.find_files) {
+         // btn to select file for 'file_name' field
+         let find_file_btn = create_button({
+            attributes:[{key:'id',value:'find_file_btn'}],
+            classlist:['form_btn','mb_2'],
+            text:'Find File'
+         })
+         form_content.append(find_file_btn)
+      }
+   }            
+
+   
    // enable buttons/links displayed in the render
    activate = async() => {
 
@@ -398,29 +390,6 @@ class CollectionItemForm {
                if(file_type) file_type.value = event.target.value   
                const file_type_info = document.getElementById('file_type_info')
                if(file_type_info) file_type_info.innerText = event.target.value === 'File' ? DESC.FILE_ITEM_FILETYPE : DESC.FOLDER_ITEM_FILETYPE
-            })
-         })
-      }
-   }
-
-   activate_tags = () => {
-      
-      // On change tag checkbox
-      const tags_checkboxes = document.querySelectorAll('.tags_checkbox')
-      if(tags_checkboxes) {
-         tags_checkboxes.forEach(checkbox => {
-            checkbox.addEventListener('change',(event) => {
-               const tags_input = document.getElementById('tags')
-               if(tags_input) {
-                  // get existing tags list (remove any non-registered tag tokens)
-                  const curr_tags = tags_input.value.split('*').filter(e => e)
-                  const verified_curr_tags = curr_tags.filter(curr_tag => {
-                     return this.#tags_obj.tags.some(tag => tag.tag === curr_tag)
-                  })
-                  const existing_tags = new Set(verified_curr_tags)
-                  existing_tags.has(event.target.value) ? existing_tags.delete(event.target.value) : existing_tags.add(event.target.value)                    
-                  tags_input.value = [...existing_tags].sort().join('*')    // build str w/ '*' delimiter
-               }
             })
          })
       }
