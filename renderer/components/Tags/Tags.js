@@ -6,7 +6,7 @@ import TagsNavList from '../TagsNavList/TagsNavList.js'
 import PaginationNav from '../PaginationNav/PaginationNav.js'
 import { ui_display_number_as_str } from '../../utilities/ui_strings.js'
 import { create_section,create_div } from '../../utilities/ui_elements.js'
-import { init_card_img_loads,no_root_folder,has_valid_field_filter } from '../../utilities/ui_utilities.js'
+import { init_card_img_loads,no_root_folder,has_valid_field_filter,no_root_elem } from '../../utilities/ui_utilities.js'
 
 
 
@@ -54,11 +54,9 @@ class Tags {
 
    render = async() => {
 
+
       this.#root_folder = app.get_root_folder()
-      if(this.#root_folder === '') {
-         window.scroll(0,0)
-         return no_root_folder()
-      }
+      if(this.#root_folder === '') return no_root_elem()
 
       this.#tags_section = create_section({
          attributes:[{key:'id',value:'tags_section'}],

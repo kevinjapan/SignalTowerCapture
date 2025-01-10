@@ -9,7 +9,7 @@ import Notification from '../../components/Notification/Notification.js'
 import { DESC } from '../../utilities/ui_descriptions.js'
 import { is_valid_response_obj } from '../../utilities/ui_response.js'
 import { ui_friendly_text } from '../../utilities/ui_strings.js'
-import {title_from_file_name,no_root_folder,is_excluded_folder } from '../../utilities/ui_utilities.js'
+import {title_from_file_name,no_root_folder,is_excluded_folder, no_root_elem } from '../../utilities/ui_utilities.js'
 import { create_section,create_div,create_form,create_label,create_button } from '../../utilities/ui_elements.js'
 
 
@@ -51,7 +51,7 @@ class CollectionItemForm {
    render = async() =>  {
 
       this.#root_folder = app.get_root_folder()
-      if(this.#root_folder === '') return no_root_folder()
+      if(this.#root_folder === '') return no_root_elem()
 
       this.#record_elem = create_section({
          classlist:['collection_item_record']

@@ -7,8 +7,10 @@ import AlphabetCtrl from '../AlphabetCtrl/AlphabetCtrl.js'
 import { is_valid_response_obj } from '../../utilities/ui_response.js'
 import { ui_display_number_as_str } from '../../utilities/ui_strings.js'
 import { create_section,create_div } from '../../utilities/ui_elements.js'
-import { init_card_img_loads,no_root_folder } from '../../utilities/ui_utilities.js'
+import { no_root_elem, init_card_img_loads } from '../../utilities/ui_utilities.js'
 
+
+// to do : move top -level nav components into Views or Pages folder - mark as top-level
 
 
 class Browse {
@@ -59,10 +61,7 @@ class Browse {
    render = () => {
 
       this.#root_folder = app.get_root_folder()
-      if(this.#root_folder === '') {
-         window.scroll(0,0)
-         return no_root_folder()
-      }
+      if(this.#root_folder === '') return no_root_elem()
 
       this.#browse_section = create_section({
          attributes:[{key:'id',value:'browse_section'}],

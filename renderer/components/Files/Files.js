@@ -6,7 +6,7 @@ import ParentLink from '../ParentLink/ParentLink.js'
 import Notification from '../Notification/Notification.js'
 import { is_valid_response_obj } from '../../utilities/ui_response.js'
 import { trim_end_char } from '../../utilities/ui_strings.js'
-import { filetype_icon,no_root_folder,is_excluded_folder,get_parent_folder_path } from '../../utilities/ui_utilities.js'
+import { filetype_icon,no_root_folder,is_excluded_folder,get_parent_folder_path, no_root_elem } from '../../utilities/ui_utilities.js'
 import { create_section,create_div,create_ul,create_li } from '../../utilities/ui_elements.js'
 
 
@@ -39,10 +39,7 @@ class Files {
    render = async() => {
 
       this.#root_folder = app.get_root_folder()
-      if(this.#root_folder === '') {
-         window.scroll(0,0)
-         return no_root_folder()
-      }
+      if(this.#root_folder === '') return no_root_elem()
 
       const files_section = create_section({
          attributes:[{key:'id',value:'files_section'}],

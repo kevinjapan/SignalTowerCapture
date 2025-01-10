@@ -2,7 +2,7 @@ import { app } from '../../renderer.js'
 import CollectionItemForm from '../CollectionItemForm/CollectionItemForm.js'
 import { create_section,create_h,create_p } from '../../utilities/ui_elements.js'
 import { get_title_from_filename } from '../../utilities/ui_strings.js'
-import { no_root_folder } from '../../utilities/ui_utilities.js'
+import { no_root_folder, no_root_elem } from '../../utilities/ui_utilities.js'
 
 
 
@@ -26,7 +26,7 @@ class CollectionItemInjectForm {
    render = async() => {
 
       this.#root_folder = app.get_root_folder()
-      if(this.#root_folder === '') return no_root_folder()
+      if(this.#root_folder === '') return no_root_elem()
             
       // component container
       const inject_form_container = create_section({

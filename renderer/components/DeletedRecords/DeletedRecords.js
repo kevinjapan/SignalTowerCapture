@@ -6,7 +6,7 @@ import PageBanner from '../PageBanner/PageBanner.js'
 import { is_valid_response_obj } from '../../utilities/ui_response.js'
 import { ui_display_number_as_str } from '../../utilities/ui_strings.js'
 import { DESC } from '../../utilities/ui_descriptions.js'
-import { init_card_img_loads,no_root_folder } from '../../utilities/ui_utilities.js'
+import { init_card_img_loads,no_root_folder, no_root_elem } from '../../utilities/ui_utilities.js'
 import { create_section,create_div } from '../../utilities/ui_elements.js'
 
 
@@ -55,7 +55,7 @@ class DeletedRecordsTeaser {
    render = async() => {
 
       this.#root_folder = app.get_root_folder()
-      if(this.#root_folder === '') return no_root_folder()
+      if(this.#root_folder === '') return no_root_elem()
 
       this.#deleted_records_section = create_section({
          attributes:[{key:'id',value:'deleted_records_section'}],

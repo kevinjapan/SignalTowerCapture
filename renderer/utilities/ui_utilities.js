@@ -315,6 +315,11 @@ export const title_from_file_name = (file_name) => {
    return candidate_arr.join(' ')
 }
 
+export const no_root_elem = (root_folder) => {
+   window.scroll(0,0)
+   return no_root_folder()
+}
+
 export const no_root_folder = () => {
    const elem = create_div({
       classlist:['bg_yellow_300','m_2','p_1','border_radius_0.5'],
@@ -323,7 +328,6 @@ export const no_root_folder = () => {
    })
    return elem
 }
-
 
 //
 // Verify if given filter_name is present in context, and has a value
