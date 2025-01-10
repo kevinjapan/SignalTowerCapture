@@ -1,11 +1,11 @@
-import { create_textarea } from '../../../utilities/ui_elements.js'
+import { create_input } from '../../../../utilities/ui_elements.js'
 
 
-class TextArea {
+class Input {
+
+   static render = (field,curr_field_value) => {      
    
-   static render = (field,curr_field_value) => {
-
-      const field_input = create_textarea({
+      const field_input = create_input({
          attributes:[
             {key:'id',value:field.key},
             {key:'name',value:field.key},
@@ -17,13 +17,11 @@ class TextArea {
          classlist:['input_field']
       })
       if(field.hidden === true) field_input.hidden = true
-      field_input.value = curr_field_value   // req for textareas
-      field_input.style.height = field.test.max > 200 ? '16rem' : '4.25rem'
       if(field.placeholder) field_input.setAttribute('placeholder',field.placeholder)
       if(!field.editable) field_input.disabled = 'disabled'
-    
+
       return field_input
    }
 }
 
-export default TextArea
+export default Input

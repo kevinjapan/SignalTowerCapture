@@ -1,6 +1,6 @@
 
-import Input from '../../Forms/Input/Input.js'
-import TextArea from '../../Forms/TextArea/TextArea.js'
+import Input from '../../Forms/Forms/Input/Input.js'
+import TextArea from '../../Forms/Forms/TextArea/TextArea.js'
 import { create_div, create_label } from '../../../utilities/ui_elements.js'
 import { ui_friendly_text } from '../../../utilities/ui_strings.js'
 

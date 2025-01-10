@@ -1,7 +1,7 @@
 import { app } from '../../renderer.js'
 import PageBanner from '../PageBanner/PageBanner.js'
 import SelectFolderComponent from '../SelectFolderComponent/SelectFolderComponent.js'
-import FormBtns from '../FormBtns/FormBtns.js'
+import FormBtns from '../Forms/FormBtns/FormBtns.js'
 import Notification from '../../components/Notification/Notification.js'
 import { ui_friendly_text } from '../../utilities/ui_strings.js'
 import { create_section,create_div,create_p,create_form,create_label,create_input,create_textarea } from '../../utilities/ui_elements.js'
