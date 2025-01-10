@@ -3,11 +3,13 @@ import PageBanner from '../components/PageBanner/PageBanner.js'
 import CardGrid from '../components/CardGrid/CardGrid.js'
 import CollectionItemCard from '../components/CollectionItems/CollectionItemCard/CollectionItemCard.js'
 import PaginationNav from '../components/PaginationNav/PaginationNav.js'
-import AlphabetCtrl from '../components/AlphabetCtrl/AlphabetCtrl.js'
 import { is_valid_response_obj } from '../utilities/ui_response.js'
 import { ui_display_number_as_str } from '../utilities/ui_strings.js'
 import { create_section,create_div } from '../utilities/ui_elements.js'
 import { no_root_elem, init_card_img_loads } from '../utilities/ui_utilities.js'
+
+// currently disabled AlphabetCtrl
+// import AlphabetCtrl from '../components/AlphabetCtrl/AlphabetCtrl.js'
 
 
 class BrowseView {
@@ -18,7 +20,7 @@ class BrowseView {
    #browse_section
 
    // alphabet navigation
-   #alpha_ctrl
+   // #alpha_ctrl
 
    // pagination
    #pagination_nav
@@ -73,14 +75,12 @@ class BrowseView {
          lead:'Browse all the Records.'
       })
    
-      // Pagination
-      // to do : remove & replace w/ better pagination ctrls below (from online signalcapture app) : rollout
-      this.#alpha_ctrl = new AlphabetCtrl({
-         selected_char:this.#filter_char ? this.#filter_char : null,
-         submit_alpha_filter:this.submit_alpha_filter,
-         reset_alpha_filter:this.reset_alpha_filter
-      })
-      setTimeout(() => this.#alpha_ctrl.activate(),50)
+      // this.#alpha_ctrl = new AlphabetCtrl({
+      //    selected_char:this.#filter_char ? this.#filter_char : null,
+      //    submit_alpha_filter:this.submit_alpha_filter,
+      //    reset_alpha_filter:this.reset_alpha_filter
+      // })
+      // setTimeout(() => this.#alpha_ctrl.activate(),50)
       
       // Display no. records found
       const num_records = create_div({
@@ -107,7 +107,7 @@ class BrowseView {
       // assemble
       this.#browse_section.append(
          page_banner.render(),
-         this.#alpha_ctrl.render(),
+         // this.#alpha_ctrl.render(),
          num_records,
          this.#pagination_nav.render(),
          this.#browse_results_container,
@@ -217,24 +217,24 @@ class BrowseView {
    }
 
    // callbacks for AlphabetCtrl
-   submit_alpha_filter = (char) => {
-      if(this.#context) {
-         this.#context.page = 1
-         this.#filter_char = char
-         this.#context.scroll_y = 0
-         this.get_items()
-         setTimeout(() => this.activate(),100)
-      }
-   }
-   reset_alpha_filter = () => {
-      if(this.#context) {
-         this.#context.page = 1
-         this.#filter_char = null
-         this.#context.scroll_y = 0
-         this.get_items()
-         setTimeout(() => this.activate(),100)
-      }
-   }
+   // submit_alpha_filter = (char) => {
+   //    if(this.#context) {
+   //       this.#context.page = 1
+   //       this.#filter_char = char
+   //       this.#context.scroll_y = 0
+   //       this.get_items()
+   //       setTimeout(() => this.activate(),100)
+   //    }
+   // }
+   // reset_alpha_filter = () => {
+   //    if(this.#context) {
+   //       this.#context.page = 1
+   //       this.#filter_char = null
+   //       this.#context.scroll_y = 0
+   //       this.get_items()
+   //       setTimeout(() => this.activate(),100)
+   //    }
+   // }
 
    // grid can request refresh
    refresh = () => {
