@@ -1,14 +1,15 @@
-import { app } from '../../renderer.js'
-import PageBanner from '../PageBanner/PageBanner.js'
-import CardGrid from '../CardGrid/CardGrid.js'
-import CollectionItemCard from '../CollectionItemCard/CollectionItemCard.js'
+import { app } from '../../../renderer.js'
+import PageBanner from '../../PageBanner/PageBanner.js'
+import CardGrid from '../../CardGrid/CardGrid.js'
+import CollectionItemCard from '../../CollectionItemCard/CollectionItemCard.js'
 import TagsNavList from '../TagsNavList/TagsNavList.js'
-import PaginationNav from '../PaginationNav/PaginationNav.js'
-import { ui_display_number_as_str } from '../../utilities/ui_strings.js'
-import { create_section,create_div } from '../../utilities/ui_elements.js'
-import { init_card_img_loads,no_root_folder,has_valid_field_filter,no_root_elem } from '../../utilities/ui_utilities.js'
+import PaginationNav from '../../PaginationNav/PaginationNav.js'
+import { ui_display_number_as_str } from '../../../utilities/ui_strings.js'
+import { create_section,create_div } from '../../../utilities/ui_elements.js'
+import { init_card_img_loads,no_root_folder,has_valid_field_filter,no_root_elem } from '../../../utilities/ui_utilities.js'
 
 
+// to do : break components eg Tags...  into sub-folders
 
 class Tags {
 
