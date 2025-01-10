@@ -1,17 +1,17 @@
-import { app } from '../../renderer.js'
-import PageBanner from '../PageBanner/PageBanner.js'
-import SearchForm from './SearchForm/SearchForm.js'
-import CardGrid from '../CardGrid/CardGrid.js'
-import CollectionItemCard from '../CollectionItems/CollectionItemCard/CollectionItemCard.js'
-import PaginationNav from '../PaginationNav/PaginationNav.js'
-import Notification from '../Notification/Notification.js'
-import { ui_display_number_as_str } from '../../utilities/ui_strings.js'
-import { create_section,create_div } from '../../utilities/ui_elements.js'
-import { init_card_img_loads,no_root_folder, no_root_elem } from '../../utilities/ui_utilities.js'
+import { app } from '../renderer.js'
+import PageBanner from '../components/PageBanner/PageBanner.js'
+import SearchForm from '../components/Search/SearchForm/SearchForm.js'
+import CardGrid from '../components/CardGrid/CardGrid.js'
+import CollectionItemCard from '../components/CollectionItems/CollectionItemCard/CollectionItemCard.js'
+import PaginationNav from '../components/PaginationNav/PaginationNav.js'
+import Notification from '../components/Notification/Notification.js'
+import { ui_display_number_as_str } from '../utilities/ui_strings.js'
+import { create_section,create_div } from '../utilities/ui_elements.js'
+import { init_card_img_loads,no_root_folder, no_root_elem } from '../utilities/ui_utilities.js'
 
 
 
-class Search {
+class SearchView {
 
    #props
 
@@ -248,4 +248,4 @@ class Search {
 }
 
 
-export default Search
+export default SearchView

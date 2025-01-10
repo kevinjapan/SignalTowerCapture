@@ -1,9 +1,9 @@
-import PageBanner from '../PageBanner/PageBanner.js'
-import { create_section,create_h, create_p } from '../../utilities/ui_elements.js'
+import PageBanner from '../components/PageBanner/PageBanner.js'
+import { create_section,create_h, create_p } from '../utilities/ui_elements.js'
 
 
 
-class About {
+class AboutView {
 
    #props
 
@@ -75,4 +75,4 @@ class About {
 
 
 
-export default About
+export default AboutView

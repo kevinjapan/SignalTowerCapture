@@ -1,8 +1,8 @@
-import { create_section,create_h,create_p,create_div,create_form,create_button } from '../../utilities/ui_elements.js'
-import { build_img_elem } from '../../utilities/ui_utilities.js'
+import { create_section,create_h,create_div,create_form } from '../utilities/ui_elements.js'
+import { build_img_elem } from '../utilities/ui_utilities.js'
 
 
-class Home {
+class HomeView {
    
    #context = {
       key:'Home',
@@ -70,4 +70,4 @@ class Home {
 
 
 
-export default Home
+export default HomeView

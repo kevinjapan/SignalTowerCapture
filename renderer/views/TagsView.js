@@ -1,17 +1,15 @@
-import { app } from '../../../renderer.js'
-import PageBanner from '../../PageBanner/PageBanner.js'
-import CardGrid from '../../CardGrid/CardGrid.js'
-import CollectionItemCard from '../../CollectionItems/CollectionItemCard/CollectionItemCard.js'
-import TagsNavList from '../TagsNavList/TagsNavList.js'
-import PaginationNav from '../../PaginationNav/PaginationNav.js'
-import { ui_display_number_as_str } from '../../../utilities/ui_strings.js'
-import { create_section,create_div } from '../../../utilities/ui_elements.js'
-import { init_card_img_loads,no_root_folder,has_valid_field_filter,no_root_elem } from '../../../utilities/ui_utilities.js'
+import { app } from '../renderer.js'
+import PageBanner from '../components/PageBanner/PageBanner.js'
+import CardGrid from '../components/CardGrid/CardGrid.js'
+import CollectionItemCard from '../components/CollectionItems/CollectionItemCard/CollectionItemCard.js'
+import TagsNavList from '../components/Tags/TagsNavList/TagsNavList.js'
+import PaginationNav from '../components/PaginationNav/PaginationNav.js'
+import { ui_display_number_as_str } from '../utilities/ui_strings.js'
+import { create_section,create_div } from '../utilities/ui_elements.js'
+import { init_card_img_loads,has_valid_field_filter,no_root_elem } from '../utilities/ui_utilities.js'
 
 
-// to do : break components eg Tags...  into sub-folders
-
-class Tags {
+class TagsView {
 
    #props
 
@@ -277,4 +275,4 @@ class Tags {
 
 }
 
-export default Tags
+export default TagsView

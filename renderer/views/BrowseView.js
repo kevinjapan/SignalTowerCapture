@@ -1,19 +1,16 @@
-import { app } from '../../renderer.js'
-import PageBanner from '../PageBanner/PageBanner.js'
-import CardGrid from '../CardGrid/CardGrid.js'
-import CollectionItemCard from '../CollectionItems/CollectionItemCard/CollectionItemCard.js'
-import PaginationNav from '../PaginationNav/PaginationNav.js'
-import AlphabetCtrl from '../AlphabetCtrl/AlphabetCtrl.js'
-import { is_valid_response_obj } from '../../utilities/ui_response.js'
-import { ui_display_number_as_str } from '../../utilities/ui_strings.js'
-import { create_section,create_div } from '../../utilities/ui_elements.js'
-import { no_root_elem, init_card_img_loads } from '../../utilities/ui_utilities.js'
+import { app } from '../renderer.js'
+import PageBanner from '../components/PageBanner/PageBanner.js'
+import CardGrid from '../components/CardGrid/CardGrid.js'
+import CollectionItemCard from '../components/CollectionItems/CollectionItemCard/CollectionItemCard.js'
+import PaginationNav from '../components/PaginationNav/PaginationNav.js'
+import AlphabetCtrl from '../components/AlphabetCtrl/AlphabetCtrl.js'
+import { is_valid_response_obj } from '../utilities/ui_response.js'
+import { ui_display_number_as_str } from '../utilities/ui_strings.js'
+import { create_section,create_div } from '../utilities/ui_elements.js'
+import { no_root_elem, init_card_img_loads } from '../utilities/ui_utilities.js'
 
 
-// to do : move top -level nav components into Views or Pages folder - mark as top-level
-
-
-class Browse {
+class BrowseView {
 
    #props
 
@@ -263,4 +260,4 @@ class Browse {
 }
 
 
-export default Browse
+export default BrowseView

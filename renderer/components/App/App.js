@@ -1,7 +1,7 @@
-import Home from '../Home/Home.js'
-import Browse from '../Browse/Browse.js'
-import Search from '../Search/Search.js'
-import Tags from '../Tags/Tags/Tags.js'
+import HomeView from '../../views/HomeView.js'
+import BrowseView from '../../views/BrowseView.js'
+import SearchView from '../../views/SearchView.js'
+import TagsView from '../../views/TagsView.js'
 import AddCollectionItem from '../CollectionItems/AddCollectionItem/AddCollectionItem.js'
 import CollectionItemRecord from '../CollectionItems/CollectionItemRecord/CollectionItemRecord.js'
 import CollectionItemForm from '../CollectionItems/CollectionItemForm/CollectionItemForm.js'
@@ -13,11 +13,11 @@ import ImportJSONComponent from '../JSON/ImportJSONComponent/ImportJSONComponent
 import DeletedRecords from '../DeletedRecords/DeletedRecords.js'
 import AppConfigForm from '../AppConfigForm/AppConfigForm.js'
 import TagsConfig from '../Tags/TagsConfig/TagsConfig.js'
-import Files from '../Files/Files.js'
+import FilesView from '../../views/FilesView.js'
 import BackupComponent from '../BackupComponent/BackupComponent.js'
 import RecentRecords from '../RecentRecords/RecentRecords.js'
 import History from '../History/History.js'
-import About from '../About/About.js'
+import AboutView from '../../views/AboutView.js'
 import Error from '../Error/Error.js'
 import NotFound from '../NotFound/NotFound.js'
 import {trim_end_char} from '../../utilities/ui_strings.js'
@@ -78,9 +78,11 @@ class App {
       return this.#search_term_max_len
    }
 
-   //
+   
    // Load component in to 'component_container'
-   //
+   // to do : on-going : move into 'Views' folder - simplify file structure 
+   //  done:  Home/Browse/Files/Tags/Search/About
+   // 
    switch_to_component = async(component_name,props,add_to_history = true) => {
 
       let component_container = document.getElementById('component_container')
@@ -90,7 +92,7 @@ class App {
 
          switch(component_name) {
             case 'About':
-               component = new About(props)
+               component = new AboutView(props)
                component_container.replaceChildren(component.render())
                break
             case 'AddCollectionItem':
@@ -106,7 +108,7 @@ class App {
                component_container.replaceChildren(component.render())
                break
             case 'Browse':
-               component = new Browse(props)
+               component = new BrowseView(props)
                component_container.replaceChildren(await component.render())
                break
             case 'DeletedRecords':
@@ -126,7 +128,7 @@ class App {
                component_container.replaceChildren(await component.render())
                break
             case 'Files':
-               component = new Files(props)
+               component = new FilesView(props)
                component_container.replaceChildren(await component.render())
                break
             case 'Form':
@@ -134,7 +136,7 @@ class App {
                component_container.replaceChildren(await component.render())
                break
             case 'Home':
-               component = new Home()
+               component = new HomeView()
                component_container.replaceChildren(component.render())
                break
             case 'ImageViewer':
@@ -158,11 +160,11 @@ class App {
                component_container.replaceChildren(await component.render())
                break
             case 'Search':
-               component = new Search(props)
+               component = new SearchView(props)
                component_container.replaceChildren(await component.render())
                break
             case 'Tags':
-               component = new Tags(props)
+               component = new TagsView(props)
                component_container.replaceChildren(await component.render())
                break
             case 'TagsConfig':

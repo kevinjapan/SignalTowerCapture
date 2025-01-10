@@ -1,16 +1,16 @@
-import { app } from '../../renderer.js'
-import PageBanner from '../PageBanner/PageBanner.js'
-import FileInjector from '../FileInjector/FileInjector.js'
-import BreadCrumbNav from '../BreadCrumbNav/BreadCrumbNav.js'
-import ParentLink from '../ParentLink/ParentLink.js'
-import Notification from '../Notification/Notification.js'
-import { is_valid_response_obj } from '../../utilities/ui_response.js'
-import { trim_end_char } from '../../utilities/ui_strings.js'
-import { filetype_icon,no_root_folder,is_excluded_folder,get_parent_folder_path, no_root_elem } from '../../utilities/ui_utilities.js'
-import { create_section,create_div,create_ul,create_li } from '../../utilities/ui_elements.js'
+import { app } from '../renderer.js'
+import PageBanner from '../components/PageBanner/PageBanner.js'
+import FileInjector from '../components/FileInjector/FileInjector.js'
+import BreadCrumbNav from '../components/BreadCrumbNav/BreadCrumbNav.js'
+import ParentLink from '../components/ParentLink/ParentLink.js'
+import Notification from '../components/Notification/Notification.js'
+import { is_valid_response_obj } from '../utilities/ui_response.js'
+import { trim_end_char } from '../utilities/ui_strings.js'
+import { filetype_icon,no_root_folder,is_excluded_folder,get_parent_folder_path, no_root_elem } from '../utilities/ui_utilities.js'
+import { create_section,create_div,create_ul,create_li } from '../utilities/ui_elements.js'
 
 
-class Files {
+class FilesView {
    
    // the Collection Root Folder
    #root_folder = ''
@@ -363,4 +363,4 @@ class Files {
 }
 
 
-export default Files
+export default FilesView
