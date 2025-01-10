@@ -47,12 +47,12 @@ class CollectionItemInjectForm {
       })
       
       // assemble
-      this.build_form(item_form_wrap)
+      this.inject_form_into(item_form_wrap)
       inject_form_container.append(heading,text,item_form_wrap)
       return inject_form_container
    }
 
-   build_form = async (item_form_wrap) => {
+   inject_form_into = async (item_form_wrap) => {
 
       try {
          const collection_item_obj = await window.collection_items_api.getCollectionItemFields()

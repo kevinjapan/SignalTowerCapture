@@ -781,6 +781,7 @@ textarea {
 textarea {
    visibility:visible;
 }
+.form_content {border:solid 4px navy;}
 
 /* clearly distinguish non-editable form fields */
 input[disabled],
@@ -829,7 +830,7 @@ label,.label {
    grid-column-end: 3;
    padding:1rem;
    padding-top:.5rem;
-   padding-bottom:.5rem;
+   padding-bottom:.5rem;      border:solild 2px orange;
 }
 .field_info {
    font-size:.95rem;
@@ -1507,3 +1508,5 @@ button.apply_btn.form_btn.dimmer::before {
    background:white;
    opacity:.7;
 }
+
+.user_select {user-select:none;}

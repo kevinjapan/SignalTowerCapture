@@ -15,24 +15,30 @@ class AddCollectionItem {
 
    render = () => {
       
+      // Section Container
       this.#record = create_section({
          attributes:[{key:'id',value:'record'}],
          classlist:['mt_2']
       })      
+
+      // PageBanner
       const page_banner = new PageBanner({
          icon_name:'card_text',
          title:'Add A New Record',
          lead:'Add a file to the system.'
       })
+
+      // Form Container
+      // to do : specify 'level' here? for what?! not clear..
       const item_form_wrap = create_section({
          attributes:[{key:'id',value:'item_form_wrap'}],
          level:'h1'
       })
 
+      // Hydrate Form
+      this.inject_form_into(item_form_wrap)
+
       // assemble
-      this.build_form(
-         item_form_wrap
-      )
       this.#record.append(
          page_banner.render(),
          item_form_wrap
@@ -41,7 +47,7 @@ class AddCollectionItem {
    }
 
 
-   build_form = async (item_form_wrap) => {
+   inject_form_into = async (item_form_wrap) => {
 
       try {
          const collection_item_obj = await window.collection_items_api.getCollectionItemFields()
@@ -52,14 +58,14 @@ class AddCollectionItem {
             let create_required_fields = collection_item_obj.fields.filter((field) => {
                return field.editable
             })
-            let props = {
+            
+            // we display empty CollectionItemForm for data entry
+            const collection_item_form = new CollectionItemForm({
                fields:create_required_fields,
                find_files:true,
                action:'add'
-            }
-            
-            // display empty CollectionItemForm for data entry
-            const collection_item_form = new CollectionItemForm(props)
+            })
+
             item_form_wrap.appendChild(await collection_item_form.render())
             collection_item_form.activate()
          }

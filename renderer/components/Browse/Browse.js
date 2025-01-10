@@ -63,32 +63,38 @@ class Browse {
       this.#root_folder = app.get_root_folder()
       if(this.#root_folder === '') return no_root_elem()
 
+      // Container Section
       this.#browse_section = create_section({
          attributes:[{key:'id',value:'browse_section'}],
          classlist:['max_w_full']
       })
 
+      // PageBanner
       const page_banner = new PageBanner({
          icon_name:'card_text',
          title:'Browse',
          lead:'Browse all the Records.'
       })
-
-      const alpha_ctrl_props = {
+   
+      // Pagination
+      // to do : remove & replace w/ better pagination ctrls below
+      this.#alpha_ctrl = new AlphabetCtrl({
          selected_char:this.#filter_char ? this.#filter_char : null,
          submit_alpha_filter:this.submit_alpha_filter,
          reset_alpha_filter:this.reset_alpha_filter
-      }      
-      this.#alpha_ctrl = new AlphabetCtrl(alpha_ctrl_props)
+      })
       setTimeout(() => this.#alpha_ctrl.activate(),50)
       
+      // Display no. records found
       const num_records = create_div({
          attributes:[{key:'id',value:'number_records'}],
          classlist:['p_.5','pt_1','text_center']
       })
       
+      // Pagination
       this.#pagination_nav = new PaginationNav()
 
+      // Card Grid
       this.#card_grid_obj = new CardGrid({
          container_id:'browse_results_container',
          refresh:this.refresh,
