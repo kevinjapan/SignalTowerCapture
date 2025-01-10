@@ -15,7 +15,6 @@ import TagsFormCtrl from '../../Tags/TagsFormCtrl/TagsFormCtrl.js'
 // all our input validation is carried out in the main process in window.collection_items_api.updateCollectionItem()
 // any errors are returned from the same api function on failure
 
-
 class CollectionItemForm {
 
    // the collection item record id 
@@ -39,7 +38,6 @@ class CollectionItemForm {
    }
 
    #submit_enabled = true
-
 
    constructor(props) {
       this.#props = props

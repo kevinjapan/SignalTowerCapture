@@ -80,9 +80,7 @@ class App {
 
    
    // Load component in to 'component_container'
-   // to do : on-going : move into 'Views' folder - simplify file structure 
-   //  done:  Home/Browse/Files/Tags/Search/About
-   // 
+   // future: move other appropriate components into 'Views' folder
    switch_to_component = async(component_name,props,add_to_history = true) => {
 
       let component_container = document.getElementById('component_container')

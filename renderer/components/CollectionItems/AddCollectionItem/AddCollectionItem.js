@@ -29,10 +29,8 @@ class AddCollectionItem {
       })
 
       // Form Container
-      // to do : specify 'level' here? for what?! not clear..
       const item_form_wrap = create_section({
-         attributes:[{key:'id',value:'item_form_wrap'}],
-         level:'h1'
+         attributes:[{key:'id',value:'item_form_wrap'}]
       })
 
       // Hydrate Form

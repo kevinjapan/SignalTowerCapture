@@ -1,8 +1,6 @@
 import { create_section,create_div } from '../../utilities/ui_elements.js'
 
 
-// to do : bring in simpler component from signalcapture
-
 class PaginationNav {
 
    #props

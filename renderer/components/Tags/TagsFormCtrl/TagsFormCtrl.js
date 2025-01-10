@@ -40,8 +40,7 @@ class TagsFormCtrl {
                if(tags_input) {
                   // get existing tags list (remove any non-registered tag tokens)
                   const curr_tags = tags_input.value.split('*').filter(e => e)
-                  const verified_curr_tags = curr_tags.filter(curr_tag => {
-                     // to do :
+                  const verified_curr_tags = curr_tags.filter(curr_tag => {                     
                      //  return this.#tags_obj.tags.some(tag => tag.tag === curr_tag)
                   })
                   const existing_tags = new Set(verified_curr_tags)

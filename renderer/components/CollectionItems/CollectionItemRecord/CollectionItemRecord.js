@@ -314,7 +314,6 @@ class CollectionItemRecord {
       }
    }
 
-   // to do : as separate component
    display_tags = (tags_csv) => {
       if(tags_csv) {
          const tags = tags_csv.split('*')

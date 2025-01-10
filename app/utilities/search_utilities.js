@@ -89,7 +89,6 @@ const remove_stopwords = function() {
    return function(search_term_tokens) {
       // exlude common words from our searches
       let tokens = null
-      // to do : review - will this allow eg a single "this" - check against len of 0 ?
       if(search_term_tokens.length > 1) {
          tokens = search_term_tokens.filter(token => {
             return !search_excluded_words.includes(token)

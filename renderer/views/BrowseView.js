@@ -74,7 +74,7 @@ class BrowseView {
       })
    
       // Pagination
-      // to do : remove & replace w/ better pagination ctrls below
+      // to do : remove & replace w/ better pagination ctrls below (from online signalcapture app) : rollout
       this.#alpha_ctrl = new AlphabetCtrl({
          selected_char:this.#filter_char ? this.#filter_char : null,
          submit_alpha_filter:this.submit_alpha_filter,
