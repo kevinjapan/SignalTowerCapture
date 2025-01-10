@@ -1,10 +1,10 @@
 import Home from '../Home/Home.js'
 import Browse from '../Browse/Browse.js'
 import Search from '../Search/Search.js'
-import Tags from '../Tags/Tags.js'
-import AddCollectionItem from '../AddCollectionItem/AddCollectionItem.js'
-import CollectionItemRecord from '../CollectionItemRecord/CollectionItemRecord.js'
-import CollectionItemForm from '../CollectionItemForm/CollectionItemForm.js'
+import Tags from '../Tags/Tags/Tags.js'
+import AddCollectionItem from '../CollectionItems/AddCollectionItem/AddCollectionItem.js'
+import CollectionItemRecord from '../CollectionItems/CollectionItemRecord/CollectionItemRecord.js'
+import CollectionItemForm from '../CollectionItems/CollectionItemForm/CollectionItemForm.js'
 import ImageViewer from '../ImageViewer/ImageViewer.js'
 import ExportCSVComponent from '../ExportCSVComponent/ExportCSVComponent.js'
 import ImportCSVComponent from '../ImportCSVComponent/ImportCSVComponent.js'
@@ -12,7 +12,7 @@ import ExportJSONComponent from '../ExportJSONComponent/ExportJSONComponent.js'
 import ImportJSONComponent from '../ImportJSONComponent/ImportJSONComponent.js'
 import DeletedRecords from '../DeletedRecords/DeletedRecords.js'
 import AppConfigForm from '../AppConfigForm/AppConfigForm.js'
-import TagsConfig from '../TagsConfig/TagsConfig.js'
+import TagsConfig from '../Tags/TagsConfig/TagsConfig.js'
 import Files from '../Files/Files.js'
 import BackupComponent from '../BackupComponent/BackupComponent.js'
 import RecentRecords from '../RecentRecords/RecentRecords.js'
@@ -65,12 +65,15 @@ class App {
    get_root_folder = () => {
       return this.#root_folder
    }
+
    set_root_folder = (root_folder) => {
       this.#root_folder = root_folder
    }
+
    set_nav = (nav) => {
       this.#page_nav = nav
    }
+   
    max_search_term_len = () => {
       return this.#search_term_max_len
    }

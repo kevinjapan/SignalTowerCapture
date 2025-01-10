@@ -1,8 +1,8 @@
-import { app } from '../../renderer.js'
+import { app } from '../../../renderer.js'
 import CollectionItemForm from '../CollectionItemForm/CollectionItemForm.js'
-import { create_section,create_h,create_p } from '../../utilities/ui_elements.js'
-import { get_title_from_filename } from '../../utilities/ui_strings.js'
-import { no_root_folder, no_root_elem } from '../../utilities/ui_utilities.js'
+import { create_section,create_h,create_p } from '../../../utilities/ui_elements.js'
+import { get_title_from_filename } from '../../../utilities/ui_strings.js'
+import { no_root_folder, no_root_elem } from '../../../utilities/ui_utilities.js'
 
 
 

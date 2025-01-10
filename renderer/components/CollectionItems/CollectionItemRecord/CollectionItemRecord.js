@@ -1,10 +1,10 @@
-import { app } from '../../renderer.js'
-import RecordBtns from '../RecordBtns/RecordBtns.js'
-import RecordAdmin from '../RecordAdmin/RecordAdmin.js'
-import { is_valid_response_obj } from '../../utilities/ui_response.js'
-import { ui_friendly_text,trim_char,trim_end_char } from '../../utilities/ui_strings.js'
-import { get_ext,is_img_ext,get_file_type_icon,file_exists,build_img_elem,add_to_int_queue,ints_array,no_root_folder,is_valid_int } from '../../utilities/ui_utilities.js'
-import { create_section,create_div,create_p } from '../../utilities/ui_elements.js'
+import { app } from '../../../renderer.js'
+import RecordBtns from '../../RecordBtns/RecordBtns.js'
+import RecordAdmin from '../../RecordAdmin/RecordAdmin.js'
+import { is_valid_response_obj } from '../../../utilities/ui_response.js'
+import { ui_friendly_text,trim_char,trim_end_char } from '../../../utilities/ui_strings.js'
+import { get_ext,is_img_ext,get_file_type_icon,file_exists,build_img_elem,add_to_int_queue,ints_array,no_root_folder,is_valid_int } from '../../../utilities/ui_utilities.js'
+import { create_section,create_div,create_p } from '../../../utilities/ui_elements.js'
 
 
 

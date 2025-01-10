@@ -1,7 +1,7 @@
 import { app } from '../../renderer.js'
 import CardGrid from '../CardGrid/CardGrid.js'
-import CollectionItemCard from '../CollectionItemCard/CollectionItemCard.js'
-import CollectionItemInjectForm from '../CollectionItemInjectForm/CollectionItemInjectForm.js'
+import CollectionItemCard from '../CollectionItems/CollectionItemCard/CollectionItemCard.js'
+import CollectionItemInjectForm from '../CollectionItems/CollectionItemInjectForm/CollectionItemInjectForm.js'
 import { init_card_img_loads,no_root_folder } from '../../utilities/ui_utilities.js'
 import { create_section,create_div } from '../../utilities/ui_elements.js'
 

@@ -5,10 +5,11 @@ import { create_div,create_checkbox_fieldset,create_button} from '../../../utili
 
 class TagsSelector {
 
+   //
    #tags_obj
 
+   //
    #current_tags
-
 
    constructor(tags_obj,current_tags) {
       this.#tags_obj = tags_obj

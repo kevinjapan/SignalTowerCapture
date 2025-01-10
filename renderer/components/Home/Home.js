@@ -22,10 +22,13 @@ class Home {
       const feature_text = create_div({
          classlist:['feature_text']
       })
+
+      // to do : re-instate title
+      // text:'Signal Tower Capture'
       const heading_2 = create_h({
          level:'h1',
          classlist:['logo_heading','mb_0','m_0','text_white'],
-         text:'Signal Tower Capture'
+         text:'lorem ipsum de'
       })
       const tagline = create_h({
          classlist:['logo_heading','m_0','mt_2','text_weight_200','text_white'],

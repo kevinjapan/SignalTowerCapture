@@ -1,7 +1,7 @@
-import { app } from '../../renderer.js'
-import PageBanner from '../PageBanner/PageBanner.js'
+import { app } from '../../../renderer.js'
+import PageBanner from '../../PageBanner/PageBanner.js'
 import CollectionItemForm from '../CollectionItemForm/CollectionItemForm.js'
-import { create_section } from '../../utilities/ui_elements.js'
+import { create_section } from '../../../utilities/ui_elements.js'
 
 
 

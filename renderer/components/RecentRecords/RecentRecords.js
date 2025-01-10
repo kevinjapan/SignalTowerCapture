@@ -1,6 +1,6 @@
 import { app } from '../../renderer.js'
 import CardGrid from '../CardGrid/CardGrid.js'
-import CollectionItemCard from '../CollectionItemCard/CollectionItemCard.js'
+import CollectionItemCard from '../CollectionItems/CollectionItemCard/CollectionItemCard.js'
 import PageBanner from '../PageBanner/PageBanner.js'
 import { is_valid_response_obj } from '../../utilities/ui_response.js'
 import { create_section } from '../../utilities/ui_elements.js'

@@ -178,6 +178,7 @@ const is_valid_collection_item = (fields_list,collection_item) => {
    ci_array.forEach((key) => {
 
       // extract 'test' from the blueprint for this key
+      // - we extract field here and access 'test' property below
       let blueprint = fields_list.filter((col) => {
          return col.key === key
       })
