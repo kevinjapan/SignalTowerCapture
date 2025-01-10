@@ -329,6 +329,15 @@ export const no_root_folder = () => {
    return elem
 }
 
+export const no_form_fields = () => {
+   const elem = create_div({
+      classlist:['bg_yellow_300','m_2','p_1','border_radius_0.5'],
+      text:`Sorry, we can't find the Form fields.
+            There may be a problem connecting to the server.`
+   })
+   return elem
+}
+
 //
 // Verify if given filter_name is present in context, and has a value
 // 
