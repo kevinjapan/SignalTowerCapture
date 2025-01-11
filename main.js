@@ -137,22 +137,22 @@ const createWindow = async() => {
                },
                {
                   label: 'Export CSV File',
-                  click: () => load_client_component('ExportCSVComponent')
+                  click: () => load_client_component('ExportCSVView')
                },
                {
                   label: 'Import CSV File',
-                  click: () => load_client_component('ImportCSVComponent')
+                  click: () => load_client_component('ImportCSVView')
                },
                {
                   type:'separator'
                },
                {
                   label: 'Export JSON File',
-                  click: () => load_client_component('ExportJSONComponent')
+                  click: () => load_client_component('ExportJSONView')
                },
                {
                   label: 'Import JSON File',
-                  click: () => load_client_component('ImportJSONComponent')
+                  click: () => load_client_component('ImportJSONView')
                }
             ]
          },

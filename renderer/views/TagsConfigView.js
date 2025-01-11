@@ -1,11 +1,11 @@
-import { app } from '../../../renderer.js'
-import PageBanner from '../../PageBanner/PageBanner.js'
-import TagsList from '../TagsList/TagsList.js'
-import Notification from '../../../components/Notification/Notification.js'
-import { create_section,create_input,create_div,create_button } from '../../../utilities/ui_elements.js'
-import { is_valid_tag } from '../../../utilities/ui_strings.js'
+import { app } from '../renderer.js'
+import PageBanner from '../components/PageBanner/PageBanner.js'
+import TagsList from '../components/Tags/TagsList/TagsList.js'
+import Notification from '../components/Notification/Notification.js'
+import { create_section,create_input,create_div,create_button } from '../utilities/ui_elements.js'
+import { is_valid_tag } from '../utilities/ui_strings.js'
 
-class TagsConfig {
+class TagsConfigView {
 
    // we retain browse state (page,scroll_y,etc) by passing a 'context token'
    #context = {
@@ -272,4 +272,4 @@ class TagsConfig {
 
 
 
-export default TagsConfig
+export default TagsConfigView

@@ -1,17 +1,17 @@
-import { app } from '../../renderer.js'
-import CardGrid from '../CardGrid/CardGrid.js'
-import CollectionItemCard from '../CollectionItems/CollectionItemCard/CollectionItemCard.js'
-import PaginationNav from '../PaginationNav/PaginationNav.js'
-import PageBanner from '../PageBanner/PageBanner.js'
-import { is_valid_response_obj } from '../../utilities/ui_response.js'
-import { ui_display_number_as_str } from '../../utilities/ui_strings.js'
-import { DESC } from '../../utilities/ui_descriptions.js'
-import { init_card_img_loads,no_root_folder, no_root_elem } from '../../utilities/ui_utilities.js'
-import { create_section,create_div } from '../../utilities/ui_elements.js'
+import { app } from '../renderer.js'
+import CardGrid from '../components/CardGrid/CardGrid.js'
+import CollectionItemCard from '../components/CollectionItems/CollectionItemCard/CollectionItemCard.js'
+import PaginationNav from '../components/PaginationNav/PaginationNav.js'
+import PageBanner from '../components/PageBanner/PageBanner.js'
+import { is_valid_response_obj } from '../utilities/ui_response.js'
+import { ui_display_number_as_str } from '../utilities/ui_strings.js'
+import { DESC } from '../utilities/ui_descriptions.js'
+import { init_card_img_loads,no_root_folder, no_root_elem } from '../utilities/ui_utilities.js'
+import { create_section,create_div } from '../utilities/ui_elements.js'
 
 
 
-class DeletedRecordsTeaser {
+class DeletedRecordsView {
 
    // Component container element
    #deleted_records_section
@@ -215,4 +215,4 @@ class DeletedRecordsTeaser {
 }
 
 
-export default DeletedRecordsTeaser
+export default DeletedRecordsView

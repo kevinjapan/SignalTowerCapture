@@ -1,15 +1,15 @@
-import PageBanner from '../../PageBanner/PageBanner.js'
-import { create_section,create_h,create_div,create_button,create_p } from '../../../utilities/ui_elements.js'
-import { get_sqlready_datetime } from '../../../utilities/ui_datetime.js'
-import { extract_file_name } from '../../../utilities/ui_strings.js'
-import Notification from '../../../components/Notification/Notification.js'
+import PageBanner from '../components/PageBanner/PageBanner.js'
+import { create_section,create_h,create_div,create_button,create_p } from '../utilities/ui_elements.js'
+import { get_sqlready_datetime } from '../utilities/ui_datetime.js'
+import { extract_file_name } from '../utilities/ui_strings.js'
+import Notification from '../components/Notification/Notification.js'
 
 
 
-class ExportCSVComponent {
+class ExportCSVView {
 
    #context = {
-      key:'ExportCSVComponent'
+      key:'ExportCSVView'
    }
 
    
@@ -142,4 +142,4 @@ class ExportCSVComponent {
 }
 
 
-export default ExportCSVComponent
+export default ExportCSVView

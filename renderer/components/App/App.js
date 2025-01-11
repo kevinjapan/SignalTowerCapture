@@ -6,16 +6,16 @@ import AddCollectionItem from '../CollectionItems/AddCollectionItem/AddCollectio
 import CollectionItemRecord from '../CollectionItems/CollectionItemRecord/CollectionItemRecord.js'
 import CollectionItemForm from '../CollectionItems/CollectionItemForm/CollectionItemForm.js'
 import ImageViewer from '../ImageViewer/ImageViewer.js'
-import ExportCSVComponent from '../CSV/ExportCSVComponent/ExportCSVComponent.js'
-import ImportCSVComponent from '../CSV/ImportCSVComponent/ImportCSVComponent.js'
-import ExportJSONComponent from '../JSON/ExportJSONComponent/ExportJSONComponent.js'
-import ImportJSONComponent from '../JSON/ImportJSONComponent/ImportJSONComponent.js'
-import DeletedRecords from '../DeletedRecords/DeletedRecords.js'
-import AppConfigForm from '../AppConfigForm/AppConfigForm.js'
-import TagsConfig from '../Tags/TagsConfig/TagsConfig.js'
+import ExportCSVView from '../../views/ExportCSVView.js'
+import ImportCSVView from '../../views/ImportCSVView.js'
+import ExportJSONView from '../../views/ExportJSONView.js'
+import ImportJSONView from '../../views/ImportJSONView.js'
+import DeletedRecords from '../../views/DeletedRecordsView.js'
+import AppConfigView from '../../views/AppConfigView.js'
+import TagsConfigView from '../../views/TagsConfigView.js'
 import FilesView from '../../views/FilesView.js'
-import BackupComponent from '../BackupComponent/BackupComponent.js'
-import RecentRecords from '../RecentRecords/RecentRecords.js'
+import BackupDatabaseView from '../../views/BackupDatabaseView.js'
+import RecentRecords from '../../views/RecentRecordsView.js'
 import History from '../History/History.js'
 import AboutView from '../../views/AboutView.js'
 import Error from '../Error/Error.js'
@@ -98,11 +98,11 @@ class App {
                component_container.replaceChildren(component.render())
                break
             case 'AppConfigForm':
-               component = new AppConfigForm()
+               component = new AppConfigView()
                component_container.replaceChildren(await component.render())
                break
             case 'BackupComponent':
-               component = new BackupComponent(props)
+               component = new BackupDatabaseView(props)
                component_container.replaceChildren(component.render())
                break
             case 'Browse':
@@ -117,12 +117,12 @@ class App {
                component = new Error(props)
                component_container.replaceChildren(component.render())
                break
-            case 'ExportCSVComponent':
-               component = new ExportCSVComponent()
+            case 'ExportCSVView':
+               component = new ExportCSVView()
                component_container.replaceChildren(await component.render())
                break
-            case 'ExportJSONComponent':
-               component = new ExportJSONComponent()
+            case 'ExportJSONView':
+               component = new ExportJSONView()
                component_container.replaceChildren(await component.render())
                break
             case 'Files':
@@ -141,12 +141,12 @@ class App {
                component = new ImageViewer(props)
                component_container.replaceChildren(await component.render())
                break
-            case 'ImportCSVComponent':
-               component = new ImportCSVComponent()
+            case 'ImportCSVView':
+               component = new ImportCSVView()
                component_container.replaceChildren(await component.render())
                break
-            case 'ImportJSONComponent':
-               component = new ImportJSONComponent()
+            case 'ImportJSONView':
+               component = new ImportJSONView()
                component_container.replaceChildren(await component.render())
                break
             case 'RecentRecords':
@@ -166,7 +166,7 @@ class App {
                component_container.replaceChildren(await component.render())
                break
             case 'TagsConfig':
-               component = new TagsConfig()
+               component = new TagsConfigView()
                component_container.replaceChildren(await component.render())
                break
             default:

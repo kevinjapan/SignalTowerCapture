@@ -7,10 +7,12 @@ import { is_valid_response_obj } from '../utilities/ui_response.js'
 import { ui_display_number_as_str } from '../utilities/ui_strings.js'
 import { create_section,create_div } from '../utilities/ui_elements.js'
 import { no_root_elem, init_card_img_loads } from '../utilities/ui_utilities.js'
-
-// currently disabled AlphabetCtrl
+// currently disabled
 // import AlphabetCtrl from '../components/AlphabetCtrl/AlphabetCtrl.js'
 
+
+
+// BrowseView
 
 class BrowseView {
 

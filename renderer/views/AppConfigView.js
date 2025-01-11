@@ -1,21 +1,21 @@
-import { app } from '../../renderer.js'
-import PageBanner from '../PageBanner/PageBanner.js'
-import SelectFolderComponent from '../SelectFolderComponent/SelectFolderComponent.js'
-import FormBtns from '../Forms/FormBtns/FormBtns.js'
-import Notification from '../../components/Notification/Notification.js'
-import { ui_friendly_text } from '../../utilities/ui_strings.js'
-import { create_section,create_div,create_p,create_form,create_label,create_input,create_textarea } from '../../utilities/ui_elements.js'
+import { app } from '../renderer.js'
+import PageBanner from '../components/PageBanner/PageBanner.js'
+import SelectFolderComponent from '../components/SelectFolderComponent/SelectFolderComponent.js'
+import FormBtns from '../components/Forms/FormBtns/FormBtns.js'
+import Notification from '../components/Notification/Notification.js'
+import { ui_friendly_text } from '../utilities/ui_strings.js'
+import { create_section,create_div,create_p,create_form,create_label,create_input,create_textarea } from '../utilities/ui_elements.js'
 
 
 
 // App Settings
 
 
-class AppConfigForm {
+class AppConfigView {
 
    #id
 
-   #context = {key:'AppConfigForm'}
+   #context = {key:'AppConfigView'}
 
    #update_required = false
 
@@ -194,7 +194,7 @@ class AppConfigForm {
    activate = (action = 'update') => {
 
 
-      // On 'Apply' add or update AppConfigForm
+      // On 'Apply' add or update AppConfigView
 
       const apply_btns = document.querySelectorAll('.apply_btn')
       if(apply_btns) {
@@ -345,4 +345,4 @@ class AppConfigForm {
    }
 }
 
-export default AppConfigForm
+export default AppConfigView

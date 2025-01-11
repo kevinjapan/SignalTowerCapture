@@ -1,11 +1,11 @@
-import { app } from '../../renderer.js'
-import CardGrid from '../CardGrid/CardGrid.js'
-import CollectionItemCard from '../CollectionItems/CollectionItemCard/CollectionItemCard.js'
-import PageBanner from '../PageBanner/PageBanner.js'
-import { is_valid_response_obj } from '../../utilities/ui_response.js'
-import { create_section } from '../../utilities/ui_elements.js'
-import { ui_display_number_as_str } from '../../utilities/ui_strings.js'
-import { init_card_img_loads,no_root_folder, no_root_elem } from '../../utilities/ui_utilities.js'
+import { app } from '../renderer.js'
+import CardGrid from '../components/CardGrid/CardGrid.js'
+import CollectionItemCard from '../components/CollectionItems/CollectionItemCard/CollectionItemCard.js'
+import PageBanner from '../components/PageBanner/PageBanner.js'
+import { is_valid_response_obj } from '../utilities/ui_response.js'
+import { create_section } from '../utilities/ui_elements.js'
+import { ui_display_number_as_str } from '../utilities/ui_strings.js'
+import { init_card_img_loads,no_root_folder, no_root_elem } from '../utilities/ui_utilities.js'
 
 
 

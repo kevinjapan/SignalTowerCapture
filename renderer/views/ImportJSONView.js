@@ -1,18 +1,18 @@
-import ActionsLogComponent from '../../ActionsLogComponent/ActionsLogComponent.js'
-import PageBanner from '../../PageBanner/PageBanner.js'
-import WaitDialog from '../../WaitDialog/WaitDialog.js'
-import Notification from '../../../components/Notification/Notification.js'
-import { get_ui_ready_date, get_ui_ready_time } from '../../../utilities/ui_datetime.js'
-import { create_section,create_h,create_p,create_div,create_button } from '../../../utilities/ui_elements.js'
+import ActionsLogComponent from '../components/ActionsLogComponent/ActionsLogComponent.js'
+import PageBanner from '../components/PageBanner/PageBanner.js'
+import WaitDialog from '../components/WaitDialog/WaitDialog.js'
+import Notification from '../components/Notification/Notification.js'
+import { get_ui_ready_date, get_ui_ready_time } from '../utilities/ui_datetime.js'
+import { create_section,create_h,create_p,create_div,create_button } from '../utilities/ui_elements.js'
 
 
 
-class ImportJSONComponent {
+class ImportJSONView {
 
    #json_actions_log_component
 
    #context = {
-      key:'ImportJSONComponent'
+      key:'ImportJSONView'
    }
 
    
@@ -216,4 +216,4 @@ class ImportJSONComponent {
    }
 }
 
-export default ImportJSONComponent
+export default ImportJSONView

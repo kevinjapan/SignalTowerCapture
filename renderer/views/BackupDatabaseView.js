@@ -1,14 +1,14 @@
-import PageBanner from '../PageBanner/PageBanner.js'
-import Notification from '../../components/Notification/Notification.js'
-import { create_section,create_div,create_button } from '../../utilities/ui_elements.js'
-import { get_sqlready_datetime } from '../../utilities/ui_datetime.js'
-import { extract_file_name } from '../../utilities/ui_strings.js'
+import PageBanner from '../components/PageBanner/PageBanner.js'
+import Notification from '../components/Notification/Notification.js'
+import { create_section,create_div,create_button } from '../utilities/ui_elements.js'
+import { get_sqlready_datetime } from '../utilities/ui_datetime.js'
+import { extract_file_name } from '../utilities/ui_strings.js'
 
 
 // to do : auto-backup - encourage user to select destination outside application folder
 
 
-class BackupComponent {
+class BackupDatabaseView {
 
    #context = {
       key:'BackupComponent'
@@ -125,4 +125,4 @@ class BackupComponent {
 }
 
 
-export default BackupComponent
+export default BackupDatabaseView
