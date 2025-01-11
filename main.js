@@ -110,18 +110,18 @@ const createWindow = async() => {
             submenu: [
                {
                   label: 'Add a New Record',
-                  click: () => load_client_component('AddCollectionItem')
+                  click: () => load_client_component('AddCollectionItemView')
                },
                {
                   type:'separator'
                },
                {
                   label: 'Recent Records',
-                  click: () => load_client_component('RecentRecords')
+                  click: () => load_client_component('RecentRecordsView')
                },
                {
                   label: 'Deleted Records',
-                  click: () => load_client_component('DeletedRecords')
+                  click: () => load_client_component('DeletedRecordsView')
                }
             ]
          },
@@ -130,7 +130,7 @@ const createWindow = async() => {
             submenu: [
                {
                   label: 'Backup Database',
-                  click: () => load_client_component('BackupComponent')
+                  click: () => load_client_component('BackupDatabaseView')
                },
                {
                   type:'separator'
@@ -161,14 +161,14 @@ const createWindow = async() => {
             submenu: [
                {
                   label: 'Configure Tags',
-                  click: () => load_client_component('TagsConfig')
+                  click: () => load_client_component('TagsConfigView')
                },
                {
                   type:'separator'
                },
                {
                   label: 'App Settings',
-                  click: () => load_client_component('AppConfigForm')
+                  click: () => load_client_component('AppConfigView')
                }
             ]
          },
@@ -177,7 +177,7 @@ const createWindow = async() => {
             submenu: [
                {
                   label: 'About',
-                  click: () => load_client_component('About')
+                  click: () => load_client_component('AboutView')
                }
             ]
          }
@@ -190,7 +190,7 @@ const createWindow = async() => {
    setTimeout(() => main_window.loadFile(`.${path.sep}renderer${path.sep}index.html`),300)
 }
 
-function load_client_component(component_name = 'About',props) {
+function load_client_component(component_name = 'AboutView',props) {
    main_window.webContents.send(
       'switch_component',
       component_name,

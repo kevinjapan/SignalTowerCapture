@@ -1,16 +1,16 @@
-import { app } from '../../../renderer.js'
-import PageBanner from '../../PageBanner/PageBanner.js'
-import CollectionItemForm from '../CollectionItemForm/CollectionItemForm.js'
-import { create_section } from '../../../utilities/ui_elements.js'
+import { app } from '../renderer.js'
+import PageBanner from '../components/PageBanner/PageBanner.js'
+import CollectionItemForm from '../components/CollectionItems/CollectionItemForm/CollectionItemForm.js'
+import { create_section } from '../utilities/ui_elements.js'
 
 
 
-class AddCollectionItem {
+class AddCollectionItemView {
 
    #record
 
    #context = {
-      key:'AddCollectionItem'
+      key:'AddCollectionItemView'
    }
 
    render = () => {
@@ -88,4 +88,4 @@ class AddCollectionItem {
 }
 
 
-export default AddCollectionItem
+export default AddCollectionItemView

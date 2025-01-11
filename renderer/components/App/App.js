@@ -1,23 +1,23 @@
-import HomeView from '../../views/HomeView.js'
+import AboutView from '../../views/AboutView.js'
+import AddCollectionItemView from '../../views/AddCollectionItemView.js'
+import AppConfigView from '../../views/AppConfigView.js'
+import BackupDatabaseView from '../../views/BackupDatabaseView.js'
 import BrowseView from '../../views/BrowseView.js'
+import DeletedRecords from '../../views/DeletedRecordsView.js'
+import ExportCSVView from '../../views/ExportCSVView.js'
+import ExportJSONView from '../../views/ExportJSONView.js'
+import FilesView from '../../views/FilesView.js'
+import ImportCSVView from '../../views/ImportCSVView.js'
+import ImportJSONView from '../../views/ImportJSONView.js'
+import HomeView from '../../views/HomeView.js'
+import RecentRecords from '../../views/RecentRecordsView.js'
 import SearchView from '../../views/SearchView.js'
+import TagsConfigView from '../../views/TagsConfigView.js'
 import TagsView from '../../views/TagsView.js'
-import AddCollectionItem from '../CollectionItems/AddCollectionItem/AddCollectionItem.js'
 import CollectionItemRecord from '../CollectionItems/CollectionItemRecord/CollectionItemRecord.js'
 import CollectionItemForm from '../CollectionItems/CollectionItemForm/CollectionItemForm.js'
 import ImageViewer from '../ImageViewer/ImageViewer.js'
-import ExportCSVView from '../../views/ExportCSVView.js'
-import ImportCSVView from '../../views/ImportCSVView.js'
-import ExportJSONView from '../../views/ExportJSONView.js'
-import ImportJSONView from '../../views/ImportJSONView.js'
-import DeletedRecords from '../../views/DeletedRecordsView.js'
-import AppConfigView from '../../views/AppConfigView.js'
-import TagsConfigView from '../../views/TagsConfigView.js'
-import FilesView from '../../views/FilesView.js'
-import BackupDatabaseView from '../../views/BackupDatabaseView.js'
-import RecentRecords from '../../views/RecentRecordsView.js'
 import History from '../History/History.js'
-import AboutView from '../../views/AboutView.js'
 import Error from '../Error/Error.js'
 import NotFound from '../NotFound/NotFound.js'
 import {trim_end_char} from '../../utilities/ui_strings.js'
@@ -89,19 +89,19 @@ class App {
          let component
 
          switch(component_name) {
-            case 'About':
+            case 'AboutView':
                component = new AboutView(props)
                component_container.replaceChildren(component.render())
                break
-            case 'AddCollectionItem':
-               component = new AddCollectionItem(props)
+            case 'AddCollectionItemView':
+               component = new AddCollectionItemView(props)
                component_container.replaceChildren(component.render())
                break
-            case 'AppConfigForm':
+            case 'AppConfigView':
                component = new AppConfigView()
                component_container.replaceChildren(await component.render())
                break
-            case 'BackupComponent':
+            case 'BackupDatabaseView':
                component = new BackupDatabaseView(props)
                component_container.replaceChildren(component.render())
                break
@@ -109,7 +109,7 @@ class App {
                component = new BrowseView(props)
                component_container.replaceChildren(await component.render())
                break
-            case 'DeletedRecords':
+            case 'DeletedRecordsView':
                component = new DeletedRecords(props)
                component_container.replaceChildren(await component.render())
                break
@@ -149,7 +149,7 @@ class App {
                component = new ImportJSONView()
                component_container.replaceChildren(await component.render())
                break
-            case 'RecentRecords':
+            case 'RecentRecordsView':
                component = new RecentRecords(props)
                component_container.replaceChildren(await component.render())
                break
@@ -165,7 +165,7 @@ class App {
                component = new TagsView(props)
                component_container.replaceChildren(await component.render())
                break
-            case 'TagsConfig':
+            case 'TagsConfigView':
                component = new TagsConfigView()
                component_container.replaceChildren(await component.render())
                break
