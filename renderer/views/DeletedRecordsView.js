@@ -30,7 +30,7 @@ class DeletedRecordsView {
 
    // Page Context (State)
    #context = {
-      key:'DeletedRecords',
+      key:'DeletedRecordsView',
       filters:{
          record_status:'deleted_records',
          order_by:'deleted_at',

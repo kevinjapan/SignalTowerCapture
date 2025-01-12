@@ -3,14 +3,14 @@ import AddCollectionItemView from '../../views/AddCollectionItemView.js'
 import AppConfigView from '../../views/AppConfigView.js'
 import BackupDatabaseView from '../../views/BackupDatabaseView.js'
 import BrowseView from '../../views/BrowseView.js'
-import DeletedRecords from '../../views/DeletedRecordsView.js'
+import DeletedRecordsView from '../../views/DeletedRecordsView.js'
 import ExportCSVView from '../../views/ExportCSVView.js'
 import ExportJSONView from '../../views/ExportJSONView.js'
 import FilesView from '../../views/FilesView.js'
 import ImportCSVView from '../../views/ImportCSVView.js'
 import ImportJSONView from '../../views/ImportJSONView.js'
 import HomeView from '../../views/HomeView.js'
-import RecentRecords from '../../views/RecentRecordsView.js'
+import RecentRecordsView from '../../views/RecentRecordsView.js'
 import SearchView from '../../views/SearchView.js'
 import TagsConfigView from '../../views/TagsConfigView.js'
 import TagsView from '../../views/TagsView.js'
@@ -110,7 +110,7 @@ class App {
                component_container.replaceChildren(await component.render())
                break
             case 'DeletedRecordsView':
-               component = new DeletedRecords(props)
+               component = new DeletedRecordsView(props)
                component_container.replaceChildren(await component.render())
                break
             case 'Error':
@@ -150,7 +150,7 @@ class App {
                component_container.replaceChildren(await component.render())
                break
             case 'RecentRecordsView':
-               component = new RecentRecords(props)
+               component = new RecentRecordsView(props)
                component_container.replaceChildren(await component.render())
                break
             case 'Record':
@@ -170,6 +170,7 @@ class App {
                component_container.replaceChildren(await component.render())
                break
             default:
+               console.log('not found:',component_name)
                component = new NotFound()
                component_container.replaceChildren(component.render())
                break

@@ -50,7 +50,7 @@ class DeletedRecordsTeaser {
       const open_btn = document.getElementById('open_btn')
       if(open_btn) {
          open_btn.addEventListener('click',() => {
-            app.switch_to_component('DeletedRecords')
+            app.switch_to_component('DeletedRecordsView')
          })
       }
 

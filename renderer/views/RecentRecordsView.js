@@ -9,7 +9,7 @@ import { init_card_img_loads,no_root_folder, no_root_elem } from '../utilities/u
 
 
 
-class RecentRecords {
+class RecentRecordsView {
 
    #props
 
@@ -17,7 +17,7 @@ class RecentRecords {
 
    // Page Context (State)
    #context = {
-      key:'RecentRecords',
+      key:'RecentRecordsView',
       field_filters:[],
       page:-1,
       scroll_y:0
@@ -181,4 +181,4 @@ class RecentRecords {
 }
 
 
-export default RecentRecords
+export default RecentRecordsView
