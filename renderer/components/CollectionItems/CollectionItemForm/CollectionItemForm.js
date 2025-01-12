@@ -1,15 +1,14 @@
 import { app } from '../../../renderer.js'
 import AppStatus from '../../AppStatus/AppStatus.js'
 import CollectionItemFormRow from '../CollectionItemFormRow/CollectionItemFormRow.js'
-import FileTypeCheckBox from '../../Forms/Forms/FileTypeCheckbox/FileTypeCheckbox.js'
 import DisplayImgOrIcon from '../../Utilities/DisplayImgOrIcon/DisplayImgOrIcon.js'
 import FormBtns from '../../Forms/FormBtns/FormBtns.js'
 import Notification from '../../../components/Notification/Notification.js'
 import { DESC } from '../../../utilities/ui_descriptions.js'
-import { is_valid_response_obj } from '../../../utilities/ui_response.js'
-import {title_from_file_name, is_excluded_folder, no_root_elem, no_form_fields } from '../../../utilities/ui_utilities.js'
-import { create_section, create_div, create_form, create_button } from '../../../utilities/ui_elements.js'
+import { no_root_elem, no_form_fields } from '../../../utilities/ui_utilities.js'
+import { create_section, create_div, create_form } from '../../../utilities/ui_elements.js'
 import TagsFormCtrl from '../../Tags/TagsFormCtrl/TagsFormCtrl.js'
+import FileTypeCtrl from '../../Files/FileTypeCtrl/FileTypeCtrl.js'
 
 
 // all our input validation is carried out in the main process in window.collection_items_api.updateCollectionItem()
@@ -46,7 +45,7 @@ class CollectionItemForm {
 
    render = async() =>  {
 
-      // bail if no root_folder      // to do : review : do we want this in all components? eg maybe only in 'views'
+      // bail if no root_folder
       this.#root_folder = app.get_root_folder()
       if(this.#root_folder === '') return no_root_elem()
 
@@ -98,13 +97,13 @@ class CollectionItemForm {
          if(!field.is_folder) setTimeout(() => this.register_input_listener(field.key),100)
 
          // inject Tags ctrl 
-         if(field.key === 'tags') {
-            // this.inject_tags_ctrl(form_content,field)
-            form_content.append(await TagsFormCtrl.render(field,this.#props.item,this.#tags_obj,this.#props.context))
-         }
+         if(field.key === 'tags') form_content.append(await TagsFormCtrl.render(field,this.#props.item,this.#tags_obj,this.#props.context))
             
-         // inject file_type ctrls
-         if(field.key === 'file_type') this.inject_file_type_ctrls(form_content,field,curr_field_value)
+         // inject FileType ctrl
+         if(field.key === 'file_type') {
+            form_content.append(await FileTypeCtrl.render(this.#props.action,this.#root_folder,this.#props.item,field,curr_field_value))
+            setTimeout(() => FileTypeCtrl.activate(this.enable_submit,this.disable_submit),300)
+         }
 
          // display feature img
          if(field.key === 'file_name' && this.#props.item) {
@@ -121,6 +120,7 @@ class CollectionItemForm {
       this.#record_elem.append(img_col,text_col)
 
       window.scroll(0,0)
+      console.log('CollectionItemForm finishing prep')
       return this.#record_elem
    }
 
@@ -139,22 +139,6 @@ class CollectionItemForm {
       }
    }
 
-   // to do : following func as separate component
-   inject_file_type_ctrls(form_content,field,curr_field_value) {
-
-      form_content.append(create_div(),FileTypeCheckBox.render(field.key,curr_field_value))
-      if(this.#props.find_files) {
-         // btn to select file for 'file_name' field
-         let find_file_btn = create_button({
-            attributes:[{key:'id',value:'find_file_btn'}],
-            classlist:['form_btn','mb_2'],
-            text:'Find File'
-         })
-         form_content.append(find_file_btn)
-      }
-   }            
-
-   
    // enable buttons/links displayed in the render
    activate = async() => {
 
@@ -264,121 +248,6 @@ class CollectionItemForm {
          })
       }
    
-      // On 'Find File' select w/ dialog
-      const find_file_btn = document.getElementById('find_file_btn')
-      if(find_file_btn) {
-         find_file_btn.addEventListener('click',async(event) => {            
-            event.preventDefault()
-            
-            const sep = await window.files_api.filePathSep()            
-            const result = await window.files_api.getFilePath()
-      
-            if(result.outcome === 'success') {
-               // inject appropriate into file_name and folder_path inputs
-               let full_path = result.files[0]
-               let separator = full_path.lastIndexOf(sep)
-               let path = full_path.substring(0,separator)
-               let file = full_path.substring(separator + 1)
-               let file_name_input = document.getElementById('file_name')
-               if(file_name_input) file_name_input.value = file
-               
-               let folder_path = document.getElementById('folder_path')
-               if(folder_path) {
-
-                  const is_excluded = await is_excluded_folder(path)
-                  
-                  // verify file is within root_folder and not in Settings.exluded_folders
-                  if(path.indexOf(this.#root_folder) === 0 && !is_excluded) {                        
-                     folder_path.value = path.replace(this.#root_folder,'') // relative path
-                  }
-                  else {
-                     this.disable_submit()
-
-                     // future : find_file_outcome is defined in FileTypeCheckbox - should be in this class? rollout this file
-                     Notification.notify(
-                        '#find_file_outcome',
-                        `Invalid location - the selected folder is not within the Collections Folders or is an excluded sub-folder.`,
-                        [],
-                        false)
-                     return
-                  }
-               }
-
-               // display if new file is an img file
-               let file_path = `${path}\\${file}`
-               await DisplayImgOrIcon.render(img_col,file_path,this.#props.item ? this.#props.item['img_desc'] : 'image')
-
-               // Is there an existing record for the selected file?
-               let context = {
-                  page:1,
-                  field_filters:[
-                     {field:'file_name',value:file},
-                     {field:'folder_path',value:path.replace(this.#root_folder,'')}]
-               }
-
-               try {                
-                  const collection_items_obj = await window.collection_items_api.getItems(context)
-                  
-                  if (typeof collection_items_obj != "undefined" && collection_items_obj.outcome === 'success') {                        
-                     if(await is_valid_response_obj('read_collection_items',collection_items_obj)) {
-
-                        if(collection_items_obj.collection_items.length < 1) {
-                           // There is no record for this file
-                           this.enable_submit()
-                           Notification.notify('#find_file_outcome',`This file is valid.`,['bg_inform'],false)
-
-                           // Auto-gen candidate title from the file name if non-exists
-                           // we always overwrite based on file_name - priority is convenience
-                           let title = document.getElementById('title')
-                           if(title && title.value === '') title.value = title_from_file_name(file_name_input.value)
-
-                        }
-                        else {
-                           // There is an existing record for this file
-                           if(action === 'update') {
-                              // Is existing record the same record we are currently editing
-                              const existing_record_id = collection_items_obj.collection_items[0].id
-                              const current_record_id = this.#props.item.id
-                              if(parseInt(existing_record_id) === parseInt(current_record_id)) {
-                                 // same record, we are changing file to a valid alternative (no existing record for new file)
-                                 this.enable_submit()
-                                 Notification.notify('#find_file_outcome',`This file is valid.`,['bg_inform'],false)
-                              }
-                              else {
-                                 // match is for a record other than the one we are editing
-                                 this.disable_submit()
-                                 Notification.notify('#find_file_outcome',`Invalid file - there is already a record for this file.`,[],false)
-                              }
-                           }
-                           else {
-                              this.disable_submit()
-                              Notification.notify('#find_file_outcome',`Invalid file - there is already a record for this file.`,[],false)
-                           }
-                        }
-                     }
-                     else {
-                        app.switch_to_component('Error',{
-                           msg:'Sorry, we were unable to process an invalid response from the main process in CollectionItemForm.'
-                        },false)
-                     }
-                  }
-                  else {
-                     throw 'No records were returned.' + collection_items_obj.message ? collection_items_obj.message : ''
-                  }
-               }
-               catch(error) {
-                  app.switch_to_component('Error',{
-                     msg:'Sorry, we were unable to access the Records.',
-                     error:error
-                  },false)
-               }
-            }
-            else {
-               Notification.notify('#find_file_outcome',result.message)
-            }
-         })
-      }
-
       // On change file_type radio btn
       const file_type_radio_btns = document.querySelectorAll('input[name="file_type_radio_btns"]')
       if(file_type_radio_btns) {
