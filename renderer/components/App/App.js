@@ -170,7 +170,7 @@ class App {
                component_container.replaceChildren(await component.render())
                break
             default:
-               console.log('not found:',component_name)
+               // future : notify component_name ?
                component = new NotFound()
                component_container.replaceChildren(component.render())
                break
@@ -185,10 +185,10 @@ class App {
             else {
                this.#history.add_visited_page(component_name,props && props.context ? props.context : null)
             }
-            setTimeout(() => this.#history.activate(),2450)   // to do : set to '50'
+            setTimeout(() => this.#history.activate(),100)
          }
          // delay to allow rendering to complete
-         setTimeout(() => component.activate(),2450)   // to do : set to '50'
+         setTimeout(() => component.activate(),100)
       }
    }
 

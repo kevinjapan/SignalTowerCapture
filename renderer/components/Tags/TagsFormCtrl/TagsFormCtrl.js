@@ -28,29 +28,29 @@ class TagsFormCtrl {
       return container
   }  
 
-  // to do : review & enable or remove
-  activate_tags = () => {
-      
-      // On change tag checkbox
-      const tags_checkboxes = document.querySelectorAll('.tags_checkbox')
-      if(tags_checkboxes) {
-         tags_checkboxes.forEach(checkbox => {
-            checkbox.addEventListener('change',(event) => {
-               const tags_input = document.getElementById('tags')
-               if(tags_input) {
-                  // get existing tags list (remove any non-registered tag tokens)
-                  const curr_tags = tags_input.value.split('*').filter(e => e)
-                  const verified_curr_tags = curr_tags.filter(curr_tag => {                     
-                     //  return this.#tags_obj.tags.some(tag => tag.tag === curr_tag)
-                  })
-                  const existing_tags = new Set(verified_curr_tags)
-                  existing_tags.has(event.target.value) ? existing_tags.delete(event.target.value) : existing_tags.add(event.target.value)                    
-                  tags_input.value = [...existing_tags].sort().join('*')    // build str w/ '*' delimiter
-               }
-            })
-         })
-      }
-   }
+   // future : review & enable or remove
+   //   activate_tags = () => {
+   //       // On change tag checkbox
+   //       const tags_checkboxes = document.querySelectorAll('.tags_checkbox')
+   //       if(tags_checkboxes) {
+   //          tags_checkboxes.forEach(checkbox => {
+   //             checkbox.addEventListener('change',(event) => {
+   //                const tags_input = document.getElementById('tags')
+   //                if(tags_input) {
+   //                   // get existing tags list (remove any non-registered tag tokens)
+   //                   const curr_tags = tags_input.value.split('*').filter(e => e)
+   //                   const verified_curr_tags = curr_tags.filter(curr_tag => {                     
+   //                      //  return this.#tags_obj.tags.some(tag => tag.tag === curr_tag)
+   //                   })
+   //                   const existing_tags = new Set(verified_curr_tags)
+   //                   existing_tags.has(event.target.value) ? existing_tags.delete(event.target.value) : existing_tags.add(event.target.value)                    
+   //                   tags_input.value = [...existing_tags].sort().join('*')    // build str w/ '*' delimiter
+   //                }
+   //             })
+   //          })
+   //       }
+   //    }
+
 }
 
 export default TagsFormCtrl

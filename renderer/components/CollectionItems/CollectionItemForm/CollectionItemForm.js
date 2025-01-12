@@ -120,7 +120,6 @@ class CollectionItemForm {
       this.#record_elem.append(img_col,text_col)
 
       window.scroll(0,0)
-      console.log('CollectionItemForm finishing prep')
       return this.#record_elem
    }
 
