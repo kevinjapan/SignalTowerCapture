@@ -189,7 +189,7 @@ const hydrate_element = (elem,props) => {
    if(elem && props) {
       if(typeof props.attributes !== 'undefined') {
          props.attributes.forEach((attr) => {
-            if(attr.value) {    
+            if(attr.value) {
                elem.setAttribute(attr.key,attr.value) 
             }     
          })

@@ -11,10 +11,13 @@ class TagsFormCtrl {
          classlist:['']
       })
 
+      // Tags label
       let field_label = create_label({
          attributes:[{key:'for',value:field.key}],
          text:ui_friendly_text(field.key)
       })
+
+      // get array of tags
       const current_tags = (item) ?  item[field.key] ? item[field.key].split('*') : [] :  []
 
       // placeholder - we inject once promise is resolved..

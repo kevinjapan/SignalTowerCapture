@@ -1,15 +1,18 @@
 import { app } from '../../../renderer.js'
 import AppStatus from '../../AppStatus/AppStatus.js'
+import Notification from '../../../components/Notification/Notification.js'
 import CollectionItemFormRow from '../CollectionItemFormRow/CollectionItemFormRow.js'
 import DisplayImgOrIcon from '../../Utilities/DisplayImgOrIcon/DisplayImgOrIcon.js'
 import FormBtns from '../../Forms/FormBtns/FormBtns.js'
-import Notification from '../../../components/Notification/Notification.js'
-import { DESC } from '../../../utilities/ui_descriptions.js'
 import { no_root_elem, no_form_fields } from '../../../utilities/ui_utilities.js'
-import { create_section, create_div, create_form } from '../../../utilities/ui_elements.js'
+import { create_section, create_div, create_form, create_button } from '../../../utilities/ui_elements.js'
 import TagsFormCtrl from '../../Tags/TagsFormCtrl/TagsFormCtrl.js'
 import FileTypeCtrl from '../../Files/FileTypeCtrl/FileTypeCtrl.js'
+import { is_valid_response_obj } from '../../../utilities/ui_response.js'
+import {title_from_file_name, is_excluded_folder } from '../../../utilities/ui_utilities.js'
 
+
+// CollectionItemForm
 
 // all our input validation is carried out in the main process in window.collection_items_api.updateCollectionItem()
 // any errors are returned from the same api function on failure
@@ -81,16 +84,32 @@ class CollectionItemForm {
       // Form Content : row grids  
       const form_content = create_div({classlist:['form_content','bg_white','p_.5','pl_1','pr_1','rounded','bg_yellow']})
 
-      // build each row
+
+      // Build each form row
+      // Order is defined in CollectionItem model's 'full_fields_list'
       this.#props.fields.forEach( async(field) => {
 
-         // default : form row : label and input 
          let curr_field_value = ''
          if(curr_field_value === null) curr_field_value = ''
          if(typeof this.#props.item !== 'undefined') curr_field_value = this.#props.item[field.key]
+
+         // set default file_type
          if(field.key === 'file_type' && curr_field_value === '') curr_field_value = 'File'
 
-         // add 'collection_item_form_row'
+         // inject FileType ctrl
+         // we create placeholder first to retain order : since async, this hydrates after we have appended all other form rows
+         // we actually submit via default hidden 'file_type' input below
+         // future : tidy this
+         if(field.key === 'file_type') {
+            form_content.append(create_div(),create_div({attributes:[{key:'id',value:'file_type_placeholder'}]}))
+            setTimeout(async() => {
+               const file_type_placeholder = document.getElementById('file_type_placeholder')
+               file_type_placeholder.append(await FileTypeCtrl.render(this.#props.action,this.#root_folder,this.#props.item,field,curr_field_value))
+               setTimeout(() => FileTypeCtrl.activate(),200)
+            },500)
+         }
+
+         // add 'collection_item_form_row' for each field
          form_content.append(CollectionItemFormRow.render(field,curr_field_value))
 
          // listen for changes so we can enable apply btn
@@ -99,10 +118,23 @@ class CollectionItemForm {
          // inject Tags ctrl 
          if(field.key === 'tags') form_content.append(await TagsFormCtrl.render(field,this.#props.item,this.#tags_obj,this.#props.context))
             
-         // inject FileType ctrl
-         if(field.key === 'file_type') {
-            form_content.append(await FileTypeCtrl.render(this.#props.action,this.#root_folder,this.#props.item,field,curr_field_value))
-            setTimeout(() => FileTypeCtrl.activate(this.enable_submit,this.disable_submit),300)
+
+         
+         // add 'Find File' btn after 'folder_path' row
+         if(field.key === 'folder_path') {
+            let find_file_outcome = create_div({
+               attributes:[{key:'id',value:'find_file_outcome'}],
+               classlist:['mb_1']
+            })
+            form_content.append(create_div(),find_file_outcome)
+            if(this.#props.find_files) {
+               let find_file_btn = create_button({
+                  attributes:[{key:'id',value:'find_file_btn'}],
+                  classlist:['form_btn','mb_2'],
+                  text:'Find File'
+               })
+               form_content.append(find_file_btn)
+            }
          }
 
          // display feature img
@@ -246,19 +278,125 @@ class CollectionItemForm {
             })
          })
       }
-   
-      // On change file_type radio btn
-      const file_type_radio_btns = document.querySelectorAll('input[name="file_type_radio_btns"]')
-      if(file_type_radio_btns) {
-         file_type_radio_btns.forEach((radio_btn) => {            
-            radio_btn.addEventListener('change',(event) => {               
-               const file_type = document.getElementById('file_type')
-               if(file_type) file_type.value = event.target.value   
-               const file_type_info = document.getElementById('file_type_info')
-               if(file_type_info) file_type_info.innerText = event.target.value === 'File' ? DESC.FILE_ITEM_FILETYPE : DESC.FOLDER_ITEM_FILETYPE
-            })
+
+      
+      // On 'Find File' select w/ dialog
+      const find_file_btn = document.getElementById('find_file_btn')
+      if(find_file_btn) {
+
+         find_file_btn.addEventListener('click',async(event) => {   
+            
+            event.preventDefault()
+            
+            const sep = await window.files_api.filePathSep()            
+            const result = await window.files_api.getFilePath()
+      
+            if(result.outcome === 'success') {
+               // inject appropriate into file_name and folder_path inputs
+               let full_path = result.files[0]
+               let separator = full_path.lastIndexOf(sep)
+               let path = full_path.substring(0,separator)
+               let file = full_path.substring(separator + 1)
+               let file_name_input = document.getElementById('file_name')
+               if(file_name_input) file_name_input.value = file
+               
+               let folder_path = document.getElementById('folder_path')
+               if(folder_path) {
+
+                  const is_excluded = await is_excluded_folder(path)
+                  
+                  // verify file is within root_folder and not in Settings.exluded_folders
+                  if(path.indexOf(this.#root_folder) === 0 && !is_excluded) {
+                     console.log('got path: ',folder_path.value)               
+                     folder_path.value = path.replace(this.#root_folder,'') // relative path
+                  }
+                  else {
+                     disable_submit()
+                     // future : find_file_outcome is defined in FileTypeCheckbox - should be in this class? rollout this file
+                     Notification.notify(
+                        '#find_file_outcome',
+                        `Invalid location - the selected folder is not within the Collections Folders or is an excluded sub-folder.`,
+                        [],
+                        false)
+                     return
+                  }
+               }
+
+               // display if new file is an img file
+               let file_path = `${path}\\${file}`
+               await DisplayImgOrIcon.render(img_col,file_path,this.#props.item ? this.#props.item['img_desc'] : 'image')
+
+               // Is there an existing record for the selected file?
+               let context = {
+                  page:1,
+                  field_filters:[
+                     {field:'file_name',value:file},
+                     {field:'folder_path',value:path.replace(this.#root_folder,'')}]
+               }
+
+               try {                
+                  const collection_items_obj = await window.collection_items_api.getItems(context)
+                  
+                  if (typeof collection_items_obj != "undefined" && collection_items_obj.outcome === 'success') {                        
+                     if(await is_valid_response_obj('read_collection_items',collection_items_obj)) {
+
+                        if(collection_items_obj.collection_items.length < 1) {
+                           // There is no record for this file
+                           this.enable_submit()
+                           Notification.notify('#find_file_outcome',`This file is valid.`,['bg_inform'],false)
+
+                           // Auto-gen candidate title from the file name if non-exists
+                           // we always overwrite based on file_name - priority is convenience
+                           let title = document.getElementById('title')
+                           if(title && title.value === '') title.value = title_from_file_name(file_name_input.value)
+                        }
+                        else {
+                           // There is an existing record for this file
+                           if(this.#props.action === 'update') {
+                              // Is existing record the same record we are currently editing
+                              const existing_record_id = collection_items_obj.collection_items[0].id
+                              const current_record_id = this.#props.item.id
+                              if(parseInt(existing_record_id) === parseInt(current_record_id)) {
+                                 // same record, we are changing file to a valid alternative (no existing record for new file)
+                                 this.enable_submit()
+                                 Notification.notify('#find_file_outcome',`This file is valid.`,['bg_inform'],false)
+                              }
+                              else {
+                                 // match is for a record other than the one we are editing
+                                 this.disable_submit()
+                                 Notification.notify('#find_file_outcome',`Invalid file - there is already a record for this file.`,[],false)
+                              }
+                           }
+                           else {
+                              this.disable_submit()
+                              Notification.notify('#find_file_outcome',`Invalid file - there is already a record for this file.`,[],false)
+                           }
+                        }
+                     }
+                     else {
+                        app.switch_to_component('Error',{
+                           msg:'Sorry, we were unable to process an invalid response from the main process in CollectionItemForm.'
+                        },false)
+                     }
+                  }
+                  else {
+                     throw 'No records were returned.' + collection_items_obj.message ? collection_items_obj.message : ''
+                  }
+               }
+               catch(error) {
+                  app.switch_to_component('Error',{
+                     msg:'Sorry, we were unable to access the Records.',
+                     error:error
+                  },false)
+               }
+            }
+            else {
+               Notification.notify('#find_file_outcome',result.message)
+            }
          })
       }
+   
+
    }
 
    // capture any change to input fields

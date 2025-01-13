@@ -36,14 +36,7 @@ class FileTypeCheckbox {
       })
       file_type_checkbox.append(field_label,file_type_radio,create_div(),file_type_info)
 
-      let find_file_outcome = create_div({
-         attributes:[{key:'id',value:'find_file_outcome'}],
-         classlist:['mb_1']
-      })
 
-      
-      // assemble find_file
-      file_type_checkbox.append(create_div(),find_file_outcome)
       return file_type_checkbox
    }
 }

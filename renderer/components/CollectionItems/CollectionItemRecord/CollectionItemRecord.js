@@ -2,9 +2,10 @@ import { app } from '../../../renderer.js'
 import RecordBtns from '../../RecordBtns/RecordBtns.js'
 import RecordAdmin from '../../RecordAdmin/RecordAdmin.js'
 import { is_valid_response_obj } from '../../../utilities/ui_response.js'
-import { ui_friendly_text,trim_char,trim_end_char } from '../../../utilities/ui_strings.js'
-import { get_ext,is_img_ext,get_file_type_icon,file_exists,build_img_elem,add_to_int_queue,ints_array,no_root_folder,is_valid_int } from '../../../utilities/ui_utilities.js'
-import { create_section,create_div,create_p } from '../../../utilities/ui_elements.js'
+import { create_section, create_div, create_p, create_a } from '../../../utilities/ui_elements.js'
+import { ui_friendly_text, trim_char, trim_end_char } from '../../../utilities/ui_strings.js'
+import { get_ext, is_img_ext, get_file_type_icon, file_exists, 
+         build_img_elem, add_to_int_queue, ints_array, no_root_folder, is_valid_int } from '../../../utilities/ui_utilities.js'
 
 
 
@@ -314,6 +315,7 @@ class CollectionItemRecord {
       }
    }
 
+   // to do : enable Tag to open Tags view for the selected tag from Record
    display_tags = (tags_csv) => {
       if(tags_csv) {
          const tags = tags_csv.split('*')
@@ -321,9 +323,13 @@ class CollectionItemRecord {
             classlist:['flex','gap_0.5']
          })
          tags.forEach(tag => {
-            let tagger = create_div({
+            let tagger = create_a({
+               attributes:[
+                  {key:'id',value:`${tag}_anchor`},
+                  {key:'href',value:'/'}
+               ],
                classlist:['inline_block','text_grey','border','rounded','pl_0.25','pr_0.25','pb_0.15'],
-               text:tag
+               text:tag + '&&',
             })
             tags_elem.append(tagger)
          })
