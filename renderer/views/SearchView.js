@@ -175,6 +175,7 @@ class SearchView {
                   else {
                      let number_records = document.getElementById('number_records')
                      if(number_records) number_records.innerText = 'No matching records were found. '
+                     this.#pagination_nav.clear()
                   }
                   // re-instate scroll position if user had scrolled list before opening a record
                   setTimeout(() => window.scroll(0,this.#context.scroll_y),50)

@@ -17,6 +17,12 @@ class PaginationNav {
    // function to request prev/next page in client lists
    #callback
 
+   // empty page_nav element (eg if no records found)
+   clear = () => {
+      const page_nav = document.getElementById('page_nav')
+      if(page_nav) page_nav.replaceChildren()
+   }
+
 
    render = (props) => {
 
