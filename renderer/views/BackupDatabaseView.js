@@ -5,7 +5,7 @@ import { get_sqlready_datetime } from '../utilities/ui_datetime.js'
 import { extract_file_name } from '../utilities/ui_strings.js'
 
 
-// to do : auto-backup - encourage user to select destination outside application folder
+// future : auto-backup - encourage user to select destination outside application folder
 
 
 class BackupDatabaseView {

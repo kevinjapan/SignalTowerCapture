@@ -53,7 +53,6 @@ class PaginationNav {
          })
 
          // page n of n
-         // to do : on no matching records found, incorrectly retains prev 'page n of n' message (eg on alphabet selector)
          const now_link = create_div({
             attributes:[{key:'data-page',value:parseInt(this.#current_page)}],
             classlist:['page_selector'],

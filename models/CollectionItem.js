@@ -25,13 +25,10 @@ class CollectionItem {
    // every read-all needs an absolute upper limit!
    #limit_read_all_records = 20000
 
-   //
    // full_fields_list
    // Our methods return appropriate filtered arrays of eg 'field_names', and we build rows/forms/etc  
    // from these arrays in the renderer, so the order of this array is carried over to front-end views.
    // Some test values are undesirable (eg title string len min:1) but required for legacy files.
-   // 
-   // to do : add 'slug' field
    static #full_fields_list = [
       {key:'title',data_type:'TEXT NOT NULL',editable:true,injectable:true,in_card:true,export:true,test:{type:'string',min:1,max:100}},
       {key:'content_desc',data_type:'TEXT',editable:true,injectable:true,in_card:true,export:true,test:{type:'string',min:0,max:500}},
