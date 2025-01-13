@@ -5,11 +5,13 @@ import CollectionItemFormRow from '../CollectionItemFormRow/CollectionItemFormRo
 import DisplayImgOrIcon from '../../Utilities/DisplayImgOrIcon/DisplayImgOrIcon.js'
 import FormBtns from '../../Forms/FormBtns/FormBtns.js'
 import { no_root_elem, no_form_fields } from '../../../utilities/ui_utilities.js'
-import { create_section, create_div, create_form, create_button } from '../../../utilities/ui_elements.js'
+import { create_section, create_div, create_form } from '../../../utilities/ui_elements.js'
 import TagsFormCtrl from '../../Tags/TagsFormCtrl/TagsFormCtrl.js'
+import FindFileBtn from '../../Files/FindFileBtn/FindFileBtn.js'
 import FileTypeCtrl from '../../Files/FileTypeCtrl/FileTypeCtrl.js'
 import { is_valid_response_obj } from '../../../utilities/ui_response.js'
 import {title_from_file_name, is_excluded_folder } from '../../../utilities/ui_utilities.js'
+
 
 
 // CollectionItemForm
@@ -34,17 +36,21 @@ class CollectionItemForm {
    // Collection root folder
    #root_folder = ''
    
+   // component context
    #context = {
       key:'Form',
       id:null
    }
 
+   // flag if form is ready to submit / changed
    #submit_enabled = true
+
 
    constructor(props) {
       this.#props = props
       if(typeof this.#props.item !== 'undefined') this.#record_id = this.#props.item.id
    }
+
 
    render = async() =>  {
 
@@ -57,7 +63,6 @@ class CollectionItemForm {
 
       // distinguish edit/add - we don't inc cancel btn in add 'new' record forms
       const inc_cancel_btn = this.#props.action === 'add' ? false : true
-
 
       // Section Container
       this.#record_elem = create_section({
@@ -78,71 +83,66 @@ class CollectionItemForm {
          attributes:[{key:'id',value:'item_form'}],
          classlist:['form_layout','user_select']
       })
+
       text_col.append(form_layout)
       form_layout.append(FormBtns.render(this.#props.item,[],inc_cancel_btn))
 
-      // Form Content : row grids  
-      const form_content = create_div({classlist:['form_content','bg_white','p_.5','pl_1','pr_1','rounded','bg_yellow']})
+      // Form Content - rows are grids
+      const form_content = create_section({classlist:['form_content','bg_white','p_.5','pl_1','pr_1','rounded']})
 
+      // File Type container
+      const file_type_ctrls = create_section({classlist:['m_1','mb_2','p_.5','pl_1','pr_1','border','rounded']})
+
+      // File fields container
+      const file_ctrls = create_section({classlist:['m_1','mb_2','p_.5','pl_1','pr_1','border','rounded']})
+
+      // Tags container
+      const tags_ctrl = create_section({classlist:['m_1','mb_2','p_.5','pl_1','pr_1','border','rounded']})
 
       // Build each form row
-      // Order is defined in CollectionItem model's 'full_fields_list'
+      // fields and order are given by CollectionItem model's 'full_fields_list'
       this.#props.fields.forEach( async(field) => {
 
-         let curr_field_value = ''
-         if(curr_field_value === null) curr_field_value = ''
-         if(typeof this.#props.item !== 'undefined') curr_field_value = this.#props.item[field.key]
+         let curr_field_value = typeof this.#props.item !== 'undefined' ? this.#props.item[field.key] : ''
 
          // set default file_type
          if(field.key === 'file_type' && curr_field_value === '') curr_field_value = 'File'
 
-         // inject FileType ctrl
-         // we create placeholder first to retain order : since async, this hydrates after we have appended all other form rows
-         // we actually submit via default hidden 'file_type' input below
-         // future : tidy this
+         // inject visible FileType ctrl @ correct pos (it's input field is hidden)
          if(field.key === 'file_type') {
-            form_content.append(create_div(),create_div({attributes:[{key:'id',value:'file_type_placeholder'}]}))
-            setTimeout(async() => {
-               const file_type_placeholder = document.getElementById('file_type_placeholder')
-               file_type_placeholder.append(await FileTypeCtrl.render(this.#props.action,this.#root_folder,this.#props.item,field,curr_field_value))
-               setTimeout(() => FileTypeCtrl.activate(),200)
-            },500)
+            form_content.append(create_div(),file_type_ctrls)
+            setTimeout(async() => file_type_ctrls.append(await FileTypeCtrl.render(this.#props.action,this.#root_folder,this.#props.item,field,curr_field_value)),500)
          }
 
-         // add 'collection_item_form_row' for each field
-         form_content.append(CollectionItemFormRow.render(field,curr_field_value))
+         // add CollectionItemFormRow for each field
+         switch(field.key) {
+            case 'file_name':
+            case 'folder_path':
+               file_ctrls.append(CollectionItemFormRow.render(field,curr_field_value))
+               break
+            case 'tags':
+               // to do : bug on refactoring this file : tags are not being added on AddCollectionItem
+               tags_ctrl.append(await TagsFormCtrl.render(field,this.#props.item,this.#tags_obj,this.#props.context))
+               break
+            default:
+               form_content.append(CollectionItemFormRow.render(field,curr_field_value))
+         }
 
          // listen for changes so we can enable apply btn
          if(!field.is_folder) setTimeout(() => this.register_input_listener(field.key),100)
 
-         // inject Tags ctrl 
-         if(field.key === 'tags') form_content.append(await TagsFormCtrl.render(field,this.#props.item,this.#tags_obj,this.#props.context))
-            
-
          
-         // add 'Find File' btn after 'folder_path' row
+         // add specific ctrl at corrects positions
          if(field.key === 'folder_path') {
-            let find_file_outcome = create_div({
-               attributes:[{key:'id',value:'find_file_outcome'}],
-               classlist:['mb_1']
-            })
-            form_content.append(create_div(),find_file_outcome)
-            if(this.#props.find_files) {
-               let find_file_btn = create_button({
-                  attributes:[{key:'id',value:'find_file_btn'}],
-                  classlist:['form_btn','mb_2'],
-                  text:'Find File'
-               })
-               form_content.append(find_file_btn)
-            }
+            file_ctrls.append(FindFileBtn.render(this.#props.find_files))
+            form_content.append(file_ctrls)
          }
+         if(field.key === 'tags') form_content.append(tags_ctrl)
+         
 
          // display feature img
          if(field.key === 'file_name' && this.#props.item) {
-            let relative_folder_path = this.#props.item['folder_path']              
-            if(relative_folder_path !== '') relative_folder_path += '\\'   // allow for empty folder_path (if file is in root_folder)
-            let file_path = `${this.#root_folder}\\${relative_folder_path}\\${this.#props.item[field.key]}`
-            await DisplayImgOrIcon.render(img_col,file_path,this.#props.item['img_desc'])
+            await DisplayImgOrIcon.render(img_col,this.build_img_path(),this.#props.item['img_desc'])
          }
       })
 
@@ -151,7 +151,10 @@ class CollectionItemForm {
       form_layout.append(create_div(), FormBtns.render(this.#props.item ,[] ,inc_cancel_btn))
       this.#record_elem.append(img_col,text_col)
 
+      // tidy after rendering and async updates
       window.scroll(0,0)
+
+      // return container
       return this.#record_elem
    }
 
@@ -168,6 +171,12 @@ class CollectionItemForm {
             if(elem) elem.value = field_value.value
          })
       }
+   }
+
+   build_img_path = () => {
+      let relative_folder_path = this.#props.item['folder_path']
+      if(relative_folder_path !== '') relative_folder_path += '\\'   // allow for empty folder_path (if file is in root_folder)
+      return `${this.#root_folder}\\${relative_folder_path}\\${this.#props.item[field.key]}`
    }
 
    // enable buttons/links displayed in the render
@@ -306,13 +315,11 @@ class CollectionItemForm {
                   const is_excluded = await is_excluded_folder(path)
                   
                   // verify file is within root_folder and not in Settings.exluded_folders
-                  if(path.indexOf(this.#root_folder) === 0 && !is_excluded) {
-                     console.log('got path: ',folder_path.value)               
+                  if(path.indexOf(this.#root_folder) === 0 && !is_excluded) {  
                      folder_path.value = path.replace(this.#root_folder,'') // relative path
                   }
                   else {
                      disable_submit()
-                     // future : find_file_outcome is defined in FileTypeCheckbox - should be in this class? rollout this file
                      Notification.notify(
                         '#find_file_outcome',
                         `Invalid location - the selected folder is not within the Collections Folders or is an excluded sub-folder.`,
@@ -357,12 +364,12 @@ class CollectionItemForm {
                               const existing_record_id = collection_items_obj.collection_items[0].id
                               const current_record_id = this.#props.item.id
                               if(parseInt(existing_record_id) === parseInt(current_record_id)) {
-                                 // same record, we are changing file to a valid alternative (no existing record for new file)
+                                 // same record, we are changing file in the Record to a valid alternative
                                  this.enable_submit()
                                  Notification.notify('#find_file_outcome',`This file is valid.`,['bg_inform'],false)
                               }
                               else {
-                                 // match is for a record other than the one we are editing
+                                 // match is for a record other than the one we are editing - we cannot duplicate Record for a given file
                                  this.disable_submit()
                                  Notification.notify('#find_file_outcome',`Invalid file - there is already a record for this file.`,[],false)
                               }
@@ -395,15 +402,9 @@ class CollectionItemForm {
             }
          })
       }
-   
-
    }
 
-   // capture any change to input fields
-   // input_changed = () => {
-   //    this.enable_apply_btn()
-   // }
-   register_input_listener = (elem_id) => {      
+   register_input_listener = (elem_id) => {
       const elem = document.getElementById(elem_id)
       if(elem) {
          elem.addEventListener('input', () => {
@@ -414,8 +415,6 @@ class CollectionItemForm {
    
    // enabled form btns since inputs have changed
    // we disable by covering w/ opaque ::before
-
-
    enable_submit = (enabled = true) => {
       const apply_btns = document.querySelectorAll('.apply_btn')
       if(apply_btns) {
